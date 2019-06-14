@@ -12,4 +12,4 @@
 ### **教学资源**
 
 ### **Python** **IDE**
-
++ [Python](https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe)
