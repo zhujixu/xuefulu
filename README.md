@@ -12,8 +12,9 @@
 ### **教学资源**
 
 ### **Python** **IDE**
-+ [Python  3.7.3 for Windows](https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe)
-+ [Python  3.7.3 for Mac OS X](https://www.python.org/ftp/python/3.7.3/python-3.7.3-macosx10.6.pkg)
++ [Python for Windows](https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe)
++ [Python for Mac OS X](https://www.python.org/ftp/python/3.7.3/python-3.7.3-macosx10.6.pkg)
++ [Thonny](https://thonny.org/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
-
-http://www.jetbrains.com/pycharm/download
++ [Visual Studio Code](http://www.jetbrains.com/pycharm/download/)
++ [Anaconda](http://www.jetbrains.com/pycharm/download/)
