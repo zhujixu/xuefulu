@@ -5,11 +5,11 @@
 + [腾讯文档](https://docs.qq.com/desktop)
 + [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取码 1wsi
 
-### 远程演示
+### **远程演示**
 
-### 教学课件
+### **教学课件**
 
-### 教学资源
+### **教学资源**
 
 ### **Python** **IDE**
 + [Python](https://www.python.org/downloads/)
