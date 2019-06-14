@@ -1,6 +1,6 @@
-## 学府路1号 访问地址 xuefulu.com
+## 学府路1号
 
-You can use the [editor on GitHub](https://github.com/zhujixu/xuefulu.com/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+通过 [xuefulu.com](https://xuefulu.com/) 访问 学府路1号
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
