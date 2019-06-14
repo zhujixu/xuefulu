@@ -3,6 +3,7 @@
 + [GitHub](https://github.com)
 + [雨课堂](https://www.yuketang.cn/web)
 + [腾讯文档](https://docs.qq.com/desktop)
++ [文件收集](http://inbox.weiyun.com/5LeKKJ6)
 + [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取码 1wsi
 
 ### **远程演示**
