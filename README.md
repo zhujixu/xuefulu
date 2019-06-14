@@ -1,6 +1,6 @@
 ## 学府路1号
 
-通过 [xuefulu.com](https://xuefulu.com/) 访问 学府路1号
+访客可从 [xuefulu.com](https://xuefulu.com/) 访问 学府路1号
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
