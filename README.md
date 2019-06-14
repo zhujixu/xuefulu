@@ -14,3 +14,6 @@
 ### **Python** **IDE**
 + [Python  3.7.3 for Windows](https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe)
 + [Python  3.7.3 for Mac OS X](https://www.python.org/ftp/python/3.7.3/python-3.7.3-macosx10.6.pkg)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/)
+
+http://www.jetbrains.com/pycharm/download
