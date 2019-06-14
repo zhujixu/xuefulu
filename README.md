@@ -1,8 +1,9 @@
 ### **学府路1号** **xuefulu.com**
 
 + [雨课堂](https://www.yuketang.cn/web)
-+ [腾讯文档](https://docs.qq.com/desktop/)
++ [腾讯文档](https://docs.qq.com/desktop)
 + [GitHub](https://github.com)
++ [华南理工大学广州学院](http://www.gcu.edu.cn)
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
