@@ -14,7 +14,7 @@
 ### **Python** **IDE**
 + [Python for Windows](https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe)
 + [Python for Mac OS X](https://www.python.org/ftp/python/3.7.3/python-3.7.3-macosx10.6.pkg)
++ [Visual Studio Code](http://www.jetbrains.com/pycharm/download/)
 + [Thonny](https://thonny.org/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
-+ [Visual Studio Code](http://www.jetbrains.com/pycharm/download/)
 + [Anaconda](http://www.jetbrains.com/pycharm/download/)
