@@ -3,7 +3,7 @@
 + [GitHub](https://github.com)
 + [雨课堂](https://www.yuketang.cn/web)
 + [腾讯文档](https://docs.qq.com/desktop)
-+ [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取密码 1wsi
++ [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取码：1wsi
 
 
 ### Python 集成开发环境（Python IDE，Integrated Development Environment ）
