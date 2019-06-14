@@ -3,7 +3,7 @@
 + [GitHub](https://github.com)
 + [雨课堂](https://www.yuketang.cn/web)
 + [腾讯文档](https://docs.qq.com/desktop)
-+ [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取密码 1wsi
++ [百度网盘 资源共享](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) **提取密码** **1wsi**
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
