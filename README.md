@@ -17,4 +17,5 @@
 
 ### **快速链接**
 + [华南理工大学广州学院](http://www.gcu.edu.cn/)
-+ [GitHub](https://github.com) + [zhujixu@gcu.edu.cn](https://xuefulu.com/)
++ [GitHub](https://github.com)
++ [zhujixu@gcu.edu.cn](https://xuefulu.com/)
