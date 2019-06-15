@@ -18,4 +18,4 @@
 ### **快速链接**
 + [GitHub](https://github.com)
 + [华南理工大学广州学院](http://www.gcu.edu.cn/)
-+ zhujixu@gcu.edu.cn
++ [zhujixu@gcu.edu.cn](https://xuefulu.com/)
