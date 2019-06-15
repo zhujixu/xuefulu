@@ -9,11 +9,11 @@
 ### **教学资源**
 
 ### **Python** **IDE**
-+ [Python](https://www.python.org/downloads/)
-+ [Thonny](https://thonny.org/)
-+ [PyCharm](http://www.jetbrains.com/pycharm/download/)
-+ [Visual Studio Code](http://www.jetbrains.com/pycharm/download/)
-+ [Anaconda](http://www.jetbrains.com/pycharm/download/)
++ [Python 3.7.3](https://www.python.org/downloads/)
++ [Thonny 3.1.2](https://thonny.org/)
++ [PyCharm 2019.1.3](http://www.jetbrains.com/pycharm/download/)
++ [Visual Studio Code 1.35](https://code.visualstudio.com/)
++ [Anaconda 2019.03](https://www.anaconda.com/distribution/)
 
 ### **快速链接**
 + [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取码 1wsi
