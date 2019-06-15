@@ -16,6 +16,4 @@
 + [Anaconda 2019.03](https://www.anaconda.com/distribution/)
 
 ### **快速链接**
-+ [百度网盘](https://pan.baidu.com/s/1cBpFzdq1C-HbC3_65VdWfw) 提取码 1wsi
-+ [文件收集](http://inbox.weiyun.com/5LeKKJ6)
 + [GitHub](https://github.com)
