@@ -1,8 +1,6 @@
 ### **学府路1号** **xuefulu.com**
 
 ### **远程演示**
-+ [雨课堂](https://www.yuketang.cn/web)
-+ [腾讯文档](https://docs.qq.com/desktop)
 
 ### **教学课件**
 
