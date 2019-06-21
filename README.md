@@ -11,9 +11,9 @@
 
 ### **Python** **IDE**
 + [Python](https://www.python.org/downloads/)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + [Anaconda](https://www.anaconda.com/distribution/)
 + [Thonny](https://thonny.org/)
-+ [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + [Visual Studio Code](https://code.visualstudio.com/)
 
 ### **快速链接**
