@@ -10,11 +10,11 @@
 ### **教学资源**
 
 ### **Python** **IDE**
-+ [Python 3.7.3](https://www.python.org/downloads/)
-+ [Thonny 3.1.2](https://thonny.org/)
-+ [PyCharm 2019.1.3](http://www.jetbrains.com/pycharm/download/)
-+ [Visual Studio Code 1.35](https://code.visualstudio.com/)
-+ [Anaconda 2019.03](https://www.anaconda.com/distribution/)
++ [Python](https://www.python.org/downloads/)
++ [Thonny](https://thonny.org/)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/)
++ [Visual Studio Code](https://code.visualstudio.com/)
++ [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **快速链接**
 + [GitHub](https://github.com/login)
