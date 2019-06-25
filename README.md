@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://github.com/zhujixu/xuefulu.com/blob/master/%E7%BB%8F%E6%B5%8E%E5%AD%A6%E9%99%A2.png">
+<img src="https://github.com/zhujixu/xuefulu.com/blob/master/SOE.png">
 </div>
 
 + [华南理工大学广州学院](http://www.gcu.edu.cn/)
