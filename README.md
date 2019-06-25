@@ -17,5 +17,4 @@
 
 ### **快速链接**
 + [GitHub](https://github.com/login)
-+ [zhujixu@gcu.edu.cn](https://xuefulu.com/)
-<zhujixu@gcu.edu.cn>
++ <zhujixu@gcu.edu.cn>
