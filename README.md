@@ -2,12 +2,6 @@
 
 + [校内访问期末考试时钟](http://10.5.1.246/clock)
 
-### **教学演示**
-
-### **教学课件**
-
-### **教学资源**
-
 ### **Python**
 + [Python](https://www.python.org/downloads/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
