@@ -12,3 +12,4 @@
 ### **快速链接**
 + [GitHub](https://github.com/login)
 + <zhujixu@gcu.edu.cn>
+![经济学院](https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/%E7%BB%8F%E6%B5%8E%E5%AD%A6%E9%99%A2.png)
