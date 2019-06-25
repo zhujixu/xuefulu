@@ -3,7 +3,6 @@
 </div>
 
 <div align="center"><a href="http://10.5.1.246/clock">期末考试时钟</a></div>
-<div align="center"><a href="http://www.gcu.edu.cn/">华南理工大学广州学院</a></div>
 
 ### **Python**
 + [Python](https://www.python.org/downloads/)
@@ -15,3 +14,4 @@
 ### **快速链接**
 + [GitHub](https://github.com/login)
 + <zhujixu@gcu.edu.cn>
++ [华南理工大学广州学院](http://www.gcu.edu.cn)
