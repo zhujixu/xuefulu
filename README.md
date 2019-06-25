@@ -3,7 +3,10 @@
 </div>
 
 <div align="center"><a href="http://10.5.1.246/clock">华南理工大学广州学院 期末考试时钟</a></div>
-
+<a href="http://10.5.1.246/clock">
+  <div align="center">华南理工大学广州学院</div>
+  <div align="center">期末考试时钟</div>
+</a>
 ### **Python**
 + [Python](https://www.python.org/downloads/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
