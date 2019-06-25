@@ -1,11 +1,11 @@
 <div align="center">
 <img src="https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/SOE.png" height="120" width="120" >
-  
-[华南理工大学广州学院](http://www.gcu.edu.cn/)
-
-[校内访问期末考试时钟](http://10.5.1.246/clock)
-
 </div>
+
++ [华南理工大学广州学院](http://www.gcu.edu.cn/)
+
++ [校内访问期末考试时钟](http://10.5.1.246/clock)
+
 
 ### **Python**
 + [Python](https://www.python.org/downloads/)
