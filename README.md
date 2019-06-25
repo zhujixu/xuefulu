@@ -15,7 +15,7 @@
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + [Anaconda](https://www.anaconda.com/distribution/)
 + [Visual Studio Code](https://code.visualstudio.com/)
-+ [Thonny 适合初学者的 Python IDE](https://thonny.org/)
++ [Thonny 适合初学者的 轻量级 Python IDE](https://thonny.org/)
 
 ### **快速链接**
 + [GitHub](https://github.com/login)
