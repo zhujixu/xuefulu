@@ -2,6 +2,7 @@
 <img src="https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/SOE.png" height="160" width="160" >
 </div>
 
+<div align="center"><a href="http://10.5.1.246/clock">校内访问期末考试时钟</a></div>
 + [校内访问期末考试时钟](http://10.5.1.246/clock)
 
 + [华南理工大学广州学院](http://www.gcu.edu.cn/)
