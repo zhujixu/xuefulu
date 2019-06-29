@@ -7,8 +7,8 @@
 </div>
 
 ### **Python**
-+ [Python](https://www.python.org/downloads/)   |   [Python中文文档](https://docs.python.org/zh-cn/3/)   
-+ [PyCharm](http://www.jetbrains.com/pycharm/download/)   |   [Thonny](https://thonny.org/)   |   [Visual Studio Code](https://code.visualstudio.com/)   |   [Anaconda](https://www.anaconda.com/distribution/)   |   [Miniconda](https://docs.conda.io/en/latest/miniconda.html)   
++ [Python](https://www.python.org/downloads/)   |   [Python中文文档](https://docs.python.org/zh-cn/3/)   |   [Thonny](https://thonny.org/)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/)   |   [Visual Studio Code](https://code.visualstudio.com/)   |   [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **快速链接**
 + [GitHub](https://github.com/login)
