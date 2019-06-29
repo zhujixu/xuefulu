@@ -2,7 +2,7 @@
 <img src="https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/SOE.png" height="150" width="150" >
 </div>
 
-[华南理工大学广州学院考试时钟](http://10.5.1.246/clock)
+### [华南理工大学广州学院考试时钟](http://10.5.1.246/clock)
 
 ### **Python**
 + [Python](https://www.python.org/downloads/)   |   [Python中文文档](https://docs.python.org/zh-cn/3/)
