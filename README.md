@@ -7,7 +7,7 @@
 </div>
 
 ### **Python**
-+ [Python](https://www.python.org/downloads/)   + [Python 文档](https://docs.python.org/zh-cn/3/)
++ [Python](https://www.python.org/downloads/)   [Python 文档](https://docs.python.org/zh-cn/3/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + [Anaconda](https://www.anaconda.com/distribution/)   [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 + [Visual Studio Code](https://code.visualstudio.com/)
