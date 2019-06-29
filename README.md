@@ -8,10 +8,10 @@
 
 ### **Python**
 + [Python](https://www.python.org/downloads/)   |   [Python中文文档](https://docs.python.org/zh-cn/3/)
-+ [PyCharm](http://www.jetbrains.com/pycharm/download/)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/)   |
 + [Anaconda](https://www.anaconda.com/distribution/)   |   [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
-+ [Visual Studio Code](https://code.visualstudio.com/)
-+ [Thonny 适合初学者的 轻量级 Python IDE](https://thonny.org/)
++ [Visual Studio Code](https://code.visualstudio.com/)   |
++ [Thonny 适合初学者的 轻量级 Python IDE](https://thonny.org/)   |
 
 ### **快速链接**
 + [GitHub](https://github.com/login)
