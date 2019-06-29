@@ -3,7 +3,7 @@
 </div>
 
 ### **华南理工大学广州学院**
-+ [校内访问考试时钟](http://10.5.1.246/clock)
++ [**校内访问**考试时钟](http://10.5.1.246/clock)
 
 ### **Python**
 + [Python](https://www.python.org/downloads/)   |   [Python中文文档](https://docs.python.org/zh-cn/3/)
