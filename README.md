@@ -12,4 +12,3 @@
 ### **[快速链接](https://github.com/login)**
 + [雨课堂](https://www.yuketang.cn/web)
 + [zhujixu@gcu.edu.cn](https://github.com/login)
-+ [华南理工大学广州学院](http://www.gcu.edu.cn/)
