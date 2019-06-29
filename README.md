@@ -11,6 +11,6 @@
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)   |   [VSCode](https://code.visualstudio.com/)   |   [Anaconda](https://www.anaconda.com/distribution/)   |   [Thonny](https://thonny.org/)
 
 ### **快速链接**
++ [雨课堂](https://www.yuketang.cn/web)
 + [GitHub](https://github.com/login)
 + <zhujixu@gcu.edu.cn>
-+ [清华大学 学堂在线 雨课堂](https://www.yuketang.cn/web)
