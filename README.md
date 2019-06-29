@@ -8,7 +8,7 @@
 
 ### **Python**
 + [Python](https://www.python.org/downloads/)   |   [Python中文文档](https://docs.python.org/zh-cn/3/)
-+ [PyCharm](http://www.jetbrains.com/pycharm/download/)   |   [VS Code](https://code.visualstudio.com/)   |   [Anaconda](https://www.anaconda.com/distribution/)   |   [Thonny](https://thonny.org/)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/)   |   [VSCode](https://code.visualstudio.com/)   |   [Anaconda](https://www.anaconda.com/distribution/)   |   [Thonny](https://thonny.org/)
 
 ### **快速链接**
 + [GitHub](https://github.com/login)
