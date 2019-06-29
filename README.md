@@ -14,3 +14,4 @@
 + [雨课堂](https://www.yuketang.cn/web)
 + [GitHub](https://github.com/login)
 + <zhujixu@gcu.edu.cn>
++ [华南理工大学广州学院](http://www.gcu.edu.cn/)
