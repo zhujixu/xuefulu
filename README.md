@@ -9,7 +9,7 @@
 ### **Python**
 + [Python](https://www.python.org/downloads/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
-+ [Anaconda](https://www.anaconda.com/distribution/)
++ [Anaconda](https://www.anaconda.com/distribution/)   [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 + [Visual Studio Code](https://code.visualstudio.com/)
 + [Thonny 适合初学者的 轻量级 Python IDE](https://thonny.org/)
 
