@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/SOE.png" height="160" width="160" >
+<img src="https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/SOE.png" height="150" width="150" >
 </div>
 
 <div align="center">
