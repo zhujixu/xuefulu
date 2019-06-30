@@ -11,4 +11,5 @@
 
 ### **[快速链接](https://github.com/login)**
 + [雨课堂](https://www.yuketang.cn/web)
++ [GitHub 帮助](https://help.github.com/cn)
 + [zhujixu@gcu.edu.cn](https://github.com/login)
