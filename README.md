@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/zhujixu/xuefulu.com/master/SOE.png" height="150" width="150" >
+<img src="" height="150" width="150" >
 </div>
 
 ### **[华南理工大学广州学院](http://www.gcu.edu.cn/)**
