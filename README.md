@@ -1,5 +1,5 @@
 ### **[学府路](http://xuefulu.com/)**
-+ [华南理工大学广州学院](http://www.gcu.edu.cn/) - [考试时钟](http://10.5.1.246/clock)
++ [华南理工大学广州学院](http://www.gcu.edu.cn/) - [智慧校园](http://sc.gcu.edu.cn/ - [考试时钟](http://10.5.1.246/clock)
 
 ### **[Python](https://www.python.org/)**
 + [Python](https://www.python.org/downloads/) - [Python帮助](https://docs.python.org/zh-cn/3/)
