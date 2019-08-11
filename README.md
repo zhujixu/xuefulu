@@ -13,6 +13,6 @@
 + [廖雪峰 Python](https://www.liaoxuefeng.com/wiki/1016959663602400) - [网盘资源](https://www.yunpanjingling.com/search/Python)
 
 ### **快速链接**
-+ [雨课堂](https://www.yuketang.cn/web) - [网页版微信](https://wx.qq.com/) - [云盘精灵](https://www.yunpanjingling.com/)
++ [雨课堂](https://www.yuketang.cn/web) - [菜鸟教程](https://www.runoob.com/python3/python3-tutorial.html) - [云盘精灵](https://www.yunpanjingling.com/)
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 + <zhujixu@gcu.edu.cn>
