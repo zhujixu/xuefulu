@@ -9,6 +9,8 @@
 + [Anaconda 数据科学平台](https://www.anaconda.com/distribution/)
 
 ### **教学课件**
+### **学习资源**
++ [廖雪峰 Python](https://www.liaoxuefeng.com/wiki/1016959663602400) - [网盘资源](https://www.yunpanjingling.com/search/Python)
 
 ### **快速链接**
 + [雨课堂](https://www.yuketang.cn/web) - [网页版微信](https://wx.qq.com/) - [云盘精灵](https://www.yunpanjingling.com/)
