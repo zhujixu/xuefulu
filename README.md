@@ -1,7 +1,7 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
 ### **Python**
-+ Python官方 
++ Python官方
 [下载](https://www.python.org/downloads/)
 [文档](https://docs.python.org/zh-cn/3/)
 + 初学者 [Thonny](https://thonny.org/)
