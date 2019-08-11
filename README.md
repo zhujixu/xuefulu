@@ -1,7 +1,8 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
 ### **[Python](https://www.python.org/)**
-+ [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/)
++ [Python下载](https://www.python.org/downloads/)
++ [Python文档](https://docs.python.org/zh-cn/3/)
 + [Thonny 初学者](https://thonny.org/)
 + [PyCharm 专业开发人员](http://www.jetbrains.com/pycharm/download/)
 + [Visual Studio Code 专业开发人员](https://code.visualstudio.com/)
