@@ -2,7 +2,7 @@
 
 ### **[Python](https://www.python.org/)**
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/)
-+ [PyCharm](http://www.jetbrains.com/pycharm/download/) - [VSCode](https://code.visualstudio.com/) - [Thonny](https://thonny.org/) - [Anaconda](https://www.anaconda.com/distribution/)
++ [PyCharm](http://www.jetbrains.com/pycharm/download/) - [VSCode](https://code.visualstudio.com/) - [Thonny Python IDE for beginners](https://thonny.org/) - [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **[快速链接](https://github.com/login)**
 + [雨课堂](https://www.yuketang.cn/web) - [网页版微信](https://wx.qq.com/)
