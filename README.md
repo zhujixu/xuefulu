@@ -4,9 +4,9 @@
 + Python [官方下载](https://www.python.org/downloads/)
 + Python [官方文档](https://docs.python.org/zh-cn/3/)
 + 初学者 [Thonny](https://thonny.org/)
++ 数据科学 [Anaconda](https://www.anaconda.com/distribution/)
 + 专业开发 [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/)
-+ 数据科学 [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **教学课件**
 ### **学习资源**
