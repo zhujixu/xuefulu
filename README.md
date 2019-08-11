@@ -4,7 +4,7 @@
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + [VSCode](https://code.visualstudio.com/)
-+ [Thonny](https://thonny.org/)
++ [Thonny](https://thonny.org/) Python IDE for beginners
 + [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **[快速链接](https://github.com/login)**
