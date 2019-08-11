@@ -8,7 +8,7 @@
 
 ### **教学课件**
 ### **学习资源**
-+ [廖雪峰 Python](https://www.liaoxuefeng.com/wiki/1016959663602400) - [网盘资源](https://www.yunpanjingling.com/search/Python) - [菜鸟教程](https://www.runoob.com/python3/python3-tutorial.html) - [菜鸟实例](https://www.runoob.com/python3/python3-examples.html)
++ [廖雪峰 Python](https://www.liaoxuefeng.com/wiki/1016959663602400) - [网盘资源](https://www.yunpanjingling.com/search/Python) - [基础教程](https://www.runoob.com/python3/python3-tutorial.html) - [基础实例](https://www.runoob.com/python3/python3-examples.html)
 
 ### **快速链接**
 + [雨课堂](https://www.yuketang.cn/web) - [微信网页版](https://wx.qq.com/) - [云盘精灵](https://www.yunpanjingling.com/)
