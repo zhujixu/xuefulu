@@ -8,7 +8,7 @@
 + [Visual Studio Code 专业开发人员](https://code.visualstudio.com/)
 + [Anaconda 数据科学平台](https://www.anaconda.com/distribution/)
 
-### **[教学课件]**
+### **教学课件**
 ### **[学习资源]**
 
 ### **[快速链接](https://github.com/login)**
