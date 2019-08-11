@@ -3,8 +3,8 @@
 ### **Python**
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/)
 + 初学者 [Thonny](https://thonny.org/)
-+ 专业开发人员 ①[PyCharm](http://www.jetbrains.com/pycharm/download/) - [Visual Studio Code](https://code.visualstudio.com/)
-+ [Anaconda 数据科学平台](https://www.anaconda.com/distribution/)
++ 专业开发人员 [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Visual Studio Code](https://code.visualstudio.com/)
++ 数据科学平台 [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **教学课件**
 ### **学习资源**
