@@ -1,7 +1,7 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
 ### **Python**
-+ Python [官方下载](https://www.python.org/downloads/) - [官方文档](https://docs.python.org/zh-cn/3/)
++ Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/)
 + 初学者 [Thonny](https://thonny.org/)
 + 专业开发人员 [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Visual Studio Code](https://code.visualstudio.com/)
 + 数据科学平台 [Anaconda](https://www.anaconda.com/distribution/)
