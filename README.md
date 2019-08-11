@@ -2,7 +2,7 @@
 
 ### **[Python](https://www.python.org/)**
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/)
-+ [Thonny](https://thonny.org/)
++ [Thonny Python IDE for beginners](https://thonny.org/)
 + [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + [Visual Studio Code](https://code.visualstudio.com/)
 + [Anaconda](https://www.anaconda.com/distribution/)
