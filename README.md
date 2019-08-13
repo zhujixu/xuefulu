@@ -17,6 +17,6 @@
 + [基础实例](https://www.runoob.com/python3/python3-examples.html)
 
 ### **快速链接**
-+ [雨课堂](https://www.yuketang.cn/web) - [微信网页版](https://wx.qq.com/) - [云盘精灵](https://www.yunpanjingling.com/)
++ [雨课堂](https://www.yuketang.cn/web) - [微信网页版](https://wx.qq.com/) - [QQ邮箱](https://mail.qq.com/cgi-bin/loginpage) - [云盘精灵](https://www.yunpanjingling.com/)
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 + <zhujixu@gcu.edu.cn>
