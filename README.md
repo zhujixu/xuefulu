@@ -10,7 +10,7 @@
 ### **教学课件**
 ### **学习资源**
 + [在线 简明的 Python 教程](https://bop.mol.uno/)
-+ [离线 简明的 Python 教程](https://www.gitbook.com/book/lenkimo/byte-of-python-chinese-edition)
++ [离线 简明的 Python 教程](https://legacy.gitbook.com/download/pdf/book/lenkimo/byte-of-python-chinese-edition)
 + [廖雪峰 Python 教程](https://www.liaoxuefeng.com/wiki/1016959663602400)
 + [董付国 Python 教程](https://blog.csdn.net/oh5W6HinUg43JvRhhB)
 + [基础教程](https://www.runoob.com/python3/python3-tutorial.html)
