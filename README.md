@@ -10,9 +10,9 @@
 
 ### **教学课件**
 ### **学习资源**
-+ [简明 Python 教程](https://bop.mol.uno/)
-+ [廖雪峰 Python](https://www.liaoxuefeng.com/wiki/1016959663602400)
-+ [董付国 Python](https://blog.csdn.net/oh5W6HinUg43JvRhhB)
++ [简  明 Python 教程](https://bop.mol.uno/)
++ [廖雪峰 Python 教程](https://www.liaoxuefeng.com/wiki/1016959663602400)
++ [董付国 Python 教程](https://blog.csdn.net/oh5W6HinUg43JvRhhB)
 + [基础教程](https://www.runoob.com/python3/python3-tutorial.html)
 + [基础实例](https://www.runoob.com/python3/python3-examples.html)
 
