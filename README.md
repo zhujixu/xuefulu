@@ -2,7 +2,6 @@
 
 ### **Python**
 + Python [下载](https://www.python.org/downloads/) - [第三方包索引](https://pypi.org/) - [文档](https://docs.python.org/zh-cn/3/)
-+ 初学者 [Thonny](https://thonny.org/)
 + 专业开发 [PyCharm Edu](https://www.jetbrains.com/pycharm-edu/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/)
 + 数据科学 [Anaconda](https://www.anaconda.com/distribution/)
