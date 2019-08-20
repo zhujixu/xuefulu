@@ -4,7 +4,7 @@
 + Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 + 专业开发 [PyCharm Edu](https://www.jetbrains.com/pycharm-edu/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/)
-+ 数据科学 [Anaconda](https://www.anaconda.com/distribution/)
++ 数据科学 [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter](https://jupyter.org/install)
 
 ### **教学课件**
 ### **学习资源**
