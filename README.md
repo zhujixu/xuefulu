@@ -11,8 +11,7 @@
 + [简明的 Python 教程 PDF](https://legacy.gitbook.com/download/pdf/book/lenkimo/byte-of-python-chinese-edition)
 + [廖雪峰 Python 教程](https://www.liaoxuefeng.com/wiki/1016959663602400)
 + [董付国 Python 教程](https://blog.csdn.net/oh5W6HinUg43JvRhhB)
-+ [菜鸟教程](https://www.runoob.com/python3/python3-tutorial.html)
-+ [菜鸟实例](https://www.runoob.com/python3/python3-examples.html)
++ [菜鸟教程](https://www.runoob.com/python3/python3-tutorial.html) - [菜鸟实例](https://www.runoob.com/python3/python3-examples.html)
 + [Python 数据分析](https://zhuanlan.zhihu.com/pydatalysis)
 
 ### **快速链接**
