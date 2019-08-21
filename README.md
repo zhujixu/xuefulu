@@ -1,4 +1,5 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
++ [雨课堂](https://www.yuketang.cn/web)
 
 ### **Python**
 + Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
@@ -15,6 +16,6 @@
 + [Python 数据分析](https://zhuanlan.zhihu.com/pydatalysis)
 
 ### **快速链接**
-+ [雨课堂](https://www.yuketang.cn/web) - [微信网页版](https://wx.qq.com/) - [QQ邮箱](https://mail.qq.com/cgi-bin/loginpage) - [云盘精灵](https://www.yunpanjingling.com/)
++ [微信网页版](https://wx.qq.com/) - [QQ邮箱](https://mail.qq.com/cgi-bin/loginpage) - [百度网盘](https://pan.baidu.com/) - [云盘精灵](https://www.yunpanjingling.com/)
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 + <zhujixu@gcu.edu.cn>
