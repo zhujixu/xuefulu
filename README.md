@@ -1,5 +1,5 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
-+ [雨课堂](https://www.yuketang.cn/web)
++ [雨课堂网页版](https://www.yuketang.cn/web) - [雨课堂安装包](https://www.yuketang.cn/download)
 
 ### **Python**
 + Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/) - [pip 离线安装](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
