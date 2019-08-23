@@ -6,6 +6,7 @@
 + 专业开发 [PyCharm Edu](https://www.jetbrains.com/pycharm-edu/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/)
 + 数据科学 [Jupyter](https://jupyter.org/install)- [Anaconda](https://www.anaconda.com/distribution/)
++ 编码规范 [Python PEP8 编码规范中文版](https://blog.csdn.net/ratsniper/article/details/78954852)
 
 ### **教学课件**
 ### **学习资源**
