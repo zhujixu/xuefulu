@@ -1,4 +1,5 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
++ [华南理工大学广州学院 经济学院 Jupyter](https://www.python.org/downloads/)
 + [![Azure Notebooks](https://notebooks.azure.com/launch.svg)](https://notebooks.azure.com/zhujixu/projects/python)
 
 ### **Python**
