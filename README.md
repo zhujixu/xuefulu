@@ -2,8 +2,8 @@
 [![Azure Notebooks](https://notebooks.azure.com/launch.svg)](https://notebooks.azure.com/zhujixu/projects/python)
 
 ### **Python**
-+ Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/) - [pip 离线安装](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
-+ 专业开发 [PyCharm Edu](https://www.jetbrains.com/pycharm-edu/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
++ Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
++ 专业开发 [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/)
 + 数据科学 [Jupyter](https://jupyter.org/install)- [Anaconda](https://www.anaconda.com/distribution/)
 + 编码规范 [Python PEP8 编码规范中文版](https://blog.csdn.net/ratsniper/article/details/78954852)
