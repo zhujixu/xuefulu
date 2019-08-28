@@ -7,7 +7,7 @@
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/)
 + 数据科学 [Jupyter](https://jupyter.org/install)- [Anaconda](https://www.anaconda.com/distribution/)
 + 编码规范 [Python PEP8 编码规范中文版](https://blog.csdn.net/ratsniper/article/details/78954852)
-+ 百度网盘 [Python程序开发环境下载](https://pan.baidu.com/s/1asEzv-b8fMPv6uhpkPDJ1A#list/path=%2F%E5%AD%A6%E5%BA%9C%E8%B7%AF%2FPython%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83&parentPath=%2F)
++ 百度网盘 [Python程序开发环境 下载](https://pan.baidu.com/s/1asEzv-b8fMPv6uhpkPDJ1A#list/path=%2F%E5%AD%A6%E5%BA%9C%E8%B7%AF%2FPython%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83&parentPath=%2F)
 ### **教学课件**
 + [Python程序设计基础](https://pan.baidu.com/s/1asEzv-b8fMPv6uhpkPDJ1A#list/path=%2F%E5%AD%A6%E5%BA%9C%E8%B7%AF%2FPython%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E5%9F%BA%E7%A1%80)
 ### **学习资源**
