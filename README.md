@@ -1,5 +1,4 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
-[![Azure Notebooks](https://notebooks.azure.com/launch.svg)](https://notebooks.azure.com/zhujixu/projects/python)
 
 ### **Python**
 + 百度网盘 [Python程序开发环境下载](https://pan.baidu.com/s/1asEzv-b8fMPv6uhpkPDJ1A#list/path=%2F%E5%AD%A6%E5%BA%9C%E8%B7%AF%2FPython%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83&parentPath=%2F)
