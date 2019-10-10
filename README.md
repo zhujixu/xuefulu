@@ -8,8 +8,6 @@
 + 数据科学 [Jupyter](https://jupyter.org/install)- [Anaconda](https://www.anaconda.com/distribution/)
 + 编码规范 [Python PEP8 编码规范中文版](https://blog.csdn.net/ratsniper/article/details/78954852)
 
-### **教学课件**
-+ [Python程序设计基础](https://pan.baidu.com/s/1asEzv-b8fMPv6uhpkPDJ1A#list/path=%2F%E5%AD%A6%E5%BA%9C%E8%B7%AF%2FPython%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E5%9F%BA%E7%A1%80)
 ### **学习资源**
 + [简明的 Python 教程 PDF](https://legacy.gitbook.com/download/pdf/book/lenkimo/byte-of-python-chinese-edition)
 + [廖雪峰 Python 教程](https://www.liaoxuefeng.com/wiki/1016959663602400)
