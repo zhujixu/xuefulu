@@ -1,6 +1,7 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
 ### **Python**
++期末考核 [17金工1、2班](https://www.wenshushu.cn/) - [17金工3、4班](https://www.yunpanjingling.com/) - [17金5、6班](https://pc.weixin.qq.com/)
 + 实用工具 [传文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
 + [Python程序开发环境下载](https://wss1.cn/f/119bno2zfd7)
 + [Python核心知识思维导图](https://wss1.cn/f/119bseg22qv)
