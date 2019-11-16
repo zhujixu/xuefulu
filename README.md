@@ -13,7 +13,6 @@
 
 ### **学习资源**
 + [简明的 Python 教程 PDF](https://legacy.gitbook.com/download/pdf/book/lenkimo/byte-of-python-chinese-edition)
-+ [廖雪峰 Python 教程](https://www.liaoxuefeng.com/wiki/1016959663602400)
 + [菜鸟网 Python 教程](https://www.runoob.com/python3/python3-tutorial.html)
 
 ### **快速链接**
