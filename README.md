@@ -5,7 +5,7 @@
 + 实用工具 [传文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
 + [Python程序开发环境下载](https://wss1.cn/f/13gd36316jr)
 + [Python核心知识思维导图](https://wss1.cn/f/13gdar3xn53)
-+ Python [下载](https://www.python.org/downloads/) - [文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
++ [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
 + 数据科学 [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter](https://jupyter.org/install)- [Jupyter notebooks on Azure](https://notebooks.azure.com/)
 
