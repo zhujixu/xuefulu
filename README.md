@@ -1,7 +1,7 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
 ### **Python**
-+ 期末考核 [17级金工1&2班](https://wss1.cn/f/12509qtlw23) - [17级金工3&4班](https://wss1.cn/f/1250emqgf3b) - [17级金工5&6班](https://wss1.cn/f/1250htvrwx3)
++ 期末考核 [17级金工1&2班](https://wss1.cn/f/14cq79axqhz) - [17级金工3&4班](https://wss1.cn/f/14cqak23yav) - [17级金工5&6班](https://wss1.cn/f/14cqdf9wya3)
 + 实用工具 [传文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
 + [Python程序开发环境下载](https://wss1.cn/f/13smhkpcinb) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 + [Python核心知识思维导图](https://wss1.cn/f/13smoucpo5n)
