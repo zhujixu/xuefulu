@@ -8,7 +8,7 @@
 + [Python核心知识思维导图](https://wss1.cn/f/13smoucpo5n)
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
-+ 数据科学 [Jupyter Notebook](https://notebooks.gesis.org/binder/jupyter/user/ipython-ipython-in-depth-bfeifbmn/notebooks/binder/Index.ipynb) - [JupyterLab](https://hub.gke.mybinder.org/user/jupyterlab-jupyterlab-demo-y8ytu671/lab) - [Jupyter notebooks on Azure](https://notebooks.azure.com/)- [Anaconda](https://www.anaconda.com/distribution/)
++ 数据科学 [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [JupyterLab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter notebooks on Azure](https://notebooks.azure.com/)- [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **学习资源**
 + [Python 基础教程](https://bop.mol.uno)
