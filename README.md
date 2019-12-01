@@ -8,7 +8,7 @@
 + [Python核心知识思维导图](https://wss1.cn/f/13smoucpo5n)
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 + 专业开发 [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
-+ 数据科学 [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter](https://jupyter.org/install)- [Jupyter notebooks on Azure](https://notebooks.azure.com/)
++ 数据科学 [Jupyter](https://jupyter.org/install)- [Jupyter notebooks on Azure](https://notebooks.azure.com/)- [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **学习资源**
 + [Python基础教程](https://legacy.gitbook.com/download/pdf/book/lenkimo/byte-of-python-chinese-edition)
