@@ -17,7 +17,7 @@
 + [NumPy 中文](https://www.numpy.org.cn)
 + [Pandas 中文](https://www.pypandas.cn)
 + [Matplotlib 中文](https://www.matplotlib.org.cn)
-+ [利用Python进行数据分析](https://www.matplotlib.org.cn)
++ [利用Python进行数据分析](https://seancheney.gitbook.io/python-for-data-analysis-2nd/)
 
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
