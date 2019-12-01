@@ -12,9 +12,7 @@
 + 数据科学 [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [JupyterLab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter notebooks on Azure](https://notebooks.azure.com/) - [Anaconda](https://www.anaconda.com/distribution/)
 
 ### **学习资源**
-+ [Python 基础教程](https://bop.mol.uno)
-+ [Python 进阶教程](http://interpy.eastlakeside.com/)
-+ [菜鸟网 Python 教程](https://www.runoob.com/python3/python3-tutorial.html)
++ [Python 基础教程](https://bop.mol.uno) - [Python 进阶教程](http://interpy.eastlakeside.com/) - [菜鸟网 Python 教程](https://www.runoob.com/python3/python3-tutorial.html)
 + [NumPy](https://www.numpy.org.cn) - [Pandas](https://www.pypandas.cn) - [Matplotlib](https://www.matplotlib.org.cn)
 + [利用Python进行数据分析·第2版](https://seancheney.gitbook.io/python-for-data-analysis-2nd/)
 
