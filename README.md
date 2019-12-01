@@ -2,6 +2,7 @@
 + [华广考试时钟](http://10.5.1.246:8080/clock/)
 
 ### **Python**
++ [文件提交](https://wss1.cn/s/17r8av9mbuz)
 + [视频录制教程](https://wss1.cn/f/14cxlnb3xx8)
 + 期末考核 [17级金工1&2班](https://wss1.cn/f/14cq79axqhz) - [17级金工3&4班](https://wss1.cn/f/14cqak23yav) - [17级金工5&6班](https://wss1.cn/f/14cqdf9wya3)
 + 实用工具 [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
