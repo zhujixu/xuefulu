@@ -14,6 +14,9 @@
 + [Python基础教程](https://legacy.gitbook.com/download/pdf/book/lenkimo/byte-of-python-chinese-edition)
 + [Python进阶教程](http://interpy.eastlakeside.com/)
 + [菜鸟网 Python 教程](https://www.runoob.com/python3/python3-tutorial.html)
++ [NumPy](https://www.numpy.org.cn)
++ [Pandas](https://www.pypandas.cn)
++ [Matplotlib](https://www.matplotlib.org.cn)
 
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
