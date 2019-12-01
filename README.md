@@ -3,6 +3,8 @@
 
 + [提交文件](https://wss1.cn/s/17r8av9mbuz)
 
++ [17级经济统计学1班 工业创业模拟实训考核报告](https://wss1.cn/f/17ss5vargiv)
+
 ### **Python**
 + [视频录制教程](https://wss1.cn/f/14cxlnb3xx8)
 + 期末考核 [17级金工1&2班](https://wss1.cn/f/14cq79axqhz) - [17级金工3&4班](https://wss1.cn/f/14cqak23yav) - [17级金工5&6班](https://wss1.cn/f/14cqdf9wya3)
