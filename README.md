@@ -1,7 +1,7 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
-+ [华广考试时钟](http://10.5.1.246:8080/clock/)
++ [考试时钟](http://10.5.1.246:8080/clock/)
 
-+ [提交文件 请点击](https://wss1.cn/s/17r8av9mbuz)
++ [提交文件](https://wss1.cn/s/17r8av9mbuz)
 
 ### **Python**
 + [视频录制教程](https://wss1.cn/f/14cxlnb3xx8)
