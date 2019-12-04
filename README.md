@@ -1,7 +1,7 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 + [考试时钟](http://10.5.1.246:8080/clock/)
 
-+ [提交文件](https://wss1.cn/s/18cth80ookn)
++ [提交文件](https://wss1.cn/s/18lgqsmos5n)
 
 + [17级经济统计学1班 工业创业模拟实训考核报告](https://wss1.cn/f/17ss5vargiv)
 
