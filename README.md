@@ -17,6 +17,8 @@
 
 + 数据科学 [Jupyter Notebook Online](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab  Online](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter notebooks on Azure](https://notebooks.azure.com/) - [Anaconda](https://www.anaconda.com/distribution/)
 
++ [Python 全国二级等级考试](https://python123.io/)
+
 ### **学习资源**
 + [Python 基础教程](https://bop.mol.uno) - [Python 进阶教程](http://interpy.eastlakeside.com/) - [菜鸟网 Python 教程](https://www.runoob.com/python3/python3-tutorial.html)
 
