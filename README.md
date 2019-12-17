@@ -7,7 +7,7 @@
 ### **Python**
 + [实用工具](http://xuefulu.com/) - [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
 
-+ [Python程序开发环境下载](https://wss1.cn/f/13smhkpcinb) - [Thonny · Python IDE for beginners](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
++ [Python程序开发环境下载](https://wss1.cn/f/13smhkpcinb) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
 + [Python核心知识思维导图](https://wss1.cn/f/13smoucpo5n)
 
