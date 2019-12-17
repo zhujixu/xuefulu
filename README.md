@@ -15,7 +15,7 @@
 
 + [专业开发](http://xuefulu.com/) - [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
 
-+ [数据科学](http://xuefulu.com/) - [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter notebooks on Azure](https://notebooks.azure.com/) - [Anaconda](https://www.anaconda.com/distribution/)
++ [数据科学](http://xuefulu.com/) - [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter notebooks on Azure](https://notebooks.azure.com/)
 
 + [Python 全国二级等级考试](https://python123.io/)
 
