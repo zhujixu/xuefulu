@@ -5,7 +5,7 @@
 + [提交文件](https://wss1.cn/s/1aprdyozxrc)
 
 ### **Python**
-+ [实用工具](http://xuefulu.com/) - [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
++ [文叔叔收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
 
 + [Python程序开发环境下载](https://wss1.cn/f/13smhkpcinb) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
