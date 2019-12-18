@@ -26,6 +26,9 @@
 
 + [利用Python进行数据分析·第2版](https://seancheney.gitbook.io/python-for-data-analysis-2nd/)
 
+### **实用插件**
++ [Kite](https://www.kite.com/) - [Pyforest](https://github.com/8080labs/pyforest)
+
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 
