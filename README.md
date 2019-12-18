@@ -28,6 +28,7 @@
 
 ### **实用插件**
 + [Kite 高效智能的Python代码补全工具](https://www.kite.com/)
+
 + [Pyforest 延迟导入所有流行的Python数据科学库](https://github.com/8080labs/pyforest)
 
 ### **快速链接**
