@@ -22,6 +22,9 @@
 ### **Database**
 + [PhpStudy](https://www.xp.cn/)
 
+### **数据采集**
++ [八爪鱼数据采集](https://www.bazhuayu.com/download) - [八爪鱼教育公益计划](https://www.bazhuayu.com/edu)
+
 ### **学习资源**
 + [微信读书](https://weread.qq.com/)
 
