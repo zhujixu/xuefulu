@@ -2,7 +2,7 @@
 
 + [考试时钟](http://10.5.1.246:8080/clock/)
 
-+ [提交文件](https://wss1.cn/s/1cy6vaw9xmz)
++ [提交文件](https://wss1.cn/s/1cy9jg9km20)
 
 + [收发文件 找文叔叔](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/)
 
