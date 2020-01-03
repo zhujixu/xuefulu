@@ -39,6 +39,8 @@
 
 + [Pyforest 延迟导入所有流行的Python数据科学库](https://github.com/8080labs/pyforest)
 
++ [PrettyErrors 一行代码简化Python异常信息](https://github.com/onelivesleft/PrettyErrors)
+
 + [Bamboolib A GUI for Pandas](https://bamboolib.8080labs.com/demo)
 
 + [Modin Scale your pandas workflows by changing one line of code](https://github.com/modin-project/modin)
