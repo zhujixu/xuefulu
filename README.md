@@ -41,6 +41,8 @@
 
 + [Bamboolib A GUI for Pandas](https://bamboolib.8080labs.com/demo)
 
++ [Modin Scale your pandas workflows by changing one line of code](https://github.com/modin-project/modin)
+
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 
