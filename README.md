@@ -39,6 +39,8 @@
 
 + [Pyforest 延迟导入所有流行的Python数据科学库](https://github.com/8080labs/pyforest)
 
++ [Bamboolib A GUI for Pandas](https://bamboolib.8080labs.com/demo)
+
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 
