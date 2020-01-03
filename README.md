@@ -18,7 +18,7 @@
 + [数据科学](http://xuefulu.com/) - [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter on Azure](https://notebooks.azure.com/)
 
 ### **Database**
-+ [PhpStudy](https://www.xp.cn/)
++ [PHPStudy](https://www.xp.cn/)
 
 ### **数据采集**
 + [八爪鱼数据采集](https://www.bazhuayu.com/download) - [八爪鱼教育公益计划](https://www.bazhuayu.com/edu)
