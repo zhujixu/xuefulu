@@ -7,7 +7,7 @@
 + [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
 
 ### **Python**
-+ [Python核心知识思维导图](https://wss1.cn/f/13smoucpo5n)
++ [Python核心知识思维导图](https://wss3.cn/f/1hk7dovvr7v)
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
