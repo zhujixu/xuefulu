@@ -35,7 +35,7 @@
 
 + [Pyforest 延迟导入所有流行的Python数据科学库](https://github.com/8080labs/pyforest)
 
-+ [Bamboolib A GUI for Pandas](https://bamboolib.8080labs.com/demo)
++ [Bamboolib A GUI for Pandas](https://bamboolib.8080labs.com/demo) - [Installing Bamboolib](https://github.com/tkrabel/bamboolib/blob/master/installation/no_virtual_environment/installation.md#installing-bamboolib-without-virtual-environment)
 
 + [Modin Scale your pandas workflows by changing one line of code](https://github.com/modin-project/modin)
 
