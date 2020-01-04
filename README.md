@@ -11,7 +11,7 @@
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
-+ [Python集成开发环境IDE下载](http://xuefulu.com/) - [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
++ [Python集成开发环境IDE 文叔叔下载](https://wss3.cn/f/1hk7kttfq07) - [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
 + [数据科学](http://xuefulu.com/) - [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter on Azure](https://notebooks.azure.com/)
 
