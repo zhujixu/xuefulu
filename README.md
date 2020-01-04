@@ -4,7 +4,7 @@
 
 + [提交文件](https://wss1.cn/s/1cy9jg9km20)
 
-+ [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC 版](https://pc.weixin.qq.com/) - [微信 网页 版](https://wx.qq.com/)
++ [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信 PC版](https://pc.weixin.qq.com/) - [微信 网页版](https://wx.qq.com/)
 
 ### **Python**
 + [Python程序开发环境下载](https://wss1.cn/f/13smhkpcinb) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
