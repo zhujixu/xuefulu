@@ -7,13 +7,11 @@
 + [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
 
 ### **Python**
-+ [Python程序开发环境下载](https://wss1.cn/f/13smhkpcinb) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
-
 + [Python核心知识思维导图](https://wss1.cn/f/13smoucpo5n)
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
-+ [专业开发](http://xuefulu.com/) - [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/)
++ [Python集成开发环境IDE下载](http://xuefulu.com/) - [Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
 + [数据科学](http://xuefulu.com/) - [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Jupyter on Azure](https://notebooks.azure.com/)
 
