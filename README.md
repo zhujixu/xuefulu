@@ -7,11 +7,11 @@
 + [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
 
 ### **Python**
-+ [Python核心知识思维导图](https://wss3.cn/f/1pjja4m7edn)
++ [Python核心知识思维导图](https://wss3.cn/f/1rq0wq9htuv)
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
-+ [推荐下载 Python集成开发环境IDE](https://wss3.cn/f/1pjj4kkc3tz)
++ [推荐下载 Python集成开发环境IDE](https://wss3.cn/f/1rq0b217maw)
 
 + [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
