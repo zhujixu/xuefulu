@@ -35,9 +35,9 @@
 ### **实用插件**
 + [Kite 高效智能的Python代码补全工具](https://www.kite.com/)
 
-+ [Pyforest 延迟导入所有流行的Python数据科学库](https://github.com/8080labs/pyforest) pip install pyforest
++ [Pyforest 延迟导入所有流行的Python数据科学库:pip install pyforest](https://pypi.org/project/pyforest/)
 
-+ [Modin Scale your pandas workflows by changing one line of code](https://github.com/modin-project/modin) pip install modin
++ [Modin Scale your pandas workflows by changing one line of code:pip install modin](https://pypi.org/project/modin/)
 
 + [PrettyErrors Prettifies Python exception output to make it legible](https://github.com/onelivesleft/PrettyErrors)
 
