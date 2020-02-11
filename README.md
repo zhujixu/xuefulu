@@ -35,13 +35,13 @@
 ### **实用插件**
 + [高效智能的Python代码补全工具【Kite】](https://www.kite.com/)
 
-+ [延迟导入所有流行的Python数据科学库【Pyforest】](https://pypi.org/project/pyforest/)
++ [延迟导入所有流行的Python数据科学库【pip install pyforest】](https://pypi.org/project/pyforest/)
 
-+ [Scale your pandas workflows by changing one line of code【modin】](https://pypi.org/project/modin/)
++ [Scale your pandas workflows by changing one line of code【pip install modin】](https://pypi.org/project/modin/)
 
-+ [Converts .py to .exe using a simple graphical interface【auto-py-to-exe】](https://pypi.org/project/auto-py-to-exe/)
++ [Converts .py to .exe using a simple graphical interface【pip install auto-py-to-exe】](https://pypi.org/project/auto-py-to-exe/)
 
-+ [Prettifies Python exception output to make it legible【pretty-errors】](https://pypi.org/project/pretty-errors/)
++ [Prettifies Python exception output to make it legible【pip install pretty-errors】](https://pypi.org/project/pretty-errors/)
 
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
