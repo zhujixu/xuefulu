@@ -33,15 +33,15 @@
 + [利用Python进行数据分析·第2版](https://seancheney.gitbook.io/python-for-data-analysis-2nd/)
 
 ### **实用插件**
-+ [Kite高效智能的Python代码补全工具【Kite】](https://www.kite.com/)
++ [高效智能的Python代码补全工具【Kite】](https://www.kite.com/)
 
-+ [Pyforest 延迟导入所有流行的Python数据科学库](https://pypi.org/project/pyforest/)
++ [延迟导入所有流行的Python数据科学库【Pyforest】](https://pypi.org/project/pyforest/)
 
-+ [Modin Scale your pandas workflows by changing one line of code](https://pypi.org/project/modin/)
++ [Scale your pandas workflows by changing one line of code【modin】](https://pypi.org/project/modin/)
 
-+ [Auto PY to EXE Converts .py to .exe using a simple graphical interface](https://pypi.org/project/auto-py-to-exe/)
++ [Converts .py to .exe using a simple graphical interface【auto-py-to-exe】](https://pypi.org/project/auto-py-to-exe/)
 
-+ [PrettyErrors Prettifies Python exception output to make it legible](https://github.com/onelivesleft/PrettyErrors)
++ [Prettifies Python exception output to make it legible【pretty-errors】](https://pypi.org/project/pretty-errors/)
 
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
