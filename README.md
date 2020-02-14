@@ -17,6 +17,9 @@
 
 + [数据科学](http://xuefulu.com/) - [Anaconda](https://www.anaconda.com/distribution/) - [Jupyter Notebook](https://mybinder.org/v2/gh/ipython/ipython-in-depth/master?filepath=binder/Index.ipynb) - [Jupyter Lab](https://mybinder.org/v2/gh/jupyterlab/jupyterlab-demo/try.jupyter.org?urlpath=lab) - [Microsoft Azure Notebooks](https://notebooks.azure.com/)
 
+'pip config set global.trusted-host mirrors.aliyun.com
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple'
+
 ### **Database**
 + [PHPStudy](https://www.xp.cn/)
 
