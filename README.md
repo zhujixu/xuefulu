@@ -19,6 +19,7 @@
 
 ```python
 # pip设置阿里云镜像
+
 pip config set global.trusted-host mirrors.aliyun.com
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
 ```
