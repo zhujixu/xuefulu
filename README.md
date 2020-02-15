@@ -19,8 +19,8 @@
 
 + [pip设置阿里云镜像](http://xuefulu.com/) - [Anaconda设置清华镜像](https://mirror.tuna.tsinghua.edu.cn/help/anaconda/)
 ```python
-pip config set install.trusted-host mirrors.aliyun.com
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
+pip config set install.trusted-host mirrors.aliyun.com
 ```
 
 ### **Database**
