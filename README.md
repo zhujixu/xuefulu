@@ -6,6 +6,8 @@
 
 + [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
 
++ [Python应用](http://xuefulu.com/) - [数据库原理与应用](http://xuefulu.com/) - [网络数据采集](http://xuefulu.com/) 
+
 ### **Python**
 + [Python核心知识思维导图](https://wss3.cn/f/1s2me0jf1xn)
 
