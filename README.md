@@ -2,7 +2,7 @@
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
-+ [提交文件](https://wss.cc/s/1tk1x9igcqz)
++ [提交文件](https://wss.cc/s/1xii0akkf54)
 
 + [17金工下载](http://xuefulu.com/) - [18经统下载](http://xuefulu.com/)
 
