@@ -4,8 +4,6 @@
 
 + [提交文件](https://wss.cc/s/1xii0akkf54)
 
-+ [17金工下载](http://xuefulu.com/) - [18经统下载](http://xuefulu.com/)
-
 + [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
 
 ### **Python**
