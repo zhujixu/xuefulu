@@ -17,7 +17,7 @@
 
 + [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
-+ [数据分析](http://xuefulu.com/) - [Microsoft Azure Notebooks](https://notebooks.azure.com/) - [和鲸K-Lab](https://www.kesci.com/home/workspace/guide)
++ [数据分析](http://xuefulu.com/) - [Microsoft Azure Notebooks](https://notebooks.azure.com/) - [和鲸 K-Lab](https://www.kesci.com/home/workspace/guide)
 
 + [pip设置阿里云镜像](http://xuefulu.com/) - [Anaconda设置清华镜像](https://mirror.tuna.tsinghua.edu.cn/help/anaconda/)
 ```python
