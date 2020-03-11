@@ -4,8 +4,6 @@
 
 + [提交文件](https://wss.cc/s/20mxowxxqjs)
 
-+ [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
-
 ### **Python**
 + [Python核心知识导图](https://ws28.cn/f/20n2hvstjlw) - [Python数据科学速查](https://ws28.cn/f/20n2hvstjlw)
 
