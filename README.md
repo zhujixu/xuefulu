@@ -42,8 +42,6 @@ pip config set install.trusted-host mirrors.aliyun.com
 
 + [Converts .py to .exe using a simple graphical interface【Auto PY to EXE】](https://pypi.org/project/auto-py-to-exe/)
 
-+ [Prettifies Python exception output to make it legible【Pretty-Errors】](https://pypi.org/project/pretty-errors/)
-
 ### **快速链接**
 + [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn)
 
