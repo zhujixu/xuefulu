@@ -2,7 +2,7 @@
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
-+ [提交文件](https://wss.cc/s/1xii0akkf54) - [网络数据采集作业提交](https://wss.cc/s/1yiipsxtuuf)
++ [提交文件](https://wss.cc/s/20mxowxxqjs)
 
 + [收发文件](https://www.wenshushu.cn/) - [云盘精灵](https://www.yunpanjingling.com/) - [微信PC版](https://pc.weixin.qq.com/) - [微信网页版](https://wx.qq.com/)
 
