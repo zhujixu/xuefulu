@@ -4,7 +4,7 @@
 
 + [提交文件](https://wss.cc/s/20mxowxxqjs)
 
-+ [讲义下载](http://xuefulu.com/) - [Python 数据分析](https://ws28.cn/f/2a3jjz8vwbh)
++ [讲义下载](http://xuefulu.com/) - [Python 数据分析](https://ws28.cn/f/2a7v38726qw)
 
 ### **Python**
 + [Python核心知识导图](https://ws28.cn/f/24m49w22hy5) - [Python数据科学速查](https://ws28.cn/f/24m49w22hy5)
