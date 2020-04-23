@@ -7,7 +7,7 @@
 + [讲义下载](http://xuefulu.com/) - [Python 数据分析](https://ws28.cn/f/2bzioj48wbs)
 
 ### **Python**
-+ [Python核心知识导图](https://ws28.cn/f/24m49w22hy5) - [Python数据科学速查](https://ws28.cn/f/24m49w22hy5)
++ [Python核心知识导图](https://ws28.cn/f/2cw195ykjhk) - [Python数据科学速查](https://ws28.cn/f/2cw195ykjhk)
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
