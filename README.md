@@ -11,7 +11,7 @@
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
-+ [极速下载 Python集成开发环境IDE](https://ws28.cn/f/296q6o5djs7)
++ [极速下载 Python集成开发环境IDE](https://ws28.cn/f/2cw2b2t1ui0)
 
 + [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/)
 
