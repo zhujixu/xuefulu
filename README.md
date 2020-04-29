@@ -1,6 +1,6 @@
 ### **[学府路123号 xuefulu.com](http://xuefulu.com/)**
 
-+ [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/) - [教师工作量计算器 V20200426](https://ws28.cn/f/2dpd5yveesd)
++ [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/) - [教师工作量计算器 V2](https://ws28.cn/f/2el4vtog21z)
 
 + [提交文件](http://xuefulu.com/)
 
