@@ -2,7 +2,7 @@
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/) - [教师工作量计算器 V3](https://ws28.cn/f/2eojn0bi63r)
 
-+ [提交文件](http://xuefulu.com/)
++ [提交文件](https://wss.pet/s/2f5gzg86e94)
 
 + [讲义下载](http://xuefulu.com/) - [Python 数据分析](https://ws28.cn/f/2e0rq32hmcd)
 
