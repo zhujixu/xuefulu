@@ -13,7 +13,7 @@
 
 + [极速下载 Python集成开发环境IDE](https://ws28.cn/f/2j9ufzzbg6g)
 
-+ [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [WinPython](https://sourceforge.net/projects/winpython/files/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
++ [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Thonny](https://thonny.org) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
 
 + [数据分析&人工智能](http://xuefulu.com/) - [百度 AI Studio](https://aistudio.baidu.com) - [微软 Azure Notebooks](https://notebooks.azure.com/) - [Google Kaggle](https://www.kaggle.com/) - [和鲸 K-Lab](https://www.kesci.com/)
 
