@@ -10,7 +10,7 @@
 
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
-+ 请先复制【 】中钥匙串取文件：【 wss:1eZvXITVBzlawMC53sXbBGPhfBA 】 - [再点击这里下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
++ 请先复制【 】中的钥匙串取文件：【 wss:1eZvXITVBzlawMC53sXbBGPhfBA 】 - [再点击这里下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
 
 + [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
 
