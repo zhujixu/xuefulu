@@ -13,7 +13,7 @@
 + Step 1：复制【 】中的钥匙串取文件：【 wss:1eZvXITVBzlawMC53sXbBGPhfBA 】
 + Step 2：[点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
 
-+ [官网下载 Python集成开发环境IDE](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
++ [官网下载 Python集成开发环境](http://xuefulu.com/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
 
 + [数据分析&人工智能](http://xuefulu.com/) - [DeepNote](https://deepnote.com/) - [Google Kaggle](https://www.kaggle.com/) - [和鲸 K-Lab](https://www.kesci.com/)
 
