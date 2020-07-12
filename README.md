@@ -11,9 +11,7 @@
 + [Python下载](https://www.python.org/downloads/) - [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
 + Step 1：复制【 】中的钥匙串取文件：【 wss:1eZvXITVBzlawMC53sXbBGPhfBA 】
-+ Step 2：[点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
-
-+ [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
++ Step 2：[点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
 
 + [数据分析&人工智能](http://xuefulu.com/) - [DeepNote](https://deepnote.com/) - [Google Kaggle](https://www.kaggle.com/) - [和鲸 K-Lab](https://www.kesci.com/)
 
