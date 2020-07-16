@@ -28,7 +28,7 @@ pip config set install.trusted-host mirrors.aliyun.com
 
 + [Python 基础教程](https://bop.mol.uno) - [Python 进阶教程](https://eastlakeside.gitbook.io/interpy-zh/) - [菜鸟网 Python 教程](https://www.runoob.com/python3/python3-tutorial.html)
 
-+ [NumPy](https://www.numpy.org.cn) - [Pandas](https://www.pypandas.cn) - [Matplotlib](https://www.matplotlib.org.cn) - [SciPy](https://wizardforcel.gitbooks.io/scipy-lecture-notes/content/) - [skLearn](https://sklearn.apachecn.org/) - [pyecharts文档](https://pyecharts.org/#/zh-cn/) - [pyecharts示例](https://gallery.pyecharts.org/#/README) - [ECharts](https://www.echartsjs.com/examples/zh/index.html)
++ [NumPy](https://www.numpy.org.cn) - [Pandas](https://www.pypandas.cn) - [Matplotlib](https://www.matplotlib.org.cn) - [SciPy](https://wizardforcel.gitbooks.io/scipy-lecture-notes/content/) - [SkLearn](https://sklearn.apachecn.org/) - [Pyecharts文档](https://pyecharts.org/#/zh-cn/) - [Pyecharts示例](https://gallery.pyecharts.org/#/README) - [ECharts](https://www.echartsjs.com/examples/zh/index.html)
 
 
 + [利用Python进行数据分析·第2版](https://seancheney.gitbook.io/python-for-data-analysis-2nd/)
