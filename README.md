@@ -1,6 +1,6 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
-+ [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/) - [教师工作量计算器 V6](https://ws28.cn/f/2pspo2497bx)
++ [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
 + 请复制提取码：wss:1ekUB7gkly4vwAWRnVaIg4MHdOm - [点击下载教师工作量计算器 V6](https://www.wenshushu.cn/k/30s5nspqc7x)
 
