@@ -2,7 +2,7 @@
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/) - [教师工作量计算器 V6](https://ws28.cn/f/2pspo2497bx)
 
-+ Step 1：请复制提取码：wss:1eZvXITVBzlawMC53sXbBGPhfBA Step 2：[请点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
++ 请复制提取码：wss:1eZvXITVBzlawMC53sXbBGPhfBA - [教师工作量计算器 V6](https://www.wenshushu.cn/k/2zps61ic78o)
 
 + [提交文件](https://wss.pet/s/2f5gzg86e94)
 
@@ -10,8 +10,7 @@
 ### **Python**
 + [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
-+ Step 1：请复制提取码：wss:1eZvXITVBzlawMC53sXbBGPhfBA
-+ Step 2：[请点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
++ 请复制提取码：wss:1eZvXITVBzlawMC53sXbBGPhfBA - [点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
 
 + [数据分析&人工智能](http://xuefulu.com/) - [DeepNote](https://deepnote.com/) - [Google Kaggle](https://www.kaggle.com/) - [和鲸 K-Lab](https://www.kesci.com/)
 
