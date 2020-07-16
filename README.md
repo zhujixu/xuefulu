@@ -2,6 +2,8 @@
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/) - [教师工作量计算器 V6](https://ws28.cn/f/2pspo2497bx)
 
++ Step 1：请复制提取码：wss:1eZvXITVBzlawMC53sXbBGPhfBA Step 2：[请点击下载Python集成开发环境](https://www.wenshushu.cn/k/2zps61ic78o)
+
 + [提交文件](https://wss.pet/s/2f5gzg86e94)
 
 
