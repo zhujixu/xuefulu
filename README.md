@@ -2,7 +2,7 @@
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
-+ [如需点击下载教师工作量计算器 V6](https://www.wenshushu.cn/k/30s5nspqc7x) - 请复制提取码：wss:1ekUB7gkly4vwAWRnVaIg4MHdOm - 
++ [如需点击下载教师工作量计算器](https://www.wenshushu.cn/k/30s5nspqc7x) - 请复制提取码：wss:1ekUB7gkly4vwAWRnVaIg4MHdOm
 
 + [提交文件](https://wss.pet/s/2f5gzg86e94)
 
