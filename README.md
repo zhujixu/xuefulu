@@ -43,6 +43,6 @@ pip config set install.trusted-host mirrors.aliyun.com
 + [Converts .py to .exe using a simple graphical interface【Auto PY to EXE】](https://pypi.org/project/auto-py-to-exe/)
 
 ### **快速链接**
-+ [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
++ [GitHub.com](https://github.com/login) - [GitHub帮助](https://help.github.com/cn) - [Python](https://www.python.org/) - [ Visual Studio Code](https://code.visualstudio.com/) - [PyCharm](http://www.jetbrains.com/pycharm/download/) - [Anaconda](https://www.anaconda.com/products/individual#Downloads)
 
 + <zhujixu@gcu.edu.cn>
