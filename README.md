@@ -8,7 +8,7 @@
 
 ### **[学习课件以及作业要求](http://xuefulu.com/)**
 
-+ [如需点击此处下载课件以及作业要求](https://www.wenshushu.cn/k/3g89pnc2qg7) - 请复制提取码：wss:1hDLTwR1x3PhwRbTx6Hz7UuCUu5
++ [如需点击此处下载课件以及作业要求](https://www.wenshushu.cn/k/3g8cbxb1tgn) - 请复制提取码：wss:1hDM8lkNp0vhgVngWIYCJ8lMWur
 
 ### **Python**
 + [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
