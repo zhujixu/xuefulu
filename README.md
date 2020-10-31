@@ -6,12 +6,6 @@
 
 + [提交文件](http://xuefulu.com/) - [19经济统计学](https://wss.pet/s/3dzfzb330rs) - [18金融工程](https://wss.pet/s/3dzg50oq6av) - [17税收学](https://wss.pet/s/3dzhdw328h3)
 
-
-### **学习课件以及作业要求**
-
-+ [如需点击此处下载课件以及作业要求](https://www.wenshushu.cn/k/3g8cbxb1tgn) - 请复制提取码：wss:1hDM8lkNp0vhgVngWIYCJ8lMWur
-
-
 ### **Python**
 + [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
 
