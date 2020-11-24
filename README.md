@@ -4,7 +4,7 @@
 
 + [点击此处下载教师工作量计算器](https://www.wenshushu.cn/box/2zppne2scpp/folder/30s3ay10cx3)
 
-+ [提交文件](http://xuefulu.com/) - [19经济统计学](https://wss.pet/s/3dzfzb330rs) - [18金融工程](https://wss.pet/s/3dzg50oq6av) - [17税收学](https://wss.pet/s/3dzhdw328h3)
++ [提交文件](http://xuefulu.com/) - [19经济统计学](https://wss.pet/s/3dzfzb330rs) - [18金融工程考核](https://wss.pet/s/3dzg50oq6av)
 
 ### **Python**
 + [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
