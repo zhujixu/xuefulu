@@ -4,7 +4,7 @@
 
 + [点击此处下载教师工作量计算器](https://www.wenshushu.cn/box/2zppne2scpp/folder/30s3ay10cx3)
 
-+ [提交文件](http://xuefulu.com/) - [19经统考核](https://wss.pet/s/3dzg50oq6av)
++ [提交文件](http://xuefulu.com/)
 
 ### **Python**
 + [Python文档](https://docs.python.org/zh-cn/3/) - [第三方包索引](https://pypi.org/)
