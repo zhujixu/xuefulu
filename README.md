@@ -19,8 +19,6 @@ pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
 pip config set install.trusted-host mirrors.aliyun.com
 ```
 
-### **数据采集**
-+ [八爪鱼数据采集](https://www.bazhuayu.com/download)
 
 ### **学习资源**
 + [微信读书](https://weread.qq.com/)
