@@ -4,7 +4,7 @@
 
 + [点击此处下载教师工作量计算器](https://www.wenshushu.cn/box/2zppne2scpp/folder/30s3ay10cx3)
 
-+ [18金工教学资源下载](https://ws28.cn/f/4wa93hnwmnc)
++ [18金工教学资源下载](https://ws28.cn/f/4wa93hnwmnc) - [19国贸教学资源下载](https://ws28.cn/f/4wjtog6plri) - [19经统教学资源下载](https://ws28.cn/f/4wjro82ekby)
 
 + [提交文件](http://xuefulu.com/)
 
