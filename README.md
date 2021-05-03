@@ -25,9 +25,6 @@ pip config set install.trusted-host mirrors.aliyun.com
 
 + [PyCharm中文指南](http://pycharm.iswbm.com/zh_CN/latest/) - [Python中文指南](http://python.iswbm.com/en/latest/) - [Python黑魔法手册](http://magic.iswbm.com/zh/latest/)
 
-+ [NumPy](https://www.numpy.org.cn) - [Pandas](https://www.pypandas.cn) - [Matplotlib](https://www.matplotlib.org.cn) - [SciPy](https://wizardforcel.gitbooks.io/scipy-lecture-notes/content/) - [SkLearn](https://sklearn.apachecn.org/) - [Pyecharts文档](https://pyecharts.org/#/zh-cn/) - [Pyecharts示例](https://gallery.pyecharts.org/#/README) - [ECharts](https://www.echartsjs.com/examples/zh/index.html)
-
-
 + [利用Python进行数据分析·第2版](https://seancheney.gitbook.io/python-for-data-analysis-2nd/)
 
 ### **实用插件**
