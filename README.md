@@ -4,8 +4,6 @@
 
 + [点击此处下载教师工作量计算器](https://www.wenshushu.cn/box/2zppne2scpp/folder/30s3ay10cx3)
 
-+ [18金工教学资源下载](https://ws28.cn/f/4wa93hnwmnc) - [19国贸教学资源下载](https://ws28.cn/f/4wjtog6plri) - [19经统教学资源下载](https://ws28.cn/f/4x2p0eee0ku)
-
 + [提交文件](http://xuefulu.com/)
 
 ### **Python**
@@ -25,7 +23,7 @@ pip config set install.trusted-host mirrors.aliyun.com
 ### **学习资源**
 + [微信读书](https://weread.qq.com/)
 
-+ [PyCharm 中文指南](http://pycharm.iswbm.com/zh_CN/latest/)
++ [PyCharm中文指南](http://pycharm.iswbm.com/zh_CN/latest/) - [Python中文指南](http://python.iswbm.com/en/latest/) - [Python黑魔法手册](http://magic.iswbm.com/zh/latest/)
 
 + [NumPy](https://www.numpy.org.cn) - [Pandas](https://www.pypandas.cn) - [Matplotlib](https://www.matplotlib.org.cn) - [SciPy](https://wizardforcel.gitbooks.io/scipy-lecture-notes/content/) - [SkLearn](https://sklearn.apachecn.org/) - [Pyecharts文档](https://pyecharts.org/#/zh-cn/) - [Pyecharts示例](https://gallery.pyecharts.org/#/README) - [ECharts](https://www.echartsjs.com/examples/zh/index.html)
 
