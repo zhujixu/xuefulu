@@ -1,7 +1,5 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
-+ [栾杰雅思口语](https://www.wenshushu.cn/box/2zppne2scpp/folder/5d1z6tdtp60)
-
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
 + [点击此处下载教师工作量计算器](https://www.wenshushu.cn/box/2zppne2scpp/folder/30s3ay10cx3)
