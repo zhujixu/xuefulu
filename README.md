@@ -4,7 +4,7 @@
 
 + [DeepNote](https://deepnote.com/sign-in) - [Lightly](https://lightly.teamcode.com/login)
 
-### **快速链接**
+### **[快速链接](http://xuefulu.com/)**
 + [GitHub.com](https://github.com/login)
 
 + <zhujixu@gcu.edu.cn>
