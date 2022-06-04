@@ -3,5 +3,5 @@
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
 ### **快速链接**
-+ [GitHub.com](https://github.com/login)
++ [GitHub.com](https://github.com/login) - [广州城市理工学院](https://www.gcu.edu.cn/)
 + <zhujixu@gcu.edu.cn>
