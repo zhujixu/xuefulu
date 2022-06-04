@@ -1,4 +1,4 @@
-### **[学府路 xuefulu.com](http://xuefulu.com/)**
+### **[xuefulu](http://xuefulu.com/)**
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考试座位](http://508cst.gcu.edu.cn/seat/)
 
