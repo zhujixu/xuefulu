@@ -5,6 +5,6 @@
 + [DeepNote](https://deepnote.com/sign-in) - [Lightly](https://lightly.teamcode.com/login)
 
 ### **快速链接**
-+ [GitHub.com](https://github.com/login) - [广州城市理工学院](https://www.gcu.edu.cn/)
++ [GitHub.com](https://github.com/login)
 
 + <zhujixu@gcu.edu.cn>
