@@ -6,5 +6,3 @@
 
 ### **[快速链接](http://xuefulu.com/)**
 + [GitHub.com](https://github.com/login)
-
-+ <zhujixu@gcu.edu.cn>
