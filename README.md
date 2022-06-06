@@ -1,6 +1,6 @@
 ### **[xuefulu](http://xuefulu.com/)**
 
-+ [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考场提示语](https://xuefulu.wss.cc/article/detail/8hh8e047zkd)
++ [考试时钟](http://508cst.gcu.edu.cn/clock/) - [考场提示](https://xuefulu.wss.cc/article/detail/8hh8e047zkd)
 
 + [DeepNote](https://deepnote.com/sign-in) - [Lightly](https://lightly.teamcode.com/login)
 
