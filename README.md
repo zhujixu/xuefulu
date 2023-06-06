@@ -1,6 +1,6 @@
 ### **[xuefulu](http://xuefulu.com/)**
 
-+ [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Cursor](https://www.cursor.so/)
++ [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Bito AI](https://alpha.bito.co/bitoai/) - [Cursor](https://www.cursor.so/)
 
 + [SQL学习笔记](https://docs.qq.com/doc/DV3VqVVpNcXRBRFZ6?&u=c70a4279e8054beba0fa48c37c0580d3)
 
