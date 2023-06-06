@@ -1,7 +1,5 @@
 ### **[xuefulu](http://xuefulu.com/)**
 
-+ [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Bito AI](https://alpha.bito.co/bitoai/) - [Cursor](https://www.cursor.so/)
-
-+ [SQL学习笔记](https://docs.qq.com/doc/DV3VqVVpNcXRBRFZ6?&u=c70a4279e8054beba0fa48c37c0580d3)
++ [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Bito AI](https://alpha.bito.co/bitoai/) - [Cursor](https://www.cursor.so/) - [EasySpider](https://github.com/NaiboWang/EasySpider/releases)
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/)
