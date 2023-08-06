@@ -1,5 +1,5 @@
 ### **[xuefulu](http://xuefulu.com/)**
 
-+ [Nat.dev](https://nat.dev) - [Claude](https://claude.ai/) - [Poe](https://poe.com) - [Spark](https://xinghuo.xfyun.cn/desk) - [ChatGLM](https://chatglm.cn) - [Bito AI](https://alpha.bito.co/bitoai/) - [Cursor](https://www.cursor.so/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [EasySpider](https://github.com/NaiboWang/EasySpider/releases)
++ [Nat.dev](https://nat.dev) - [Claude](https://claude.ai/) - [Poe](https://poe.com) - [Spark](https://xinghuo.xfyun.cn/desk) - [Bito AI](https://alpha.bito.co/bitoai/) - [Cursor](https://www.cursor.so/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [EasySpider](https://www.easyspider.cn/)
 
 + [考试时钟](http://508cst.gcu.edu.cn/clock/)
