@@ -6,4 +6,4 @@
 
 + [2024届毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A) - [商务智能方法与应用](https://send2me.cn/9W6tZBqU/SXiYI7IspMN5Gw) - [网络数据采集](https://xuefulu.com/)
 
-+ [#腾讯会议：985-085-7711](https://meeting.tencent.com/p/9850857711)
++ [腾讯会议：985-085-7711](https://meeting.tencent.com/p/9850857711)
