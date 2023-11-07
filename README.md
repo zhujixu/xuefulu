@@ -4,6 +4,6 @@
 
 + [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Cursor](https://www.cursor.so/) - [八爪鱼软件下载](https://www.bazhuayu.com/download/windows) - [八爪鱼帮助中心](https://www.bazhuayu.com/helpcenter)
 
-+ [2024届毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A) - [网络数据采集](https://xuefulu.com/)
++ [2024届毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A) - [网络数据采集](https://send2me.cn/h4rCMJxh/Q1KUfwPwljj5tQ)
 
 + [腾讯会议：985-085-7711](https://meeting.tencent.com/p/9850857711)
