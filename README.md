@@ -1,6 +1,6 @@
 ### **[xuefulu](http://xuefulu.com/)**
 
-+ [文心一言](https://yiyan.baidu.com/) - [智谱清言](https://chatglm.cn/) - [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [激活工具](https://pan.baidu.com/s/14U3zIG4tG6ZdMBrHaPaLzw?pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
++ [文心一言](https://yiyan.baidu.com/) - [智谱清言](https://chatglm.cn/) - [ChatGPT](https://chat.openai.com/) - [Copilot](https://copilot.microsoft.com) - [Claude](https://claude.ai/) - [激活工具](https://pan.baidu.com/s/14U3zIG4tG6ZdMBrHaPaLzw?pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
 + [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [八爪鱼软件下载](https://www.bazhuayu.com/download/windows) - [八爪鱼帮助中心](https://www.bazhuayu.com/helpcenter)
 
