@@ -6,4 +6,4 @@
 
 + [2024届毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A) - [腾讯会议：985-085-7711](https://meeting.tencent.com/p/9850857711)
 
-+ [网络数据采集](https://send2me.cn/6_rofAHv/Rfqxmqr912aviw)
++ [提交网络数据采集考核报告](https://send2me.cn/6_rofAHv/Rfqxmqr912aviw)
