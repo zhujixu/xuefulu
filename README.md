@@ -7,5 +7,6 @@
 + [Devv](https://devv.ai) - [文心一言](https://yiyan.baidu.com/) - [通义千问](https://tongyi.aliyun.com/qianwen)
 
 + [Lightly](https://lightly.teamcode.com/login) - [Online Python](https://www.online-python.com/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
+
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
