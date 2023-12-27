@@ -10,3 +10,5 @@
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
++ [人民币-美元](https://www.xe.com/zh-CN/currencycharts/?from=CNY&to=USD) - [人民币-林吉特](https://www.xe.com/zh-CN/currencycharts/?from=CNY&to=MYR)
+
