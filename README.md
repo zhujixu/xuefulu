@@ -6,7 +6,7 @@
 
 + [Devv](https://devv.ai) - [文心一言](https://yiyan.baidu.com/)
 
-+ [Lightly](https://lightly.teamcode.com/login) - [Online Python](https://www.online-python.com/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
++ [Lightly](https://lightly.teamcode.com/login) - [Jupyter Notebooks](https://jupyter.org/try-jupyter/notebooks/?path=notebooks/Intro.ipynb) - [Online Python](https://www.online-python.com/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
