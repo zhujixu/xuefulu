@@ -1,6 +1,6 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
-+ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Copilot](https://copilot.microsoft.com) - [Bard](https://bard.google.com/chat) - [Zlibrary](https://zh.z-library.se/) - [文件分享](https://wormhole.app) - [激活工具](https://pan.baidu.com/s/14U3zIG4tG6ZdMBrHaPaLzw?pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
++ [Bard](https://bard.google.com/chat) - [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Copilot](https://copilot.microsoft.com) - [Zlibrary](https://zh.z-library.se/) - [文件分享](https://wormhole.app) - [激活工具](https://pan.baidu.com/s/14U3zIG4tG6ZdMBrHaPaLzw?pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
 + [AI搜索](https://devv.ai) - [文心一言](https://yiyan.baidu.com) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [讯飞星火](https://xinghuo.xfyun.cn/desk)
 
