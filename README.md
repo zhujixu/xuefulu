@@ -1,6 +1,6 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
-+ [Kimi](https://kimi.moonshot.cn/) - [Lepton](https://search.lepton.run) - [Perplexity](https://www.perplexity.ai) - [Devv](https://devv.ai) - [智谱清言](https://chatglm.cn/main/alltoolsdetail)
++ [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [Kimi](https://kimi.moonshot.cn/) - [Lepton](https://search.lepton.run) - [Perplexity](https://www.perplexity.ai) - [Devv](https://devv.ai) - [智谱清言](https://chatglm.cn/main/alltoolsdetail)
 
 + [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in) - [Lightly](https://lightly.teamcode.com/login) - [Kaggle](https://www.kaggle.com/)
 
