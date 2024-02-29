@@ -1,8 +1,8 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
-+ [Kimi](https://kimi.moonshot.cn/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [Perplexity](https://www.perplexity.ai) - [Devv](https://devv.ai)
-
 + [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Lightly](https://lightly.teamcode.com/login)
+
++ [Kimi](https://kimi.moonshot.cn/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [Perplexity](https://www.perplexity.ai) - [Devv](https://devv.ai)
 
 + [ChatGPT](https://chat.openai.com/) - [Gemini](https://gemini.google.com/) - [Claude](https://claude.ai/) - [Copilot](https://copilot.microsoft.com) - [Zlibrary](https://zh.z-library.se/) - [文件分享](https://wormhole.app) - [激活工具](https://pan.baidu.com/s/14U3zIG4tG6ZdMBrHaPaLzw?pwd=c65c#list/path=%2FHEU%20KMS%20Activator) - [KeymouseGo](https://github.com/taojy123/KeymouseGo)
 
