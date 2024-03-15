@@ -1,6 +1,6 @@
 ### **[xuefulu.com](http://xuefulu.com/)**
 
-+ [月之暗面](https://kimi.moonshot.cn/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [文心一言](https://yiyan.baidu.com/) - [通义千问](https://tongyi.aliyun.com/qianwen/)
++ [月之暗面](https://kimi.moonshot.cn/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [文心一言](https://yiyan.baidu.com/)
   
 + [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Lightly](https://lightly.teamcode.com/login)
 
