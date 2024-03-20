@@ -4,7 +4,7 @@
 
 + [月之暗面](https://kimi.moonshot.cn/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [文心一言](https://yiyan.baidu.com/) - [字节豆包](https://www.doubao.com/chat/)
 
-+ [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/) - [Lightly](https://lightly.teamcode.com/login)
++ [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
 + [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/) - [Copilot](https://copilot.microsoft.com) - [Poe](https://poe.com/)
 
