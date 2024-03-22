@@ -2,7 +2,7 @@
 
 + [微信文件传输助手](https://filehelper.weixin.qq.com/) - [文件分享](https://wormhole.app) - [在线图书馆](https://zh.z-library.se/) - [激活工具](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
-+ [Kimi](https://kimi.moonshot.cn/) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [ChatGLM](https://chatglm.cn/main/alltoolsdetail) - [Perplexity](https://www.perplexity.ai/) - [Lepton](https://search.lepton.run/)
++ [Kimi](https://kimi.moonshot.cn/) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [文心一言](https://yiyan.baidu.com/) - [ChatGLM](https://chatglm.cn/main/alltoolsdetail) - [Perplexity](https://www.perplexity.ai/) - [Lepton](https://search.lepton.run/)
 
 + [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
