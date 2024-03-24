@@ -6,7 +6,7 @@
 
 + [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
-+ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Poe](https://poe.com/) - [Copilot](https://copilot.microsoft.com) - [Gemini](https://gemini.google.com/)
++ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/) - [Poe](https://poe.com/)
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
