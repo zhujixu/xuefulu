@@ -12,8 +12,8 @@
 
 + [4月3日提交工业创业模拟实训报告](https://send2me.cn/Z6ZB9Ksu/QsWPu7YPNPXIRA)
 
-+ [4月12日提交SQL语言基础过程考核1-4](https://send2me.cn/sRXPkEgr/Tru8LDsvf3d--w) - [4月12日提交SQL语言基础实验报告](https://send2me.cn/MqIbREoE/TAaMwzt6zEd1dA) 
++ [4月12日提交](http://xuefulu.com/) - [SQL语言基础过程考核1-4](https://send2me.cn/sRXPkEgr/Tru8LDsvf3d--w) - [SQL语言基础实验报告](https://send2me.cn/MqIbREoE/TAaMwzt6zEd1dA) 
 
-+ [4月22日提交Python语言过程考核1-4](https://send2me.cn/IOcyzd6Q/S0OSV8VzNGuMPQ) - [4月22日提交Python语言实验报告](https://send2me.cn/pM9xVa14/REGi43nOowuKGA)
++ [4月22日提交](http://xuefulu.com/) - [Python语言过程考核1-4](https://send2me.cn/IOcyzd6Q/S0OSV8VzNGuMPQ) - [Python语言实验报告](https://send2me.cn/pM9xVa14/REGi43nOowuKGA)
 
-+ [4月22日提交机器学习过程考核1-4](https://send2me.cn/VM4AR7kS/RjKavP442g-taA) - [4月22日提交机器学习实验报告](https://xuefulu.com)
++ [4月22日提交](http://xuefulu.com/) - [机器学习过程考核1-4](https://send2me.cn/VM4AR7kS/RjKavP442g-taA) - [机器学习实验报告](https://xuefulu.com)
