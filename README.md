@@ -10,10 +10,10 @@
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
-+ [Python语言过程考核1-4](https://xuefulu.com) - [Python语言实验报告](https://xuefulu.com)
++ [Python语言过程考核1-4](https://send2me.cn/IOcyzd6Q/S0OSV8VzNGuMPQ) - [Python语言实验报告](https://send2me.cn/pM9xVa14/REGi43nOowuKGA)
 
 + [SQL语言基础过程考核1-4](https://send2me.cn/sRXPkEgr/Tru8LDsvf3d--w) - [SQL语言基础实验报告](https://send2me.cn/MqIbREoE/TAaMwzt6zEd1dA) 
 
-+ [机器学习过程考核1-4](https://xuefulu.com) - [机器学习实验报告](https://xuefulu.com)
++ [机器学习过程考核1-4](https://send2me.cn/VM4AR7kS/RjKavP442g-taA) - [机器学习实验报告](https://xuefulu.com)
 
 
