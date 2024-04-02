@@ -10,7 +10,7 @@
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
-+ [工业创业模拟实训实验报告](https://send2me.cn/Z6ZB9Ksu/QsWPu7YPNPXIRA)
++ [工业创业模拟实训报告](https://send2me.cn/Z6ZB9Ksu/QsWPu7YPNPXIRA)
 
 + [Python语言过程考核1-4](https://send2me.cn/IOcyzd6Q/S0OSV8VzNGuMPQ) - [Python语言实验报告](https://send2me.cn/pM9xVa14/REGi43nOowuKGA)
 
