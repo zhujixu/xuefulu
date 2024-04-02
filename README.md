@@ -4,7 +4,7 @@
 
 + [Kimi](https://kimi.moonshot.cn/) - [跃问](https://stepchat.cn/chats/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [文心一言](https://yiyan.baidu.com/) - [腾讯智影](https://zenvideo.qq.com/) - [Lepton](https://search.lepton.run/)
 
-+ [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in)
++ [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
 + [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Copilot](https://copilot.microsoft.com/) - [Poe](https://poe.com/) - [Perplexity](https://www.perplexity.ai/)
 
