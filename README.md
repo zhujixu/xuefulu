@@ -4,10 +4,10 @@
 
 + [Kimi](https://kimi.moonshot.cn/) - [跃问](https://stepchat.cn/chats/) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [文心一言](https://yiyan.baidu.com/) - [腾讯智影](https://zenvideo.qq.com/) - [Lepton](https://search.lepton.run)
 
-
 + [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
-+ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Copilot](https://copilot.microsoft.com/) - [Poe](https://poe.com/)
++ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Copilot](https://copilot.microsoft.com/) - [Poe](https://poe.com/) - [Hugging](https://huggingface.co/chat/)
+
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
 + [4月18日提交](http://xuefulu.com/) - [SQL语言基础过程考核1-4](https://send2me.cn/sRXPkEgr/Tru8LDsvf3d--w) - [SQL语言基础实验报告](https://send2me.cn/MqIbREoE/TAaMwzt6zEd1dA) 
