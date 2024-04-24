@@ -10,6 +10,6 @@
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
 
-+ [4月22日提交](http://xuefulu.com/) - [Python语言过程考核1-4](https://send2me.cn/IOcyzd6Q/S0OSV8VzNGuMPQ) - [Python语言实验报告](https://send2me.cn/pM9xVa14/REGi43nOowuKGA)
++ [Python语言过程考核1-4](https://send2me.cn/IOcyzd6Q/S0OSV8VzNGuMPQ) - [Python语言实验报告](https://send2me.cn/pM9xVa14/REGi43nOowuKGA)
 
-+ [4月22日提交](http://xuefulu.com/) - [机器学习过程考核1-4](https://send2me.cn/VM4AR7kS/RjKavP442g-taA) - [机器学习实验报告](https://send2me.cn/ALYftQ76/QOSmjPTHcN6E6Q)
++ [机器学习过程考核1-4](https://send2me.cn/VM4AR7kS/RjKavP442g-taA) - [机器学习实验报告](https://send2me.cn/ALYftQ76/QOSmjPTHcN6E6Q)
