@@ -9,5 +9,3 @@
 + [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Copilot](https://copilot.microsoft.com/) - [Poe](https://poe.com/)
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
-
-+ [DrissionPage](https://www.drissionpage.cn/)
