@@ -2,7 +2,7 @@
 
 + [微信文件传输助手](https://filehelper.weixin.qq.com/) - [在线图书馆](https://zh.z-library.se/) - [科研通](https://www.ablesci.com/) - [激活工具](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
-+ [Kimi](https://kimi.moonshot.cn/) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [阶跃星辰](https://stepchat.cn/chats/new)
++ [Kimi](https://kimi.moonshot.cn/) - [Qwen](https://tongyi.aliyun.com/qianwen/) - [Step](https://stepchat.cn/chats/new)
 
 + [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [ModelScope](https://www.modelscope.cn/my/mynotebook/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
