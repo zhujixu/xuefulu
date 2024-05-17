@@ -6,6 +6,6 @@
 
 + [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [ModelScope](https://www.modelscope.cn/my/mynotebook/) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
 
-+ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Copilot](https://copilot.microsoft.com/) - [Poe](https://poe.com/)
++ [ChatGPT](https://chat.openai.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Copilot](https://copilot.microsoft.com/) - [Poe](https://poe.com/) - [Hugging](https://huggingface.co/chat/) - [Devv](https://devv.ai)
 
 + [毕业论文资料收集](https://send2me.cn/b8YG5Ez2/RI-z442A7iRs7A)
