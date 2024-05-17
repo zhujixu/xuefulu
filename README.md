@@ -1,4 +1,4 @@
-### **[xuefulu.com](http://xuefulu.com/)** - **[xuefulu.cc](http://xuefulu.com/)** - **[xuefulu.cn](http://xuefulu.com/)**
+### **[xuefulu.com](http://xuefulu.com/)** 或 **[xuefulu.cc](http://xuefulu.com/)** 或 **[xuefulu.cn](http://xuefulu.com/)**
 
 + [微信文件传输助手](https://filehelper.weixin.qq.com/) - [在线图书馆](https://zh.z-library.se/) - [科研通](https://www.ablesci.com/) - [激活工具](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
