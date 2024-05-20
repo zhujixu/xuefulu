@@ -2,7 +2,7 @@
 
 + [微信文件传输助手](https://filehelper.weixin.qq.com/) - [在线图书馆](https://zh.z-library.se/) - [科研通](https://www.ablesci.com/) - [激活工具](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
-+ [SQL课件下载](http://xuefulu.com/) - [SQL作业提交](https://send2me.cn/s6VnlaRr/Qq6ulEtY3nKSng) - [SQL互动白板](https://docs.qq.com/doc/DV3hTbEJySE9TQW1r) - [SQL实时答题](https://docs.qq.com/sheet/DV0VhTkRCaU5PRFhm?tab=BB08J2) - [菜鸟教程](https://www.runoob.com/sql/sql-tutorial.html) - [自学SQL](https://www.runoob.com/sql/sql-tutorial.html)
++ [SQL课件下载](http://xuefulu.com/) - [SQL作业提交](https://send2me.cn/s6VnlaRr/Qq6ulEtY3nKSng) - [SQL互动白板](https://docs.qq.com/doc/DV3hTbEJySE9TQW1r) - [SQL实时答题](https://docs.qq.com/sheet/DV0VhTkRCaU5PRFhm?tab=BB08J2) - [菜鸟教程](https://www.runoob.com/sql/sql-tutorial.html) - [自学SQL](http://xuesql.cn/)
 
 
 + [Kimi](https://kimi.moonshot.cn/) - [跃问](https://stepchat.cn/chats/new) - [通义](https://tongyi.aliyun.com/qianwen/)
