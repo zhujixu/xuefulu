@@ -8,4 +8,4 @@
 
 + [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Poe](https://poe.com/) - [Devv](https://devv.ai)
 
-+ [VSCode](https://vscodeedu.com/) - [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
++ [VSCode](https://vscodeedu.com/my-work/projects) - [Datalore](https://datalore.jetbrains.com/) - [Lightly](https://lightly.teamcode.com/login) - [Deepnote](https://deepnote.com/sign-in) - [Kaggle](https://www.kaggle.com/)
