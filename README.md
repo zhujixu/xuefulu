@@ -1,4 +1,4 @@
-### **[xuefulu.com](http://xuefulu.com/)** / **[xuefulu.cc](http://xuefulu.cc/)** / **[xuefulu.cn](http://xuefulu.cn/)**
+### **[xuefulu.com](http://xuefulu.com/)**
 
 + [xuefulu.com](http://xuefulu.com/) - [xuefulu.cc](http://xuefulu.cc/) - [xuefulu.cn](http://xuefulu.cn/)
 
