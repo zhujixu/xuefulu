@@ -1,6 +1,6 @@
 ### **[学府路 xuefulu.com](http://xuefulu.com/)**
 
-+ [学府路网址](http://xuefulu.com/) / [xuefulu.com](http://xuefulu.com/) / [xuefulu.cc](http://xuefulu.cc/) / [xuefulu.cn](http://xuefulu.cn/)
++ [来访学府路](http://xuefulu.com/) / [xuefulu.com](http://xuefulu.com/) / [xuefulu.cc](http://xuefulu.cc/) / [xuefulu.cn](http://xuefulu.cn/)
 
 + [期末考试时钟](http://10.5.1.246:8080/clock) - [微信文件传输助手](https://filehelper.weixin.qq.com/)
 
