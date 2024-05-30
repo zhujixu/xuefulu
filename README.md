@@ -6,6 +6,6 @@
 
 + [Kimi](https://kimi.moonshot.cn/) - [智谱](https://chatglm.cn/main/alltoolsdetail) - [通义](https://tongyi.aliyun.com/qianwen/) - [小应](https://ying.baichuan-ai.com/chat) - [跃问](https://stepchat.cn/chats/new) - [文心](https://yiyan.baidu.com/)
 
-+ [VSCode for Education](https://vscodeedu.com/my-work/projects) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
++ [VSCode](https://vscodeedu.com/my-work/projects) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
   
 + [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Poe](https://poe.com/) - [Devv](https://devv.ai)
