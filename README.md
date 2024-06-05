@@ -8,4 +8,4 @@
 
 + [VSCode](https://vscodeedu.com/my-work/projects) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
   
-+ [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Copilot](https://www.bing.com/chat?q=Microsoft+Copilot&FORM=hpcodx) - [Gemini](https://gemini.google.com/app) - [Poe](https://poe.com/) - [You](https://you.com/) - [Devv](https://devv.ai) - [ChatTTS](https://chattts.com/zh#Demo)
++ [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Copilot](https://copilot.microsoft.com/) - [Gemini](https://gemini.google.com/app) - [Poe](https://poe.com/) - [You](https://you.com/) - [Devv](https://devv.ai) - [ChatTTS](https://chattts.com/zh#Demo)
