@@ -2,7 +2,7 @@
 
 + [来访学府路](http://xuefulu.com/) / [xuefulu.com](http://xuefulu.com/) / [xuefulu.cc](http://xuefulu.cc/) / [xuefulu.cn](http://xuefulu.cn/)
 
-+ [微信文件传输助手](https://filehelper.weixin.qq.com/) - [KMS Activator](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
++ [期末考试时钟](http://10.5.1.246:8080/clock) - [微信文件传输助手](https://filehelper.weixin.qq.com/) - [KMS Activator](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
 + [Kimi](https://kimi.moonshot.cn/) - [智谱](https://chatglm.cn/main/alltoolsdetail) - [通义](https://tongyi.aliyun.com/qianwen/) - [小应](https://ying.baichuan-ai.com/chat) - [跃问](https://stepchat.cn/chats/new)
 
