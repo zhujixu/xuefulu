@@ -4,7 +4,7 @@
 
 + [期末考试时钟](http://10.5.1.246:8080/clock) - [微信文件传输助手](https://filehelper.weixin.qq.com/) - [Z-Library](https://z-library.re) - [KMS Activator](https://pan.baidu.com/share/init?surl=4U3zIG4tG6ZdMBrHaPaLzw&pwd=c65c#list/path=%2FHEU%20KMS%20Activator)
 
-+ [Kimi](https://kimi.moonshot.cn/) - [智谱](https://chatglm.cn/main/alltoolsdetail) - [通义](https://tongyi.aliyun.com/qianwen/) - [文心](https://yiyan.baidu.com/) - [小应](https://ying.baichuan-ai.com/chat) - [跃问](https://stepchat.cn/chats/new) - [元宝](https://yuanbao.tencent.com/chat/) - [豆包](https://www.doubao.com/chat/)
++ [Kimi](https://kimi.moonshot.cn/) - [智谱](https://chatglm.cn/main/alltoolsdetail) - [通义](https://tongyi.aliyun.com/qianwen/) - [文心](https://yiyan.baidu.com/) - [小应](https://ying.baichuan-ai.com/chat?) - [跃问](https://stepchat.cn/chats/new) - [元宝](https://yuanbao.tencent.com/chat/) - [豆包](https://www.doubao.com/chat/)
 
 + [Marimo](https://marimo.new/) - [VSCode](https://vscodeedu.com/my-work/projects) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
   
