@@ -8,4 +8,4 @@
 
 + [Marimo](https://marimo.new/) - [VSCode](https://vscodeedu.com/my-work/projects) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
   
-+ [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Devv](https://devv.ai) - [Poe](https://poe.com/) - [You](https://you.com/)
++ [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Poe](https://poe.com/) - [You](https://you.com/)
