@@ -6,4 +6,4 @@
 
 + [Kimi](https://kimi.moonshot.cn/) - [通义千问](https://tongyi.aliyun.com/qianwen/) - [智谱清言](https://chatglm.cn/main/alltoolsdetail) - [百小应](https://ying.baichuan-ai.com/chat?) - [ChatGPT](https://chatgpt.com/) - [Claude](https://claude.ai/) - [Gemini](https://gemini.google.com/app) - [Poe](https://poe.com/) - [You](https://you.com/)
   
-+ [VSCode](https://vscodeedu.com/my-work/projects) - [MarsCode](https://www.marscode.cn/dashboard) - [Marimo](https://marimo.new/) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
++ [MarsCode](https://www.marscode.cn/dashboard) - [VSCode](https://vscodeedu.com/my-work/projects) - [Marimo](https://marimo.new/) - [Datalore](https://datalore.jetbrains.com/) - [Deepnote](https://deepnote.com/sign-in)
