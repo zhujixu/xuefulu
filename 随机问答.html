@@ -1,0 +1,818 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机问答</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F59E0B',
+                        secondary: '#10B981',
+                        accent: '#EF4444',
+                        neutral: '#1F2937',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            .btn-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            .btn-hover {
+                transition: all 0.3s ease;
+            }
+
+            .btn-hover:hover {
+                transform: translateY(-2px);
+            }
+
+            .name-btn {
+                @apply flex items-center justify-center rounded-lg font-medium transition-all duration-300 ease-in-out;
+            }
+
+            .control-btn {
+                @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 ease-in-out shadow-lg;
+            }
+
+            .rating-btn {
+                @apply px-3 py-1 rounded-md font-medium transition-all duration-200 ease-in-out;
+            }
+
+            .stats-card {
+                @apply bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow;
+            }
+
+            /* 闪烁动画 */
+            @keyframes blink {
+                0% {
+                    background-color: #d1fae5;
+                }
+
+                50% {
+                    background-color: #a7f3d0;
+                }
+
+                100% {
+                    background-color: #d1fae5;
+                }
+            }
+
+            .blink {
+                animation: blink 1s infinite;
+            }
+
+            .step-card {
+                @apply bg-white rounded-xl shadow-lg p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-primary/50 h-full;
+            }
+
+            .step-number {
+                @apply inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-xl mb-4;
+            }
+
+            /* 新增：随机名单控制区样式，借鉴随机分组 */
+            .stat-button {
+                @apply flex items-center justify-center
+                       rounded-xl font-bold text-white text-lg
+                       px-6 py-4
+                       shadow-md hover:shadow-lg 
+                       transition-all duration-300 hover:-translate-y-0.5
+                       min-w-[160px] h-16;
+            }
+
+            .slider-container {
+                @apply flex-1 px-4 sm:px-6;
+            }
+            
+            .slider-wrapper {
+                @apply bg-white rounded-lg border border-gray-200
+                       p-4 w-full h-16 flex items-center;
+            }
+            
+            input[type="range"] {
+                @apply w-full h-3
+                       bg-gray-200 rounded-lg appearance-none cursor-pointer
+                       accent-primary;
+            }
+            
+            input[type="range"]::-webkit-slider-thumb {
+                @apply appearance-none w-6 h-6 rounded-full
+                       bg-primary cursor-pointer
+                       shadow-md hover:shadow-lg
+                       transition-all duration-200;
+            }
+
+            /* 控制按钮容器，确保按钮大小一致 */
+            .control-buttons-container {
+                @apply flex flex-wrap justify-center gap-4;
+            }
+
+            .action-btn {
+                @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 ease-in-out shadow-lg min-w-[140px];
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-neutral">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部区域 -->
+        <header class="mb-8 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-neutral mb-2">随机问答</h1>
+            <p class="text-gray-600 text-lg mb-6">广州城市理工学院 经济学院 朱继绪</p>
+
+            <!-- 步骤区域 - 左右并排 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- 步骤卡片 - 重置统计数据 -->
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="text-xl font-semibold mb-4">初始化</h3>
+                    <button id="resetStatsBtn" class="w-full control-btn bg-red-500 text-white hover:bg-red-600 btn-hover">
+                        <i class="fa fa-trash-o mr-2"></i>清除缓存并刷新
+                    </button>
+                    <p class="mt-4 text-gray-500 text-sm">点击此按钮清除页面缓存并刷新页面</p>
+                </div>
+
+                <!-- 步骤卡片 - 导入Excel文件 -->
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="text-xl font-semibold mb-4">导入学生名单</h3>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" class="hidden">
+                    <label for="excelFile" class="block w-full cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-8 py-4 rounded-lg inline-flex items-center justify-center gap-2 transition-all duration-300 ease-in-out">
+                        <i class="fa fa-file-excel-o text-xl"></i>
+                        <span class="font-medium">选择Excel文件</span>
+                    </label>
+                    <p id="fileInfo" class="mt-4 text-gray-500">请选择Excel文件导入学生名单</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="space-y-8">
+            <!-- 随机名单区域 - 修改为随机分组风格 -->
+            <div id="randomListSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-6">随机名单</h2>
+
+                <!-- 核心控制区 - 左侧按钮、中间滑动条、右侧按钮 -->
+                <div class="mb-8">
+                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        
+                        <!-- 左侧按钮：显示总人数 -->
+                        <div class="flex-none">
+                            <div class="stat-button bg-blue-500 hover:bg-blue-600">
+                                共 <span id="totalCount">0</span> 人
+                            </div>
+                        </div>
+                        
+                        <!-- 中间滑动条 -->
+                        <div class="slider-container">
+                            <div class="slider-wrapper">
+                                <input type="range" id="randomCount" min="1" max="100" value="1" class="w-full" disabled>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧按钮：显示随机数量 -->
+                        <div class="flex-none">
+                            <div class="stat-button bg-primary hover:bg-primary/90">
+                                选 <span id="randomCountValue">1</span> 人
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 下方操作按钮 -->
+                <div class="text-center mb-6">
+                    <div class="control-buttons-container">
+                        <button id="randomBtn" class="action-btn bg-accent text-white hover:bg-accent/90 btn-hover" disabled>
+                            <i class="fa fa-random mr-2"></i>随机
+                        </button>
+                        <button id="resetBtn" class="action-btn bg-gray-200 text-gray-800 hover:bg-gray-300 btn-hover" disabled>
+                            <i class="fa fa-refresh mr-2"></i>重置名单
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 名单显示区域 -->
+                <div id="nameContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3"></div>
+            </div>
+
+            <!-- 数据统计区域 -->
+            <div id="statsSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">数据统计</h2>
+                    <div class="flex gap-3">
+                        <button id="backToListBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fa fa-arrow-up mr-1"></i> 返回随机名单
+                        </button>
+                        <button id="exportStatsBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors" disabled>
+                            <i class="fa fa-download mr-1"></i> 导出统计数据
+                        </button>
+                    </div>
+                </div>
+
+                <div id="recordContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6"></div>
+            </div>
+        </main>
+
+        <!-- 页脚区域 -->
+        <footer class="mt-12 text-center text-gray-500">
+            <p>© 2025 广州城市理工学院 经济学院 朱继绪</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let nameData = [];
+        let nameElements = [];
+        let randomInterval = null;
+        let isRandomizing = false;
+        let selectedCount = 1;
+        let recordData = {};
+        let statsData = {};
+        let lastRandomTime = {}; // 保存每个名字的最后随机时间
+        let latestRandomNames = []; // 保存最新随机的名字数组
+        let originalExcelData = null; // 保存原始Excel数据
+        let originalExcelName = ''; // 保存原始Excel文件名
+        const RATING_SCORES = { A: 5, B: 3, C: 1 }; // 评分对应的分数
+        const REQUIRED_COLUMNS = ['A次数', 'B次数', 'C次数', '回答次数', '总分']; // 必需的列名
+
+        // DOM 元素
+        const excelFileInput = document.getElementById('excelFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const nameContainer = document.getElementById('nameContainer');
+        const randomBtn = document.getElementById('randomBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const randomCount = document.getElementById('randomCount');
+        const randomCountValue = document.getElementById('randomCountValue');
+        const recordContainer = document.getElementById('recordContainer');
+        const resetStatsBtn = document.getElementById('resetStatsBtn');
+        const exportStatsBtn = document.getElementById('exportStatsBtn');
+        const backToListBtn = document.getElementById('backToListBtn');
+        const randomListSection = document.getElementById('randomListSection');
+        const statsSection = document.getElementById('statsSection');
+        const totalCountElement = document.getElementById('totalCount'); // 新增：总人数显示
+
+        // 初始化
+        function init() {
+            // 加载本地存储数据
+            loadFromLocalStorage();
+
+            // 事件监听器
+            excelFileInput.addEventListener('change', handleFileUpload);
+            randomBtn.addEventListener('click', toggleRandom);
+            resetBtn.addEventListener('click', resetAll);
+            randomCount.addEventListener('input', updateRandomCount);
+            resetStatsBtn.addEventListener('click', resetStats);
+            exportStatsBtn.addEventListener('click', exportStatsData);
+            backToListBtn.addEventListener('click', scrollToRandomList);
+
+            // 更新UI
+            updateRecordDisplay();
+        }
+
+        // 处理文件上传
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            originalExcelName = file.name.replace(/\.[^/.]+$/, ''); // 保存文件名（不含扩展名）
+            fileInfo.textContent = `正在处理: ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // 使用header:1获取原始表头
+
+                    // 保存原始Excel数据
+                    originalExcelData = jsonData;
+
+                    // 检查是否包含所需的列
+                    const headers = jsonData[0] || [];
+                    const hasRequiredColumns = REQUIRED_COLUMNS.every(col => headers.includes(col));
+                    
+                    // 提取姓名列
+                    const nameColumnIndex = findNameColumnIndex(headers);
+                    if (nameColumnIndex === -1) {
+                        fileInfo.textContent = '错误: 未找到"姓名"列';
+                        return;
+                    }
+
+                    // 从第2行开始提取姓名数据
+                    nameData = jsonData.slice(1).map(row => row[nameColumnIndex]).filter(name => name);
+
+                    if (nameData.length === 0) {
+                        fileInfo.textContent = '错误: 未找到有效姓名数据';
+                        return;
+                    }
+
+                    // 更新滑块最大值和总人数显示
+                    const total = nameData.length;
+                    randomCount.max = total;
+                    randomCount.value = Math.min(1, total);
+                    totalCountElement.textContent = total; // 更新总人数显示
+                    updateRandomCount();
+
+                    // 初始化记录数据
+                    initRecordData(hasRequiredColumns);
+
+                    // 渲染姓名按钮
+                    renderNameButtons();
+
+                    fileInfo.textContent = `已成功导入 ${nameData.length} 个姓名`;
+                    
+                    if (hasRequiredColumns) {
+                        fileInfo.textContent += '，并检测到统计数据列';
+                        // 从Excel中导入统计数据
+                        importStatsFromExcel(jsonData, nameColumnIndex);
+                    } else {
+                        fileInfo.textContent += '，未检测到统计数据列，将使用默认统计';
+                    }
+
+                    // 启用随机按钮和导出按钮
+                    randomBtn.disabled = false;
+                    resetBtn.disabled = false;
+                    exportStatsBtn.disabled = false;
+                    randomCount.disabled = false; // 启用滑块
+
+                    // 更新统计数据
+                    updateRecordDisplay();
+
+                    // 保存到本地存储
+                    saveToLocalStorage();
+
+                    // 滚动到随机名单区域
+                    scrollToRandomList();
+                } catch (error) {
+                    fileInfo.textContent = '错误: 文件处理失败';
+                    console.error('文件处理错误:', error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 查找姓名列索引
+        function findNameColumnIndex(headers) {
+            if (!headers || headers.length === 0) return -1;
+
+            return headers.findIndex(header => 
+                header.includes('姓名') || header.includes('名字') || header.toLowerCase().includes('name')
+            );
+        }
+
+        // 初始化记录数据
+        function initRecordData(hasRequiredColumns) {
+            nameData.forEach(name => {
+                if (!recordData[name]) {
+                    recordData[name] = {
+                        answered: 0,
+                        ratings: { A: 0, B: 0, C: 0 }
+                    };
+                }
+            });
+        }
+
+        // 从Excel导入统计数据
+        function importStatsFromExcel(excelData, nameColumnIndex) {
+            const headers = excelData[0];
+            
+            // 查找统计列的索引
+            const colIndices = {
+                A: headers.indexOf('A次数'),
+                B: headers.indexOf('B次数'),
+                C: headers.indexOf('C次数'),
+                total: headers.indexOf('回答次数'),
+                score: headers.indexOf('总分')
+            };
+            
+            // 从第2行开始导入数据
+            excelData.slice(1).forEach(row => {
+                const name = row[nameColumnIndex];
+                if (name && nameData.includes(name)) {
+                    recordData[name] = {
+                        answered: parseInt(row[colIndices.total] || 0),
+                        ratings: {
+                            A: parseInt(row[colIndices.A] || 0),
+                            B: parseInt(row[colIndices.B] || 0),
+                            C: parseInt(row[colIndices.C] || 0)
+                        }
+                    };
+                }
+            });
+        }
+
+        // 渲染姓名按钮
+        function renderNameButtons() {
+            nameContainer.innerHTML = '';
+            nameElements = [];
+
+            nameData.forEach((name, index) => {
+                const nameBtn = document.createElement('button');
+                
+                // 设置默认背景色为白色
+                nameBtn.className = 'name-btn bg-white text-neutral h-16 btn-shadow hover:bg-gray-100 border border-gray-200';
+                
+                // 如果已被选中过，设置为黄色
+                if (statsData[name] && statsData[name].status === 'yellow') {
+                    nameBtn.className = 'name-btn bg-yellow-300 text-neutral h-16 btn-shadow hover:bg-yellow-400';
+                }
+                
+                nameBtn.textContent = `${index + 1}. ${name}`;
+                nameBtn.dataset.index = index;
+                nameBtn.dataset.name = name;
+
+                // 添加点击事件
+                nameBtn.addEventListener('click', () => selectNameManually(nameBtn));
+
+                nameContainer.appendChild(nameBtn);
+                nameElements.push(nameBtn);
+            });
+        }
+
+        // 手动选择名字
+        function selectNameManually(btn) {
+            if (isRandomizing) return; // 随机进行中不允许手动选择
+            
+            const name = btn.dataset.name;
+            
+            // 重置所有按钮颜色
+            nameElements.forEach(el => {
+                if (!statsData[el.dataset.name] || statsData[el.dataset.name].status !== 'yellow') {
+                    el.className = 'name-btn bg-white text-neutral h-16 btn-shadow hover:bg-gray-100 border border-gray-200';
+                }
+            });
+            
+            // 设置选中的名字为黄色
+            btn.className = 'name-btn bg-yellow-300 text-neutral h-16 btn-shadow hover:bg-yellow-400';
+            
+            // 更新统计数据
+            const now = Date.now();
+            statsData[name] = { status: 'yellow' };
+            lastRandomTime[name] = now;
+            recordData[name].answered++;
+            
+            // 更新最新随机名字数组
+            latestRandomNames = [name];
+            
+            // 更新显示
+            updateRecordDisplay();
+            saveToLocalStorage();
+        }
+
+        // 开始/停止随机
+        function toggleRandom() {
+            if (isRandomizing) {
+                // 停止随机
+                clearInterval(randomInterval);
+                isRandomizing = false;
+                randomBtn.innerHTML = '<i class="fa fa-random mr-2"></i>随机';
+
+                const now = Date.now();
+                latestRandomNames = []; // 重置最新随机名字数组
+
+                // 将最后选中的变为黄色
+                nameElements.forEach(el => {
+                    if (el.classList.contains('bg-accent')) {
+                        el.className = 'name-btn bg-yellow-300 text-neutral h-16 btn-shadow hover:bg-yellow-400';
+
+                        // 更新统计数据
+                        const name = el.dataset.name;
+                        statsData[name] = { status: 'yellow' };
+                        lastRandomTime[name] = now; // 保存随机时间
+
+                        // 更新记录数据
+                        recordData[name].answered++;
+                        
+                        // 添加到最新随机名字数组
+                        latestRandomNames.push(name);
+                    }
+                });
+
+                // 更新显示
+                updateRecordDisplay();
+                saveToLocalStorage();
+
+                // 滚动到数据统计区域
+                scrollToStatsSection();
+            } else {
+                // 开始随机
+                const availableNames = nameElements.filter(el =>
+                    !(statsData[el.dataset.name] && statsData[el.dataset.name].status === 'yellow')
+                );
+
+                if (availableNames.length === 0) {
+                    alert('所有名字都已被选中，请重置后再试');
+                    return;
+                }
+
+                isRandomizing = true;
+                randomBtn.innerHTML = '<i class="fa fa-pause mr-2"></i>停止';
+
+                // 随机选择
+                randomInterval = setInterval(() => {
+                    // 重置所有未选中按钮颜色
+                    nameElements.forEach(el => {
+                        if (!(statsData[el.dataset.name] && statsData[el.dataset.name].status === 'yellow')) {
+                            el.className = 'name-btn bg-white text-neutral h-16 btn-shadow hover:bg-gray-100 border border-gray-200';
+                        }
+                    });
+
+                    // 随机选择指定数量的名字
+                    const selectedIndices = new Set();
+                    while (selectedIndices.size < Math.min(selectedCount, availableNames.length)) {
+                        const randomIndex = Math.floor(Math.random() * availableNames.length);
+                        selectedIndices.add(randomIndex);
+                    }
+
+                    // 设置选中的名字为红色
+                    selectedIndices.forEach(index => {
+                        availableNames[index].className = 'name-btn bg-accent text-white h-16 btn-shadow hover:bg-accent/90';
+                    });
+                }, 100);
+
+                // 滚动到随机名单区域
+                scrollToRandomList();
+            }
+        }
+
+        // 重置所有
+        function resetAll() {
+            if (isRandomizing) {
+                clearInterval(randomInterval);
+                isRandomizing = false;
+                randomBtn.innerHTML = '<i class="fa fa-random mr-2"></i>随机';
+            }
+
+            // 重置按钮状态
+            nameElements.forEach(el => {
+                el.className = 'name-btn bg-white text-neutral h-16 btn-shadow hover:bg-gray-100 border border-gray-200';
+            });
+
+            // 重置状态数据
+            statsData = {};
+            lastRandomTime = {}; // 重置随机时间
+            latestRandomNames = []; // 重置最新随机名字数组
+
+            // 更新UI
+            updateRecordDisplay();
+
+            // 保存到本地存储
+            saveToLocalStorage();
+
+            // 滚动到随机名单区域
+            scrollToRandomList();
+        }
+
+        // 更新随机数量
+        function updateRandomCount() {
+            selectedCount = parseInt(randomCount.value);
+            randomCountValue.textContent = selectedCount;
+        }
+
+        // 更新记录显示
+        function updateRecordDisplay() {
+            recordContainer.innerHTML = '';
+
+            // 筛选出已答题的学生
+            const answeredStudents = Object.keys(recordData)
+               .filter(name => recordData[name].answered > 0);
+
+            // 按随机时间和姓名序号排序
+            const sortedNames = answeredStudents.sort((a, b) => {
+                if (lastRandomTime[a] && lastRandomTime[b]) {
+                    return lastRandomTime[b] - lastRandomTime[a];
+                } else if (lastRandomTime[a]) {
+                    return -1;
+                } else if (lastRandomTime[b]) {
+                    return 1;
+                } else {
+                    const indexA = nameData.indexOf(a);
+                    const indexB = nameData.indexOf(b);
+                    return indexA - indexB;
+                }
+            });
+
+            if (sortedNames.length === 0) {
+                recordContainer.innerHTML = '<div class="col-span-full text-center text-gray-500 py-6">暂无答题记录</div>';
+                return;
+            }
+
+            sortedNames.forEach(name => {
+                const index = nameData.indexOf(name);
+                const recordCard = document.createElement('div');
+                recordCard.className = 'stats-card bg-green-50 border-green-200';
+
+                // 高亮最新随机的内容（多个）
+                if (latestRandomNames.includes(name)) {
+                    recordCard.classList.add('blink');
+                }
+
+                const ratings = recordData[name].ratings;
+                const totalScore = getTotalScore(recordData[name]);
+                let ratingBtnsHTML = '';
+
+                ['A', 'B', 'C'].forEach(rating => {
+                    ratingBtnsHTML += `
+                        <button class="rating-btn ml-1 ${getRatingColor(rating)}" 
+                                data-name="${name}" 
+                                data-rating="${rating}">
+                            ${rating} (${ratings[rating]})
+                        </button>
+                    `;
+                });
+
+                recordCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium">${index + 1}. ${name}</h3>
+                        <span class="text-sm font-semibold bg-green-100 text-green-800 px-2 py-1 rounded">
+                            总分: ${totalScore}
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="mr-2">评价:</span>
+                        ${ratingBtnsHTML}
+                    </div>
+                    <div class="mt-3 text-sm text-gray-600">
+                        <div class="flex justify-between">
+                            <span>A次数: ${ratings.A}</span>
+                            <span>B次数: ${ratings.B}</span>
+                            <span>C次数: ${ratings.C}</span>
+                        </div>
+                        <div class="flex justify-between mt-1">
+                            <span>回答次数: ${ratings.A + ratings.B + ratings.C}</span>
+                            <span>总分: ${totalScore}</span>
+                        </div>
+                    </div>
+                `;
+
+                // 添加评分按钮事件
+                ['A', 'B', 'C'].forEach(rating => {
+                    const btn = recordCard.querySelector(`[data-name="${name}"][data-rating="${rating}"]`);
+                    btn.addEventListener('click', () => addRating(name, rating));
+                });
+
+                recordContainer.appendChild(recordCard);
+            });
+        }
+
+        // 计算总分数
+        function getTotalScore(record) {
+            return record.ratings.A * RATING_SCORES.A +
+                record.ratings.B * RATING_SCORES.B +
+                record.ratings.C * RATING_SCORES.C;
+        }
+
+        // 获取评价等级的颜色
+        function getRatingColor(rating) {
+            switch (rating) {
+                case 'A': return 'bg-green-100 text-green-800 hover:bg-green-200';
+                case 'B': return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200';
+                case 'C': return 'bg-red-100 text-red-800 hover:bg-red-200';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 添加评价
+        function addRating(name, rating) {
+            if (!recordData[name]) {
+                recordData[name] = {
+                    answered: 0,
+                    ratings: { A: 0, B: 0, C: 0 }
+                };
+            }
+
+            recordData[name].ratings[rating]++;
+            updateRecordDisplay();
+            saveToLocalStorage();
+        }
+
+        // 重置统计数据 - 优化版本：清除缓存并刷新网页
+        function resetStats() {
+            if (confirm('确定要重置所有统计数据、清除缓存并刷新网页吗？此操作不可恢复！')) {
+                // 清除本地存储数据
+                localStorage.removeItem('nameDrawingRecord');
+                localStorage.removeItem('nameDrawingStats');
+                localStorage.removeItem('lastRandomTime');
+                localStorage.removeItem('latestRandomNames');
+                
+                // 强制刷新页面，清除缓存
+                location.reload(true);
+            }
+        }
+
+        // 导出统计数据
+        function exportStatsData() {
+            try {
+                // 创建导出数据
+                const exportData = [['姓名', '回答次数', 'A次数', 'B次数', 'C次数', '总分']];
+                
+                // 添加每个学生的数据
+                nameData.forEach(name => {
+                    const record = recordData[name] || { answered: 0, ratings: { A: 0, B: 0, C: 0 } };
+                    const totalScore = getTotalScore(record);
+                    
+                    exportData.push([
+                        name,
+                        record.answered,
+                        record.ratings.A,
+                        record.ratings.B,
+                        record.ratings.C,
+                        totalScore
+                    ]);
+                });
+                
+                // 创建工作簿
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "统计数据");
+                
+                // 获取当前时间（年月日时分秒）
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${padZero(now.getMonth()+1)}${padZero(now.getDate())}${padZero(now.getHours())}${padZero(now.getMinutes())}${padZero(now.getSeconds())}`;
+                
+                // 生成文件名
+                const fileName = `导出统计数据_${timestamp}.xlsx`;
+                
+                // 导出文件
+                XLSX.writeFile(wb, fileName);
+                
+                alert('统计数据已成功导出');
+            } catch (error) {
+                console.error('导出错误:', error);
+                alert('导出统计数据时出错');
+            }
+        }
+
+        // 辅助函数：数字补零
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // 保存到本地存储
+        function saveToLocalStorage() {
+            localStorage.setItem('nameDrawingRecord', JSON.stringify(recordData));
+            localStorage.setItem('nameDrawingStats', JSON.stringify(statsData));
+            localStorage.setItem('lastRandomTime', JSON.stringify(lastRandomTime));
+            localStorage.setItem('latestRandomNames', JSON.stringify(latestRandomNames)); // 保存最新随机的名字数组
+        }
+
+        // 从本地存储加载
+        function loadFromLocalStorage() {
+            const savedRecord = localStorage.getItem('nameDrawingRecord');
+            const savedStats = localStorage.getItem('nameDrawingStats');
+            const savedLastRandomTime = localStorage.getItem('lastRandomTime');
+            const savedLatestRandomNames = localStorage.getItem('latestRandomNames');
+
+            if (savedRecord) {
+                recordData = JSON.parse(savedRecord);
+            }
+
+            if (savedStats) {
+                statsData = JSON.parse(savedStats);
+            }
+
+            if (savedLastRandomTime) {
+                lastRandomTime = JSON.parse(savedLastRandomTime);
+            }
+
+            if (savedLatestRandomNames) {
+                latestRandomNames = JSON.parse(savedLatestRandomNames);
+            }
+        }
+
+        // 滚动到随机名单区域
+        function scrollToRandomList() {
+            if (randomListSection) {
+                randomListSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 滚动到数据统计区域
+        function scrollToStatsSection() {
+            if (statsSection) {
+                statsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+
+    </body></html>

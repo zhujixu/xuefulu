@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生考勤</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F59E0B',
+                        secondary: '#10B981',
+                        accent: '#EF4444',
+                        neutral: '#1F2937',
+                        attendance: {
+                            present: '#10B981',
+                            late: '#FBBF24',
+                            early: '#F97316',
+                            absent: '#EF4444',
+                            pending: '#6B7280'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            .btn-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            .btn-hover {
+                transition: all 0.3s ease;
+            }
+
+            .btn-hover:hover {
+                transform: translateY(-2px);
+            }
+
+            .name-btn {
+                @apply flex items-center justify-center rounded-xl font-medium transition-all duration-300 ease-in-out border-2 shadow-md;
+            }
+
+            .control-btn {
+                @apply px-6 py-3 rounded-xl font-medium transition-all duration-300 ease-in-out shadow-lg;
+            }
+
+            .rating-btn {
+                @apply px-3 py-1 rounded-md font-medium transition-all duration-200 ease-in-out;
+            }
+
+            .stats-card {
+                @apply bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow;
+            }
+
+            /* 闪烁动画 */
+            @keyframes blink {
+                0% {
+                    background-color: #d1fae5;
+                }
+
+                50% {
+                    background-color: #a7f3d0;
+                }
+
+                100% {
+                    background-color: #d1fae5;
+                }
+            }
+
+            .blink {
+                animation: blink 1s infinite;
+            }
+
+            .step-card {
+                @apply bg-white rounded-xl shadow-lg p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-primary/50 h-full;
+            }
+
+            .step-number {
+                @apply inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold text-xl mb-4;
+            }
+
+            .attendance-btn {
+                @apply flex items-center justify-center rounded-lg font-medium transition-all duration-300 ease-in-out shadow-md h-10 min-w-0 text-sm w-[80px] md:w-[100px];
+            }
+
+            .attendance-btn:hover {
+                @apply transform scale-105 shadow-lg;
+            }
+
+            .attendance-btn:active {
+                @apply transform scale-95;
+            }
+
+            /* 美化进度条 */
+            .progress-container {
+                @apply relative w-full bg-gray-200 rounded-full h-6 shadow-inner overflow-hidden;
+            }
+
+            .progress-value {
+                @apply absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out shadow-md;
+            }
+
+            .progress-text {
+                @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-medium text-sm;
+            }
+
+            /* 表格样式 */
+            .attendance-table {
+                @apply w-full border-collapse;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                @apply border border-gray-200 px-4 py-2 text-center;
+            }
+
+            .attendance-table th {
+                @apply bg-gray-100 font-semibold text-neutral;
+            }
+
+            /* 优化奇偶行样式 - 仅保留奇偶行背景色 */
+            .attendance-table tbody tr:nth-child(odd) {
+                @apply bg-gray-50;
+            }
+
+            .attendance-table tbody tr:nth-child(even) {
+                @apply bg-white;
+            }
+
+            /* 状态更新按钮样式 */
+            .update-btn {
+                @apply px-2 py-1 rounded text-xs font-medium transition-all duration-200 ease-in-out mx-0.5;
+            }
+
+            /* 今日考勤表格的特殊样式 */
+            .today-attendance-late {
+                background-color: rgba(251, 191, 36, 0.2);
+                color: #92400E;
+            }
+            .today-attendance-early {
+                background-color: rgba(249, 115, 22, 0.2);
+                color: #92400E;
+            }
+            .today-attendance-absent {
+                background-color: rgba(239, 68, 68, 0.2);
+                color: #7F1D1D;
+            }
+            .today-attendance-present {
+                background-color: rgba(16, 185, 129, 0.2);
+                color: #065F46;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-neutral">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部区域 -->
+        <header class="mb-8 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-neutral mb-2">学生考勤</h1>
+            <p class="text-gray-600 text-lg mb-6">广州城市理工学院 经济学院 朱继绪</p>
+
+            <!-- 步骤区域 - 左右并排 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- 步骤卡片 - 重置统计数据 -->
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="text-xl font-semibold mb-4">初始化</h3>
+                    <button id="resetStatsBtn" class="w-full control-btn bg-red-500 text-white hover:bg-red-600 btn-hover">
+                        <i class="fa fa-refresh mr-2"></i>清除缓存并刷新
+                    </button>
+                    <p class="mt-4 text-gray-500 text-sm">点击此按钮清除页面缓存并刷新页面</p>
+                </div>
+
+                <!-- 新增区域，显示姓名 -->
+                <div id="nameDisplay" class="bg-blue-500 text-white font-bold text-center flex items-center justify-center text-[clamp(5rem,3vw,10rem)] rounded-xl shadow-lg p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-primary/50 h-full">
+                    暂无考勤
+                </div>
+
+                <!-- 步骤卡片 - 导入Excel文件 -->
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="text-xl font-semibold mb-4">导入学生名单</h3>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" class="hidden">
+                    <label for="excelFile" class="block w-full cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2 transition-all duration-300 ease-in-out">
+                        <i class="fa fa-file-excel-o text-xl"></i>
+                        <span class="font-medium">选择Excel文件</span>
+                    </label>
+                    <p id="fileInfo" class="mt-4 text-gray-500">请选择Excel文件导入学生名单</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="space-y-8">
+            <!-- 考勤区域 -->
+            <div id="attendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">考勤进度</h2>
+                <div class="flex flex-col gap-3 mb-6">
+                    <div class="progress-container">
+                        <div id="progressBar" class="progress-value bg-gradient-to-r from-blue-500 to-blue-700"></div>
+                        <div id="progressText" class="progress-text"></div>
+                    </div>
+                </div>
+
+                <div id="attendanceButtons" class="flex flex-wrap justify-center gap-2">
+                    <button id="nameBtn" class="attendance-btn bg-white text-neutral border-gray-300" disabled>
+                        <span class="font-bold">序号和姓名</span>
+                    </button>
+                    <button id="lateBtn" class="attendance-btn bg-attendance-late/90 text-white hover:bg-attendance-late border border-attendance-late/30" disabled>
+                        <i class="fa fa-clock-o mr-1"></i>迟到
+                    </button>
+                    <button id="earlyLeaveBtn" class="attendance-btn bg-attendance-early/90 text-white hover:bg-attendance-early border border-attendance-early/30" disabled>
+                        <i class="fa fa-sign-out mr-1"></i>早退
+                    </button>
+                    <button id="absentBtn" class="attendance-btn bg-attendance-absent/90 text-white hover:bg-attendance-absent border border-attendance-absent/30" disabled>
+                        <i class="fa fa-times mr-1"></i>缺勤
+                    </button>
+                    <button id="presentBtn" class="attendance-btn bg-attendance-present/90 text-white hover:bg-attendance-present border border-attendance-present/30" disabled>
+                        <i class="fa fa-check mr-1"></i>出勤
+                    </button>
+                    <button id="exportStatsBtn" class="attendance-btn bg-blue-500 text-white hover:bg-blue-600 transition-colors" disabled>
+                        <i class="fa fa-download mr-1"></i> 导出数据
+                    </button>
+                </div>
+            </div>
+
+            <!-- 今日考勤区域 -->
+            <div id="todayAttendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">今日考勤</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table id="todayAttendanceTable" class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>姓名</th>
+                                <th>迟到次数</th>
+                                <th>早退次数</th>
+                                <th>缺勤次数</th>
+                                <th>出勤次数</th>
+                                <th>状态更新</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todayAttendanceTableBody">
+                            <!-- 表格内容将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 历史考勤区域 -->
+            <div id="statsSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">历史考勤</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table id="attendanceTable" class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>姓名</th>
+                                <th>迟到次数</th>
+                                <th>早退次数</th>
+                                <th>缺勤次数</th>
+                                <th>出勤次数</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- 表格内容将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚区域 -->
+        <footer class="mt-12 text-center text-gray-500">
+            <p>© 2025 广州城市理工学院 经济学院 朱继绪</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let nameData = [];
+        let attendanceStats = {}; // 历史统计数据
+        let todayAttendance = {}; // 今日考勤数据
+        let attendanceToggle = {}; // 记录按钮状态
+        let lastUpdatedCells = {}; // 记录最后更新的单元格
+        let totalStudents = 0;
+        let remainingStudents = []; // 剩余未抽取的学生索引
+        let currentStudentIndex = -1; // 当前学生索引
+
+        // DOM 元素
+        const excelFileInput = document.getElementById('excelFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const nameBtn = document.getElementById('nameBtn');
+        const lateBtn = document.getElementById('lateBtn');
+        const earlyLeaveBtn = document.getElementById('earlyLeaveBtn');
+        const absentBtn = document.getElementById('absentBtn');
+        const presentBtn = document.getElementById('presentBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const attendanceTableBody = document.getElementById('attendanceTableBody');
+        const todayAttendanceTableBody = document.getElementById('todayAttendanceTableBody');
+        const resetStatsBtn = document.getElementById('resetStatsBtn');
+        const exportStatsBtn = document.getElementById('exportStatsBtn');
+        const attendanceSection = document.getElementById('attendanceSection');
+        const statsSection = document.getElementById('statsSection');
+        const todayAttendanceSection = document.getElementById('todayAttendanceSection');
+        const nameDisplay = document.getElementById('nameDisplay');
+
+        // 初始化
+        function init() {
+            // 加载本地存储数据
+            loadFromLocalStorage();
+
+            // 事件监听器
+            excelFileInput.addEventListener('change', handleFileUpload);
+            lateBtn.addEventListener('click', () => updateAttendanceStatus('迟到'));
+            earlyLeaveBtn.addEventListener('click', () => updateAttendanceStatus('早退'));
+            absentBtn.addEventListener('click', () => updateAttendanceStatus('缺勤'));
+            presentBtn.addEventListener('click', () => updateAttendanceStatus('出勤'));
+            resetStatsBtn.addEventListener('click', clearCacheAndRefresh);
+            exportStatsBtn.addEventListener('click', exportStatsData);
+            nameBtn.addEventListener('change', updateNameDisplay); // 监听姓名按钮文本变化
+
+            // 更新UI
+            updateAttendanceTable();
+            updateTodayAttendanceTable();
+            updateNameDisplay(); // 初始化姓名显示
+        }
+
+        // 更新姓名显示
+        function updateNameDisplay() {
+            const nameText = nameBtn.textContent.split('. ')[1] || '暂无考勤';
+            nameDisplay.textContent = nameText;
+        }
+
+        // 处理文件上传
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileInfo.textContent = `正在处理: ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    // 检查是否包含所需的列
+                    const headers = jsonData[0] || [];
+                    const nameColumnIndex = findNameColumnIndex(headers);
+                    if (nameColumnIndex === -1) {
+                        fileInfo.textContent = '错误: 未找到"姓名"列';
+                        return;
+                    }
+
+                    // 查找考勤统计列索引
+                    const columnIndices = {
+                        迟到次数: headers.findIndex(h => h.includes('迟到次数')),
+                        早退次数: headers.findIndex(h => h.includes('早退次数')),
+                        缺勤次数: headers.findIndex(h => h.includes('缺勤次数')),
+                        出勤次数: headers.findIndex(h => h.includes('出勤次数'))
+                    };
+
+                    // 从第2行开始提取姓名数据和考勤数据
+                    nameData = [];
+                    attendanceStats = {};
+
+                    jsonData.slice(1).forEach(row => {
+                        const name = row[nameColumnIndex];
+                        if (!name) return;
+
+                        nameData.push(name);
+
+                        // 初始化统计数据
+                        attendanceStats[name] = {
+                            迟到: parseInt(row[columnIndices.迟到次数]) || 0,
+                            早退: parseInt(row[columnIndices.早退次数]) || 0,
+                            缺勤: parseInt(row[columnIndices.缺勤次数]) || 0,
+                            出勤: parseInt(row[columnIndices.出勤次数]) || 0
+                        };
+                    });
+
+                    if (nameData.length === 0) {
+                        fileInfo.textContent = '错误: 未找到有效姓名数据';
+                        return;
+                    }
+
+                    totalStudents = nameData.length;
+
+                    // 初始化今日考勤数据
+                    initTodayAttendanceData();
+
+                    // 初始化剩余学生数组
+                    resetRemainingStudents();
+
+                    // 启用按钮
+                    nameBtn.disabled = false;
+                    lateBtn.disabled = false;
+                    earlyLeaveBtn.disabled = false;
+                    absentBtn.disabled = false;
+                    presentBtn.disabled = false;
+                    exportStatsBtn.disabled = false;
+
+                    // 更新进度条
+                    updateProgressBar();
+
+                    // 显示第一个随机姓名
+                    showNextRandomName();
+
+                    fileInfo.textContent = `已成功导入 ${nameData.length} 个姓名及其考勤数据`;
+
+                    // 更新历史考勤表格
+                    updateAttendanceTable();
+
+                    // 保存到本地存储
+                    saveToLocalStorage();
+
+                    // 滚动到"学生考勤"前面的锚点
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } catch (error) {
+                    fileInfo.textContent = '错误: 文件处理失败';
+                    console.error('文件处理错误:', error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 查找姓名列索引
+        function findNameColumnIndex(headers) {
+            if (!headers || headers.length === 0) return -1;
+
+            return headers.findIndex(header =>
+                header.includes('姓名') || header.includes('名字') || header.toLowerCase().includes('name')
+            );
+        }
+
+        // 初始化今日考勤数据
+        function initTodayAttendanceData() {
+            nameData.forEach(name => {
+                todayAttendance[name] = {
+                    迟到: 0,
+                    早退: 0,
+                    缺勤: 0,
+                    出勤: 0,
+                    总计: 0
+                };
+                attendanceToggle[name] = {
+                    迟到: 1,
+                    早退: 1,
+                    缺勤: 1,
+                    出勤: 1
+                };
+            });
+        }
+
+        // 重置剩余学生数组
+        function resetRemainingStudents() {
+            remainingStudents = Array.from({ length: nameData.length }, (_, i) => i);
+        }
+
+        // 显示下一个随机姓名（不重复）
+        function showNextRandomName() {
+            if (remainingStudents.length === 0) {
+                nameBtn.textContent = '已完成考勤';
+                return;
+            }
+
+            const randomIndexInRemaining = Math.floor(Math.random() * remainingStudents.length);
+            currentStudentIndex = remainingStudents[randomIndexInRemaining];
+
+            // 从剩余学生中移除当前选中的学生
+            remainingStudents.splice(randomIndexInRemaining, 1);
+
+            nameBtn.textContent = `${currentStudentIndex + 1}. ${nameData[currentStudentIndex]}`;
+
+            // 添加动画效果
+            nameBtn.classList.add('scale-105');
+            setTimeout(() => {
+                nameBtn.classList.remove('scale-105');
+            }, 300);
+
+            updateNameDisplay(); // 更新姓名显示
+        }
+
+        // 更新考勤状态
+        function updateAttendanceStatus(status) {
+            if (currentStudentIndex === -1 || !nameData[currentStudentIndex]) return;
+
+            const name = nameData[currentStudentIndex];
+
+            // 先将今日考勤之前的状态计数减1
+            const previousStatus = getCurrentStatus(name, todayAttendance);
+            if (previousStatus) {
+                todayAttendance[name][previousStatus] -= 1;
+                todayAttendance[name]['总计'] -= 1;
+            }
+
+            // 再将今日考勤当前状态计数加1
+            todayAttendance[name][status] += 1;
+            todayAttendance[name]['总计'] += 1;
+
+            // 更新历史考勤数据
+            updateHistoricalAttendance(name, status, previousStatus);
+
+            // 记录最后更新的单元格
+            lastUpdatedCells[name] = status;
+
+            // 更新表格
+            updateAttendanceTable();
+            updateTodayAttendanceTable();
+
+            // 更新进度条
+            updateProgressBar();
+
+            // 保存到本地存储
+            saveToLocalStorage();
+
+            // 显示下一个随机姓名
+            showNextRandomName();
+        }
+
+        // 更新历史考勤数据
+        function updateHistoricalAttendance(name, newStatus, previousStatus) {
+            // 如果之前有状态，先减去
+            if (previousStatus) {
+                attendanceStats[name][previousStatus] -= 1;
+            }
+
+            // 添加新状态
+            attendanceStats[name][newStatus] += 1;
+        }
+
+        // 获取当前学生的状态
+        function getCurrentStatus(name, attendanceData) {
+            const statuses = ['迟到', '早退', '缺勤', '出勤'];
+            for (const status of statuses) {
+                if (attendanceData[name][status] > 0) {
+                    return status;
+                }
+            }
+            return null;
+        }
+
+        // 更新考勤表格（历史考勤区域）
+        function updateAttendanceTable() {
+            attendanceTableBody.innerHTML = '';
+
+            nameData.forEach((name, index) => {
+                const row = document.createElement('tr');
+                row.id = `row-${index}`;
+
+                // 序号
+                const indexCell = document.createElement('td');
+                indexCell.textContent = index + 1;
+                row.appendChild(indexCell);
+
+                // 姓名
+                const nameCell = document.createElement('td');
+                nameCell.textContent = name;
+                row.appendChild(nameCell);
+
+                // 迟到次数
+                const lateCell = document.createElement('td');
+                lateCell.textContent = attendanceStats[name]?.迟到 || 0;
+                row.appendChild(lateCell);
+
+                // 早退次数
+                const earlyCell = document.createElement('td');
+                earlyCell.textContent = attendanceStats[name]?.早退 || 0;
+                row.appendChild(earlyCell);
+
+                // 缺勤次数
+                const absentCell = document.createElement('td');
+                absentCell.textContent = attendanceStats[name]?.缺勤 || 0;
+                row.appendChild(absentCell);
+
+                // 出勤次数
+                const presentCell = document.createElement('td');
+                presentCell.textContent = attendanceStats[name]?.出勤 || 0;
+                row.appendChild(presentCell);
+
+                attendanceTableBody.appendChild(row);
+            });
+        }
+
+        // 更新今日考勤表格
+        function updateTodayAttendanceTable() {
+            todayAttendanceTableBody.innerHTML = '';
+
+            nameData.forEach((name, index) => {
+                const row = document.createElement('tr');
+                row.id = `today-row-${index}`;
+
+                // 序号
+                const indexCell = document.createElement('td');
+                indexCell.textContent = index + 1;
+                row.appendChild(indexCell);
+
+                // 姓名
+                const nameCell = document.createElement('td');
+                nameCell.textContent = name;
+                row.appendChild(nameCell);
+
+                // 迟到次数
+                const lateCell = document.createElement('td');
+                const lateCount = todayAttendance[name]?.迟到 || 0;
+                lateCell.textContent = lateCount;
+                if (lateCount === 1) {
+                    lateCell.className = 'today-attendance-late';
+                }
+                row.appendChild(lateCell);
+
+                // 早退次数
+                const earlyCell = document.createElement('td');
+                const earlyCount = todayAttendance[name]?.早退 || 0;
+                earlyCell.textContent = earlyCount;
+                if (earlyCount === 1) {
+                    earlyCell.className = 'today-attendance-early';
+                }
+                row.appendChild(earlyCell);
+
+                // 缺勤次数
+                const absentCell = document.createElement('td');
+                const absentCount = todayAttendance[name]?.缺勤 || 0;
+                absentCell.textContent = absentCount;
+                if (absentCount === 1) {
+                    absentCell.className = 'today-attendance-absent';
+                }
+                row.appendChild(absentCell);
+
+                // 出勤次数
+                const presentCell = document.createElement('td');
+                const presentCount = todayAttendance[name]?.出勤 || 0;
+                presentCell.textContent = presentCount;
+                if (presentCount === 1) {
+                    presentCell.className = 'today-attendance-present';
+                }
+                row.appendChild(presentCell);
+
+                // 状态更新列
+                const actionCell = document.createElement('td');
+                actionCell.className = 'p-1 flex flex-wrap justify-center'; // 水平横向对齐
+
+                // 迟到按钮
+                const lateBtn = document.createElement('button');
+                lateBtn.className = 'update-btn bg-attendance-late text-white';
+                lateBtn.textContent = '迟到';
+                lateBtn.addEventListener('click', () => updateStatusFromTable(index, '迟到'));
+                actionCell.appendChild(lateBtn);
+
+                // 早退按钮
+                const earlyBtn = document.createElement('button');
+                earlyBtn.className = 'update-btn bg-attendance-early text-white';
+                earlyBtn.textContent = '早退';
+                earlyBtn.addEventListener('click', () => updateStatusFromTable(index, '早退'));
+                actionCell.appendChild(earlyBtn);
+
+                // 缺勤按钮
+                const absentBtn = document.createElement('button');
+                absentBtn.className = 'update-btn bg-attendance-absent text-white';
+                absentBtn.textContent = '缺勤';
+                absentBtn.addEventListener('click', () => updateStatusFromTable(index, '缺勤'));
+                actionCell.appendChild(absentBtn);
+
+                // 出勤按钮
+                const presentBtn = document.createElement('button');
+                presentBtn.className = 'update-btn bg-attendance-present text-white';
+                presentBtn.textContent = '出勤';
+                presentBtn.addEventListener('click', () => updateStatusFromTable(index, '出勤'));
+                actionCell.appendChild(presentBtn);
+
+                row.appendChild(actionCell);
+
+                todayAttendanceTableBody.appendChild(row);
+            });
+        }
+
+        // 从表格更新状态
+        function updateStatusFromTable(index, status) {
+            const name = nameData[index];
+
+            // 先将今日考勤之前的状态计数减1
+            const previousStatus = getCurrentStatus(name, todayAttendance);
+            if (previousStatus) {
+                todayAttendance[name][previousStatus] -= 1;
+                todayAttendance[name]['总计'] -= 1;
+            }
+
+            // 再将今日考勤当前状态计数加1
+            todayAttendance[name][status] += 1;
+            todayAttendance[name]['总计'] += 1;
+
+            // 更新历史考勤数据
+            updateHistoricalAttendance(name, status, previousStatus);
+
+            // 记录最后更新的单元格
+            lastUpdatedCells[name] = status;
+
+            // 更新表格
+            updateAttendanceTable();
+            updateTodayAttendanceTable();
+
+            // 更新进度条
+            updateProgressBar();
+
+            // 保存到本地存储
+            saveToLocalStorage();
+        }
+
+        // 更新进度条
+        function updateProgressBar() {
+            if (totalStudents === 0) return;
+
+            // 计算已考勤的学生数（今日考勤至少有一项记录的学生）
+            let checkedStudents = 0;
+            nameData.forEach(name => {
+                if (todayAttendance[name] && todayAttendance[name].总计 > 0) {
+                    checkedStudents++;
+                }
+            });
+
+            // 进度条范围从0到学生总数
+            const progress = (checkedStudents / totalStudents) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${checkedStudents} / ${totalStudents}`;
+
+            // 如果所有学生都考勤完毕，显示提示
+            if (checkedStudents === totalStudents) {
+                nameBtn.textContent = '已完成考勤';
+            }
+        }
+
+        // 清除缓存并刷新页面
+        function clearCacheAndRefresh() {
+            if (confirm('确定要清除页面缓存并刷新吗？')) {
+                try {
+                    // 清除本地存储
+                    localStorage.clear();
+
+                    // 清除缓存并重新加载页面
+                    if (caches) {
+                        caches.keys().then(function (names) {
+                            names.forEach(function (name) {
+                                caches.delete(name);
+                            });
+                        });
+                    }
+
+                    // 强制刷新页面（不使用缓存）
+                    window.location.reload(true);
+                } catch (error) {
+                    console.error('清除缓存时出错:', error);
+                    alert('清除缓存时出错，请手动刷新页面');
+                }
+            }
+        }
+
+        // 导出统计数据
+        function exportStatsData() {
+            try {
+                if (!nameData || nameData.length === 0) {
+                    alert('没有可导出的学生数据');
+                    return;
+                }
+
+                // 创建导出数据
+                const exportData = [['序号', '姓名', '迟到次数', '早退次数', '缺勤次数', '出勤次数']];
+
+                // 添加每个学生的数据
+                nameData.forEach((name, index) => {
+                    exportData.push([
+                        index + 1,
+                        name,
+                        attendanceStats[name]?.迟到 || 0,
+                        attendanceStats[name]?.早退 || 0,
+                        attendanceStats[name]?.缺勤 || 0,
+                        attendanceStats[name]?.出勤 || 0
+                    ]);
+                });
+
+                // 创建工作簿
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "历史考勤");
+
+                // 获取当前时间（年月日时分秒）
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${padZero(now.getMonth() + 1)}${padZero(now.getDate())}${padZero(now.getHours())}${padZero(now.getMinutes())}${padZero(now.getSeconds())}`;
+
+                // 生成文件名
+                const fileName = `历史考勤_${timestamp}.xlsx`;
+
+                // 导出文件
+                XLSX.writeFile(wb, fileName);
+
+                alert('历史考勤数据已成功导出');
+            } catch (error) {
+                console.error('导出错误:', error);
+                alert('导出历史考勤数据时出错');
+            }
+        }
+
+        // 辅助函数：数字补零
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // 保存到本地存储
+        function saveToLocalStorage() {
+            localStorage.setItem('nameData', JSON.stringify(nameData));
+            localStorage.setItem('attendanceStats', JSON.stringify(attendanceStats));
+            localStorage.setItem('todayAttendance', JSON.stringify(todayAttendance));
+            localStorage.setItem('attendanceToggle', JSON.stringify(attendanceToggle));
+            localStorage.setItem('totalStudents', totalStudents);
+            localStorage.setItem('remainingStudents', JSON.stringify(remainingStudents));
+            localStorage.setItem('currentStudentIndex', currentStudentIndex);
+        }
+
+        // 从本地存储加载
+        function loadFromLocalStorage() {
+            const savedNameData = localStorage.getItem('nameData');
+            const savedAttendanceStats = localStorage.getItem('attendanceStats');
+            const savedTodayAttendance = localStorage.getItem('todayAttendance');
+            const savedAttendanceToggle = localStorage.getItem('attendanceToggle');
+            const savedTotalStudents = localStorage.getItem('totalStudents');
+            const savedRemainingStudents = localStorage.getItem('remainingStudents');
+            const savedCurrentStudentIndex = localStorage.getItem('currentStudentIndex');
+
+            if (savedNameData) {
+                nameData = JSON.parse(savedNameData);
+            }
+
+            if (savedAttendanceStats) {
+                attendanceStats = JSON.parse(savedAttendanceStats);
+            }
+
+            if (savedTodayAttendance) {
+                todayAttendance = JSON.parse(savedTodayAttendance);
+            } else {
+                // 如果没有今日考勤数据，初始化它
+                initTodayAttendanceData();
+            }
+
+            if (savedAttendanceToggle) {
+                attendanceToggle = JSON.parse(savedAttendanceToggle);
+            }
+
+            if (savedTotalStudents) {
+                totalStudents = parseInt(savedTotalStudents);
+            }
+
+            if (savedRemainingStudents) {
+                remainingStudents = JSON.parse(savedRemainingStudents);
+            }
+
+            if (savedCurrentStudentIndex) {
+                currentStudentIndex = parseInt(savedCurrentStudentIndex);
+            }
+
+            // 更新进度条
+            updateProgressBar();
+        }
+
+        // 滚动到考勤区域
+        function scrollToAttendanceSection() {
+            if (attendanceSection) {
+                attendanceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
+    

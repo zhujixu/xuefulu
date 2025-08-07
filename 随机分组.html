@@ -1,0 +1,564 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机分组</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F59E0B',
+                        secondary: '#10B981',
+                        accent: '#EF4444',
+                        neutral: '#1F2937',
+                        group: {
+                            1: '#4F46E5',
+                            2: '#10B981',
+                            3: '#F59E0B',
+                            4: '#EF4444',
+                            5: '#8B5CF6',
+                            6: '#EC4899',
+                            7: '#06B6D4',
+                            8: '#F97316',
+                            9: '#14B8A6',
+                            10: '#6366F1'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            /* 统一统计按钮样式 */
+            .stat-button {
+                @apply flex items-center justify-center
+                       rounded-xl font-bold text-white text-lg
+                       px-6 py-4
+                       shadow-md hover:shadow-lg 
+                       transition-all duration-300 hover:-translate-y-0.5
+                       min-w-[160px] h-16;
+            }
+
+            /* 滑动条容器样式 */
+            .slider-container {
+                @apply flex-1 px-4 sm:px-6;
+            }
+            
+            .slider-wrapper {
+                @apply bg-white rounded-lg border border-gray-200
+                       p-4 w-full h-16 flex items-center;
+            }
+            
+            /* 滑动条视觉效果 */
+            input[type="range"] {
+                @apply w-full h-3
+                       bg-gray-200 rounded-lg appearance-none cursor-pointer
+                       accent-primary;
+            }
+            
+            input[type="range"]::-webkit-slider-thumb {
+                @apply appearance-none w-6 h-6 rounded-full
+                       bg-primary cursor-pointer
+                       shadow-md hover:shadow-lg
+                       transition-all duration-200;
+            }
+
+            .step-card {
+                @apply bg-white rounded-xl shadow-lg p-6
+                       border-2 border-dashed border-gray-200
+                       transition-all duration-300 hover:border-primary/50
+                       h-full;
+            }
+
+            .step-number {
+                @apply inline-flex items-center justify-center
+                       w-10 h-10 rounded-full
+                       bg-primary text-white
+                       font-bold text-xl mb-4;
+            }
+
+            .control-btn {
+                @apply px-6 py-3 rounded-xl font-medium
+                       transition-all duration-300 ease-in-out shadow-lg;
+            }
+
+            /* 优化分组结果样式 - 每行显示10个名单 */
+            .group-card {
+                @apply bg-white rounded-xl p-5 my-4 border border-gray-100
+                       shadow-md hover:shadow-lg transition-all duration-300
+                       overflow-hidden relative;
+            }
+            
+            .group-header {
+                @apply flex justify-between items-center mb-4 pb-2 border-b border-gray-100;
+            }
+            
+            .group-title {
+                @apply font-bold text-lg flex items-center;
+            }
+            
+            .group-count {
+                @apply text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600;
+            }
+            
+            /* 关键修改：使用网格布局每行显示10个项目 */
+            .group-members {
+                @apply grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3;
+            }
+            
+            .member-item {
+                @apply flex items-center p-2 rounded-lg bg-gray-50 
+                       hover:bg-gray-100 transition-colors duration-200
+                       text-sm;
+            }
+            
+            .member-index {
+                @apply w-5 h-5 rounded-full flex items-center justify-center
+                       text-white text-xs font-medium mr-2;
+            }
+            
+            /* 分组卡片装饰元素 */
+            .group-accent {
+                @apply absolute top-0 left-0 w-1 h-full;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-neutral">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部区域 -->
+        <header class="mb-8 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-neutral mb-2">随机分组</h1>
+            <p class="text-gray-600 text-lg mb-6">广州城市理工学院 经济学院 朱继绪</p>
+
+            <!-- 步骤区域 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- 步骤卡片 - 初始化 -->
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="text-xl font-semibold mb-4">初始化</h3>
+                    <button id="resetStatsBtn" class="w-full control-btn bg-red-500 text-white hover:bg-red-600">
+                        <i class="fa fa-refresh mr-2"></i>清除缓存并刷新
+                    </button>
+                    <p class="mt-4 text-gray-500 text-sm">点击此按钮清除页面缓存并刷新页面</p>
+                </div>
+
+                <!-- 步骤卡片 - 导入Excel文件 -->
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="text-xl font-semibold mb-4">导入学生名单</h3>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" class="hidden">
+                    <label for="excelFile" class="block w-full cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2 transition-all duration-300 ease-in-out">
+                        <i class="fa fa-file-excel-o text-xl"></i>
+                        <span class="font-medium">选择Excel文件</span>
+                    </label>
+                    <p id="fileInfo" class="mt-4 text-gray-500">请选择包含学生名单的Excel文件（需包含"姓名"列）</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="space-y-8">
+            <!-- 分组设置区域 -->
+            <div id="groupSettingsSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <!-- 核心控制区 -->
+                <div class="mb-8">
+                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        
+                        <!-- 总人数按钮 -->
+                        <div class="flex-none">
+                            <div class="stat-button bg-blue-500 hover:bg-blue-600">
+                                共 <span id="totalCount">0</span> 人
+                            </div>
+                        </div>
+                        
+                        <!-- 滑动条 -->
+                        <div class="slider-container">
+                            <div class="slider-wrapper">
+                                <input type="range" id="groupSlider" min="1" max="1" value="1" class="w-full" disabled="">
+                            </div>
+                        </div>
+                        
+                        <!-- 分组数量按钮 -->
+                        <div class="flex-none">
+                            <div class="stat-button bg-primary hover:bg-primary/90">
+                                <span id="groupValue">1</span> 个小组
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 开始分组按钮 -->
+                <div class="text-center">
+                    <button id="groupPeopleBtn" class="control-btn bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed inline-block">
+                        <i class="fa fa-random mr-2"></i>开始分组
+                    </button>
+                </div>
+                
+                <div id="numError" class="text-accent mt-4 text-sm text-center hidden"></div>
+            </div>
+
+            <!-- 分组结果区域 -->
+            <div id="resultSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">分组结果</h2>
+                    <div class="flex gap-2 mt-4 sm:mt-0">
+                        <button id="regroupBtn" class="px-4 py-2 rounded-lg font-medium bg-primary text-white hover:bg-primary/90 transition-colors">
+                            <i class="fa fa-refresh mr-1"></i> 重新分组
+                        </button>
+                        <button id="exportBtn" class="px-4 py-2 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+                            <i class="fa fa-download mr-1"></i> 导出结果
+                        </button>
+                    </div>
+                </div>
+
+                <div id="result" class="space-y-4">
+                    <!-- 分组结果将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚区域 -->
+        <footer class="mt-12 text-center text-gray-500">
+            <p>© 2025 广州城市理工学院 经济学院 朱继绪</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let nameData = [];
+        let currentGroups = [];
+        
+        // DOM 元素
+        const excelFileInput = document.getElementById('excelFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const resetStatsBtn = document.getElementById('resetStatsBtn');
+        const groupSlider = document.getElementById('groupSlider');
+        const groupValue = document.getElementById('groupValue');
+        const numError = document.getElementById('numError');
+        const groupPeopleBtn = document.getElementById('groupPeopleBtn');
+        const resultSection = document.getElementById('resultSection');
+        const resultDiv = document.getElementById('result');
+        const exportBtn = document.getElementById('exportBtn');
+        const regroupBtn = document.getElementById('regroupBtn');
+        const totalCountElement = document.getElementById('totalCount');
+
+        // 初始化
+        function init() {
+            // 加载本地存储数据
+            loadFromLocalStorage();
+
+            // 事件监听器
+            excelFileInput.addEventListener('change', handleFileUpload);
+            resetStatsBtn.addEventListener('click', clearCacheAndRefresh);
+            groupPeopleBtn.addEventListener('click', groupPeople);
+            exportBtn.addEventListener('click', exportGroups);
+            regroupBtn.addEventListener('click', groupPeople);
+            
+            // 滑动条事件监听
+            groupSlider.addEventListener('input', function() {
+                const value = Math.min(Math.max(parseInt(this.value), parseInt(this.min)), parseInt(this.max));
+                groupValue.textContent = value;
+            });
+        }
+
+        // 处理文件上传
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileInfo.textContent = `正在处理: ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    // 检查是否包含所需的列
+                    const headers = jsonData[0] || [];
+                    const nameColumnIndex = findNameColumnIndex(headers);
+                    if (nameColumnIndex === -1) {
+                        fileInfo.textContent = '错误: 未找到"姓名"列';
+                        return;
+                    }
+
+                    // 提取姓名数据
+                    nameData = [];
+                    jsonData.slice(1).forEach(row => {
+                        const name = row[nameColumnIndex];
+                        if (name) {
+                            nameData.push(name);
+                        }
+                    });
+
+                    if (nameData.length === 0) {
+                        fileInfo.textContent = '错误: 未找到有效姓名数据';
+                        groupPeopleBtn.disabled = true;
+                        groupSlider.disabled = true;
+                        return;
+                    }
+
+                    // 启用分组功能
+                    groupPeopleBtn.disabled = false;
+                    groupSlider.disabled = false;
+                    
+                    // 更新滑动条
+                    const total = nameData.length;
+                    groupSlider.max = total;
+                    groupSlider.value = 1;
+                    groupValue.textContent = 1;
+                    
+                    // 更新显示
+                    totalCountElement.textContent = total;
+                    fileInfo.textContent = `已成功导入 ${total} 个姓名`;
+
+                    // 保存到本地存储
+                    saveToLocalStorage();
+
+                    // 滚动到分组设置区域
+                    document.getElementById('groupSettingsSection').scrollIntoView({ behavior: 'smooth' });
+                } catch (error) {
+                    fileInfo.textContent = '错误: 文件处理失败';
+                    console.error('文件处理错误:', error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 查找姓名列索引
+        function findNameColumnIndex(headers) {
+            if (!headers || headers.length === 0) return -1;
+
+            return headers.findIndex(header =>
+                header.includes('姓名') || header.includes('名字') || header.toLowerCase().includes('name')
+            );
+        }
+
+        // 执行分组操作
+        function groupPeople() {
+            if (nameData.length === 0) {
+                alert('请先导入学生名单');
+                return;
+            }
+            
+            const groupNum = parseInt(groupSlider.value);
+            const errorDiv = document.getElementById('numError');
+            
+            // 验证输入
+            if (!validateInput(nameData.length, groupNum, errorDiv)) return;
+            
+            // 打乱名单顺序
+            const shuffled = shuffleArray([...nameData]);
+            
+            // 计算每组人数
+            const baseSize = Math.floor(shuffled.length / groupNum);
+            const remainder = shuffled.length % groupNum;
+            
+            // 创建分组
+            currentGroups = [];
+            let index = 0;
+            
+            for (let i = 0; i < groupNum; i++) {
+                const size = baseSize + (i < remainder ? 1 : 0);
+                currentGroups.push(shuffled.slice(index, index + size));
+                index += size;
+            }
+            
+            // 显示结果
+            displayResult(currentGroups);
+            
+            // 显示结果区域
+            resultSection.classList.remove('hidden');
+            
+            // 滚动到结果区域
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 显示结果 - 每行显示10个名单
+        function displayResult(groups) {
+            resultDiv.innerHTML = '';
+            
+            groups.forEach((group, index) => {
+                // 为不同分组分配不同颜色（循环使用预设颜色）
+                const colorIndex = (index % 10) + 1;
+                const groupColor = `group-${colorIndex}`;
+                
+                // 创建分组卡片
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                groupCard.innerHTML = `
+                    <!-- 左侧彩色装饰条 -->
+                    <div class="group-accent bg-${groupColor}"></div>
+                    
+                    <!-- 分组标题区域 -->
+                    <div class="group-header">
+                        <div class="group-title text-${groupColor}">
+                            <i class="fa fa-users mr-2"></i>
+                            第${index + 1}组
+                        </div>
+                        <div class="group-count">
+                            <i class="fa fa-user mr-1"></i>${group.length}人
+                        </div>
+                    </div>
+                    
+                    <!-- 成员列表 - 每行显示10个 -->
+                    <div class="group-members" id="group-${index}-members"></div>
+                `;
+                
+                resultDiv.appendChild(groupCard);
+                
+                // 添加成员
+                const membersContainer = document.getElementById(`group-${index}-members`);
+                group.forEach((member, memberIndex) => {
+                    const memberElement = document.createElement('div');
+                    memberElement.className = 'member-item';
+                    memberElement.innerHTML = `
+                        <span class="member-index bg-${groupColor}">${memberIndex + 1}</span>
+                        <span>${member}</span>
+                    `;
+                    membersContainer.appendChild(memberElement);
+                });
+            });
+        }
+
+        // 验证输入
+        function validateInput(total, groupNum, errorDiv) {
+            errorDiv.classList.add('hidden');
+            
+            if (isNaN(groupNum) || groupNum < 1) {
+                errorDiv.textContent = '请选择有效的分组数量';
+                errorDiv.classList.remove('hidden');
+                return false;
+            }
+            
+            if (groupNum > total) {
+                errorDiv.textContent = `分组数量不能超过总人数（当前${total}人）`;
+                errorDiv.classList.remove('hidden');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 打乱数组顺序
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // 导出分组结果
+        function exportGroups() {
+            if (!currentGroups || currentGroups.length === 0) {
+                alert('没有可导出的分组数据');
+                return;
+            }
+            
+            try {
+                // 创建导出数据
+                const exportData = [['组别', '人数', '成员名单']];
+                
+                // 添加每个组的数据
+                currentGroups.forEach((group, index) => {
+                    exportData.push([
+                        index + 1,
+                        group.length,
+                        group.join('、')
+                    ]);
+                });
+                
+                // 创建工作簿
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "分组结果");
+                
+                // 获取当前时间
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${padZero(now.getMonth() + 1)}${padZero(now.getDate())}${padZero(now.getHours())}${padZero(now.getMinutes())}${padZero(now.getSeconds())}`;
+                
+                // 生成文件名
+                const fileName = `分组结果_${timestamp}.xlsx`;
+                
+                // 导出文件
+                XLSX.writeFile(wb, fileName);
+                
+                alert('分组结果已成功导出');
+            } catch (error) {
+                console.error('导出错误:', error);
+                alert('导出分组结果时出错');
+            }
+        }
+
+        // 清除缓存并刷新页面
+        function clearCacheAndRefresh() {
+            if (confirm('确定要清除页面缓存并刷新吗？')) {
+                try {
+                    localStorage.removeItem('groupNameData');
+                    
+                    if (caches) {
+                        caches.keys().then(names => {
+                            names.forEach(name => caches.delete(name));
+                        });
+                    }
+                    
+                    window.location.reload(true);
+                } catch (error) {
+                    console.error('清除缓存时出错:', error);
+                    alert('清除缓存时出错，请手动刷新页面');
+                }
+            }
+        }
+
+        // 辅助函数：数字补零
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // 保存到本地存储
+        function saveToLocalStorage() {
+            localStorage.setItem('groupNameData', JSON.stringify(nameData));
+        }
+
+        // 从本地存储加载
+        function loadFromLocalStorage() {
+            const savedNameData = localStorage.getItem('groupNameData');
+            
+            if (savedNameData) {
+                nameData = JSON.parse(savedNameData);
+                
+                if (nameData.length > 0) {
+                    const total = nameData.length;
+                    totalCountElement.textContent = total;
+                    fileInfo.textContent = `已加载 ${total} 个姓名`;
+                    groupPeopleBtn.disabled = false;
+                    
+                    groupSlider.max = total;
+                    groupSlider.value = 1;
+                    groupValue.textContent = 1;
+                    groupSlider.disabled = false;
+                }
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+    
+</body></html>
