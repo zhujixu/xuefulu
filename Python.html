@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下载 Python - 学府路1号 xuefulu.ai</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/utc.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/timezone.js"></script>
+  <style>
+    /* ==================== 基础重置 ==================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+      min-height: 100dvh;
+      padding: clamp(10px, 3vw, 20px);
+      overflow-x: hidden;
+      position: relative;
+      line-height: 1.6;
+      transition: background 0.5s ease, color 0.3s ease;
+    }
+
+    /* ==================== 主题：极简暖灰 Minimal Warm ==================== */
+    body {
+      --page-bg: #f5f3ef;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.06);
+      --glass-hover: rgba(255, 255, 255, 0.95);
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --card-header-windows: linear-gradient(90deg, #0071e3, #2997ff);
+      --card-header-macos: linear-gradient(90deg, #555, #777);
+      --btn-bg: #0071e3;
+      --btn-hover: #0077ed;
+      --btn-shadow: rgba(0, 113, 227, 0.3);
+      --orb-1-bg: radial-gradient(circle, rgba(0,113,227,0.06) 0%, transparent 70%);
+      --orb-2-bg: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
+      --shadow-md: 0 2px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+      --code-bg: rgba(0, 0, 0, 0.04);
+    }
+    body .logo i { color: #0071e3; filter: drop-shadow(0 0 8px rgba(0,113,227,0.3)); }
+    body .header-logo-link .logo span { color: #1d1d1f; }
+    body .download-tip { color: #86868b; }
+    body .download-tip:hover { color: #0071e3; }
+    body .footer-link { color: #0071e3; }
+    body .footer-link:hover { color: #1d1d1f; }
+    body .time-display .time-main { color: #86868b; font-weight: 400; }
+    body .download-card .version-text { color: #1d1d1f; }
+    body .download-card .filename-text { color: #515154; }
+    body .download-btn { color: #ffffff; }
+    body .download-subtitle a { color: #0071e3; }
+
+    /* ==================== 通用样式（基于CSS变量） ==================== */
+    body {
+      background: var(--page-bg);
+      color: var(--text-primary);
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+    .bg-orb-1 {
+      top: -10%; right: -5%;
+      width: min(500px, 50vw); height: min(500px, 50vw);
+      background: var(--orb-1-bg);
+    }
+    .bg-orb-2 {
+      bottom: -10%; left: -5%;
+      width: min(400px, 40vw); height: min(400px, 40vw);
+      background: var(--orb-2-bg);
+      animation-delay: -2s; animation-direction: reverse;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-30px) translateX(20px); } }
+
+    .container {
+      max-width: 56rem; width: 100%; margin: 0 auto;
+      position: relative; z-index: 1; padding: 0;
+    }
+
+    /* 头部 */
+    header { text-align: center; padding: clamp(20px, 5vw, 30px) 20px 8px; color: var(--text-primary); }
+    .logo {
+      font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; gap: 15px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .logo i { animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    .gold-accent { color: var(--accent); }
+    body .header-logo-link .logo span.gold-accent { color: #0071e3; }
+    .header-logo-link { text-decoration: none; color: inherit; display: block; }
+
+    .time-display { text-align: center; padding: 8px 0 6px; color: var(--text-primary); position: relative; z-index: 1; }
+    .time-display .time-main { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.5px; }
+    .time-display .time-sync-status { font-size: 0.7rem; opacity: 0.5; margin-left: 6px; vertical-align: middle; }
+
+    .download-tip {
+      display: block; text-align: center; color: var(--text-secondary);
+      font-size: 0.875rem; padding: 8px 20px; text-decoration: none;
+      transition: color var(--transition-fast, 0.2s ease);
+    }
+    .download-tip:hover { color: var(--accent); }
+    .download-tip i { margin-right: 6px; color: var(--text-secondary); }
+    .download-tip .highlight {
+      background-color: #fde047; color: #111827; font-weight: 700;
+      padding: 0.125rem 0.375rem; border-radius: 0.25rem;
+    }
+
+    /* 加载/错误 */
+    .loading-screen { min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+    .loading-screen .loading-content { text-align: center; }
+    .spinner {
+      width: 3rem; height: 3rem; margin: 0 auto 1rem;
+      border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-screen p { color: var(--text-secondary); font-size: 0.95rem; }
+
+    .error-screen { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .error-card {
+      max-width: 28rem; width: 100%; background: var(--glass-bg);
+      backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-md); padding: 1.5rem;
+    }
+    .error-card .error-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .error-card .error-icon { width: 1.5rem; height: 1.5rem; color: #ef4444; flex-shrink: 0; }
+    .error-card h2 { font-size: 1.125rem; font-weight: 600; color: var(--text-primary); }
+    .error-card p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.875rem; }
+    .error-card button {
+      width: 100%; padding: 0.75rem 1rem; background: var(--btn-bg);
+      color: var(--text-primary); border: 1px solid var(--glass-border);
+      border-radius: 12px; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px);
+    }
+    .error-card button:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 8px 20px var(--btn-shadow); }
+
+    /* 下载卡片 */
+    .cards-wrapper {
+      background: var(--glass-bg); backdrop-filter: blur(20px);
+      border-radius: 20px; padding: clamp(20px, 4vw, 30px);
+      box-shadow: var(--shadow-md); border: 1px solid var(--glass-border); margin-top: 10px;
+    }
+    .cards-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    @media (min-width: 768px) { .cards-grid { grid-template-columns: 1fr 1fr; } }
+
+    .download-card {
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+      border-radius: 15px; border: 1px solid var(--glass-border);
+      overflow: hidden; transition: all 0.3s ease;
+    }
+    .download-card:hover { background: var(--glass-hover); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+    .download-card .card-header { padding: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .download-card .card-header.windows { background: var(--card-header-windows); }
+    .download-card .card-header.macos { background: var(--card-header-macos); }
+    .download-card .card-header svg { width: 1.5rem; height: 1.5rem; fill: #fff; flex-shrink: 0; }
+    .download-card .card-header h2 { font-size: 1.25rem; font-weight: 600; color: #fff; }
+    .download-card .card-header a { color: #fff; text-decoration: none; }
+    .download-card .card-header a:hover { text-decoration: underline; }
+
+    .download-card .card-body { padding: 1.5rem; }
+    .download-card .info-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .download-card .info-row:last-of-type { margin-bottom: 0; }
+    .download-card .info-label { font-size: 0.875rem; color: var(--text-secondary); white-space: nowrap; }
+    .download-card .version-text { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--text-primary); }
+    .download-card .release-date-text { font-size: 0.875rem; color: var(--text-secondary); }
+    .download-card .filename-text {
+      font-size: 0.875rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--code-bg); color: var(--text-primary);
+      padding: 0.25rem 0.5rem; border-radius: 0.25rem; word-break: break-all;
+    }
+
+    .download-btn {
+      width: 100%; margin-top: 1rem; padding: 0.75rem 1rem;
+      background: var(--btn-bg); color: #fff; border: 1px solid var(--glass-border);
+      border-radius: 12px; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: all 0.3s ease; backdrop-filter: blur(10px);
+    }
+    .download-btn:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 8px 20px var(--btn-shadow); }
+    .download-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; }
+
+    .space-y-4 > * + * { margin-top: 1rem; }
+
+    /* 页脚 */
+    .footer { text-align: center; color: var(--text-secondary); padding: 30px 0 20px; font-size: 0.9rem; }
+    .footer-content { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .footer-link { color: var(--accent); text-decoration: none; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+    .footer-link:hover { color: var(--accent-hover); text-decoration: underline; transform: translateY(-2px); }
+    .separator { opacity: 0.4; }
+
+    /* ==================== 响应式 ==================== */
+    @media (max-width: 640px) { .cards-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) {
+      .logo { flex-direction: column; gap: 10px; }
+      .footer-content { flex-direction: column; gap: 8px; }
+      .separator { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+    @media print {
+      body { background: white !important; color: black !important; }
+      .bg-orb, .spinner, .loading-screen, .error-screen { display: none !important; }
+      .cards-wrapper { background: white; border: 1px solid #ddd; box-shadow: none; }
+      .download-card { background: #f5f5f5; border: 1px solid #ddd; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body class="theme-minimal-warm">
+  <!-- 背景装饰 -->
+  <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+  <div id="app"></div>
+
+  <script>
+
+    // ============== Icons ==============
+    var icons = {
+      windows: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.05M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>',
+      macos: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
+      download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>',
+      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    };
+
+    // ============== Constants ==============
+    var GITHUB_TAGS_API = 'https://api.github.com/repos/python/cpython/tags?per_page=60';
+    var PYTHON_FTP = 'https://www.python.org/ftp/python';
+    var ALIYUN_WINDOWS = 'https://mirrors.aliyun.com/python-release/windows/';
+    var ALIYUN_MACOS = 'https://mirrors.aliyun.com/python-release/macos/';
+
+    // ============== Data Helpers ==============
+    function parseVersion(tag) {
+      var m = tag.match(/^v?(\d+)\.(\d+)\.(\d+)$/);
+      if (!m) return null;
+      return { major: parseInt(m[1]), minor: parseInt(m[2]), patch: parseInt(m[3]), str: m[1] + '.' + m[2] + '.' + m[3] };
+    }
+
+    function isStableRelease(tag) { return /^v?\d+\.\d+\.\d+$/.test(tag); }
+
+    async function fetchWithTimeout(url, timeoutMs) {
+      timeoutMs = timeoutMs || 8000;
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, timeoutMs);
+      try {
+        var resp = await fetch(url, { signal: controller.signal });
+        clearTimeout(timer);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return await resp.json();
+      } catch(e) { clearTimeout(timer); throw e; }
+    }
+
+    // ============== Data Sources ==============
+    async function fetchFromGitHub() {
+      var data = await fetchWithTimeout(GITHUB_TAGS_API);
+      var stableVersions = [];
+      for (var idx = 0; idx < data.length; idx++) {
+        var tag = data[idx].name;
+        if (isStableRelease(tag)) {
+          var parsed = parseVersion(tag);
+          if (parsed) stableVersions.push(parsed);
+        }
+      }
+      stableVersions.sort(function(a,b) {
+        if (a.major !== b.major) return b.major - a.major;
+        if (a.minor !== b.minor) return b.minor - a.minor;
+        return b.patch - a.patch;
+      });
+      if (stableVersions.length === 0) throw new Error('未找到版本信息');
+
+      var latestVer = stableVersions[0].str;
+      var winFilename = 'python-' + latestVer + '-amd64.exe';
+      var macFilename = 'python-' + latestVer + '-macos11.pkg';
+      // 获取发布日期
+      var releaseDate = '';
+      try {
+        var tagRefResp = await fetchWithTimeout('https://api.github.com/repos/python/cpython/git/ref/tags/v' + latestVer, 5000);
+        var tagRef = tagRefResp;
+        if (tagRef.object && tagRef.object.url) {
+          var tagObjResp = await fetchWithTimeout(tagRef.object.url, 5000);
+          var tagObj = tagObjResp;
+          if (tagObj.tagger && tagObj.tagger.date) {
+            releaseDate = tagObj.tagger.date.slice(0, 10);
+          }
+        }
+      } catch(e) { /* 无法获取发布日期，留空 */ }
+
+      return {
+        windows: { platform: 'Windows', version: latestVer, filename: winFilename, downloadUrl: PYTHON_FTP + '/' + latestVer + '/' + winFilename, mirrorUrl: ALIYUN_WINDOWS , releaseDate: releaseDate },
+        macos: { platform: 'MacOS', version: latestVer, filename: macFilename, downloadUrl: PYTHON_FTP + '/' + latestVer + '/' + macFilename, mirrorUrl: ALIYUN_MACOS , releaseDate: releaseDate }
+      };
+    }
+
+    // ============== App State ==============
+    var state = { loading: true, error: null, data: null, year: new Date().getFullYear() };
+    var appEl = document.getElementById('app');
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    function escapeAttr(str) {
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderCard(data, platform) {
+      var isWindows = platform === 'windows';
+      var icon = isWindows ? icons.windows : icons.macos;
+      var mirrorUrl = data.mirrorUrl || (isWindows ? ALIYUN_WINDOWS : ALIYUN_MACOS);
+      var releaseDateHtml = data.releaseDate
+        ? '<div class="info-row"><span class="info-label">发布日期：</span><span class="release-date-text">' + escapeHtml(data.releaseDate) + '</span></div>'
+        : '';
+
+      return (
+        '<div class="download-card">' +
+          '<div class="card-header ' + platform + '">' +
+            icon +
+            '<h2><a href="' + escapeAttr(mirrorUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(data.platform) + '</a></h2>' +
+          '</div>' +
+          '<div class="card-body">' +
+            '<div class="space-y-4">' +
+              '<div class="info-row"><span class="info-label">最新版本：</span><span class="version-text">' + escapeHtml(data.version) + '</span></div>' +
+              '<div class="info-row"><span class="info-label">文件名：</span><span class="filename-text">' + escapeHtml(data.filename) + '</span></div>' +
+              releaseDateHtml +
+              '<button class="download-btn" onclick="window.open(\'' + escapeAttr(data.downloadUrl) + '\', \'_blank\')">' +
+                icons.download + ' 下载' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function render() {
+      if (state.loading) {
+        appEl.innerHTML =
+          '<div class="container">' +
+            '<header>' +
+              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
+                '<h1 class="logo">' +
+                  '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
+                  '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
+                '</h1>' +
+              '</a>' +
+              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
+                '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
+                '<span class="highlight">xuefulu.ai</span>' +
+                '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
+              '</a>' +
+              '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
+            '</header>' +
+            '<div class="loading-screen">' +
+              '<div class="loading-content">' +
+                '<div class="spinner"></div>' +
+                '<p>正在获取最新版本信息...</p>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      } else if (state.error) {
+        appEl.innerHTML =
+          '<div class="container">' +
+            '<header>' +
+              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
+                '<h1 class="logo">' +
+                  '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
+                  '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
+                '</h1>' +
+              '</a>' +
+              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
+                '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
+                '<span class="highlight">xuefulu.ai</span>' +
+                '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
+              '</a>' +
+              '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
+            '</header>' +
+            '<div class="error-screen">' +
+              '<div class="error-card">' +
+                '<div class="error-header">' +
+                  '<div class="error-icon">' + icons.error + '</div>' +
+                  '<h2>加载失败</h2>' +
+                '</div>' +
+                '<p>' + escapeHtml(state.error) + '</p>' +
+                '<button onclick="window.__fetchData()">重试</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      } else {
+        var d = state.data;
+        appEl.innerHTML =
+          '<div class="container">' +
+            '<header>' +
+              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
+                '<h1 class="logo">' +
+                  '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
+                  '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
+                '</h1>' +
+              '</a>' +
+              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
+                '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
+                '<span class="highlight">xuefulu.ai</span>' +
+                '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
+              '</a>' +
+              '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
+            '</header>' +
+            '<div class="cards-wrapper">' +
+              '<div class="cards-grid">' +
+                (d.windows ? renderCard(d.windows, 'windows') : '') +
+                (d.macos ? renderCard(d.macos, 'macos') : '') +
+              '</div>' +
+            '</div>' +
+            '<footer class="footer">' +
+              '<div class="footer-content">' +
+                '<a href="https://xuefulu.ai" target="_blank" rel="noopener" class="footer-link"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span id="footerYear">' + state.year + '</span> 学府路1号 xuefulu.ai</a>' +
+                '<span class="separator" aria-hidden="true">|</span>' +
+                '<a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>' +
+              '</div>' +
+            '</footer>' +
+          '</div>';
+      }
+    }
+
+    // ============== Fetch Logic ==============
+    var FALLBACK = {
+      windows: { platform: 'Windows', version: '3.14.6', filename: 'python-3.14.6-amd64.exe', downloadUrl: 'https://www.python.org/ftp/python/3.14.6/python-3.14.6-amd64.exe', mirrorUrl: ALIYUN_WINDOWS , releaseDate: '2026-06-10' },
+      macos: { platform: 'MacOS', version: '3.14.6', filename: 'python-3.14.6-macos11.pkg', downloadUrl: 'https://www.python.org/ftp/python/3.14.6/python-3.14.6-macos11.pkg', mirrorUrl: ALIYUN_MACOS , releaseDate: '2026-06-10' }
+    };
+
+    window.__fetchData = async function fetchData() {
+      state.loading = true;
+      state.error = null;
+      render();
+
+      try {
+        var result;
+        try { result = await fetchFromGitHub(); }
+        catch(e1) { result = null; }
+
+        if (result) { state.data = result; }
+        else { state.data = { windows: Object.assign({}, FALLBACK.windows), macos: Object.assign({}, FALLBACK.macos) }; }
+
+        try {
+          var tsResp = await fetch('https://api.shijian.online/timestamp/', { signal: AbortSignal.timeout(3000) });
+          var tsData = await tsResp.json();
+          if (tsData.status === 1 && tsData.data && tsData.data.timestamp) { state.year = new Date(tsData.data.timestamp).getFullYear(); }
+        } catch(e) { state.year = new Date().getFullYear(); }
+
+        state.loading = false;
+        render();
+        initTimeSync();
+      } catch(err) {
+        state.data = { windows: Object.assign({}, FALLBACK.windows), macos: Object.assign({}, FALLBACK.macos) };
+        state.year = new Date().getFullYear();
+        state.loading = false;
+        state.error = null;
+        render();
+        initTimeSync();
+      }
+
+      // 每 5 分钟自动检查新版本
+      setInterval(function() { window.__fetchData(); }, 5 * 60 * 1000);
+    };
+
+    // ============== 时间同步 ==============
+    var timeSyncInitialized = false;
+
+    function initTimeSync() {
+      if (timeSyncInitialized) return;
+      if (typeof dayjs === 'undefined') { setTimeout(initTimeSync, 500); return; }
+
+      dayjs.extend(window.dayjs_plugin_utc);
+      dayjs.extend(window.dayjs_plugin_timezone);
+
+      var BJ_TZ = 'Asia/Shanghai';
+      var SYNC_INTERVAL_MS = 5 * 60 * 1000;
+      var timeOffset = 0;
+      var syncTimer = null;
+
+      var timeEl = document.getElementById('currentDateTime');
+      var syncStatusEl = document.getElementById('timeSyncStatus');
+      if (!timeEl) { setTimeout(initTimeSync, 500); return; }
+
+      timeSyncInitialized = true;
+
+      function getBeijingTime() { return dayjs(Date.now() + timeOffset).tz(BJ_TZ); }
+
+      function updateDisplay() {
+        if (!timeEl) return;
+        var now = getBeijingTime();
+        var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        timeEl.textContent = now.format('YYYY年MM月DD日 ') + weekdays[now.day()] + ' ' + now.format('HH:mm:ss');
+      }
+
+      function updateFooterYear(isLocal) {
+        var yearEl = document.getElementById('footerYear');
+        if (!yearEl) return;
+        yearEl.textContent = isLocal ? new Date().getFullYear() : getBeijingTime().year();
+      }
+
+      async function syncTime() {
+        if (syncStatusEl) { syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+        try { await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' }); } catch(e) {}
+
+        var best = null;
+        var bestRtt = Infinity;
+        for (var attempt = 0; attempt < 3; attempt++) {
+          var t0 = performance.now();
+          try {
+            var res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
+            var data = await res.json();
+            var t1 = performance.now();
+            if (data.status === 1 && data.data && data.data.timestamp) {
+              var rtt = t1 - t0;
+              if (rtt < bestRtt) { bestRtt = rtt; best = data.data.timestamp + Math.round(rtt / 2); }
+            }
+          } catch(e) { continue; }
+        }
+
+        if (best) {
+          timeOffset = best - Date.now();
+          if (syncStatusEl) syncStatusEl.innerHTML = '';
+          updateFooterYear();
+        } else {
+          if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
+          updateFooterYear(true);
+        }
+        updateDisplay();
+      }
+
+      function startSync() {
+        syncTime();
+        if (syncTimer) clearInterval(syncTimer);
+        syncTimer = setInterval(syncTime, SYNC_INTERVAL_MS);
+      }
+
+      setInterval(updateDisplay, 1000);
+      startSync();
+    }
+
+    // ============== Init ==============
+    window.__fetchData();
+  </script>
+</body>
+</html>

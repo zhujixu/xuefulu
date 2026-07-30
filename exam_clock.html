@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xuefulu.ai</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/utc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/timezone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#3b82f6',
+                        accent: '#f97316',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        neutral: '#f3f4f6',
+                        dark: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .transition-smooth {
+                transition: all 0.3s ease-in-out;
+            }
+            .card {
+                @apply bg-white rounded-xl p-4 md:p-6 card-shadow transition-smooth hover:shadow-lg;
+            }
+            .btn {
+                @apply text-white font-bold py-2 px-4 rounded-lg transition-smooth focus:outline-none focus:ring-2 focus:ring-opacity-50;
+            }
+            .btn--success {
+                @apply bg-success hover:bg-success/90 focus:ring-success;
+            }
+            .btn--danger {
+                @apply bg-danger hover:bg-danger/90 focus:ring-danger;
+            }
+            /* ===== 按钮悬停上浮效果 ===== */
+            .btn-float:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.15);
+            }
+            .btn-float:active {
+                transform: translateY(0);
+            }
+
+            .input-container {
+                @apply w-full space-y-2;
+            }
+            .title-btn {
+                @apply w-full font-bold rounded-t-lg flex items-center justify-center transition-smooth px-3 text-white;
+            }
+            .form-input {
+                @apply w-full h-16 px-3 border border-gray-300 rounded-b-lg transition-smooth outline-none font-bold text-red-600 text-center;
+            }
+            .auto-adjust-hint {
+                @apply text-xs text-gray-500 italic text-center mt-1 hidden;
+            }
+            /* ===== 自定义下拉框 ===== */
+            .custom-select-popup {
+                scrollbar-width: thin;
+                scrollbar-color: #d1d5db transparent;
+            }
+            .custom-select-popup::-webkit-scrollbar {
+                width: 4px;
+            }
+            .custom-select-popup::-webkit-scrollbar-thumb {
+                background: #d1d5db;
+                border-radius: 2px;
+            }
+            .local-time-warning {
+                animation: pulse-warning 2s ease-in-out infinite;
+                border-color: #f59e0b !important;
+            }
+            @keyframes pulse-warning {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+                50% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            }
+            .sync-indicator {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.375rem;
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+            .sync-indicator.success {
+                background-color: rgba(16, 185, 129, 0.1);
+                color: #334155;
+            }
+            .sync-indicator.warning {
+                background-color: rgba(245, 158, 11, 0.1);
+                color: #f59e0b;
+            }
+            .sync-indicator.error {
+                background-color: rgba(239, 68, 68, 0.1);
+                color: #ef4444;
+            }
+
+
+            /* ===== 倒计时等宽数字 ===== */
+            .tabular-nums {
+                font-variant-numeric: tabular-nums;
+            }
+
+            /* ===== 紧迫感呼吸光晕 ===== */
+            .countdown-urgent {
+                animation: glow-urgent 1.5s ease-in-out infinite;
+            }
+            @keyframes glow-urgent {
+                0%, 100% { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(239, 68, 68, 0); }
+                50% { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 20px 4px rgba(239, 68, 68, 0.25); }
+            }
+
+            /* ===== 考前提醒脉冲 ===== */
+            .reminder-pulse-blue {
+                animation: pulse-border-blue 1.5s ease-in-out infinite;
+            }
+            @keyframes pulse-border-blue {
+                0%, 100% { border-top-color: #1e40af; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                50% { border-top-color: #3b82f6; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 -4px 15px 2px rgba(59, 130, 246, 0.3); }
+            }
+            .reminder-pulse-accent {
+                animation: pulse-border-accent 1.5s ease-in-out infinite;
+            }
+            @keyframes pulse-border-accent {
+                0%, 100% { border-top-color: #ef4444; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                50% { border-top-color: #fb923c; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 -4px 15px 2px rgba(249, 115, 22, 0.3); }
+            }
+            .reminder-pulse-red {
+                animation: pulse-border-red 1.5s ease-in-out infinite;
+            }
+            @keyframes pulse-border-red {
+                0%, 100% { border-top-color: #ef4444; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                50% { border-top-color: #f87171; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 -4px 15px 2px rgba(239, 68, 68, 0.3); }
+            }
+
+            .discipline-number {
+                @apply inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-xs mr-3 flex-shrink-0;
+                background: #ef4444;
+                font-weight: 600;
+            }
+
+            /* ===== 考试纪律条目 ===== */
+            .discipline-item {
+                display: flex;
+                align-items: center;
+                gap: 0;
+                padding: 12px 16px;
+                border-radius: 10px;
+                background: #f8fafc;
+                border: 1px solid #eef2f6;
+                transition: all 0.2s ease;
+            }
+            .discipline-item:hover {
+                background: #f1f5f9;
+                border-color: #dbe4ee;
+            }
+            .discipline-item p {
+                line-height: 1.7;
+                color: #334155;
+                font-size: 1rem;
+                text-align: justify;
+            }
+
+            #toggleDisciplineIcon {
+                transition: transform 0.3s ease;
+            }
+            #toggleDisciplineIcon.open {
+                transform: rotate(180deg);
+            }
+
+            /* ===== 当前时间卡片内层光晕 ===== */
+            .time-glow {
+                position: relative;
+            }
+            .time-glow::after {
+                content: '';
+                position: absolute;
+                inset: -8px;
+                border-radius: 12px;
+                background: radial-gradient(ellipse at center, rgba(30, 64, 175, 0.04) 0%, transparent 70%);
+                pointer-events: none;
+            }
+        }
+        /* ===== 页脚（与 index.html 保持一致） ===== */
+        .footer {
+            text-align: center;
+
+            color: #6b7280;
+        }
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .footer-link {
+            color: #ef4444;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .footer-link:hover {
+            color: #ef4444;
+            text-decoration: underline;
+        }
+        .separator {
+            opacity: 0.4;
+        }
+        @media (max-width: 640px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .separator {
+                display: none;
+            }
+        }
+
+
+        /* ===== 考试纪律折叠动画 ===== */
+        .discipline-collapse {
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, padding-top 0.3s ease, margin-top 0.3s ease, border-color 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+        }
+        .discipline-collapse.open {
+            max-height: 2000px;
+            opacity: 1;
+            margin-top: 24px;
+        }
+
+
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans text-dark flex flex-col">
+    <div class="container mx-auto px-4 pt-6 max-w-5xl flex-grow flex flex-col justify-start">
+        <!-- 考试纪律区域 -->
+        <section class="card mb-6">
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="https://xuefulu.ai/" class="btn btn--success btn-float flex items-center justify-center" target="_blank" rel="noopener">
+                    <i class="fa fa-external-link mr-2"></i>学府路1号 · <span class="bg-yellow-300 text-gray-900 font-bold px-1.5 py-0.5 rounded">xuefulu.ai</span>
+                </a>
+                <button id="toggleDisciplineBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="展开或收起考试纪律">
+                    <i class="fa fa-chevron-down mr-2" id="toggleDisciplineIcon"></i><span id="toggleDisciplineLabel">展开考试纪律</span>
+                </button>
+                <button id="playOnceBtn" class="btn btn--success btn-float flex items-center justify-center" aria-label="单次播放考试纪律音频">
+                    <i class="fa fa-play mr-2"></i>单次播放
+                </button>
+                <button id="playLoopBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="循环播放考试纪律音频">
+                    <i class="fa fa-repeat mr-2"></i>循环播放
+                </button>
+            </div>
+
+            <audio id="disciplineAudio" src="https://xuefulu.ai/Attention.mp3" preload="metadata">
+                您的浏览器不支持音频播放
+            </audio>
+            <audio id="reminderAudio" src="https://xuefulu.ai/Reminder.mp3" preload="metadata">
+                您的浏览器不支持音频播放
+            </audio>
+
+            <div id="disciplineMessage" class="text-red-500 text-center text-sm mb-3 hidden"></div>
+
+            <div id="disciplineCollapse" class="discipline-collapse">
+                <div class="space-y-3">
+                    <div class="discipline-item">
+                        <span class="discipline-number">1</span>
+                        <p>考生须自觉服从监考老师管理，严禁扰乱考场秩序。</p>
+                    </div>
+                    <div class="discipline-item">
+                        <span class="discipline-number">2</span>
+                        <p>考生须凭学生证，在规定时间进入指定教室，并按指定座位号就座参加考试。入场前须主动自查，自觉接受监考人员检查；严禁携带任何具有通讯、存储、拍照、传输功能的电子设备进入考场，包括但不限于：手机、智能眼镜、智能手表（手环）、蓝牙耳机、隐形耳机等新型智能穿戴设备，以及其他具备收发信息、扫描功能的电子设备。</p>
+                    </div>
+                    <div class="discipline-item">
+                        <span class="discipline-number">3</span>
+                        <p>入场后，考桌上仅可放置学生证及答题所需工具；其余无关物品（含各类电子设备）须提前关闭电源，统一放置于讲台两侧，不得随身携带；开考 45 分钟后，方可交卷。</p>
+                    </div>
+                    <div class="discipline-item">
+                        <span class="discipline-number">4</span>
+                        <p>凡携带、使用通讯工具及各类电子设备进行通话、查阅、发送、接收与考试相关内容的，一经发现，该门课程成绩按无效处理，并给予开除学籍处分。</p>
+                    </div>
+                    <div class="discipline-item">
+                        <span class="discipline-number">5</span>
+                        <p>考试过程中须保持安静，严格遵守考试纪律。对于任何违反考试规定的行为，将依据学校相关规定严肃处理。考试结束后，请安静有序离开考区。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <a href="https://xuefulu.ai/" target="_blank" rel="noopener"
+            class="block text-center text-sm text-gray-500 mb-6 hover:text-primary transition-smooth">
+            <i class="fa fa-external-link text-primary mr-1"></i>打开浏览器，在地址栏输入 <span class="bg-yellow-300 text-gray-900 font-bold px-1.5 py-0.5 rounded">xuefulu.ai</span>，按下 <span class="bg-yellow-300 text-gray-900 font-bold px-1.5 py-0.5 rounded">Enter</span> 即可访问学府路1号！
+        </a>
+
+        <!-- 考试信息设置区域 -->
+        <section class="card mb-6">
+            <form id="examForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 考试科目输入 -->
+                <div class="input-container">
+                    <button type="button" class="title-btn bg-success h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
+                        <i class="fa fa-book mr-2"></i>考试科目
+                    </button>
+                    <input type="text" id="examSubject" placeholder="xuefulu.ai" class="form-input text-[clamp(1.2rem,5vw,1.8rem)]">
+                </div>
+
+                <!-- 考试时间输入 -->
+                <div class="input-container">
+                    <button type="button" class="title-btn bg-danger h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
+                        <i class="fa fa-clock-o mr-2"></i>考试时间
+                    </button>
+                    <div id="examTimeContainer" class="w-full h-16 px-2 border border-gray-300 rounded-b-lg transition-smooth outline-none font-bold text-red-600 text-center flex items-center justify-center gap-0 bg-white select-none">
+                        <div class="custom-select-wrap relative inline-flex" data-field="startHour">
+                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="09">09</button>
+                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                        </div>
+                        <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600">:</span>
+                        <div class="custom-select-wrap relative inline-flex" data-field="startMinute">
+                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="00">00</button>
+                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                        </div>
+                        <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 mx-1">–</span>
+                        <div class="custom-select-wrap relative inline-flex" data-field="endHour">
+                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="09">09</button>
+                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                        </div>
+                        <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600">:</span>
+                        <div class="custom-select-wrap relative inline-flex" data-field="endMinute">
+                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="00">00</button>
+                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                        </div>
+                    </div>
+                    <div id="timeError" class="text-danger text-xs hidden text-center">开始和结束时间不能相同；支持跨日，如 22:00-00:30</div>
+                    <div id="autoAdjustHint" class="auto-adjust-hint">修改起始时间将自动调整结束时间（2小时后）</div>
+                </div>
+
+            </form>
+        </section>
+
+        <!-- 时钟显示区域 -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- 当前时间卡片 -->
+            <div id="currentTimeCard"
+                class="card border-t-4 border-primary">
+                <div class="text-center">
+                    <h3 class="text-base font-semibold mb-2 text-gray-700 flex items-center justify-center flex-wrap">
+                        <i class="fa fa-clock-o mr-2 text-primary"></i>当前北京时间
+                        <span id="syncStatus" class="ml-2">
+                            <span class="sync-indicator warning">
+                                <i class="fa fa-spinner fa-spin mr-1"></i> 同步中…
+                            </span>
+                        </span>
+                        <button id="syncNowBtn" class="ml-2 text-xs text-primary hover:text-primary/80 transition-smooth"
+                            title="立即同步">
+                            <i class="fa fa-refresh"></i> 立即同步
+                        </button>
+                    </h3>
+                    <div class="time-glow">
+                        <div id="currentTime" class="text-[clamp(3rem,12vw,5rem)] font-bold text-gray-800 tabular-nums" role="timer" aria-label="当前北京时间"></div>
+                    </div>
+                    <div id="currentDate" class="text-gray-500 mt-1 text-base"></div>
+                    <div id="localTimeWarning" class="hidden mt-2 text-sm text-warning">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <span>使用本机时间，可能存在误差</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 剩余时间卡片 -->
+            <div id="countdownCard"
+                class="card border-t-4 border-accent">
+                <div class="text-center">
+                    <h3 id="countdownTitle"
+                        class="text-base font-semibold mb-2 text-gray-700 flex items-center justify-center">
+                        <i id="countdownIcon" class="fa fa-hourglass-half mr-2 text-accent"></i><span
+                            id="countdownHeader">考试剩余时间</span>
+                    </h3>
+                    <div class="time-glow">
+                        <div id="countdown" class="text-[clamp(3rem,12vw,5rem)] font-bold text-accent tabular-nums" role="timer" aria-label="考试倒计时"></div>
+                    </div>
+                    <div id="countdownStatus" class="text-gray-500 mt-1 text-base"></div>
+                </div>
+            </div>
+        </section>
+
+
+    <footer class="footer mb-6 bg-white rounded-xl px-4 md:px-6 py-4 md:py-6 card-shadow">
+      <div class="footer-content">
+        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank"
+            rel="noopener"><i class="fa fa-graduation-cap" aria-hidden="true"></i> © 2026 学府路1号 xuefulu.ai</a></span>
+        <span class="separator" aria-hidden="true">|</span>
+        <a href="mailto:ai@xuefulu.ai" class="footer-link">
+          <i class="fa fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai
+        </a>
+      </div>
+    </footer>
+    </div>
+
+    <script>
+        // ===== 基础配置 =====
+        dayjs.extend(window.dayjs_plugin_utc);
+        dayjs.extend(window.dayjs_plugin_timezone);
+        const BJ_TZ = 'Asia/Shanghai';
+        const MS_SECOND = 1000;
+        const MS_MINUTE = 60 * MS_SECOND;
+        const MS_HOUR = 60 * MS_MINUTE;
+        const PRE_EXAM_REMINDER_MS = 5 * MS_MINUTE;
+        const PRE_END_REMINDER_MS = 15 * MS_MINUTE;
+        const PRE_EXAM_URGENT_MS = 15 * MS_MINUTE;
+        const COUNTDOWN_URGENT_MS = 5 * MS_MINUTE;
+
+        // ===== 状态变量 =====
+        let timeOffset = 0;
+        let retryCount = 0;
+        let syncInterval = null;
+
+        let userModifiedEndTime = false;
+        let preExamReminderTriggered = false;
+        let preEndReminderTriggered = false;
+        let _disciplineUserOverride = false;
+        let _timeErrorDirty = false;
+
+        // 考前5分钟自动播放状态（null=未激活, {count, handler}）
+        let _preExamAuto = null;
+
+        let _adjustTimer = null;
+
+        const MAX_RETRY = 3;
+        const SYNC_INTERVAL_MS = 5 * MS_MINUTE;
+        const RETRY_DELAY_BASE = 2000;
+        const FETCH_TIMEOUT = 3000;
+        const STORAGE_KEY_SUBJECT = 'exam_clock_subject';
+
+        // ===== 时间段定义（06:00-11:59 上午 / 12:00-17:59 下午 / 18:00-23:59 晚上） =====
+        const TIME_RANGES = [
+            { name: 'morning', label: '上午', startHour: 6, endHour: 12, defaultTime: '09:00-11:00' },
+            { name: 'afternoon', label: '下午', startHour: 12, endHour: 18, defaultTime: '15:00-17:00' },
+            { name: 'evening', label: '晚上', startHour: 18, endHour: 24, defaultTime: '19:00-21:00' },
+        ];
+
+        function getCurrentTimeRange() {
+            const hour = getBeijingTime().hour();
+            for (const r of TIME_RANGES) {
+                if (hour >= r.startHour && hour < r.endHour) return r;
+            }
+            return TIME_RANGES[TIME_RANGES.length - 1]; // 00:00-05:59 归入晚上
+        }
+
+        // ===== DOM 缓存 =====
+        const DOM = {};
+
+        function cacheDom() {
+            // 时钟相关
+            DOM.currentTime = document.getElementById('currentTime');
+            DOM.currentDate = document.getElementById('currentDate');
+            DOM.syncStatus = document.getElementById('syncStatus');
+            DOM.syncNowBtn = document.getElementById('syncNowBtn');
+            DOM.localTimeWarning = document.getElementById('localTimeWarning');
+            DOM.currentTimeCard = document.getElementById('currentTimeCard');
+            // 倒计时相关
+            DOM.examSubject = document.getElementById('examSubject');
+            DOM.startHourBtn = document.querySelector('[data-field="startHour"] .custom-select-btn');
+            DOM.startMinuteBtn = document.querySelector('[data-field="startMinute"] .custom-select-btn');
+            DOM.endHourBtn = document.querySelector('[data-field="endHour"] .custom-select-btn');
+            DOM.endMinuteBtn = document.querySelector('[data-field="endMinute"] .custom-select-btn');
+            DOM.timeError = document.getElementById('timeError');
+            DOM.autoAdjustHint = document.getElementById('autoAdjustHint');
+            DOM.countdownHeader = document.getElementById('countdownHeader');
+            DOM.countdownIcon = document.getElementById('countdownIcon');
+            DOM.countdownEl = document.getElementById('countdown');
+            DOM.countdownStatus = document.getElementById('countdownStatus');
+            DOM.countdownCard = document.getElementById('countdownCard');
+            // 音频相关
+            DOM.disciplineAudio = document.getElementById('disciplineAudio');
+            DOM.reminderAudio = document.getElementById('reminderAudio');
+            DOM.playOnceBtn = document.getElementById('playOnceBtn');
+            DOM.playLoopBtn = document.getElementById('playLoopBtn');
+            DOM.toggleDisciplineBtn = document.getElementById('toggleDisciplineBtn');
+            DOM.disciplineCollapse = document.getElementById('disciplineCollapse');
+            DOM.toggleDisciplineIcon = document.getElementById('toggleDisciplineIcon');
+            DOM.toggleDisciplineLabel = document.getElementById('toggleDisciplineLabel');
+            DOM.disciplineMessage = document.getElementById('disciplineMessage');
+        }
+
+        // ===== 工具函数 =====
+
+        function getBeijingTime() {
+            return dayjs(Date.now() + timeOffset).tz(BJ_TZ);
+        }
+
+        function formatDuration(ms) {
+            const abs = Math.max(0, ms);
+            const h = Math.floor(abs / MS_HOUR).toString().padStart(2, '0');
+            const m = Math.floor((abs % MS_HOUR) / MS_MINUTE).toString().padStart(2, '0');
+            const s = Math.floor((abs % MS_MINUTE) / MS_SECOND).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+
+        function setCountdownColor(colorClass) {
+            DOM.countdownEl.classList.remove('text-accent', 'text-blue-500', 'text-red-500', 'text-green-500');
+            DOM.countdownEl.classList.add(colorClass);
+        }
+
+        function setCountdownCardPulse(className) {
+            DOM.countdownCard.classList.remove('reminder-pulse-blue', 'reminder-pulse-accent', 'reminder-pulse-red', 'countdown-urgent');
+            if (className) DOM.countdownCard.classList.add(className);
+        }
+
+        function setCurrentTimeCardPulse(className) {
+            DOM.currentTimeCard.classList.remove('reminder-pulse-blue', 'reminder-pulse-accent', 'reminder-pulse-red');
+            if (className) DOM.currentTimeCard.classList.add(className);
+        }
+
+        function cleanupPreExamAuto() {
+            if (_preExamAuto) {
+                DOM.disciplineAudio.removeEventListener('ended', _preExamAuto.handler);
+                _preExamAuto = null;
+            }
+        }
+
+        function resetReminders() {
+            preExamReminderTriggered = false;
+            preEndReminderTriggered = false;
+            cleanupPreExamAuto();
+        }
+
+        /** 创建播放按钮点击处理器（避免单次/循环按钮逻辑重复） */
+        function createPlayHandler(loop) {
+            return function() {
+                const btn = loop ? DOM.playLoopBtn : DOM.playOnceBtn;
+                if (btn.dataset.state === 'playing') {
+                    cleanupPreExamAuto();
+                    stopDisciplineAudio();
+                    updateButtonStates(false);
+                    setCurrentTimeCardPulse(null);
+                } else {
+                    playDisciplineAudio(loop);
+                    updateButtonStates(true, btn);
+                }
+            };
+        }
+
+        function setFieldValue(btn, val) {
+            btn.dataset.value = val;
+            btn.textContent = val;
+        }
+
+        function getFieldValue(btn) {
+            return btn.dataset.value;
+        }
+
+        function getExamTimeValue() {
+            return `${getFieldValue(DOM.startHourBtn)}:${getFieldValue(DOM.startMinuteBtn)}-${getFieldValue(DOM.endHourBtn)}:${getFieldValue(DOM.endMinuteBtn)}`;
+        }
+
+        function setExamTimeSelects(timeStr) {
+            const parts = timeStr.split('-');
+            if (parts.length !== 2) return;
+            const [start, end] = parts;
+            const [sH, sM] = start.split(':');
+            const [eH, eM] = end.split(':');
+            setFieldValue(DOM.startHourBtn, sH);
+            setFieldValue(DOM.startMinuteBtn, sM);
+            setFieldValue(DOM.endHourBtn, eH);
+            setFieldValue(DOM.endMinuteBtn, eM);
+        }
+
+        function setExamTime(timeStr) {
+            setExamTimeSelects(timeStr);
+            userModifiedEndTime = false;
+            _disciplineUserOverride = false;
+            _timeErrorDirty = false;
+            DOM.timeError.classList.add('hidden');
+            resetReminders();
+            DOM.autoAdjustHint.classList.remove('hidden');
+            updateCountdown();
+            setDiscipline(false);
+        }
+
+        // ===== localStorage 持久化 =====
+        function saveExamSubject(subject) {
+            try { localStorage.setItem(STORAGE_KEY_SUBJECT, subject); } catch(e) {}
+        }
+        function loadExamSubject() {
+            try { return localStorage.getItem(STORAGE_KEY_SUBJECT); } catch(e) { return null; }
+        }
+
+        // ===== 互联网时间同步 =====
+
+        function updateSyncStatus(status, message) {
+            const icons = {
+                syncing: '<i class="fa fa-spinner fa-spin mr-1"></i>',
+                success: '<i class="fa fa-check-circle mr-1"></i>',
+                warning: '<i class="fa fa-exclamation-circle mr-1"></i>',
+                error: '<i class="fa fa-times-circle mr-1"></i>'
+            };
+            DOM.syncStatus.innerHTML = `
+                <span class="sync-indicator ${status === 'syncing' ? 'warning' : status}">
+                    ${icons[status]} ${message}
+                </span>`;
+        }
+
+        function toggleLocalTimeWarning(show) {
+            DOM.localTimeWarning.classList.toggle('hidden', !show);
+            DOM.currentTimeCard.classList.toggle('local-time-warning', show);
+        }
+
+        async function fetchWithTimeout(url, options = {}, timeout = FETCH_TIMEOUT) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            try {
+                const res = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(id);
+                return res;
+            } catch (e) {
+                clearTimeout(id);
+                throw e;
+            }
+        }
+
+        const TIME_SOURCE = { name: 'shijian.online', url: 'https://api.shijian.online/timestamp/', parse: d => d.data.timestamp };
+        // 不硬编码校准值，只用最小 RTT / 2 估算单向网络延迟
+
+        async function probeTimeSource() {
+            // 预热请求：消除 DNS、TCP、TLS 握手开销
+            try { await fetchWithTimeout(TIME_SOURCE.url, { cache: 'no-store', mode: 'cors' }); } catch {}
+            // 多轮探测（3次），取最低 RTT 的结果（网络抖动最小、服务器处理时间最短）
+            let best = null;
+            let bestRtt = Infinity;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                const t0 = performance.now();
+                try {
+                    const res = await fetchWithTimeout(TIME_SOURCE.url, { cache: 'no-store', mode: 'cors' });
+                    const data = await res.json();
+                    const t1 = performance.now();
+                    if (data.status !== 1) continue;
+                    const serverTime = TIME_SOURCE.parse(data);
+                    if (isNaN(serverTime) || serverTime < 1e12) continue;
+                    const roundTrip = Math.round(t1 - t0);
+                    if (roundTrip < bestRtt) {
+                        bestRtt = roundTrip;
+                        const estimatedNow = serverTime + Math.round(roundTrip / 2);
+                        best = { name: TIME_SOURCE.name, serverTime, roundTrip, estimatedNow };
+                    }
+                } catch { continue; }
+            }
+            return best;
+        }
+
+        async function syncInternetTime(isManual = false) {
+            if (!isManual) updateSyncStatus('syncing', '同步中…');
+
+            const result = await probeTimeSource();
+
+            if (result) {
+                timeOffset = result.estimatedNow - Date.now();
+                retryCount = 0;
+                updateSyncStatus('success', `已同步网络时间`);
+                toggleLocalTimeWarning(false);
+                resetSyncInterval();
+                return;
+            }
+
+            retryCount++;
+            if (isManual) {
+                updateSyncStatus('error', '同步失败');
+                alert('时间同步失败，将使用本机时间。\n请检查网络连接后重试。');
+            } else if (retryCount <= MAX_RETRY) {
+                const delay = RETRY_DELAY_BASE * Math.pow(2, retryCount - 1);
+                updateSyncStatus('warning', `重试中 (${retryCount}/${MAX_RETRY})`);
+                setTimeout(() => syncInternetTime(), delay);
+            } else {
+                updateSyncStatus('warning', '本机时间');
+            }
+            toggleLocalTimeWarning(true);
+        }
+
+        function resetSyncInterval() {
+            if (syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(syncInternetTime, SYNC_INTERVAL_MS);
+        }
+
+        function reloadAudioElement(audioEl) {
+            const src = audioEl.getAttribute('src') || audioEl.src;
+            const cleanSrc = src.replace(/[?&]t=\d+$/, '');
+            const cacheBusted = cleanSrc + (cleanSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
+            audioEl.pause();
+            audioEl.src = cacheBusted;
+            audioEl.load();
+            audioEl.play().catch(function() {});
+        }
+
+
+        // ===== 音频解锁（浏览器自动播放策略） =====
+        function ensureAudioContext() {
+            if (!window._audioCtx) {
+                try {
+                    let AC = window.AudioContext || window.webkitAudioContext;
+                    window._audioCtx = new AC();
+                } catch(e) { return; }
+            }
+            if (window._audioCtx.state === 'suspended') {
+                window._audioCtx.resume();
+            }
+        }
+
+        // ===== 音频控制 =====
+
+        function playDisciplineAudio(loop = false) {
+            DOM.disciplineAudio.loop = loop;
+            DOM.disciplineAudio.currentTime = 0;
+            DOM.disciplineAudio.play().catch(function() {
+                DOM.disciplineMessage.textContent = '音频播放失败：不支持该文件类型或文件无法访问';
+                DOM.disciplineMessage.classList.remove('hidden');
+                reloadAudioElement(DOM.disciplineAudio);
+            });
+            DOM.disciplineMessage.classList.add('hidden');
+            setDiscipline(true);
+        }
+
+        function stopDisciplineAudio() {
+            DOM.disciplineAudio.pause();
+            DOM.disciplineAudio.currentTime = 0;
+            DOM.disciplineMessage.classList.add('hidden');
+            setDiscipline(false);
+        }
+
+        function updateButtonStates(isPlaying, activeBtn = null) {
+            const resetBtn = (btn, icon, label, colorClass) => {
+                btn.innerHTML = `<i class="fa fa-${icon} mr-2"></i>${label}`;
+                btn.dataset.state = 'stopped';
+                btn.disabled = false;
+                btn.className = `btn ${colorClass} btn-float flex items-center justify-center`;
+            };
+
+            resetBtn(DOM.playOnceBtn, 'play', '单次播放', 'btn--success');
+            resetBtn(DOM.playLoopBtn, 'repeat', '循环播放', 'btn--danger');
+
+            if (isPlaying && activeBtn) {
+                activeBtn.innerHTML = '<i class="fa fa-stop mr-2"></i>停止播放';
+                activeBtn.dataset.state = 'playing';
+                const otherBtn = activeBtn === DOM.playOnceBtn ? DOM.playLoopBtn : DOM.playOnceBtn;
+                otherBtn.disabled = true;
+                otherBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // ===== 考试时间验证与处理 =====
+
+        function validateExamTime(timeStr) {
+            const parts = timeStr.trim().split('-');
+            if (parts.length !== 2) return false;
+            const [s, e] = parts.map(p => p.split(':').map(Number));
+            if (s.length !== 2 || e.length !== 2) return false;
+            if (s[0] < 0 || s[0] > 23 || s[1] < 0 || s[1] > 59) return false;
+            if (e[0] < 0 || e[0] > 23 || e[1] < 0 || e[1] > 59) return false;
+            // 允许跨日：结束时间 ≤ 开始时间视为次日（如 22:00-00:30）
+            return (e[0] * 60 + e[1]) !== (s[0] * 60 + s[1]);
+        }
+
+        function adjustEndTimeWhenStartChanges() {
+            if (userModifiedEndTime) return false;
+            const h = parseInt(getFieldValue(DOM.startHourBtn), 10);
+            const m = parseInt(getFieldValue(DOM.startMinuteBtn), 10);
+            const endStr = getBeijingTime().hour(h).minute(m).add(2, 'hour').format('HH:mm');
+            const [eH, eM] = endStr.split(':');
+            setFieldValue(DOM.endHourBtn, eH);
+            setFieldValue(DOM.endMinuteBtn, eM);
+            return true;
+        }
+
+        function setDefaultExamTime() {
+            setExamTime(getCurrentTimeRange().defaultTime);
+        }
+
+        // ===== 时间显示更新 =====
+
+        const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+        function updateCurrentTime(now) {
+            if (!now) now = getBeijingTime();
+            const timeStr = now.format('HH:mm:ss');
+            DOM.currentTime.innerHTML = timeStr;
+            DOM.currentDate.textContent = `${now.year()}年${now.month() + 1}月${now.date()}日 ${WEEKDAYS[now.day()]}`;
+        }
+
+        function updateCountdown(now) {
+            const timeInput = getExamTimeValue();
+
+            if (!validateExamTime(timeInput)) {
+                if (_timeErrorDirty) DOM.timeError.classList.remove('hidden');
+                DOM.countdownHeader.textContent = '时间格式错误';
+                DOM.countdownIcon.className = 'fa fa-exclamation-circle mr-2 text-red-500';
+                DOM.countdownEl.innerHTML = '--:--:--';
+                DOM.countdownStatus.textContent = '格式: HH:MM-HH:MM（不能相同；支持跨日）';
+                setCountdownColor('text-red-500');
+                setCountdownCardPulse(null);
+                setCurrentTimeCardPulse(null);
+                return;
+            }
+
+            DOM.timeError.classList.add('hidden');
+
+            const [startTimeStr, endTimeStr] = timeInput.split('-');
+            if (!now) now = getBeijingTime();
+            const baseDate = now.format('YYYY-MM-DD');
+            let startTime = dayjs.tz(`${baseDate} ${startTimeStr}`, BJ_TZ);
+            let endTime = dayjs.tz(`${baseDate} ${endTimeStr}`, BJ_TZ);
+
+            // 跨日支持：结束 ≤ 开始时，结束时间推到次日（如 22:00-00:30）
+            if (!endTime.isAfter(startTime)) {
+                endTime = endTime.add(1, 'day');
+            }
+
+            // 判断原始输入是否为跨日考试（避免将当天10:00-12:00误判为跨日）
+            const [sH, sM] = startTimeStr.split(':').map(Number);
+            const [eH, eM] = endTimeStr.split(':').map(Number);
+            const isCrossDayInput = (eH * 60 + eM) <= (sH * 60 + sM);
+
+            // 仅对跨日考试做次日回退检测（例如当前01:00，考试为昨晚22:00-00:30）
+            if (isCrossDayInput && now.isBefore(startTime) && startTime.diff(now, 'hour') > 6) {
+                const yesterdayStart = startTime.subtract(1, 'day');
+                const yesterdayEnd = endTime.subtract(1, 'day');
+                if (now.isAfter(yesterdayEnd)) {
+                    startTime = yesterdayStart;
+                    endTime = yesterdayEnd;
+                }
+            }
+
+            const isUpcoming = now.isBefore(startTime);
+            const isStarted = !isUpcoming;
+            const isEnded = now.isAfter(endTime);
+
+            if (isUpcoming) {
+                updateUpcoming(startTime.diff(now), startTime);
+            } else if (isStarted && !isEnded) {
+                updateDuring(endTime.diff(now), endTime);
+            } else {
+                updateEnded(endTime);
+            }
+        }
+
+        /** 考前阶段：显示距开考剩余时间，监听考前5分钟提醒 */
+        function updateUpcoming(diff, startTime) {
+            DOM.countdownHeader.textContent = '即将开始考试';
+            DOM.countdownIcon.className = 'fa fa-hourglass-start mr-2 text-blue-500';
+            DOM.countdownEl.innerHTML = formatDuration(diff);
+            DOM.countdownStatus.textContent = `考试将于 ${startTime.format('HH:mm')} 开始`;
+
+            if (diff < PRE_EXAM_URGENT_MS) {
+                setCountdownColor('text-accent');
+                setCountdownCardPulse('reminder-pulse-accent');
+            } else {
+                setCountdownColor('text-blue-500');
+                setCountdownCardPulse(null);
+            }
+
+            // 检测考前倒计时是否精确到达 5 分钟（±1秒容差）
+            const isAtPreExamThreshold = Math.abs(diff - PRE_EXAM_REMINDER_MS) < 1000;
+
+            // 考试前5分钟（倒计时精确到达5分钟时）：展开纪律并播放 Attention.mp3，播放2次后自动收起
+            if (isAtPreExamThreshold && !preExamReminderTriggered) {
+                preExamReminderTriggered = true;
+                cleanupPreExamAuto();
+                DOM.disciplineAudio.loop = false;
+                DOM.disciplineAudio.currentTime = 0;
+                const handler = function() {
+                    if (!_preExamAuto || ++_preExamAuto.count < 2) {
+                        DOM.disciplineAudio.currentTime = 0;
+                        DOM.disciplineAudio.play().catch(function() {});
+                    } else {
+                        cleanupPreExamAuto();
+                        stopDisciplineAudio();
+                        updateButtonStates(false);
+                        setCurrentTimeCardPulse(null);
+                    }
+                };
+                _preExamAuto = { count: 0, handler };
+                DOM.disciplineAudio.addEventListener('ended', handler);
+                DOM.disciplineAudio.play().then(function() {
+                    DOM.disciplineMessage.classList.add('hidden');
+                    setDiscipline(true);
+                    updateButtonStates(true, DOM.playOnceBtn);
+                    setCurrentTimeCardPulse('reminder-pulse-blue');
+                }).catch(function() {
+                    cleanupPreExamAuto();
+                    DOM.disciplineMessage.textContent = '音频播放失败：不支持该文件类型或文件无法访问';
+                    DOM.disciplineMessage.classList.remove('hidden');
+                    updateButtonStates(false);
+                    setCurrentTimeCardPulse(null);
+                });
+            }
+            autoToggleDiscipline('upcoming');
+        }
+
+        /** 考中阶段：显示离考试结束剩余时间，监听结束前15分钟提醒 */
+        function updateDuring(diff, endTime) {
+            // 检测倒计时是否精确到达 15 分钟（±1秒容差）
+            const isAtEndThreshold = Math.abs(diff - PRE_END_REMINDER_MS) < 1000;
+            DOM.countdownHeader.textContent = '考试剩余时间';
+            DOM.countdownIcon.className = 'fa fa-hourglass-half mr-2 text-accent';
+            DOM.countdownEl.innerHTML = formatDuration(diff);
+            DOM.countdownStatus.textContent = `考试将于 ${endTime.format('HH:mm')} 结束`;
+
+            setCurrentTimeCardPulse(null);
+
+            if (diff < PRE_END_REMINDER_MS) {
+                setCountdownColor('text-red-500');
+                // <5分钟时加强紧迫感
+                if (diff < COUNTDOWN_URGENT_MS) {
+                    setCountdownCardPulse('countdown-urgent');
+                } else {
+                    setCountdownCardPulse('reminder-pulse-red');
+                }
+            } else {
+                setCountdownColor('text-accent');
+                setCountdownCardPulse(null);
+            }
+
+            // 考试结束前15分钟（倒计时精确到达15分钟时）：播放 Reminder.mp3
+            if (isAtEndThreshold && !preEndReminderTriggered) {
+                preEndReminderTriggered = true;
+                DOM.reminderAudio.currentTime = 0;
+                DOM.reminderAudio.play().catch(function() { reloadAudioElement(DOM.reminderAudio); });
+            }
+            autoToggleDiscipline('during');
+        }
+
+        /** 考后阶段：显示考试已结束 */
+        function updateEnded(endTime) {
+            DOM.countdownHeader.textContent = '考试已结束';
+            DOM.countdownIcon.className = 'fa fa-check-circle mr-2 text-green-500';
+            DOM.countdownEl.innerHTML = '00:00:00';
+            DOM.countdownStatus.textContent = `考试已于 ${endTime.format('HH:mm')} 结束`;
+            setCountdownColor('text-green-500');
+            setCountdownCardPulse(null);
+            setCurrentTimeCardPulse(null);
+            autoToggleDiscipline('ended');
+        }
+
+        // ===== 初始化 =====
+
+        /** 每6小时自动刷新页面（00:00 / 06:00 / 12:00 / 18:00） */
+        function scheduleAutoRefresh() {
+            const now = getBeijingTime();
+            const refreshHours = [0, 6, 12, 18];
+            const currentHour = now.hour();
+            let nextHour = refreshHours.find(function(h) { return h > currentHour; });
+            let nextRefresh;
+            if (nextHour !== undefined) {
+                nextRefresh = now.clone().hour(nextHour).minute(0).second(0).millisecond(0);
+            } else {
+                nextRefresh = now.clone().add(1, 'day').hour(0).minute(0).second(0).millisecond(0);
+            }
+            let msUntilRefresh = nextRefresh.diff(now);
+            setTimeout(function() { location.reload(); }, msUntilRefresh);
+        }
+
+        function init() {
+            cacheDom();
+            initForm();
+            initAudioControls();
+            initTimeSync();
+            scheduleAutoRefresh();
+
+            // 首次用户交互时解锁音频上下文（绕过浏览器自动播放策略）
+            document.addEventListener('click', ensureAudioContext, { once: true });
+            document.addEventListener('keydown', ensureAudioContext, { once: true });
+
+            // 每秒更新（共享一次 getBeijingTime 调用）
+            setInterval(() => {
+                const now = getBeijingTime();
+                updateCurrentTime(now);
+                updateCountdown(now);
+            }, 1000);
+        }
+
+        function initExamSubject() {
+            const savedSubject = loadExamSubject();
+            if (savedSubject) DOM.examSubject.value = savedSubject;
+            DOM.examSubject.addEventListener('input', function() { saveExamSubject(this.value.trim()); });
+        }
+
+        function populateTimeSelects() {
+            const fields = [
+                { popup: DOM.startHourBtn.parentElement.querySelector('.custom-select-popup'), count: 24, pad: 2 },
+                { popup: DOM.startMinuteBtn.parentElement.querySelector('.custom-select-popup'), count: 60, pad: 2 },
+                { popup: DOM.endHourBtn.parentElement.querySelector('.custom-select-popup'), count: 24, pad: 2 },
+                { popup: DOM.endMinuteBtn.parentElement.querySelector('.custom-select-popup'), count: 60, pad: 2 }
+            ];
+            fields.forEach(({ popup, count, pad }) => {
+                for (let i = 0; i < count; i++) {
+                    const val = i.toString().padStart(pad, '0');
+                    const opt = document.createElement('button');
+                    opt.type = 'button';
+                    opt.className = 'block w-full px-4 py-1.5 text-center text-[18px] text-gray-700 hover:bg-gray-100 border-none bg-transparent cursor-pointer';
+                    opt.dataset.value = val;
+                    opt.textContent = val;
+                    popup.appendChild(opt);
+                }
+            });
+        }
+
+        function initExamTime() {
+            populateTimeSelects();
+            setDefaultExamTime();
+
+            let previousValue = getExamTimeValue();
+
+            function onTimeChanged(isEndField) {
+                const newValue = getExamTimeValue();
+                if (newValue !== previousValue) {
+                    resetReminders();
+                    previousValue = newValue;
+                }
+                _timeErrorDirty = true;
+
+                if (isEndField) {
+                    userModifiedEndTime = true;
+                    DOM.autoAdjustHint.classList.add('hidden');
+                    updateCountdown();
+                } else if (!userModifiedEndTime) {
+                    if (_adjustTimer) clearTimeout(_adjustTimer);
+                    _adjustTimer = setTimeout(() => {
+                        _adjustTimer = null;
+                        adjustEndTimeWhenStartChanges();
+                        updateCountdown();
+                    }, 500);
+                } else {
+                    updateCountdown();
+                }
+            }
+
+            function closeAllPopups() {
+                document.querySelectorAll('.custom-select-popup').forEach(p => p.classList.add('hidden'));
+            }
+
+            // 容器内事件委托：展开/选择
+            document.getElementById('examTimeContainer').addEventListener('click', function(e) {
+                // 点击按钮 — 切换弹出
+                const btn = e.target.closest('.custom-select-btn');
+                if (btn) {
+                    const wrap = btn.parentElement;
+                    const popup = wrap.querySelector('.custom-select-popup');
+                    const isOpen = !popup.classList.contains('hidden');
+                    closeAllPopups();
+                    if (!isOpen) popup.classList.remove('hidden');
+                    e.stopPropagation();
+                    return;
+                }
+                // 点击选项 — 选中
+                const opt = e.target.closest('.custom-select-popup button');
+                if (opt) {
+                    const wrap = opt.closest('.custom-select-wrap');
+                    const fieldBtn = wrap.querySelector('.custom-select-btn');
+                    setFieldValue(fieldBtn, opt.dataset.value);
+                    closeAllPopups();
+                    const isEnd = wrap.dataset.field.startsWith('end');
+                    onTimeChanged(isEnd);
+                    e.stopPropagation();
+                }
+            });
+
+            // 点击外部关闭所有弹出
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.custom-select-wrap')) {
+                    closeAllPopups();
+                }
+            });
+        }
+
+        function initTitleButtons() {
+            document.querySelectorAll('.title-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const next = this.nextElementSibling;
+                    const focusable = next.matches('input,select') ? next :
+                        next.querySelector('input,select,.custom-select-btn');
+                    if (focusable) focusable.focus();
+                });
+                btn.classList.add('hover:opacity-90');
+            });
+        }
+
+        function initForm() {
+            initExamSubject();
+            initExamTime();
+            initTitleButtons();
+            document.getElementById('examForm').addEventListener('submit', function(e) { e.preventDefault(); });
+            updateCurrentTime();
+            updateCountdown();
+            setDiscipline(false);
+        }
+
+        function initAudioControls() {
+            DOM.playOnceBtn.addEventListener('click', createPlayHandler(false));
+            DOM.playLoopBtn.addEventListener('click', createPlayHandler(true));
+            DOM.disciplineAudio.addEventListener('ended', function() {
+                // 手动单次播放结束后重置按钮状态
+                // 考前自动播放期间不收起（由 _preExamAuto.handler 在播完2次后统一处理）
+                if (!DOM.disciplineAudio.loop && !_preExamAuto) {
+                    updateButtonStates(false);
+                    setDiscipline(false);
+                }
+            });
+            DOM.disciplineAudio.addEventListener('error', function() {
+                DOM.disciplineMessage.textContent = '音频文件无法播放，请检查文件格式';
+                DOM.disciplineMessage.classList.remove('hidden');
+                updateButtonStates(false);
+            });
+            updateButtonStates(false);
+
+            DOM.toggleDisciplineBtn.addEventListener('click', toggleDiscipline);
+        }
+
+        function initTimeSync() {
+            syncInternetTime();
+            resetSyncInterval();
+
+            DOM.syncNowBtn.addEventListener('click', () => {
+                DOM.syncNowBtn.disabled = true;
+                DOM.syncNowBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                syncInternetTime(true).finally(() => {
+                    DOM.syncNowBtn.disabled = false;
+                    DOM.syncNowBtn.innerHTML = '<i class="fa fa-refresh"></i> 立即同步';
+                });
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    
+
+        // ===== 考试纪律折叠/展开 =====
+        function setDiscipline(show) {
+            if (show) {
+                DOM.disciplineCollapse.classList.add('open');
+                DOM.toggleDisciplineIcon.classList.add('open');
+                DOM.toggleDisciplineLabel.textContent = '收起考试纪律';
+            } else {
+                DOM.disciplineCollapse.classList.remove('open');
+                DOM.toggleDisciplineIcon.classList.remove('open');
+                DOM.toggleDisciplineLabel.textContent = '展开考试纪律';
+            }
+        }
+
+        function toggleDiscipline() {
+            _disciplineUserOverride = true;
+            cleanupPreExamAuto();
+            if (DOM.disciplineCollapse.classList.contains('open')) {
+                stopDisciplineAudio();
+                updateButtonStates(false);
+            } else {
+                playDisciplineAudio(true);
+                updateButtonStates(true, DOM.playLoopBtn);
+            }
+        }
+        function autoToggleDiscipline(phase) {
+            if (!_disciplineUserOverride && phase === 'during') {
+                setDiscipline(false);
+            }
+        }
+</script>
+<script>
+fetch('https://api.shijian.online/timestamp/').then(function(r){return r.json();}).then(function(d){var y=new Date(d.data.timestamp).getFullYear();document.querySelectorAll('.footer-link').forEach(function(e){e.innerHTML=e.innerHTML.replace(/\d{4}/,y);});}).catch(function(){});
+</script>
+</body>
+
+</html>
