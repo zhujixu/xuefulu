@@ -5,12 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>学府路1号 xuefulu.ai</title>
-  <!-- 阻止浏览器缓存 HTML，确保每次访问都是最新版本 -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/utc.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/timezone.js"></script>
   <style>
     /* ==================== CSS变量系统（暖灰极简主题） ==================== */
     :root {
@@ -18,10 +13,17 @@
       --text-primary: #1d1d1f;
       --text-secondary: #86868b;
       --glass-bg: rgba(255, 255, 255, 0.85);
-      --glass-border: rgba(0, 0, 0, 0.06);
       --glass-hover: rgba(255, 255, 255, 0.95);
       --accent: #0071e3;
-      --btn-shadow: rgba(0, 113, 227, 0.3);
+      --accent-hover: #0077ed;
+      --accent-soft: rgba(0, 113, 227, 0.1);
+      --accent-glow: rgba(0, 113, 227, 0.3);
+      --accent-focus: rgba(0, 113, 227, 0.12);
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --bg-subtle: rgba(0, 0, 0, 0.05);
+      --bg-active: rgba(0, 0, 0, 0.1);
+      --glass-border: var(--border-subtle);
+      --btn-shadow: var(--accent-glow);
       --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.06);
       --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
       --transition-fast: 0.2s ease;
@@ -53,9 +55,7 @@
       min-height: 100dvh;
       padding: clamp(10px, 3vw, 20px);
       overflow-x: hidden;
-      position: relative;
       line-height: 1.6;
-      transition: background 0.5s ease, color 0.3s ease;
     }
 
     /* 背景装饰 */
@@ -125,8 +125,8 @@
     }
 
     .logo i {
-      color: #0071e3;
-      filter: drop-shadow(0 0 8px rgba(0,113,227,0.3));
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
       animation: pulse 2s ease-in-out infinite;
     }
 
@@ -161,7 +161,7 @@
       border-radius: 0.25rem;
     }
 
-    /* ==================== 链接类（替代重复 inline styles） ==================== */
+    /* ==================== 链接类 ==================== */
     .header-logo-link {
       text-decoration: none;
       color: inherit;
@@ -170,8 +170,8 @@
 
     /* 品牌强调色（蓝色） */
     .brand-accent {
-      color: #0071e3;
-      text-shadow: 0 0 10px rgba(0, 113, 227, 0.3);
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
     }
 
     /* ==================== 主内容区 ==================== */
@@ -184,6 +184,7 @@
     .links-container {
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
       padding: clamp(20px, 4vw, 30px);
       box-shadow: var(--shadow-md);
@@ -227,14 +228,15 @@
       font-size: 0.95rem;
       outline: none;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
       white-space: nowrap;
       color: #fff;
     }
 
     .btn:focus-visible,
     .link-item:focus-visible {
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.3);
+      box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
     .btn:active {
@@ -243,39 +245,33 @@
 
     .btn:hover {
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--btn-shadow);
     }
 
     .btn-primary {
-      --btn-shadow: rgba(0, 113, 227, 0.3);
-      background: #0071e3;
-      color: white;
+      background: var(--accent);
     }
 
     .btn-primary:hover {
-      background: #0077ed;
-      box-shadow: 0 8px 20px var(--btn-shadow);
+      background: var(--accent-hover);
     }
 
     .btn-success {
       --btn-shadow: rgba(52, 199, 89, 0.4);
       background: #34c759;
-      color: white;
     }
 
     .btn-success:hover {
       background: #28a745;
-      box-shadow: 0 8px 20px var(--btn-shadow);
     }
 
     .btn-wechat {
       --btn-shadow: rgba(7, 193, 96, 0.4);
       background: #07c160;
-      color: white;
     }
 
     .btn-wechat:hover {
       background: #06ad56;
-      box-shadow: 0 8px 20px var(--btn-shadow);
     }
 
     .btn-wechat i {
@@ -285,21 +281,20 @@
     .btn-danger {
       --btn-shadow: rgba(255, 59, 48, 0.4);
       background: #ff3b30;
-      color: white;
     }
 
     .btn-danger:hover {
       background: #d6342a;
-      box-shadow: 0 8px 20px var(--btn-shadow);
     }
 
     .btn-cancel {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--bg-subtle);
       color: var(--text-primary);
+      --btn-shadow: transparent;
     }
 
     .btn-cancel:hover {
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--bg-active);
     }
 
     /* ==================== 链接网格 ==================== */
@@ -321,12 +316,13 @@
     .link-item {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius: var(--radius-md);
       padding: 16px 18px;
       display: flex;
       align-items: center;
       gap: 14px;
-      cursor: move;
+      cursor: pointer;
       transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       border: 1px solid var(--glass-border);
       position: relative;
@@ -371,6 +367,11 @@
       background: rgba(255, 255, 255, 0.95);
     }
 
+    /* 拖拽时屏蔽子元素指针事件，避免 dragenter/dragleave 在子元素间反复触发造成闪烁 */
+    .link-item.dragging * {
+      pointer-events: none;
+    }
+
     .link-item.drag-over {
       border: 2px dashed var(--accent);
       transform: scale(1.02);
@@ -393,6 +394,7 @@
       font-weight: bold;
       border-radius: inherit;
       backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       font-size: 0.9rem;
     }
 
@@ -409,7 +411,7 @@
       overflow: hidden;
       transition: all var(--transition-normal);
       position: relative;
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-subtle);
     }
 
     .link-favicon img {
@@ -455,7 +457,6 @@
     .link-content {
       flex: 1;
       min-width: 0;
-      cursor: pointer;
     }
 
     .link-title {
@@ -496,11 +497,15 @@
         opacity: 1;
         transform: translateX(0);
       }
+
+      .move-btn {
+        display: flex;
+      }
     }
 
     .action-btn {
       background: rgba(0, 0, 0, 0.04);
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-subtle);
       width: 30px;
       height: 30px;
       border-radius: 8px;
@@ -521,13 +526,23 @@
     }
 
     .edit-btn:hover {
-      background: rgba(0, 113, 227, 0.1);
+      background: var(--accent-soft);
       color: var(--accent);
     }
 
     .delete-btn:hover {
       background: rgba(255, 59, 48, 0.1);
       color: #ff3b30;
+    }
+
+    /* 移动按钮：桌面端用拖拽排序，触屏设备用上下移动替代 */
+    .move-btn {
+      display: none;
+    }
+
+    .move-btn:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
     }
 
     /* ==================== 空状态 ==================== */
@@ -564,6 +579,7 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
@@ -580,6 +596,7 @@
     .modal-content {
       background: #ffffff;
       backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: var(--radius-lg);
       width: 100%;
       max-width: 480px;
@@ -612,8 +629,8 @@
     }
 
     .close-modal {
-      background: rgba(0, 0, 0, 0.05);
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -628,7 +645,7 @@
     }
 
     .close-modal:hover {
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--bg-active);
       transform: rotate(90deg);
       color: var(--text-primary);
     }
@@ -664,7 +681,7 @@
 
     .form-control:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+      box-shadow: 0 0 0 3px var(--accent-focus);
       background: #fff;
     }
 
@@ -725,6 +742,7 @@
       right: 24px;
       background: #34c759;
       backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       color: white;
       padding: 14px 24px;
       border-radius: 12px;
@@ -909,7 +927,7 @@
 
   <div class="container">
     <header>
-      <a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
         <h1 class="logo">
           <i class="fas fa-graduation-cap" aria-hidden="true"></i>
           <span>学府路<span class="brand-accent">1</span>号 · <span
@@ -917,7 +935,7 @@
         </h1>
       </a>
       <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
-        <i class="fa fa-external-link" aria-hidden="true"></i>打开浏览器，在地址栏输入
+        <i class="fas fa-external-link" aria-hidden="true"></i>打开浏览器，在地址栏输入
         <span class="highlight">xuefulu.ai</span>
         ，按下 <span class="highlight">Enter</span> 即可访问学府路1号！
       </a>
@@ -959,7 +977,7 @@
 
     <footer class="footer">
       <div class="footer-content">
-        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span
+        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span
               id="footerYear">2026</span> 学府路1号
             xuefulu.ai</a></span>
         <span class="separator" aria-hidden="true">|</span>
@@ -1012,19 +1030,20 @@
 
   <!-- 通知 -->
   <div class="notification" id="notification" role="status" aria-live="polite">
-    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <i class="fas fa-check-circle" id="notificationIcon" aria-hidden="true"></i>
     <span id="notificationText">操作成功</span>
   </div>
 
-  <!-- 数据存储 -->
+  <!-- 数据存储：初始兜底链接数据。
+       运行时增删改只存在于内存，修改此处不会影响已打开页面的数据；
+       修改后请点击"下载保存"导出 HTML 备份。 -->
   <script type="application/json" id="initialData">
-    [{"id":1,"name":"考试时钟","url":"https://xuefulu.ai/exam_clock.html"},{"id":2,"name":"置身城内","url":"https://sc.gcut.edu.cn/home/"},{"id":3,"name":"学习通","url":"https://passport2.chaoxing.com/login?fid=&newversion=true&refer=https%3A%2F%2Fi.chaoxing.com"},{"id":4,"name":"学生考勤","url":"https://xuefulu.ai/student_attendance.html"},{"id":5,"name":"随机问答","url":"https://xuefulu.ai/random_questioning.html"},{"id":6,"name":"随机分组","url":"https://xuefulu.ai/random_grouping.html"},{"id":7,"name":"豆包","url":"https://www.doubao.com/chat/"},{"id":8,"name":"DeepSeek","url":"https://chat.deepseek.com/"},{"id":9,"name":"Kimi","url":"https://www.kimi.com"},{"id":10,"name":"Z.ai","url":"https://chat.z.ai"},{"id":11,"name":"Python","url":"https://xuefulu.ai/Python.html"},{"id":12,"name":"Trae","url":"https://www.trae.cn/ide"},{"id":13,"name":"WorkBuddy","url":"https://www.workbuddy.cn/"},{"id":14,"name":"ZCode","url":"https://zcode.z.ai/"},{"id":15,"name":"EchoBird","url":"https://echobird.ai/download/"},{"id":16,"name":"DeepSeek开放平台","url":"https://platform.deepseek.com/usage"},{"id":17,"name":"Kimi开放平台","url":"https://platform.kimi.com/console/account"},{"id":18,"name":"智谱开放平台","url":"https://bigmodel.cn/console/overview"},{"id":19,"name":"Cloudflare Drop","url":"https://www.cloudflare.com/drop/"}]
+    [{"id":"1","name":"考试时钟","url":"https://xuefulu.ai/exam_clock.html"},{"id":"2","name":"置身城理","url":"https://sc.gcut.edu.cn/home/"},{"id":"3","name":"学习通","url":"https://passport2.chaoxing.com/login?fid=&newversion=true&refer=https%3A%2F%2Fi.chaoxing.com"},{"id":"4","name":"学生考勤","url":"https://xuefulu.ai/student_attendance.html"},{"id":"5","name":"随机问答","url":"https://xuefulu.ai/random_questioning.html"},{"id":"6","name":"随机分组","url":"https://xuefulu.ai/random_grouping.html"},{"id":"7","name":"豆包","url":"https://www.doubao.com/chat/"},{"id":"8","name":"DeepSeek","url":"https://chat.deepseek.com/"},{"id":"9","name":"Kimi","url":"https://www.kimi.com"},{"id":"10","name":"Z.ai","url":"https://chat.z.ai"},{"id":"11","name":"Python","url":"https://xuefulu.ai/Python.html"},{"id":"12","name":"Trae","url":"https://www.trae.cn/ide"},{"id":"13","name":"WorkBuddy","url":"https://www.workbuddy.cn/"},{"id":"14","name":"ZCode","url":"https://zcode.z.ai/"},{"id":"15","name":"EchoBird","url":"https://echobird.ai/download/"},{"id":"16","name":"DeepSeek开放平台","url":"https://platform.deepseek.com/usage"},{"id":"17","name":"Kimi开放平台","url":"https://platform.kimi.com/console/account"},{"id":"18","name":"智谱开放平台","url":"https://bigmodel.cn/console/overview"},{"id":"19","name":"Cloudflare Drop","url":"https://www.cloudflare.com/drop/"}]
   </script>
 
   <script>
     /**
      * 学府路1号 - 链接管理器
-     * 优化后的JavaScript代码，使用ES6+特性和更好的架构
      */
 
     // ==================== 配置常量 ====================
@@ -1051,6 +1070,7 @@
       editingId: null,
       deleteId: null,
       draggedItem: null,
+      justDragged: false,
       notificationTimer: null,
       lastFocused: null
     };
@@ -1074,6 +1094,7 @@
       confirmDeleteBtn: document.getElementById('confirmDeleteBtn'),
       notification: document.getElementById('notification'),
       notificationText: document.getElementById('notificationText'),
+      notificationIcon: document.getElementById('notificationIcon'),
       initialData: document.getElementById('initialData'),
       wechatHelperBtn: document.getElementById('wechatHelperBtn')
     };
@@ -1087,8 +1108,19 @@
         return String(text).replace(/[&<>"']/g, c => m[c]);
       },
 
-      getDomain: (url) => {
+      getHostname: (url) => {
         try { return new URL(url).hostname; } catch { return ''; }
+      },
+
+      // 提取主域名：去掉子域名前缀，只保留根域名
+      // 如 www.doubao.com → doubao.com、sc.gcut.edu.cn → gcut.edu.cn、chat.z.ai → z.ai
+      // 最后两段是多段后缀（edu.cn、com.cn 等）时保留三段，否则保留两段
+      getMainDomain: (hostname) => {
+        if (!hostname) return '';
+        const labels = hostname.split('.');
+        const multiSuffixes = new Set(['com.cn', 'net.cn', 'org.cn', 'gov.cn', 'edu.cn', 'ac.cn', 'mil.cn', 'co.cn']);
+        const keep = multiSuffixes.has(labels.slice(-2).join('.')) ? 3 : 2;
+        return labels.slice(-keep).join('.');
       },
     };
 
@@ -1108,16 +1140,55 @@
       });
     }
 
-    // ==================== Favicon 加载（三级降级） ====================
-    function loadFavicon(url, container, onFallback, guard) {
-      const img = new Image();
-      img.alt = '';
-      img.onload = () => {
-        if (guard && guard(img)) { onFallback(); return; }
-        container.appendChild(img);
+    // ==================== Favicon 加载（源站优先 → Google 兜底 → 学士帽，带缓存） ====================
+    const faviconCache = new Map();
+
+    function renderFaviconFallback(container) {
+      container.innerHTML = '<i class="fas fa-graduation-cap favicon-fallback"></i>';
+    }
+
+    function loadFavicon(domain, container) {
+      if (!domain) {
+        renderFaviconFallback(container);
+        return;
+      }
+
+      // 命中缓存：复用已加载的图片，避免拖拽重排时重复请求
+      if (faviconCache.has(domain)) {
+        const cached = faviconCache.get(domain);
+        if (cached) container.appendChild(cached.cloneNode());
+        else renderFaviconFallback(container);
+        return;
+      }
+
+      const sources = [
+        `https://${domain}/favicon.ico`,
+        `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+      ];
+
+      let index = 0;
+      const tryNext = () => {
+        if (index >= sources.length) {
+          faviconCache.set(domain, null);
+          renderFaviconFallback(container);
+          return;
+        }
+        const img = new Image();
+        img.alt = '';
+        img.onload = () => {
+          // Google 服务取不到时返回 16×16 默认图标，继续降级
+          if (index === 1 && img.naturalWidth <= 16) {
+            index++;
+            tryNext();
+            return;
+          }
+          faviconCache.set(domain, img);
+          container.appendChild(img);
+        };
+        img.onerror = () => { index++; tryNext(); };
+        img.src = sources[index];
       };
-      img.onerror = onFallback;
-      img.src = url;
+      tryNext();
     }
 
     // ==================== UI管理 ====================
@@ -1129,6 +1200,8 @@
         }
         elements.notificationText.textContent = message;
         elements.notification.classList.toggle('error', isError);
+        elements.notificationIcon.classList.toggle('fa-check-circle', !isError);
+        elements.notificationIcon.classList.toggle('fa-exclamation-circle', isError);
         void elements.notification.offsetHeight;
         elements.notification.classList.add('show');
         state.notificationTimer = setTimeout(() => {
@@ -1170,7 +1243,7 @@
           if (!link?.id) return;
 
           const colorSet = CARD_COLORS[index % CARD_COLORS.length];
-          const domain = utils.getDomain(link.url);
+          const hostname = utils.getHostname(link.url);
 
           const item = document.createElement('div');
           item.className = 'link-item';
@@ -1182,7 +1255,7 @@
           item.style.cssText = `--card-accent: ${colorSet.accent}; --card-glow: ${colorSet.glow}; --card-accent-border: ${colorSet.border};`;
 
           const displayName = utils.escapeHtml(link.name || '未命名链接');
-          const displayDomain = utils.escapeHtml(domain || link.url || '无地址');
+          const displayDomain = utils.escapeHtml(utils.getMainDomain(hostname) || hostname || link.url || '无地址');
 
           item.innerHTML = `
             <div class="drag-handle" aria-label="拖动排序">
@@ -1197,49 +1270,19 @@
               <button class="action-btn edit-btn" type="button" aria-label="编辑 ${displayName}" title="编辑 (右键点击链接也可)">
                 <i class="fas fa-edit" aria-hidden="true"></i>
               </button>
+              <button class="action-btn move-btn move-up" type="button" aria-label="上移 ${displayName}" title="上移">
+                <i class="fas fa-chevron-up" aria-hidden="true"></i>
+              </button>
+              <button class="action-btn move-btn move-down" type="button" aria-label="下移 ${displayName}" title="下移">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+              </button>
               <button class="action-btn delete-btn" type="button" aria-label="删除 ${displayName}" title="删除">
                 <i class="fas fa-trash-alt" aria-hidden="true"></i>
               </button>
             </div>
           `;
 
-          // 加载 Favicon：Google 服务 → 源站 /favicon.ico → 学士帽
-          const faviconContainer = item.querySelector('.link-favicon');
-          if (domain) {
-            const toFallback = () => loadFavicon(
-              `https://${domain}/favicon.ico`,
-              faviconContainer,
-              () => { faviconContainer.innerHTML = '<i class="fas fa-graduation-cap favicon-fallback"></i>'; }
-            );
-            loadFavicon(
-              `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
-              faviconContainer,
-              toFallback,
-              (img) => img.naturalWidth <= 16
-            );
-          } else {
-            faviconContainer.innerHTML = '<i class="fas fa-graduation-cap favicon-fallback"></i>';
-          }
-
-          const content = item.querySelector('.link-content');
-          const editBtn = item.querySelector('.edit-btn');
-          const deleteBtn = item.querySelector('.delete-btn');
-
-          content.addEventListener('click', () => handlers.openLink(link.url));
-          content.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            handlers.openEditModal(link.id);
-          });
-
-          editBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handlers.openEditModal(link.id);
-          });
-
-          deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handlers.openDeleteModal(link.id, link.name);
-          });
+          loadFavicon(hostname, item.querySelector('.link-favicon'));
 
           fragment.appendChild(item);
         });
@@ -1255,9 +1298,11 @@
       openLink: (url) => {
         if (!url) return;
         try {
-          const isExternal = new URL(url).hostname !== window.location.hostname;
-          window.open(url, isExternal ? '_blank' : '_self');
-        } catch { window.open(url, '_self'); }
+          const parsed = new URL(url);
+          if (!['http:', 'https:'].includes(parsed.protocol)) return;
+          // 统一用新标签页打开，避免同域链接覆盖当前导航页
+          window.open(url, '_blank', 'noopener');
+        } catch { /* 忽略非法 URL */ }
       },
 
       // 打开添加模态框
@@ -1271,7 +1316,7 @@
 
       // 打开编辑模态框
       openEditModal: (id) => {
-        const link = state.links.find(l => l.id === id);
+        const link = handlers.findLinkById(id);
         if (!link) return;
 
         state.isEditing = true;
@@ -1293,7 +1338,6 @@
       closeModals: () => {
         ui.toggleModal(elements.linkModal, false);
         ui.toggleModal(elements.deleteConfirmModal, false);
-        elements.linkForm.reset();
         state.isEditing = false;
         state.editingId = null;
         state.deleteId = null;
@@ -1317,8 +1361,11 @@
           finalUrl = `https://${url}`;
         }
 
-        try { new URL(finalUrl); } catch {
-          ui.showNotification('请输入有效的URL地址', true);
+        try {
+          const parsed = new URL(finalUrl);
+          if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('unsupported protocol');
+        } catch {
+          ui.showNotification('请输入有效的 http/https 链接', true);
           return;
         }
 
@@ -1327,6 +1374,9 @@
           if (index !== -1) {
             state.links[index] = { ...state.links[index], name, url: finalUrl };
             ui.showNotification('链接已更新');
+          } else {
+            ui.showNotification('该链接不存在，可能已被删除', true);
+            return;
           }
         } else {
           state.links.push({
@@ -1356,6 +1406,16 @@
         handlers.closeModals();
       },
 
+      // 上移/下移排序（触屏设备替代拖拽）
+      moveLink: (id, direction) => {
+        const index = state.links.findIndex(l => String(l.id) === String(id));
+        const target = index + direction;
+        if (index === -1 || target < 0 || target >= state.links.length) return;
+        [state.links[index], state.links[target]] = [state.links[target], state.links[index]];
+        ui.renderLinks();
+        ui.showNotification(direction < 0 ? '链接已上移' : '链接已下移');
+      },
+
       // 下载页面
       downloadPage: () => {
         try {
@@ -1377,9 +1437,14 @@
         }
       },
 
-      // 拖拽开始
+      // 拖拽开始（仅从拖拽手柄触发，避免在卡片其他区域误触发排序）
       dragStart: (e) => {
-        const item = e.target.closest('.link-item');
+        const handle = e.target.closest('.drag-handle');
+        if (!handle) {
+          e.preventDefault();
+          return;
+        }
+        const item = handle.closest('.link-item');
         if (!item) return;
         state.draggedItem = item;
         item.classList.add('dragging');
@@ -1421,7 +1486,6 @@
           const toIndex = parseInt(target.dataset.index);
 
           if (!isNaN(fromIndex) && !isNaN(toIndex)) {
-            // 重新排序
             const [moved] = state.links.splice(fromIndex, 1);
             state.links.splice(toIndex, 0, moved);
             ui.renderLinks();
@@ -1438,14 +1502,17 @@
           el.classList.remove('drag-over');
         });
         state.draggedItem = null;
+        state.justDragged = true;
       },
 
       // 键盘导航
       handleLinkKeydown: (e) => {
+        // 按钮、输入框等可交互元素自己处理键盘事件，避免误触发打开链接
+        if (e.target.closest('button, input, textarea, select, a')) return;
         const item = e.target.closest('.link-item');
         if (!item) return;
         const id = item.dataset.id;
-        const link = state.links.find(l => l.id === id);
+        const link = handlers.findLinkById(id);
         if (!link) return;
 
         if (e.key === 'Enter' || e.key === ' ') {
@@ -1459,6 +1526,38 @@
           handlers.openEditModal(link.id);
         }
       },
+
+      // 网格事件委托：点击打开/编辑/删除
+      handleGridClick: (e) => {
+        const item = e.target.closest('.link-item');
+        if (!item) return;
+        const link = handlers.findLinkById(item.dataset.id);
+        if (!link) return;
+
+        if (e.target.closest('.edit-btn')) {
+          handlers.openEditModal(link.id);
+        } else if (e.target.closest('.delete-btn')) {
+          handlers.openDeleteModal(link.id, link.name);
+        } else if (e.target.closest('.move-up')) {
+          handlers.moveLink(link.id, -1);
+        } else if (e.target.closest('.move-down')) {
+          handlers.moveLink(link.id, 1);
+        } else if (!e.target.closest('.drag-handle')) {
+          // 整卡可点：除拖拽手柄和操作按钮外，点击任意区域都打开链接
+          handlers.openLink(link.url);
+        }
+      },
+
+      // 网格事件委托：右键卡片打开编辑
+      handleGridContextMenu: (e) => {
+        const item = e.target.closest('.link-item');
+        if (!item || e.target.closest('button')) return;
+        e.preventDefault();
+        const link = handlers.findLinkById(item.dataset.id);
+        if (link) handlers.openEditModal(link.id);
+      },
+
+      findLinkById: (id) => state.links.find(l => String(l.id) === String(id)),
 
       // 键盘快捷键
       handleKeydown: (e) => {
@@ -1476,7 +1575,8 @@
 
     // ==================== 初始化 ====================
     const init = () => {
-      state.links = JSON.parse(elements.initialData.textContent || '[]');
+      // 统一 ID 为字符串，保证新增/初始链接的严格相等比较一致
+      state.links = JSON.parse(elements.initialData.textContent || '[]').map(link => ({ ...link, id: String(link.id) }));
 
       ui.renderLinks();
 
@@ -1503,105 +1603,121 @@
       elements.linksGrid.addEventListener('drop', handlers.drop);
       elements.linksGrid.addEventListener('dragend', handlers.dragEnd);
       elements.linksGrid.addEventListener('keydown', handlers.handleLinkKeydown);
+      elements.linksGrid.addEventListener('click', handlers.handleGridClick);
+      elements.linksGrid.addEventListener('contextmenu', handlers.handleGridContextMenu);
 
       document.addEventListener('keydown', handlers.handleKeydown);
 
+      // 拖拽结束后抑制一次 click（浏览器会在 drop 后补发），防止误打开链接；下次按下指针时复位
+      document.addEventListener('pointerdown', () => { state.justDragged = false; }, true);
+      document.addEventListener('click', (e) => {
+        if (state.justDragged) {
+          e.preventDefault();
+          e.stopPropagation();
+          state.justDragged = false;
+        }
+      }, true);
+
+      // 先用本地年份兜底，避免同步完成前显示错误年份
+      updateFooterYear(true);
+      startSync();
     };
 
-    // 启动应用
+    // ==================== 时间同步与显示（原生 Intl 实现，无第三方依赖） ====================
+    const TIME = {
+      SYNC_INTERVAL_MS: 5 * 60 * 1000,
+      offset: 0,
+      syncTimer: null,
+      formatter: new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+      })
+    };
+
+    const timeEl = document.getElementById('currentDateTime');
+    const syncStatusEl = document.getElementById('timeSyncStatus');
+
+    function getBeijingParts() {
+      return TIME.formatter.formatToParts(new Date(Date.now() + TIME.offset));
+    }
+
+    function getBeijingPart(type) {
+      const part = getBeijingParts().find(p => p.type === type);
+      return part ? part.value : '';
+    }
+
+    function updateDisplay() {
+      if (!timeEl) return;
+      const parts = {};
+      for (const p of getBeijingParts()) parts[p.type] = p.value;
+      timeEl.textContent = `${parts.year}年${parts.month}月${parts.day}日 ${parts.weekday} ${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+
+    function updateFooterYear(useLocal) {
+      const yearEl = document.getElementById('footerYear');
+      if (!yearEl) return;
+      yearEl.textContent = useLocal ? new Date().getFullYear() : getBeijingPart('year');
+    }
+
+    async function syncTime() {
+      if (syncStatusEl) {
+        syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      }
+
+      let best = null;
+      let bestRtt = Infinity;
+
+      // 多轮探测（3次），取最低 RTT 的结果（网络抖动最小）
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const t0 = performance.now();
+        try {
+          const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
+          const data = await res.json();
+          const t1 = performance.now();
+          if (data.status === 1 && data.data && data.data.timestamp) {
+            const rtt = t1 - t0;
+            if (rtt < bestRtt) {
+              bestRtt = rtt;
+              // 估算网络时间：服务器时间 + 单向延迟（RTT/2）
+              best = data.data.timestamp + Math.round(rtt / 2);
+            }
+          }
+        } catch (e) { continue; }
+      }
+
+      if (best) {
+        TIME.offset = best - Date.now();
+        if (syncStatusEl) syncStatusEl.innerHTML = '';
+        updateFooterYear(false);
+      } else {
+        if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
+        updateFooterYear(true);
+      }
+
+      updateDisplay();
+    }
+
+    function startSync() {
+      syncTime();
+      if (TIME.syncTimer) clearInterval(TIME.syncTimer);
+      TIME.syncTimer = setInterval(syncTime, TIME.SYNC_INTERVAL_MS);
+      setInterval(updateDisplay, 1000);
+    }
+
+    // 统一启动入口
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {
-	      init();
-	    }
-
-	    // ===== 时间同步与显示（复用 exam_clock.html 的网络时间同步方案） =====
-	    (function() {
-	      dayjs.extend(window.dayjs_plugin_utc);
-	      dayjs.extend(window.dayjs_plugin_timezone);
-
-	      const BJ_TZ = 'Asia/Shanghai';
-	      const SYNC_INTERVAL_MS = 5 * 60 * 1000;
-	      let timeOffset = 0;
-	      let syncTimer = null;
-
-	      const timeEl = document.getElementById('currentDateTime');
-	      const syncStatusEl = document.getElementById('timeSyncStatus');
-
-	      function getBeijingTime() {
-	        return dayjs(Date.now() + timeOffset).tz(BJ_TZ);
-	      }
-
-	      function updateDisplay() {
-	        if (!timeEl) return;
-	        const now = getBeijingTime();
-	        const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-	        timeEl.textContent = now.format('YYYY年MM月DD日 ') + weekdays[now.day()] + ' ' + now.format('HH:mm:ss');
-	      }
-
-	      function updateFooterYear(isLocal) {
-	        const yearEl = document.getElementById('footerYear');
-	        if (!yearEl) return;
-	        yearEl.textContent = isLocal ? new Date().getFullYear() : getBeijingTime().year();
-	      }
-
-	      async function syncTime() {
-	        if (syncStatusEl) {
-	          syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-	        }
-
-	        // 预热请求：消除 DNS、TCP 握手开销
-	        try { await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' }); } catch(e) {}
-
-	        let best = null;
-	        let bestRtt = Infinity;
-
-	        // 多轮探测（3次），取最低 RTT 的结果（网络抖动最小）
-	        for (let attempt = 0; attempt < 3; attempt++) {
-	          const t0 = performance.now();
-	          try {
-	            const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
-	            const data = await res.json();
-	            const t1 = performance.now();
-	            if (data.status === 1 && data.data && data.data.timestamp) {
-	              const rtt = t1 - t0;
-	              if (rtt < bestRtt) {
-	                bestRtt = rtt;
-	                // 估算网络时间：服务器时间 + 单向延迟（RTT/2）
-	                best = data.data.timestamp + Math.round(rtt / 2);
-	              }
-	            }
-	          } catch(e) { continue; }
-	        }
-
-	        if (best) {
-	          timeOffset = best - Date.now();
-	          if (syncStatusEl) syncStatusEl.innerHTML = '';
-	          updateFooterYear();
-	        } else {
-	          if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
-	          updateFooterYear(true);
-	        }
-
-	        updateDisplay();
-	      }
-
-	      function startSync() {
-	        syncTime();
-	        if (syncTimer) clearInterval(syncTimer);
-	        syncTimer = setInterval(syncTime, SYNC_INTERVAL_MS);
-	      }
-
-	      // 每秒更新显示
-	      setInterval(updateDisplay, 1000);
-
-	      if (document.readyState === 'loading') {
-	        document.addEventListener('DOMContentLoaded', startSync);
-	      } else {
-	        startSync();
-	      }
-	    })();
-	  </script>
+      init();
+    }
+  </script>
 </body>
 
 </html>
