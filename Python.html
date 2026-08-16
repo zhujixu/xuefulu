@@ -191,6 +191,12 @@
     .download-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; }
 
     .space-y-4 > * + * { margin-top: 1rem; }
+    .stale-warning {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+      border-radius: 10px; padding: 0.6rem 0.9rem;
+      font-size: 0.85rem; margin-bottom: 1rem;
+    }
 
     /* 页脚 */
     .footer { text-align: center; color: var(--text-secondary); padding: 30px 0 20px; font-size: 0.9rem; }
@@ -235,19 +241,18 @@
     };
 
     // ============== Constants ==============
-    var GITHUB_TAGS_API = 'https://api.github.com/repos/python/cpython/tags?per_page=60';
-    var PYTHON_FTP = 'https://www.python.org/ftp/python';
+    var EOL_API = 'https://endoflife.date/api/python.json';
+    var GITHUB_TAGS_API = 'https://api.github.com/repos/python/cpython/tags?per_page=100';
     var ALIYUN_WINDOWS = 'https://mirrors.aliyun.com/python-release/windows/';
     var ALIYUN_MACOS = 'https://mirrors.aliyun.com/python-release/macos/';
 
     // ============== Data Helpers ==============
     function parseVersion(tag) {
+      if (!tag) return null;
       var m = tag.match(/^v?(\d+)\.(\d+)\.(\d+)$/);
       if (!m) return null;
       return { major: parseInt(m[1]), minor: parseInt(m[2]), patch: parseInt(m[3]), str: m[1] + '.' + m[2] + '.' + m[3] };
     }
-
-    function isStableRelease(tag) { return /^v?\d+\.\d+\.\d+$/.test(tag); }
 
     async function fetchWithTimeout(url, timeoutMs) {
       timeoutMs = timeoutMs || 8000;
@@ -262,15 +267,31 @@
     }
 
     // ============== Data Sources ==============
-    async function fetchFromGitHub() {
+    // 主数据源：endoflife.date（免认证、无速率限制、支持 CORS），一次请求拿到最新稳定版和发布日期
+    async function fetchLatestFromEOL() {
+      var data = await fetchWithTimeout(EOL_API);
+      var best = null;
+      for (var i = 0; i < data.length; i++) {
+        var parsed = parseVersion(data[i] && data[i].latest);
+        if (!parsed) continue;
+        if (!best ||
+            parsed.major > best.major ||
+            (parsed.major === best.major && parsed.minor > best.minor) ||
+            (parsed.major === best.major && parsed.minor === best.minor && parsed.patch > best.patch)) {
+          best = { version: parsed.str, releaseDate: (data[i].latestReleaseDate || '').slice(0, 10) };
+        }
+      }
+      if (!best) throw new Error('未找到版本信息');
+      return best;
+    }
+
+    // 备用数据源：GitHub tags（有未认证速率限制，仅作为兜底，不再额外请求发布日期）
+    async function fetchLatestFromGitHub() {
       var data = await fetchWithTimeout(GITHUB_TAGS_API);
       var stableVersions = [];
       for (var idx = 0; idx < data.length; idx++) {
-        var tag = data[idx].name;
-        if (isStableRelease(tag)) {
-          var parsed = parseVersion(tag);
-          if (parsed) stableVersions.push(parsed);
-        }
+        var parsed = parseVersion(data[idx] && data[idx].name);
+        if (parsed) stableVersions.push(parsed);
       }
       stableVersions.sort(function(a,b) {
         if (a.major !== b.major) return b.major - a.major;
@@ -278,27 +299,16 @@
         return b.patch - a.patch;
       });
       if (stableVersions.length === 0) throw new Error('未找到版本信息');
+      return { version: stableVersions[0].str, releaseDate: '' };
+    }
 
-      var latestVer = stableVersions[0].str;
-      var winFilename = 'python-' + latestVer + '-amd64.exe';
-      var macFilename = 'python-' + latestVer + '-macos11.pkg';
-      // 获取发布日期
-      var releaseDate = '';
-      try {
-        var tagRefResp = await fetchWithTimeout('https://api.github.com/repos/python/cpython/git/ref/tags/v' + latestVer, 5000);
-        var tagRef = tagRefResp;
-        if (tagRef.object && tagRef.object.url) {
-          var tagObjResp = await fetchWithTimeout(tagRef.object.url, 5000);
-          var tagObj = tagObjResp;
-          if (tagObj.tagger && tagObj.tagger.date) {
-            releaseDate = tagObj.tagger.date.slice(0, 10);
-          }
-        }
-      } catch(e) { /* 无法获取发布日期，留空 */ }
-
+    function buildData(version, releaseDate, isFallback) {
+      var winFilename = 'python-' + version + '-amd64.exe';
+      var macFilename = 'python-' + version + '-macos11.pkg';
       return {
-        windows: { platform: 'Windows', version: latestVer, filename: winFilename, downloadUrl: PYTHON_FTP + '/' + latestVer + '/' + winFilename, mirrorUrl: ALIYUN_WINDOWS , releaseDate: releaseDate },
-        macos: { platform: 'MacOS', version: latestVer, filename: macFilename, downloadUrl: PYTHON_FTP + '/' + latestVer + '/' + macFilename, mirrorUrl: ALIYUN_MACOS , releaseDate: releaseDate }
+        isFallback: !!isFallback,
+        windows: { platform: 'Windows', version: version, filename: winFilename, downloadUrl: ALIYUN_WINDOWS + winFilename, mirrorUrl: ALIYUN_WINDOWS, releaseDate: releaseDate },
+        macos: { platform: 'MacOS', version: version, filename: macFilename, downloadUrl: ALIYUN_MACOS + macFilename, mirrorUrl: ALIYUN_MACOS, releaseDate: releaseDate }
       };
     }
 
@@ -415,6 +425,7 @@
               '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
             '</header>' +
             '<div class="cards-wrapper">' +
+              (d.isFallback ? '<div class="stale-warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> 实时数据获取失败，当前显示为备用版本信息，可能不是最新版本</div>' : '') +
               '<div class="cards-grid">' +
                 (d.windows ? renderCard(d.windows, 'windows') : '') +
                 (d.macos ? renderCard(d.macos, 'macos') : '') +
@@ -433,8 +444,8 @@
 
     // ============== Fetch Logic ==============
     var FALLBACK = {
-      windows: { platform: 'Windows', version: '3.14.6', filename: 'python-3.14.6-amd64.exe', downloadUrl: 'https://www.python.org/ftp/python/3.14.6/python-3.14.6-amd64.exe', mirrorUrl: ALIYUN_WINDOWS , releaseDate: '2026-06-10' },
-      macos: { platform: 'MacOS', version: '3.14.6', filename: 'python-3.14.6-macos11.pkg', downloadUrl: 'https://www.python.org/ftp/python/3.14.6/python-3.14.6-macos11.pkg', mirrorUrl: ALIYUN_MACOS , releaseDate: '2026-06-10' }
+      windows: { platform: 'Windows', version: '3.14.7', filename: 'python-3.14.7-amd64.exe', downloadUrl: 'https://mirrors.aliyun.com/python-release/windows/python-3.14.7-amd64.exe', mirrorUrl: ALIYUN_WINDOWS, releaseDate: '2026-08-05' },
+      macos: { platform: 'MacOS', version: '3.14.7', filename: 'python-3.14.7-macos11.pkg', downloadUrl: 'https://mirrors.aliyun.com/python-release/macos/python-3.14.7-macos11.pkg', mirrorUrl: ALIYUN_MACOS, releaseDate: '2026-08-05' }
     };
 
     window.__fetchData = async function fetchData() {
@@ -442,34 +453,33 @@
       state.error = null;
       render();
 
-      try {
-        var result;
-        try { result = await fetchFromGitHub(); }
-        catch(e1) { result = null; }
+      var result = null;
+      try { result = await fetchLatestFromEOL(); }
+      catch(e1) { result = null; }
 
-        if (result) { state.data = result; }
-        else { state.data = { windows: Object.assign({}, FALLBACK.windows), macos: Object.assign({}, FALLBACK.macos) }; }
-
-        try {
-          var tsResp = await fetch('https://api.shijian.online/timestamp/', { signal: AbortSignal.timeout(3000) });
-          var tsData = await tsResp.json();
-          if (tsData.status === 1 && tsData.data && tsData.data.timestamp) { state.year = new Date(tsData.data.timestamp).getFullYear(); }
-        } catch(e) { state.year = new Date().getFullYear(); }
-
-        state.loading = false;
-        render();
-        initTimeSync();
-      } catch(err) {
-        state.data = { windows: Object.assign({}, FALLBACK.windows), macos: Object.assign({}, FALLBACK.macos) };
-        state.year = new Date().getFullYear();
-        state.loading = false;
-        state.error = null;
-        render();
-        initTimeSync();
+      if (result) {
+        state.data = buildData(result.version, result.releaseDate, false);
+      } else {
+        try { result = await fetchLatestFromGitHub(); }
+        catch(e2) { result = null; }
+        if (result) {
+          state.data = buildData(result.version, result.releaseDate, true);
+        } else {
+          state.data = { isFallback: true, windows: Object.assign({}, FALLBACK.windows), macos: Object.assign({}, FALLBACK.macos) };
+        }
       }
 
-      // 每 5 分钟自动检查新版本
-      setInterval(function() { window.__fetchData(); }, 5 * 60 * 1000);
+      try {
+        var tsResp = await fetch('https://api.shijian.online/timestamp/', { signal: AbortSignal.timeout(3000) });
+        var tsData = await tsResp.json();
+        if (tsData.status === 1 && tsData.data && tsData.data.timestamp) { state.year = new Date(tsData.data.timestamp).getFullYear(); }
+      } catch(e) {
+        state.year = new Date().getFullYear();
+      }
+
+      state.loading = false;
+      render();
+      initTimeSync();
     };
 
     // ============== 时间同步 ==============
@@ -549,7 +559,15 @@
     }
 
     // ============== Init ==============
+    // 自动刷新定时器只注册一次，避免定时器叠加导致请求翻倍
+    var refreshTimer = null;
+    function startAutoRefresh() {
+      if (refreshTimer) return;
+      refreshTimer = setInterval(function() { window.__fetchData(); }, 5 * 60 * 1000);
+    }
+
     window.__fetchData();
+    startAutoRefresh();
   </script>
 </body>
 </html>
