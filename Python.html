@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>下载 Python - 学府路1号 xuefulu.ai</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/utc.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/timezone.js"></script>
   <style>
     /* ==================== 基础重置 ==================== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -127,24 +124,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-screen p { color: var(--text-secondary); font-size: 0.95rem; }
 
-    .error-screen { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    .error-card {
-      max-width: 28rem; width: 100%; background: var(--glass-bg);
-      backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow-md); padding: 1.5rem;
-    }
-    .error-card .error-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
-    .error-card .error-icon { width: 1.5rem; height: 1.5rem; color: #ef4444; flex-shrink: 0; }
-    .error-card h2 { font-size: 1.125rem; font-weight: 600; color: var(--text-primary); }
-    .error-card p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.875rem; }
-    .error-card button {
-      width: 100%; padding: 0.75rem 1rem; background: var(--btn-bg);
-      color: var(--text-primary); border: 1px solid var(--glass-border);
-      border-radius: 12px; font-size: 0.95rem; font-weight: 600;
-      cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px);
-    }
-    .error-card button:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 8px 20px var(--btn-shadow); }
-
     /* 下载卡片 */
     .cards-wrapper {
       background: var(--glass-bg); backdrop-filter: blur(20px);
@@ -185,7 +164,7 @@
       background: var(--btn-bg); color: #fff; border: 1px solid var(--glass-border);
       border-radius: 12px; font-size: 0.95rem; font-weight: 600;
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      transition: all 0.3s ease; backdrop-filter: blur(10px);
+      text-decoration: none; transition: all 0.3s ease; backdrop-filter: blur(10px);
     }
     .download-btn:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 8px 20px var(--btn-shadow); }
     .download-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; }
@@ -217,7 +196,7 @@
     }
     @media print {
       body { background: white !important; color: black !important; }
-      .bg-orb, .spinner, .loading-screen, .error-screen { display: none !important; }
+      .bg-orb, .spinner, .loading-screen { display: none !important; }
       .cards-wrapper { background: white; border: 1px solid #ddd; box-shadow: none; }
       .download-card { background: #f5f5f5; border: 1px solid #ddd; break-inside: avoid; }
     }
@@ -236,8 +215,7 @@
     var icons = {
       windows: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.05M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>',
       macos: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
-      download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>',
-      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>'
     };
 
     // ============== Constants ==============
@@ -245,6 +223,7 @@
     var GITHUB_TAGS_API = 'https://api.github.com/repos/python/cpython/tags?per_page=100';
     var ALIYUN_WINDOWS = 'https://mirrors.aliyun.com/python-release/windows/';
     var ALIYUN_MACOS = 'https://mirrors.aliyun.com/python-release/macos/';
+    var TIME_API = 'https://api.shijian.online/timestamp/';
 
     // ============== Data Helpers ==============
     function parseVersion(tag) {
@@ -254,12 +233,12 @@
       return { major: parseInt(m[1]), minor: parseInt(m[2]), patch: parseInt(m[3]), str: m[1] + '.' + m[2] + '.' + m[3] };
     }
 
-    async function fetchWithTimeout(url, timeoutMs) {
+    async function fetchWithTimeout(url, timeoutMs, options) {
       timeoutMs = timeoutMs || 8000;
       var controller = new AbortController();
       var timer = setTimeout(function() { controller.abort(); }, timeoutMs);
       try {
-        var resp = await fetch(url, { signal: controller.signal });
+        var resp = await fetch(url, Object.assign({ signal: controller.signal }, options || {}));
         clearTimeout(timer);
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         return await resp.json();
@@ -313,7 +292,7 @@
     }
 
     // ============== App State ==============
-    var state = { loading: true, error: null, data: null, year: new Date().getFullYear() };
+    var state = { loading: true, data: null, year: new Date().getFullYear() };
     var appEl = document.getElementById('app');
 
     function escapeHtml(str) {
@@ -344,12 +323,31 @@
               '<div class="info-row"><span class="info-label">最新版本：</span><span class="version-text">' + escapeHtml(data.version) + '</span></div>' +
               '<div class="info-row"><span class="info-label">文件名：</span><span class="filename-text">' + escapeHtml(data.filename) + '</span></div>' +
               releaseDateHtml +
-              '<button class="download-btn" onclick="window.open(\'' + escapeAttr(data.downloadUrl) + '\', \'_blank\')">' +
+              '<a class="download-btn" href="' + escapeAttr(data.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' +
                 icons.download + ' 下载' +
-              '</button>' +
+              '</a>' +
             '</div>' +
           '</div>' +
         '</div>'
+      );
+    }
+
+    function renderHeader() {
+      return (
+        '<header>' +
+          '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
+            '<h1 class="logo">' +
+              '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
+              '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
+            '</h1>' +
+          '</a>' +
+          '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
+            '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
+            '<span class="highlight">xuefulu.ai</span>' +
+            '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
+          '</a>' +
+          '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
+        '</header>'
       );
     }
 
@@ -357,20 +355,7 @@
       if (state.loading) {
         appEl.innerHTML =
           '<div class="container">' +
-            '<header>' +
-              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
-                '<h1 class="logo">' +
-                  '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
-                  '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
-                '</h1>' +
-              '</a>' +
-              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
-                '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
-                '<span class="highlight">xuefulu.ai</span>' +
-                '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
-              '</a>' +
-              '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
-            '</header>' +
+            renderHeader() +
             '<div class="loading-screen">' +
               '<div class="loading-content">' +
                 '<div class="spinner"></div>' +
@@ -378,52 +363,11 @@
               '</div>' +
             '</div>' +
           '</div>';
-      } else if (state.error) {
-        appEl.innerHTML =
-          '<div class="container">' +
-            '<header>' +
-              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
-                '<h1 class="logo">' +
-                  '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
-                  '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
-                '</h1>' +
-              '</a>' +
-              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
-                '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
-                '<span class="highlight">xuefulu.ai</span>' +
-                '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
-              '</a>' +
-              '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
-            '</header>' +
-            '<div class="error-screen">' +
-              '<div class="error-card">' +
-                '<div class="error-header">' +
-                  '<div class="error-icon">' + icons.error + '</div>' +
-                  '<h2>加载失败</h2>' +
-                '</div>' +
-                '<p>' + escapeHtml(state.error) + '</p>' +
-                '<button onclick="window.__fetchData()">重试</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
       } else {
         var d = state.data;
         appEl.innerHTML =
           '<div class="container">' +
-            '<header>' +
-              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener" class="header-logo-link">' +
-                '<h1 class="logo">' +
-                  '<i class="fas fa-graduation-cap" aria-hidden="true"></i>' +
-                  '<span>学府路<span class="gold-accent">1</span>号 · <span class="gold-accent">xuefulu.ai</span></span>' +
-                '</h1>' +
-              '</a>' +
-              '<a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">' +
-                '<i class="fa fa-external-link" aria-hidden="true"></i> 打开浏览器，在地址栏输入 ' +
-                '<span class="highlight">xuefulu.ai</span>' +
-                '，按下 <span class="highlight">Enter</span> 即可访问学府路1号！' +
-              '</a>' +
-              '<div class="time-display"><span class="time-main"><span id="currentDateTime">--</span><span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span></span></div>' +
-            '</header>' +
+            renderHeader() +
             '<div class="cards-wrapper">' +
               (d.isFallback ? '<div class="stale-warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> 实时数据获取失败，当前显示为备用版本信息，可能不是最新版本</div>' : '') +
               '<div class="cards-grid">' +
@@ -443,14 +387,8 @@
     }
 
     // ============== Fetch Logic ==============
-    var FALLBACK = {
-      windows: { platform: 'Windows', version: '3.14.7', filename: 'python-3.14.7-amd64.exe', downloadUrl: 'https://mirrors.aliyun.com/python-release/windows/python-3.14.7-amd64.exe', mirrorUrl: ALIYUN_WINDOWS, releaseDate: '2026-08-05' },
-      macos: { platform: 'MacOS', version: '3.14.7', filename: 'python-3.14.7-macos11.pkg', downloadUrl: 'https://mirrors.aliyun.com/python-release/macos/python-3.14.7-macos11.pkg', mirrorUrl: ALIYUN_MACOS, releaseDate: '2026-08-05' }
-    };
-
     window.__fetchData = async function fetchData() {
       state.loading = true;
-      state.error = null;
       render();
 
       var result = null;
@@ -462,19 +400,10 @@
       } else {
         try { result = await fetchLatestFromGitHub(); }
         catch(e2) { result = null; }
-        if (result) {
-          state.data = buildData(result.version, result.releaseDate, true);
-        } else {
-          state.data = { isFallback: true, windows: Object.assign({}, FALLBACK.windows), macos: Object.assign({}, FALLBACK.macos) };
-        }
-      }
-
-      try {
-        var tsResp = await fetch('https://api.shijian.online/timestamp/', { signal: AbortSignal.timeout(3000) });
-        var tsData = await tsResp.json();
-        if (tsData.status === 1 && tsData.data && tsData.data.timestamp) { state.year = new Date(tsData.data.timestamp).getFullYear(); }
-      } catch(e) {
-        state.year = new Date().getFullYear();
+        // 最终兜底：写死的已知版本，界面会显示备用提示
+        state.data = result
+          ? buildData(result.version, result.releaseDate, true)
+          : buildData('3.14.7', '2026-08-05', true);
       }
 
       state.loading = false;
@@ -483,66 +412,72 @@
     };
 
     // ============== 时间同步 ==============
+    // 用原生 Intl 替代 dayjs，无外部依赖；定时器只注册一次，刷新页面时按 id 重新查找节点
     var timeSyncInitialized = false;
 
     function initTimeSync() {
       if (timeSyncInitialized) return;
-      if (typeof dayjs === 'undefined') { setTimeout(initTimeSync, 500); return; }
+      if (!document.getElementById('currentDateTime')) { setTimeout(initTimeSync, 500); return; }
+      timeSyncInitialized = true;
 
-      dayjs.extend(window.dayjs_plugin_utc);
-      dayjs.extend(window.dayjs_plugin_timezone);
-
-      var BJ_TZ = 'Asia/Shanghai';
       var SYNC_INTERVAL_MS = 5 * 60 * 1000;
       var timeOffset = 0;
       var syncTimer = null;
+      var beijingFormat = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+      });
 
-      var timeEl = document.getElementById('currentDateTime');
-      var syncStatusEl = document.getElementById('timeSyncStatus');
-      if (!timeEl) { setTimeout(initTimeSync, 500); return; }
-
-      timeSyncInitialized = true;
-
-      function getBeijingTime() { return dayjs(Date.now() + timeOffset).tz(BJ_TZ); }
+      function beijingParts(date) {
+        var parts = beijingFormat.formatToParts(date);
+        var map = {};
+        for (var i = 0; i < parts.length; i++) map[parts[i].type] = parts[i].value;
+        return map;
+      }
 
       function updateDisplay() {
-        if (!timeEl) return;
-        var now = getBeijingTime();
-        var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-        timeEl.textContent = now.format('YYYY年MM月DD日 ') + weekdays[now.day()] + ' ' + now.format('HH:mm:ss');
+        var el = document.getElementById('currentDateTime');
+        if (!el) return;
+        var p = beijingParts(new Date(Date.now() + timeOffset));
+        el.textContent = p.year + '年' + p.month + '月' + p.day + '日 ' + p.weekday + ' ' + p.hour + ':' + p.minute + ':' + p.second;
       }
 
       function updateFooterYear(isLocal) {
         var yearEl = document.getElementById('footerYear');
         if (!yearEl) return;
-        yearEl.textContent = isLocal ? new Date().getFullYear() : getBeijingTime().year();
+        yearEl.textContent = isLocal
+          ? new Date().getFullYear()
+          : parseInt(beijingParts(new Date(Date.now() + timeOffset)).year, 10);
+      }
+
+      function setSyncStatus(html) {
+        var el = document.getElementById('timeSyncStatus');
+        if (el) el.innerHTML = html;
       }
 
       async function syncTime() {
-        if (syncStatusEl) { syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
-        try { await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' }); } catch(e) {}
-
+        setSyncStatus('<i class="fas fa-spinner fa-spin"></i>');
         var best = null;
         var bestRtt = Infinity;
         for (var attempt = 0; attempt < 3; attempt++) {
           var t0 = performance.now();
           try {
-            var res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
-            var data = await res.json();
+            var data = await fetchWithTimeout(TIME_API, 4000, { cache: 'no-store' });
             var t1 = performance.now();
             if (data.status === 1 && data.data && data.data.timestamp) {
               var rtt = t1 - t0;
               if (rtt < bestRtt) { bestRtt = rtt; best = data.data.timestamp + Math.round(rtt / 2); }
             }
-          } catch(e) { continue; }
+          } catch(e) { /* 单次失败继续尝试 */ }
         }
 
         if (best) {
           timeOffset = best - Date.now();
-          if (syncStatusEl) syncStatusEl.innerHTML = '';
-          updateFooterYear();
+          setSyncStatus('');
+          updateFooterYear(false);
         } else {
-          if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
+          setSyncStatus('<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>');
           updateFooterYear(true);
         }
         updateDisplay();
@@ -554,7 +489,21 @@
         syncTimer = setInterval(syncTime, SYNC_INTERVAL_MS);
       }
 
-      setInterval(updateDisplay, 1000);
+      function startClock() {
+        if (window.__clockTimer) return;
+        window.__clockTimer = setInterval(updateDisplay, 1000);
+        updateDisplay();
+      }
+
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          if (window.__clockTimer) { clearInterval(window.__clockTimer); window.__clockTimer = null; }
+        } else {
+          startClock();
+        }
+      });
+
+      startClock();
       startSync();
     }
 
