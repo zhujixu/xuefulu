@@ -211,6 +211,36 @@
       font-weight: 600;
     }
 
+    .links-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* "其他链接"入口 */
+    .other-links-link {
+      text-decoration: none;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-soft);
+      transition: all var(--transition-fast);
+    }
+
+    .other-links-link:hover {
+      background: rgba(0, 113, 227, 0.16);
+      border-color: rgba(0, 113, 227, 0.28);
+      color: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
     /* ==================== 按钮系统 ==================== */
     .actions {
       display: flex;
@@ -952,7 +982,14 @@
     <main class="main-content">
       <section class="links-container">
         <div class="links-header">
-          <h2><i class="fas fa-compass" aria-hidden="true"></i> 快捷导航</h2>
+          <div class="links-header-left">
+            <h2>
+              <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="other-links-link"
+                title="学府路1号首页"><i class="fas fa-external-link" aria-hidden="true"></i> 快捷导航</a>
+            </h2>
+            <a href="https://xuefulu.ai/0.html" target="_blank" rel="noopener noreferrer" class="other-links-link"
+              title="其他链接"><i class="fas fa-external-link" aria-hidden="true"></i> 其他链接</a>
+          </div>
           <div class="actions">
             <button class="btn btn-wechat" id="wechatHelperBtn" type="button">
               <i class="fab fa-weixin" aria-hidden="true"></i> 微信传输
