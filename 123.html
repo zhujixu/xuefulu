@@ -1307,8 +1307,8 @@
               num2: num2,
               quotient: quotient,
               remainder: remainder,
-              answer: `商是 ${quotient}, 余数是 ${remainder}`,
-              questionText: `${num1} ÷ ${num2} 的商和余数分别是？`
+              answer: `${quotient} 余 ${remainder}`,
+              questionText: `${num1} ÷ ${num2} = ?`
             };
           }
         }
@@ -1334,7 +1334,7 @@
       function generateOptions(correctAnswer) {
         optionsContainer.innerHTML = '';
 
-        // 合并题（商和余数）：4 个选项都是"商是 x, 余数是 y"格式，其中一个是正确组合
+        // 合并题（商和余数）：4 个选项都是"x 余 y"格式，其中一个是正确组合
         if (currentQuestion.type === 'modulo') {
           const { quotient, remainder, num2 } = currentQuestion;
 
@@ -1375,7 +1375,7 @@
             button.type = 'button';
             button.dataset.q = ans.q;
             button.dataset.r = ans.r;
-            button.textContent = `商是 ${ans.q}, 余数是 ${ans.r}`;
+            button.textContent = `${ans.q} 余 ${ans.r}`;
             optionsContainer.appendChild(button);
           });
           return;
