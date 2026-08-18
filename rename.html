@@ -2,656 +2,1072 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生成毕业设计(论文)归档文件名称</title>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="学府路1号（xuefulu.ai）：一键生成毕业设计(论文)归档文件名称。打开浏览器，在地址栏输入 xuefulu.ai，按下 Enter 键即可访问学府路1号！">
+  <title>生成毕业设计(论文)归档文件名称 - 学府路1号 xuefulu.ai</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+  <style>
+    /* ==================== CSS变量系统（暖灰极简主题） ==================== */
+    :root {
+      --page-bg: #f5f3ef;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-hover: rgba(255, 255, 255, 0.95);
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --accent-soft: rgba(0, 113, 227, 0.1);
+      --accent-glow: rgba(0, 113, 227, 0.3);
+      --accent-focus: rgba(0, 113, 227, 0.12);
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --bg-subtle: rgba(0, 0, 0, 0.05);
+      --bg-active: rgba(0, 0, 0, 0.1);
+      --glass-border: var(--border-subtle);
+      --btn-shadow: var(--accent-glow);
+      --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --radius-sm: 10px;
+      --radius-md: 15px;
+      --radius-lg: 20px;
+    }
 
-        :root {
-            --primary-color: #2563eb;
-            --primary-light: #3b82f6;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #64748b;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --success-color: #10b981;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --transition: all 0.2s ease-in-out;
-        }
+    /* ==================== 基础重置 ==================== */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background-color: var(--bg-color);
-            min-height: 100vh;
-            padding: 2rem 1rem 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
+    html {
+      font-size: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-        .container {
-            max-width: 800px;
-            width: 100%;
-            background: var(--card-bg);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            margin-top: 2rem;
-        }
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+      background: var(--page-bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      padding: clamp(10px, 3vw, 20px);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
+    /* 背景装饰 */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
 
-        .header h1 {
-            font-size: 1.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
+    .bg-orb-1 {
+      top: -10%;
+      right: -5%;
+      width: min(500px, 50vw);
+      height: min(500px, 50vw);
+      background: radial-gradient(circle, rgba(0,113,227,0.06) 0%, transparent 70%);
+    }
 
-        .header p {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    .bg-orb-2 {
+      bottom: -10%;
+      left: -5%;
+      width: min(400px, 40vw);
+      height: min(400px, 40vw);
+      background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
+      animation-delay: -2s;
+      animation-direction: reverse;
+    }
 
-        .input-section {
-            padding: 2rem;
-        }
+    @keyframes float {
 
-        .input-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
+      0%,
+      100% {
+        transform: translateY(0) translateX(0);
+      }
 
-        .input-group label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
+      50% {
+        transform: translateY(-30px) translateX(20px);
+      }
+    }
 
-        .input-group input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            font-size: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            background-color: var(--bg-color);
-            transition: var(--transition);
-        }
+    /* ==================== 布局容器 ==================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            background-color: white;
-        }
+    /* ==================== 头部 ==================== */
+    header {
+      text-align: center;
+      /* 顶部间距保持响应式，底部固定 10px：与时间显示的 6px 底部内边距合计 16px */
+      padding: clamp(20px, 5vw, 30px) 20px 10px;
+      color: var(--text-primary);
+      margin-bottom: 0;
+    }
 
-        .checkbox-section {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-sm);
-        }
+    .logo {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
 
-        .checkbox-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
+    .logo i {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+      animation: pulse 2s ease-in-out infinite;
+    }
 
-        .checkbox-header h3 {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+    @keyframes pulse {
 
-        .select-all-btn {
-            padding: 0.375rem 0.875rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--primary-color);
-            background: transparent;
-            border: 1px solid var(--primary-color);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-        }
+      0%,
+      100% {
+        transform: scale(1);
+      }
 
-        .select-all-btn:hover {
-            background: var(--primary-color);
-            color: white;
-        }
+      50% {
+        transform: scale(1.05);
+      }
+    }
 
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 0.75rem;
-        }
+    .download-tip {
+      display: block;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      padding: 8px 20px;
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    .download-tip:hover { color: var(--accent); }
+    .download-tip i { margin-right: 6px; color: var(--text-secondary); }
+    .download-tip .highlight {
+      background-color: #fde047;
+      color: #111827;
+      font-weight: 700;
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+    }
 
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            padding: 0.7rem 1rem;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            box-shadow: var(--shadow-sm);
-        }
+    /* ==================== 链接类 ==================== */
+    .header-logo-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
 
-        .checkbox-item:hover {
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
+    /* 品牌强调色（蓝色） */
+    .brand-accent {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
 
-        .checkbox-item input[type="checkbox"] {
-            width: 1rem;
-            height: 1rem;
-            margin-right: 0.75rem;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-        }
+    /* ==================== 主内容区 ==================== */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
 
-        .checkbox-item label {
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            cursor: pointer;
-            user-select: none;
-            margin: 0;
-        }
+    /* ==================== 工具卡片 ==================== */
+    .tool-card {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: clamp(24px, 4vw, 36px);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--glass-border);
+    }
 
-        .selection-info {
-            margin-top: 1rem;
-            padding: 0.75rem 1rem;
-            background: rgba(37, 99, 235, 0.05);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            color: var(--primary-color);
-            text-align: center;
-            border: 1px solid rgba(37, 99, 235, 0.1);
-        }
+    .tool-header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
 
-        .generate-btn {
-            width: 100%;
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: 600;
-            color: white;
-            background: var(--primary-color);
-            border: none;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
+    .tool-title {
+      font-size: clamp(1.3rem, 3vw, 1.65rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
 
-        .generate-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
+    .tool-title i {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+    }
 
-        .generate-btn:active {
-            transform: translateY(0);
-            box-shadow: var(--shadow-sm);
-        }
+    .tool-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+    }
 
-        .generate-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+    /* ==================== 输入区 ==================== */
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
 
-        .checkbox-item.copied {
-            background: rgba(16, 185, 129, 0.08);
-            border-color: var(--success-color);
-            color: var(--success-color);
-        }
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-        .toast {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            background: var(--success-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
-            transform: translateX(400px);
-            transition: transform 0.3s ease-out;
-            z-index: 1000;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    .input-row .form-group {
+      margin-bottom: 0;
+    }
 
-        .toast.show {
-            transform: translateX(0);
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem 0.5rem;
-                align-items: flex-start;
-            }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      transition: all var(--transition-fast);
+      outline: none;
+      background: rgba(0, 0, 0, 0.02);
+      color: var(--text-primary);
+    }
 
-            .container {
-                margin-top: 1rem;
-            }
+    .form-control::placeholder {
+      color: var(--text-secondary);
+    }
 
-            .header {
-                padding: 1.5rem 1rem;
-            }
+    .form-control:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-focus);
+      background: #fff;
+    }
 
-            .header h1 {
-                font-size: 1.5rem;
-            }
+    /* ==================== 文档类型选择区 ==================== */
+    .doc-types-card {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 22px;
+    }
 
-            .input-section,
-            .results-section {
-                padding: 1.5rem 1rem;
-            }
+    .doc-types-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
 
-            .checkbox-grid {
-                grid-template-columns: 1fr;
-            }
+    .doc-types-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-            .text-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
-            }
+    .doc-types-header h3 i {
+      color: var(--accent);
+    }
 
-            .text-content {
-                padding-right: 0;
-            }
+    /* 全选按钮：胶囊样式 */
+    .select-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-soft);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
 
-            .copy-btn {
-                margin-left: 0;
-                margin-top: 0.5rem;
-                width: 100%;
-            }
+    .select-all-btn:hover {
+      background: rgba(0, 113, 227, 0.16);
+      border-color: rgba(0, 113, 227, 0.28);
+      color: var(--accent-hover);
+      transform: translateY(-1px);
+    }
 
-            .toast {
-                top: 1rem;
-                right: 1rem;
-                padding: 0.625rem 1rem;
-                font-size: 0.75rem;
-            }
-        }
-    </style>
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 10px;
+    }
 
-    <!-- 页脚样式 -->
-    <style>
-        .footer {
-            text-align: center;
-            padding: 20px 1rem 0;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            max-width: 800px;
-            width: 100%;
-        }
-        .footer-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .footer-link {
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .footer-link:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-        .separator {
-            opacity: 0.4;
-        }
-        @media (max-width: 640px) {
-            .footer-content {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .separator {
-                display: none;
-            }
-        }
-    </style>
+    /* 文档类型条目：轻量玻璃卡片 */
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .doc-item:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+      background: var(--glass-hover);
+    }
+
+    .doc-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .doc-item label {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      margin: 0;
+      flex: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* 生成后：条目变为点击复制项 */
+    .doc-item.clickable {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .doc-item.clickable:hover {
+      border-color: var(--accent);
+      background: rgba(0, 113, 227, 0.14);
+      box-shadow: var(--shadow-md);
+    }
+
+    .doc-item.clickable::after {
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      content: '\f0c5';
+      font-size: 0.8rem;
+      color: var(--accent);
+      opacity: 0.75;
+      transition: all var(--transition-fast);
+    }
+
+    .doc-item.clickable:hover::after {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .doc-item.copied {
+      background: rgba(52, 199, 89, 0.1);
+      border-color: #34c759;
+    }
+
+    .doc-item.copied label,
+    .doc-item.copied::after {
+      color: #34c759;
+    }
+
+    .doc-item.copied::after {
+      content: '\f00c';
+    }
+
+    /* 选择信息 */
+    .selection-info {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(0, 113, 227, 0.12);
+      border-radius: 999px;
+      padding: 8px 16px;
+    }
+
+    /* 生成后的黄色高亮提示（胶囊样式） */
+    .tip-highlight {
+      display: inline-block;
+      background-color: #fde047;
+      color: #111827;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+    }
+
+    /* ==================== 按钮系统 ==================== */
+    .btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-normal);
+      font-size: 0.95rem;
+      outline: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
+      color: #fff;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--btn-shadow);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 1rem;
+      justify-content: center;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    /* ==================== 通知 ==================== */
+    .notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #34c759;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1001;
+      transform: translateY(100px) scale(0.9);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: min(400px, 90vw);
+    }
+
+    .notification.show {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .notification.error {
+      background: #ff3b30;
+    }
+
+    /* ==================== 页脚 ==================== */
+    .footer {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 20px 0 20px;
+      font-size: 0.9rem;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+      transform: translateY(-2px);
+    }
+
+    .separator {
+      opacity: 0.4;
+    }
+
+    /* ==================== 时间显示 ==================== */
+    .time-display {
+      text-align: center;
+      padding: 6px 0;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+    .time-display .time-main {
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .time-display .time-sync-status {
+      font-size: 0.7rem;
+      opacity: 0.5;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ==================== 响应式优化 ==================== */
+    @media (max-width: 768px) {
+      .tool-card {
+        padding: 20px 16px;
+      }
+
+      .doc-types-card {
+        padding: 16px 14px;
+      }
+
+      .notification {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+
+      .doc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .separator {
+        display: none;
+      }
+    }
+
+    /* 减少动画偏好 */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* 打印样式 */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .bg-orb {
+        display: none !important;
+      }
+
+      .tool-card {
+        background: white;
+        border: 1px solid #ddd;
+        box-shadow: none;
+      }
+
+      .doc-item {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>生成毕业设计(论文)归档文件名称</h1>
-            <p>输入学生信息，选择需要的文档类型，一键生成规范的归档文件名称</p>
+  <!-- 背景装饰 -->
+  <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+  <div class="container">
+    <header>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+        <h1 class="logo">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          <span>学府路<span class="brand-accent">1</span>号 · <span
+              class="brand-accent">xuefulu.ai</span></span>
+        </h1>
+      </a>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
+        <i class="fas fa-external-link" aria-hidden="true"></i>打开浏览器，在地址栏输入
+        <span class="highlight">xuefulu.ai</span>
+        ，按下 <span class="highlight">Enter</span> 即可访问学府路1号！
+      </a>
+      <div class="time-display">
+        <span class="time-main">
+          <span id="currentDateTime">--</span>
+          <span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span>
+        </span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="tool-card" aria-labelledby="toolTitle">
+        <div class="tool-header">
+          <h2 class="tool-title" id="toolTitle">
+            <i class="fas fa-file-signature" aria-hidden="true"></i>
+            <span>生成毕业设计(论文)归档文件名称</span>
+          </h2>
+          <p class="tool-subtitle">输入学生信息，选择需要的文档类型，一键生成规范的归档文件名称</p>
         </div>
 
-        <a href="https://xuefulu.ai/" target="_blank" rel="noopener"
-            style="display:block;text-align:center;font-size:0.875rem;color:var(--text-secondary);margin-top:1rem;margin-bottom:0;text-decoration:none;transition:all 0.3s ease;padding:0 2rem;">
-            <i class="fa fa-external-link" style="color:var(--primary-color);margin-right:0.25rem;"></i>打开浏览器，在地址栏输入 <span style="background:#fde047;color:#1f2937;font-weight:bold;padding:0.125rem 0.375rem;border-radius:0.25rem;">xuefulu.ai</span>，按下 <span style="background:#fde047;color:#1f2937;font-weight:bold;padding:0.125rem 0.375rem;border-radius:0.25rem;">Enter</span> 即可访问学府路1号！
-        </a>
-
-        <div class="input-section" style="padding:1rem 2rem 2rem;">
-            <div style="display: flex; gap: 1rem;">
-                <div class="input-group" style="flex: 1;">
-                    <input type="text" id="studentName" placeholder="请输入姓名(仅支持纯汉字)" oninput="validateName()" />
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <input type="text" id="studentId" placeholder="请输入学号(仅支持12位纯数字)" oninput="validateStudentId()" />
-                </div>
-            </div>
-
-            <div class="checkbox-section">
-                <div class="checkbox-header">
-                    <h3>选择文档类型</h3>
-                    <button class="select-all-btn" onclick="toggleSelectAll()">全选</button>
-                </div>
-                <div class="checkbox-grid" id="checkboxGrid"></div>
-                <div class="selection-info" id="selectionInfo">已选择 0 项</div>
-            </div>
-
-            <button class="generate-btn" onclick="generateTexts()">生成归档文件名称</button>
+        <div class="input-row">
+          <div class="form-group">
+            <input type="text" id="studentName" class="form-control" placeholder="请输入姓名（仅支持纯汉字）"
+              aria-label="学生姓名" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <input type="text" id="studentId" class="form-control" placeholder="请输入学号（仅支持12位数字）"
+              aria-label="学生学号" autocomplete="off" inputmode="numeric" maxlength="12">
+          </div>
         </div>
-    </div>
+
+        <div class="doc-types-card">
+          <div class="doc-types-header">
+            <h3 id="docTypesTitle"><i class="fas fa-list-check" aria-hidden="true"></i> 选择文档类型</h3>
+            <button type="button" class="select-all-btn" id="selectAllBtn">
+              <i class="fas fa-check-double" aria-hidden="true"></i> 全选
+            </button>
+          </div>
+          <div class="doc-grid" id="checkboxGrid"></div>
+          <div class="selection-info" id="selectionInfo" role="status" aria-live="polite">已选择 0 项</div>
+        </div>
+
+        <button type="button" class="btn btn-primary generate-btn" id="generateBtn">
+          <i class="fas fa-file-lines" aria-hidden="true"></i> 生成归档文件名称
+        </button>
+      </section>
+    </main>
 
     <footer class="footer">
-        <div class="footer-content">
-            <a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener"><i class="fa fa-graduation-cap" aria-hidden="true"></i> © 2026 学府路1号 xuefulu.ai</a>
-            <span class="separator">|</span>
-            <a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fa fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>
-        </div>
+      <div class="footer-content">
+        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span
+              id="footerYear">2026</span> 学府路1号
+            xuefulu.ai</a></span>
+        <span class="separator" aria-hidden="true">|</span>
+        <a href="mailto:ai@xuefulu.ai" class="footer-link">
+          <i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai
+        </a>
+      </div>
     </footer>
+  </div>
 
-    <div class="toast" id="toast">✓ 复制成功！</div>
+  <!-- 通知 -->
+  <div class="notification" id="notification" role="status" aria-live="polite">
+    <i class="fas fa-check-circle" id="notificationIcon" aria-hidden="true"></i>
+    <span id="notificationText">复制成功</span>
+  </div>
 
-    <script>
-        const documentTypes = [
-            '毕业论文',
-            '任务书',
-            '开题报告',
-            '开题报告指导教师意见',
-            '外文翻译及外文原件',
-            '外文翻译指导教师意见',
-            '中期考核',
-            '中期考核指导教师意见',
-            '指导教师评语书',
-            '专家评阅评语书',
-            '答辩记录表',
-            '评分表',
-            '指导过程记录表',
-            '查重报告'
-        ];
+  <script>
+    /**
+     * 学府路1号 - 毕业设计(论文)归档文件名称生成工具
+     */
 
-        // 初始化复选框（默认非选中）
-        function initCheckboxes() {
-            const grid = document.getElementById('checkboxGrid');
-            documentTypes.forEach((docType, index) => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="doc${index}" value="${docType}" onchange="updateSelectionInfo()">
-                    <label for="doc${index}">${docType}</label>
-                `;
-                grid.appendChild(div);
-            });
-            // 初始化选择信息
-            updateSelectionInfo();
+    // ==================== 配置常量 ====================
+    const CONFIG = {
+      NOTIFICATION_DURATION: 2000,
+      ERROR_DURATION: 3000
+    };
+
+    // ==================== DOM元素缓存 ====================
+    const elements = {
+      studentName: document.getElementById('studentName'),
+      studentId: document.getElementById('studentId'),
+      checkboxGrid: document.getElementById('checkboxGrid'),
+      selectionInfo: document.getElementById('selectionInfo'),
+      selectAllBtn: document.getElementById('selectAllBtn'),
+      docTypesTitle: document.getElementById('docTypesTitle'),
+      generateBtn: document.getElementById('generateBtn'),
+      notification: document.getElementById('notification'),
+      notificationText: document.getElementById('notificationText'),
+      notificationIcon: document.getElementById('notificationIcon')
+    };
+
+    // ==================== 文档类型定义 ====================
+    const documentTypes = [
+      '毕业论文',
+      '任务书',
+      '开题报告',
+      '开题报告指导教师意见',
+      '外文翻译及外文原件',
+      '外文翻译指导教师意见',
+      '中期考核',
+      '中期考核指导教师意见',
+      '指导教师评语书',
+      '专家评阅评语书',
+      '答辩记录表',
+      '评分表',
+      '指导过程记录表',
+      '查重报告'
+    ];
+
+    // ==================== 通知 ====================
+    let notificationTimer = null;
+
+    function showNotification(message, isError = false) {
+      if (notificationTimer) {
+        clearTimeout(notificationTimer);
+        elements.notification.classList.remove('show');
+      }
+      elements.notificationText.textContent = message;
+      elements.notification.classList.toggle('error', isError);
+      elements.notificationIcon.classList.toggle('fa-check-circle', !isError);
+      elements.notificationIcon.classList.toggle('fa-exclamation-circle', isError);
+      void elements.notification.offsetHeight;
+      elements.notification.classList.add('show');
+      notificationTimer = setTimeout(() => {
+        elements.notification.classList.remove('show');
+        notificationTimer = null;
+      }, isError ? CONFIG.ERROR_DURATION : CONFIG.NOTIFICATION_DURATION);
+    }
+
+    // ==================== 复选框初始化 ====================
+    function initCheckboxes() {
+      elements.checkboxGrid.innerHTML = '';
+      documentTypes.forEach((docType, index) => {
+        const div = document.createElement('div');
+        div.className = 'doc-item';
+        div.innerHTML = `
+          <input type="checkbox" id="doc${index}" value="${docType}">
+          <label for="doc${index}">${docType}</label>
+        `;
+        // 点击条目任意位置切换勾选状态（复选框本身由原生事件处理，避免重复切换）
+        div.onclick = (e) => {
+          if (e.target.tagName === 'INPUT') return;
+          const cb = div.querySelector('input');
+          cb.checked = !cb.checked;
+          updateSelectionInfo();
+        };
+        elements.checkboxGrid.appendChild(div);
+      });
+      updateSelectionInfo();
+    }
+
+    // 全选 / 取消全选
+    function toggleSelectAll() {
+      const checkboxes = Array.from(elements.checkboxGrid.querySelectorAll('input[type="checkbox"]'));
+      const allChecked = checkboxes.every(cb => cb.checked);
+      checkboxes.forEach(cb => { cb.checked = !allChecked; });
+      updateSelectionInfo();
+    }
+
+    // 更新选择信息与全选按钮文案
+    function updateSelectionInfo() {
+      const checkboxes = Array.from(elements.checkboxGrid.querySelectorAll('input[type="checkbox"]'));
+      const checkedCount = checkboxes.filter(cb => cb.checked).length;
+      elements.selectionInfo.textContent = `已选择 ${checkedCount} 项`;
+      const allChecked = checkboxes.length > 0 && checkboxes.every(cb => cb.checked);
+      elements.selectAllBtn.innerHTML = `<i class="fas fa-check-double" aria-hidden="true"></i> ${allChecked ? '取消全选' : '全选'}`;
+    }
+
+    // ==================== 输入验证 ====================
+    function validateName() {
+      const name = elements.studentName.value.trim();
+      const nameReg = /^[\u4e00-\u9fa5]+$/;
+      return name ? nameReg.test(name) : false;
+    }
+
+    function validateStudentId() {
+      const id = elements.studentId.value.trim();
+      const idReg = /^\d{12}$/;
+      return idReg.test(id);
+    }
+
+    // ==================== 生成与复制 ====================
+    function generateTexts() {
+      if (!validateName()) {
+        showNotification('姓名格式错误！请输入纯汉字，不能包含其他字符！', true);
+        elements.studentName.focus();
+        return;
+      }
+
+      if (!validateStudentId()) {
+        showNotification('学号格式错误！请输入12位数字！', true);
+        elements.studentId.focus();
+        return;
+      }
+
+      const name = elements.studentName.value.trim();
+      const id = elements.studentId.value.trim();
+
+      const selectedCbs = Array.from(elements.checkboxGrid.querySelectorAll('input[type="checkbox"]:checked'));
+      if (selectedCbs.length === 0) {
+        showNotification('请至少选择一种文档类型！', true);
+        return;
+      }
+
+      // 选中的条目变为点击复制项
+      selectedCbs.forEach(cb => {
+        const text = `${name}-${id}-${cb.value}`;
+        const item = cb.closest('.doc-item');
+        cb.style.display = 'none';
+        item.classList.add('clickable');
+        item.onclick = (e) => {
+          e.preventDefault();
+          copyText(text, item);
+        };
+      });
+
+      // 隐藏未选中的条目
+      elements.checkboxGrid.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+        cb.closest('.doc-item').style.display = 'none';
+      });
+
+      // 隐藏全选按钮与选择信息，改为复制提示
+      elements.selectAllBtn.style.display = 'none';
+      elements.selectionInfo.style.display = 'none';
+      elements.docTypesTitle.innerHTML = '<span class="tip-highlight">点击相应条目，可一键复制该文件名称</span>';
+
+      // 按钮切换为重新生成
+      elements.generateBtn.innerHTML = '<i class="fas fa-rotate-left" aria-hidden="true"></i> 重新生成归档文件名称';
+      elements.generateBtn.onclick = resetAndClear;
+    }
+
+    // 重置并清空输入框
+    function resetAndClear() {
+      elements.studentName.value = '';
+      elements.studentId.value = '';
+      resetState();
+    }
+
+    // 复制文本
+    function copyText(text, el) {
+      navigator.clipboard.writeText(text).then(() => {
+        showNotification('复制成功');
+        markCopied(el);
+      }).catch(() => {
+        // 降级方案：使用隐藏 textarea 执行复制
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          showNotification('复制成功');
+          markCopied(el);
+        } catch {
+          showNotification('复制失败，请手动复制', true);
         }
+        document.body.removeChild(textarea);
+      });
+    }
 
-        // 全选/取消全选
-        function toggleSelectAll() {
-            const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            const btn = document.querySelector('.select-all-btn');
+    function markCopied(el) {
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 2000);
+    }
 
-            checkboxes.forEach(cb => {
-                cb.checked = !allChecked;
-            });
+    // 重置为初始状态（重新选择文档类型）
+    function resetState() {
+      initCheckboxes();
 
-            btn.textContent = allChecked ? '全选' : '取消全选';
-            updateSelectionInfo();
-        }
+      // 恢复标题、全选按钮与选择信息
+      elements.docTypesTitle.innerHTML = '<i class="fas fa-list-check" aria-hidden="true"></i> 选择文档类型';
+      elements.selectAllBtn.style.display = '';
+      elements.selectionInfo.style.display = '';
 
-        // 更新选择信息
-        function updateSelectionInfo() {
-            const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
-            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-            const info = document.getElementById('selectionInfo');
-            const btn = document.querySelector('.select-all-btn');
+      // 恢复生成按钮
+      elements.generateBtn.innerHTML = '<i class="fas fa-file-lines" aria-hidden="true"></i> 生成归档文件名称';
+      elements.generateBtn.onclick = generateTexts;
+    }
 
-            info.textContent = `已选择 ${checkedCount} 项`;
+    // ==================== 初始化 ====================
+    const init = () => {
+      elements.selectAllBtn.addEventListener('click', toggleSelectAll);
+      elements.checkboxGrid.addEventListener('change', updateSelectionInfo);
+      elements.generateBtn.onclick = generateTexts;
 
-            // 更新全选按钮文本
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            btn.textContent = allChecked ? '取消全选' : '全选';
-        }
+      // 姓名或学号重新输入时重置状态
+      elements.studentName.addEventListener('input', resetState);
+      elements.studentId.addEventListener('input', resetState);
 
-        // 验证姓名（仅汉字，无视觉错误提示）
-        function validateName() {
-            const nameInput = document.getElementById('studentName');
-            const name = nameInput.value.trim();
-            const nameReg = /^[\u4e00-\u9fa5]+$/;
-            // 仅返回验证结果，无样式修改
-            return name ? nameReg.test(name) : false;
-        }
+      // 回车键：姓名输入后跳转学号，学号输入后直接生成
+      elements.studentName.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') elements.studentId.focus();
+      });
+      elements.studentId.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') generateTexts();
+      });
 
-        // 验证学号（12位数字，无视觉错误提示）
-        function validateStudentId() {
-            const idInput = document.getElementById('studentId');
-            const id = idInput.value.trim();
-            const idReg = /^\d{12}$/;
-            // 仅返回验证结果，无样式修改
-            return idReg.test(id);
-        }
+      initCheckboxes();
 
-        // 生成文本
-        function generateTexts() {
-            // 执行验证
-            const isNameValid = validateName();
-            const isIdValid = validateStudentId();
+      // 页脚年份与时间同步（沿用学府路1号主页逻辑）
+      updateFooterYear(true);
+      startSync();
+    };
 
-            // 验证不通过则提示并返回
-            if (!isNameValid) {
-                alert('姓名格式错误！请输入纯汉字，不能包含其他字符！');
-                document.getElementById('studentName').focus();
-                return;
+    // ==================== 时间同步与显示（原生 Intl 实现，无第三方依赖） ====================
+    const TIME = {
+      SYNC_INTERVAL_MS: 5 * 60 * 1000,
+      offset: 0,
+      syncTimer: null,
+      formatter: new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+      })
+    };
+
+    const timeEl = document.getElementById('currentDateTime');
+    const syncStatusEl = document.getElementById('timeSyncStatus');
+
+    function getBeijingParts() {
+      return TIME.formatter.formatToParts(new Date(Date.now() + TIME.offset));
+    }
+
+    function getBeijingPart(type) {
+      const part = getBeijingParts().find(p => p.type === type);
+      return part ? part.value : '';
+    }
+
+    function updateDisplay() {
+      if (!timeEl) return;
+      const parts = {};
+      for (const p of getBeijingParts()) parts[p.type] = p.value;
+      timeEl.textContent = `${parts.year}年${parts.month}月${parts.day}日 ${parts.weekday} ${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+
+    function updateFooterYear(useLocal) {
+      const yearEl = document.getElementById('footerYear');
+      if (!yearEl) return;
+      yearEl.textContent = useLocal ? new Date().getFullYear() : getBeijingPart('year');
+    }
+
+    async function syncTime() {
+      if (syncStatusEl) {
+        syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      }
+
+      let best = null;
+      let bestRtt = Infinity;
+
+      // 多轮探测（3次），取最低 RTT 的结果（网络抖动最小）
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const t0 = performance.now();
+        try {
+          const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
+          const data = await res.json();
+          const t1 = performance.now();
+          if (data.status === 1 && data.data && data.data.timestamp) {
+            const rtt = t1 - t0;
+            if (rtt < bestRtt) {
+              bestRtt = rtt;
+              // 估算网络时间：服务器时间 + 单向延迟（RTT/2）
+              best = data.data.timestamp + Math.round(rtt / 2);
             }
+          }
+        } catch (e) { continue; }
+      }
 
-            if (!isIdValid) {
-                alert('学号格式错误！请输入12位数字！');
-                document.getElementById('studentId').focus();
-                return;
-            }
+      if (best) {
+        TIME.offset = best - Date.now();
+        if (syncStatusEl) syncStatusEl.innerHTML = '';
+        updateFooterYear(false);
+      } else {
+        if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
+        updateFooterYear(true);
+      }
 
-            const name = document.getElementById('studentName').value.trim();
-            const id = document.getElementById('studentId').value.trim();
+      updateDisplay();
+    }
 
-            // 获取选中的文档类型
-            const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]:checked');
-            const selectedDocs = Array.from(checkboxes).map(cb => cb.value);
+    function startSync() {
+      syncTime();
+      if (TIME.syncTimer) clearInterval(TIME.syncTimer);
+      TIME.syncTimer = setInterval(syncTime, TIME.SYNC_INTERVAL_MS);
+      setInterval(updateDisplay, 1000);
+    }
 
-            if (selectedDocs.length === 0) {
-                alert('请至少选择一种文档类型！');
-                return;
-            }
-
-            const generateBtn = document.querySelector('.generate-btn');
-
-            // 将选中的复选框项变为可点击复制项
-            selectedDocs.forEach((docType) => {
-                const text = `${name}-${id}-${docType}`;
-                // 找到对应的复选框项
-                const cb = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]'))
-                    .find(c => c.value === docType);
-                if (cb) {
-                    const item = cb.closest('.checkbox-item');
-                    // 移除复选框，只保留文字
-                    cb.style.display = 'none';
-                    const label = item.querySelector('label');
-                    if (label) label.style.pointerEvents = 'none';
-                    // 添加点击复制功能
-                    item.style.cursor = 'pointer';
-                    item.addEventListener('click', function handler(e) {
-                        // 避免点到隐藏复选框触发两次
-                        e.preventDefault();
-                        copyText(text, this);
-                    });
-                }
-            });
-
-            // 隐藏未选中的项
-            document.querySelectorAll('.checkbox-grid input[type="checkbox"]:not(:checked)').forEach(cb => {
-                const item = cb.closest('.checkbox-item');
-                if (item) item.style.display = 'none';
-            });
-
-            // 隐藏全选按钮和选择信息
-            document.querySelector('.select-all-btn').style.display = 'none';
-            document.getElementById('selectionInfo').style.display = 'none';
-            document.querySelector('.checkbox-header h3').innerHTML = '<span style="background:#fde047;color:#1f2937;font-weight:bold;padding:0.125rem 0.375rem;border-radius:0.25rem;">点击相应按钮，可一键复制归档文件名称</span>';
-
-            // 按钮变为"重新生成归档文件名称"，点击后重置
-            generateBtn.textContent = '重新生成归档文件名称';
-            generateBtn.onclick = resetAndClear;
-        }
-
-        // 重置并清空输入框
-        function resetAndClear() {
-            document.getElementById('studentName').value = '';
-            document.getElementById('studentId').value = '';
-            resetState();
-        }
-
-        // 复制文本
-        function copyText(text, el) {
-            // 使用 Clipboard API 复制文本
-            navigator.clipboard.writeText(text).then(() => {
-                showToast();
-                el.classList.add('copied');
-                setTimeout(() => {
-                    el.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                // 降级方案：使用 textarea
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    showToast();
-                    el.classList.add('copied');
-                    setTimeout(() => {
-                        el.classList.remove('copied');
-                    }, 2000);
-                } catch (err) {
-                    alert('复制失败，请手动复制');
-                }
-                document.body.removeChild(textarea);
-            });
-        }
-
-        // 显示提示
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
-
-        // 重置为初始状态（选择文档类型）
-        function resetState() {
-            // 重建复选框网格
-            const grid = document.getElementById('checkboxGrid');
-            grid.innerHTML = '';
-            documentTypes.forEach((docType, index) => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="doc${index}" value="${docType}" onchange="updateSelectionInfo()">
-                    <label for="doc${index}">${docType}</label>
-                `;
-                grid.appendChild(div);
-            });
-            updateSelectionInfo();
-
-            // 恢复标题文字
-            document.querySelector('.checkbox-header h3').textContent = '选择文档类型';
-
-            // 显示全选按钮和选择信息
-            document.querySelector('.select-all-btn').style.display = '';
-            document.getElementById('selectionInfo').style.display = '';
-
-            // 恢复按钮文字和样式
-            const generateBtn = document.querySelector('.generate-btn');
-            generateBtn.textContent = '生成归档文件名称';
-            generateBtn.classList.remove('generated');
-            generateBtn.onclick = generateTexts;
-        }
-
-        // 姓名或学号重新输入时重置状态
-        document.getElementById('studentName').addEventListener('input', resetState);
-        document.getElementById('studentId').addEventListener('input', resetState);
-
-        // 回车键触发生成
-        document.getElementById('studentId').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                generateTexts();
-            }
-        });
-
-        document.getElementById('studentName').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                document.getElementById('studentId').focus();
-            }
-        });
-
-        // 页面加载时初始化
-        window.addEventListener('DOMContentLoaded', initCheckboxes);
-    </script>
-    <script>
-	    fetch('https://api.shijian.online/timestamp/').then(function(r){return r.json();}).then(function(d){var y=new Date(d.data.timestamp).getFullYear();document.querySelectorAll('.footer-link').forEach(function(e){e.innerHTML=e.innerHTML.replace(/\d{4}/,y);});}).catch(function(){});
-    </script>
+    // 统一启动入口
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
 </body>
 
 </html>
