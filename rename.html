@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成毕业设计(论文)归档文件名称</title>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success-color: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 2rem 1rem 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .input-section {
+            padding: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background-color: white;
+        }
+
+        .checkbox-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .checkbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .checkbox-header h3 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .select-all-btn {
+            padding: 0.375rem 0.875rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .select-all-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.75rem;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-item label {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+            margin: 0;
+        }
+
+        .selection-info {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            text-align: center;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background: var(--primary-color);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .generate-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .checkbox-item.copied {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--success-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            transform: translateX(400px);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+                align-items: flex-start;
+            }
+
+            .container {
+                margin-top: 1rem;
+            }
+
+            .header {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .input-section,
+            .results-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .text-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .text-content {
+                padding-right: 0;
+            }
+
+            .copy-btn {
+                margin-left: 0;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+
+            .toast {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.625rem 1rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+
+    <!-- 页脚样式 -->
+    <style>
+        .footer {
+            text-align: center;
+            padding: 20px 1rem 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            max-width: 800px;
+            width: 100%;
+        }
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .footer-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        .separator {
+            opacity: 0.4;
+        }
+        @media (max-width: 640px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .separator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>生成毕业设计(论文)归档文件名称</h1>
+            <p>输入学生信息，选择需要的文档类型，一键生成规范的归档文件名称</p>
+        </div>
+
+        <a href="https://xuefulu.ai/" target="_blank" rel="noopener"
+            style="display:block;text-align:center;font-size:0.875rem;color:var(--text-secondary);margin-top:1rem;margin-bottom:0;text-decoration:none;transition:all 0.3s ease;padding:0 2rem;">
+            <i class="fa fa-external-link" style="color:var(--primary-color);margin-right:0.25rem;"></i>打开浏览器，在地址栏输入 <span style="background:#fde047;color:#1f2937;font-weight:bold;padding:0.125rem 0.375rem;border-radius:0.25rem;">xuefulu.ai</span>，按下 <span style="background:#fde047;color:#1f2937;font-weight:bold;padding:0.125rem 0.375rem;border-radius:0.25rem;">Enter</span> 即可访问学府路1号！
+        </a>
+
+        <div class="input-section" style="padding:1rem 2rem 2rem;">
+            <div style="display: flex; gap: 1rem;">
+                <div class="input-group" style="flex: 1;">
+                    <input type="text" id="studentName" placeholder="请输入姓名(仅支持纯汉字)" oninput="validateName()" />
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <input type="text" id="studentId" placeholder="请输入学号(仅支持12位纯数字)" oninput="validateStudentId()" />
+                </div>
+            </div>
+
+            <div class="checkbox-section">
+                <div class="checkbox-header">
+                    <h3>选择文档类型</h3>
+                    <button class="select-all-btn" onclick="toggleSelectAll()">全选</button>
+                </div>
+                <div class="checkbox-grid" id="checkboxGrid"></div>
+                <div class="selection-info" id="selectionInfo">已选择 0 项</div>
+            </div>
+
+            <button class="generate-btn" onclick="generateTexts()">生成归档文件名称</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener"><i class="fa fa-graduation-cap" aria-hidden="true"></i> © 2026 学府路1号 xuefulu.ai</a>
+            <span class="separator">|</span>
+            <a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fa fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">✓ 复制成功！</div>
+
+    <script>
+        const documentTypes = [
+            '毕业论文',
+            '任务书',
+            '开题报告',
+            '开题报告指导教师意见',
+            '外文翻译及外文原件',
+            '外文翻译指导教师意见',
+            '中期考核',
+            '中期考核指导教师意见',
+            '指导教师评语书',
+            '专家评阅评语书',
+            '答辩记录表',
+            '评分表',
+            '指导过程记录表',
+            '查重报告'
+        ];
+
+        // 初始化复选框（默认非选中）
+        function initCheckboxes() {
+            const grid = document.getElementById('checkboxGrid');
+            documentTypes.forEach((docType, index) => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="doc${index}" value="${docType}" onchange="updateSelectionInfo()">
+                    <label for="doc${index}">${docType}</label>
+                `;
+                grid.appendChild(div);
+            });
+            // 初始化选择信息
+            updateSelectionInfo();
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const btn = document.querySelector('.select-all-btn');
+
+            checkboxes.forEach(cb => {
+                cb.checked = !allChecked;
+            });
+
+            btn.textContent = allChecked ? '全选' : '取消全选';
+            updateSelectionInfo();
+        }
+
+        // 更新选择信息
+        function updateSelectionInfo() {
+            const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const info = document.getElementById('selectionInfo');
+            const btn = document.querySelector('.select-all-btn');
+
+            info.textContent = `已选择 ${checkedCount} 项`;
+
+            // 更新全选按钮文本
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            btn.textContent = allChecked ? '取消全选' : '全选';
+        }
+
+        // 验证姓名（仅汉字，无视觉错误提示）
+        function validateName() {
+            const nameInput = document.getElementById('studentName');
+            const name = nameInput.value.trim();
+            const nameReg = /^[\u4e00-\u9fa5]+$/;
+            // 仅返回验证结果，无样式修改
+            return name ? nameReg.test(name) : false;
+        }
+
+        // 验证学号（12位数字，无视觉错误提示）
+        function validateStudentId() {
+            const idInput = document.getElementById('studentId');
+            const id = idInput.value.trim();
+            const idReg = /^\d{12}$/;
+            // 仅返回验证结果，无样式修改
+            return idReg.test(id);
+        }
+
+        // 生成文本
+        function generateTexts() {
+            // 执行验证
+            const isNameValid = validateName();
+            const isIdValid = validateStudentId();
+
+            // 验证不通过则提示并返回
+            if (!isNameValid) {
+                alert('姓名格式错误！请输入纯汉字，不能包含其他字符！');
+                document.getElementById('studentName').focus();
+                return;
+            }
+
+            if (!isIdValid) {
+                alert('学号格式错误！请输入12位数字！');
+                document.getElementById('studentId').focus();
+                return;
+            }
+
+            const name = document.getElementById('studentName').value.trim();
+            const id = document.getElementById('studentId').value.trim();
+
+            // 获取选中的文档类型
+            const checkboxes = document.querySelectorAll('.checkbox-grid input[type="checkbox"]:checked');
+            const selectedDocs = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedDocs.length === 0) {
+                alert('请至少选择一种文档类型！');
+                return;
+            }
+
+            const generateBtn = document.querySelector('.generate-btn');
+
+            // 将选中的复选框项变为可点击复制项
+            selectedDocs.forEach((docType) => {
+                const text = `${name}-${id}-${docType}`;
+                // 找到对应的复选框项
+                const cb = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]'))
+                    .find(c => c.value === docType);
+                if (cb) {
+                    const item = cb.closest('.checkbox-item');
+                    // 移除复选框，只保留文字
+                    cb.style.display = 'none';
+                    const label = item.querySelector('label');
+                    if (label) label.style.pointerEvents = 'none';
+                    // 添加点击复制功能
+                    item.style.cursor = 'pointer';
+                    item.addEventListener('click', function handler(e) {
+                        // 避免点到隐藏复选框触发两次
+                        e.preventDefault();
+                        copyText(text, this);
+                    });
+                }
+            });
+
+            // 隐藏未选中的项
+            document.querySelectorAll('.checkbox-grid input[type="checkbox"]:not(:checked)').forEach(cb => {
+                const item = cb.closest('.checkbox-item');
+                if (item) item.style.display = 'none';
+            });
+
+            // 隐藏全选按钮和选择信息
+            document.querySelector('.select-all-btn').style.display = 'none';
+            document.getElementById('selectionInfo').style.display = 'none';
+            document.querySelector('.checkbox-header h3').innerHTML = '<span style="background:#fde047;color:#1f2937;font-weight:bold;padding:0.125rem 0.375rem;border-radius:0.25rem;">点击相应按钮，可一键复制归档文件名称</span>';
+
+            // 按钮变为"重新生成归档文件名称"，点击后重置
+            generateBtn.textContent = '重新生成归档文件名称';
+            generateBtn.onclick = resetAndClear;
+        }
+
+        // 重置并清空输入框
+        function resetAndClear() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentId').value = '';
+            resetState();
+        }
+
+        // 复制文本
+        function copyText(text, el) {
+            // 使用 Clipboard API 复制文本
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+                el.classList.add('copied');
+                setTimeout(() => {
+                    el.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                // 降级方案：使用 textarea
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                    el.classList.add('copied');
+                    setTimeout(() => {
+                        el.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    alert('复制失败，请手动复制');
+                }
+                document.body.removeChild(textarea);
+            });
+        }
+
+        // 显示提示
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 重置为初始状态（选择文档类型）
+        function resetState() {
+            // 重建复选框网格
+            const grid = document.getElementById('checkboxGrid');
+            grid.innerHTML = '';
+            documentTypes.forEach((docType, index) => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="doc${index}" value="${docType}" onchange="updateSelectionInfo()">
+                    <label for="doc${index}">${docType}</label>
+                `;
+                grid.appendChild(div);
+            });
+            updateSelectionInfo();
+
+            // 恢复标题文字
+            document.querySelector('.checkbox-header h3').textContent = '选择文档类型';
+
+            // 显示全选按钮和选择信息
+            document.querySelector('.select-all-btn').style.display = '';
+            document.getElementById('selectionInfo').style.display = '';
+
+            // 恢复按钮文字和样式
+            const generateBtn = document.querySelector('.generate-btn');
+            generateBtn.textContent = '生成归档文件名称';
+            generateBtn.classList.remove('generated');
+            generateBtn.onclick = generateTexts;
+        }
+
+        // 姓名或学号重新输入时重置状态
+        document.getElementById('studentName').addEventListener('input', resetState);
+        document.getElementById('studentId').addEventListener('input', resetState);
+
+        // 回车键触发生成
+        document.getElementById('studentId').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                generateTexts();
+            }
+        });
+
+        document.getElementById('studentName').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('studentId').focus();
+            }
+        });
+
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', initCheckboxes);
+    </script>
+    <script>
+	    fetch('https://api.shijian.online/timestamp/').then(function(r){return r.json();}).then(function(d){var y=new Date(d.data.timestamp).getFullYear();document.querySelectorAll('.footer-link').forEach(function(e){e.innerHTML=e.innerHTML.replace(/\d{4}/,y);});}).catch(function(){});
+    </script>
+</body>
+
+</html>
