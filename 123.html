@@ -391,7 +391,7 @@
       color: #34c759;
     }
 
-    .math-score-item i.fa-question-circle {
+    .math-score-item i.fa-clipboard-list {
       color: var(--accent);
     }
 
@@ -790,13 +790,13 @@
 
         <!-- 运算类型选择 -->
         <div class="math-mode-switch">
-          <button id="arithmetic-btn" class="math-mode-btn active" type="button">加减法</button>
+          <button id="arithmetic-btn" class="math-mode-btn" type="button">加减法</button>
           <button id="nine-nine-multiplication-btn" class="math-mode-btn" type="button">九九乘法</button>
           <button id="multiplication-btn" class="math-mode-btn" type="button">乘除余</button>
         </div>
 
         <!-- 数字范围设置（仅加减法） -->
-        <div id="number-range-container" class="math-options-panel">
+        <div id="number-range-container" class="math-options-panel hidden">
           <h3>选择数字范围</h3>
           <div class="math-pill-btns">
             <button class="math-pill-btn" type="button" data-value="10">10以内</button>
@@ -810,7 +810,7 @@
         <div id="nine-nine-mode-container" class="math-options-panel hidden">
           <h3>选择练习模式</h3>
           <div class="math-pill-btns">
-            <button id="nine-nine-order-btn" class="math-pill-btn active" type="button">顺序</button>
+            <button id="nine-nine-order-btn" class="math-pill-btn" type="button">顺序</button>
             <button id="nine-nine-random-btn" class="math-pill-btn" type="button">随机</button>
           </div>
         </div>
@@ -819,7 +819,7 @@
         <div class="math-score-bar" role="status" aria-live="polite">
           <div class="math-score-item"><i class="fas fa-check-circle" aria-hidden="true"></i><span id="correct-count">0</span></div>
           <div class="math-score-divider" aria-hidden="true">/</div>
-          <div class="math-score-item"><span id="total-count">0</span><i class="fas fa-question-circle" aria-hidden="true"></i></div>
+          <div class="math-score-item"><span id="total-count">0</span><i class="fas fa-clipboard-list" aria-hidden="true"></i></div>
         </div>
 
         <!-- 题目卡片 -->
@@ -981,8 +981,7 @@
       // 乘除余模式内部循环：0 乘法 → 1 除法 → 2 取余
       let subModeIndex = 0;
       let isAddition = true;
-      // 加减法为默认模式（与加减法按钮的默认高亮保持一致）
-      let isArithmeticMode = true;
+      let isArithmeticMode = false;
       let isNineNineMultiplicationMode = false;
       let isNineNineOrderMode = true;
       let currentNineNineIndex = 0;
