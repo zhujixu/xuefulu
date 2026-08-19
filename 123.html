@@ -101,7 +101,8 @@
 
     /* ==================== 布局容器 ==================== */
     .container {
-      max-width: 720px;
+      max-width: none;
+      width: 100%;
       margin: 0 auto;
       position: relative;
       z-index: 1;
@@ -178,8 +179,8 @@
 
     /* ==================== 主内容区 ==================== */
     .main-content {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
       gap: 30px;
     }
     /* ==================== 页脚 ==================== */
@@ -252,6 +253,7 @@
       padding: clamp(20px, 4vw, 30px);
       box-shadow: var(--shadow-md);
       border: 1px solid var(--glass-border);
+      width: var(--left-col-w, auto);
     }
 
     .math-header {
@@ -285,6 +287,7 @@
     .math-mode-switch {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 10px;
       margin-bottom: 24px;
       flex-wrap: wrap;
@@ -312,23 +315,6 @@
       color: #fff;
       border-color: transparent;
       box-shadow: 0 2px 10px rgba(0, 113, 227, 0.35);
-    }
-
-    /* 子面板（数字范围 / 九九模式） */
-    .math-options-panel {
-      text-align: center;
-      background: rgba(0, 0, 0, 0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-
-    .math-options-panel h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 14px;
     }
 
     .math-pill-btns {
@@ -360,6 +346,44 @@
       color: #fff;
       border-color: transparent;
       box-shadow: 0 2px 10px rgba(0, 113, 227, 0.35);
+    }
+
+    /* 加减法数字范围选项：琥珀色系，与模式按钮区分 */
+    .math-pill-btn.range-opt {
+      border-color: rgba(255, 149, 0, 0.35);
+      background: rgba(255, 149, 0, 0.08);
+      color: #a05a00;
+    }
+
+    .math-pill-btn.range-opt:hover {
+      background: rgba(255, 149, 0, 0.18);
+      color: #7a4500;
+    }
+
+    .math-pill-btn.range-opt.active {
+      background: linear-gradient(135deg, #ff9500, #f08600);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(255, 149, 0, 0.35);
+    }
+
+    /* 九九乘法模式选项：绿色系，与模式按钮区分 */
+    .math-pill-btn.nine-mode-opt {
+      border-color: rgba(52, 199, 89, 0.35);
+      background: rgba(52, 199, 89, 0.08);
+      color: #1d7a3a;
+    }
+
+    .math-pill-btn.nine-mode-opt:hover {
+      background: rgba(52, 199, 89, 0.18);
+      color: #155c2b;
+    }
+
+    .math-pill-btn.nine-mode-opt.active {
+      background: linear-gradient(135deg, #34c759, #28a745);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(52, 199, 89, 0.35);
     }
 
     /* 分数显示 */
@@ -553,6 +577,8 @@
       border-radius: var(--radius-lg);
       padding: 24px;
       box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 20px;
     }
 
     .math-wrong-panel h2 {
@@ -570,7 +596,8 @@
     }
 
     .math-wrong-list {
-      max-height: 260px;
+      max-height: calc(100dvh - 320px);
+      min-height: 160px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -639,13 +666,6 @@
       font-weight: 600;
     }
 
-    /* 数字范围面板提示 */
-    .math-panel-tip {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      margin-top: 12px;
-    }
-
     /* 答错后的"下一题"按钮 */
     .math-next-wrap {
       display: flex;
@@ -711,6 +731,25 @@
     }
 
     /* ==================== 响应式优化 ==================== */
+    @media (max-width: 1080px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .math-card {
+        width: auto;
+      }
+
+      .math-wrong-panel {
+        position: static;
+      }
+
+      .math-wrong-list {
+        max-height: 260px;
+        min-height: 0;
+      }
+    }
+
     @media (max-width: 480px) {
       .logo {
         flex-direction: column;
@@ -788,31 +827,22 @@
           <p class="math-subtitle">练习基础数学运算，提升你的数学技能！</p>
         </div>
 
-        <!-- 运算类型选择 -->
+        <!-- 运算类型选择（选项按钮内联显示在对应模式按钮右侧） -->
         <div class="math-mode-switch">
           <button id="arithmetic-btn" class="math-mode-btn" type="button">加减法</button>
+          <!-- 数字范围选择（仅加减法） -->
+          <span id="number-range-container" class="math-pill-btns hidden">
+            <button class="math-pill-btn range-opt" type="button" data-value="10">10以内</button>
+            <button class="math-pill-btn range-opt" type="button" data-value="100">100以内</button>
+            <button class="math-pill-btn range-opt" type="button" data-value="1000">1000以内</button>
+          </span>
           <button id="nine-nine-multiplication-btn" class="math-mode-btn" type="button">九九乘法</button>
+          <!-- 九九乘法模式选择 -->
+          <span id="nine-nine-mode-container" class="math-pill-btns hidden">
+            <button id="nine-nine-order-btn" class="math-pill-btn nine-mode-opt" type="button">顺序</button>
+            <button id="nine-nine-random-btn" class="math-pill-btn nine-mode-opt" type="button">随机</button>
+          </span>
           <button id="multiplication-btn" class="math-mode-btn" type="button">乘除余</button>
-        </div>
-
-        <!-- 数字范围设置（仅加减法） -->
-        <div id="number-range-container" class="math-options-panel hidden">
-          <h3>选择数字范围</h3>
-          <div class="math-pill-btns">
-            <button class="math-pill-btn" type="button" data-value="10">10以内</button>
-            <button class="math-pill-btn" type="button" data-value="100">100以内</button>
-            <button class="math-pill-btn" type="button" data-value="1000">1000以内</button>
-          </div>
-          <p class="math-panel-tip">选择数字范围后立即开始练习</p>
-        </div>
-
-        <!-- 九九乘法模式设置 -->
-        <div id="nine-nine-mode-container" class="math-options-panel hidden">
-          <h3>选择练习模式</h3>
-          <div class="math-pill-btns">
-            <button id="nine-nine-order-btn" class="math-pill-btn" type="button">顺序</button>
-            <button id="nine-nine-random-btn" class="math-pill-btn" type="button">随机</button>
-          </div>
         </div>
 
         <!-- 分数显示 -->
@@ -852,16 +882,16 @@
 
         <!-- 九九乘法一轮完成提示 -->
         <div id="round-banner" class="math-round-banner hidden" role="status"></div>
-
-        <!-- 错题记录 -->
-        <div class="math-wrong-panel">
-          <h2><i class="fas fa-history" aria-hidden="true"></i> 错题记录
-            <button id="clear-wrong-btn" class="math-clear-btn hidden" type="button">清空错题</button></h2>
-          <div id="wrong-questions-container" class="math-wrong-list">
-            <p class="math-wrong-empty" id="no-errors-message">暂无错题记录</p>
-          </div>
-        </div>
       </section>
+
+      <!-- 错题记录（右侧栏） -->
+      <aside class="math-wrong-panel" aria-label="错题记录">
+        <h2><i class="fas fa-history" aria-hidden="true"></i> 错题记录
+          <button id="clear-wrong-btn" class="math-clear-btn hidden" type="button">清空错题</button></h2>
+        <div id="wrong-questions-container" class="math-wrong-list">
+          <p class="math-wrong-empty" id="no-errors-message">暂无错题记录</p>
+        </div>
+      </aside>
     </main>
 
     <footer class="footer">
@@ -1036,6 +1066,24 @@
         }
       }
 
+      // 锁定左栏宽度为"加减法状态"（6 个按钮同一行）的宽度，
+      // 切换九九乘法/乘除余时按钮数量变化，但左栏宽度保持不变
+      function lockLeftColumnWidth() {
+        const card = document.querySelector('.math-card');
+        const switchEl = document.querySelector('.math-mode-switch');
+        if (!card || !switchEl) return;
+        // 临时强制单行，确保测出的是所有按钮在同一行的完整宽度
+        const prevWrap = switchEl.style.flexWrap;
+        switchEl.style.flexWrap = 'nowrap';
+        const pad = parseFloat(getComputedStyle(card).paddingLeft) * 2;
+        const border = parseFloat(getComputedStyle(card).borderLeftWidth) * 2;
+        const w = Math.ceil(switchEl.offsetWidth + pad + border + 2);
+        switchEl.style.flexWrap = prevWrap;
+        if (w > 0) {
+          document.documentElement.style.setProperty('--left-col-w', w + 'px');
+        }
+      }
+
       arithmeticBtn.addEventListener('click', () => {
         isArithmeticMode = true;
         isNineNineMultiplicationMode = false;
@@ -1046,6 +1094,7 @@
         questionCard.classList.add('hidden');
         selectedMaxNumber = null;
         resetRangeButtons();
+        lockLeftColumnWidth();
       });
 
       multiplicationBtn.addEventListener('click', () => {
@@ -1086,11 +1135,7 @@
 
           if (isArithmeticMode) {
             questionCard.classList.remove('hidden');
-            numberRangeContainer.classList.add('hidden');
             generateQuestion();
-            setTimeout(() => {
-              questionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
           }
         });
       });
@@ -1101,7 +1146,6 @@
         nineNineOrderBtn.classList.add('active');
         nineNineRandomBtn.classList.remove('active');
         questionCard.classList.remove('hidden');
-        nineNineModeContainer.classList.add('hidden');
         currentNineNineIndex = 0;
         nineRoundCorrect = 0;
         nineRoundTotal = 0;
@@ -1113,7 +1157,6 @@
         nineNineRandomBtn.classList.add('active');
         nineNineOrderBtn.classList.remove('active');
         questionCard.classList.remove('hidden');
-        nineNineModeContainer.classList.add('hidden');
         generateQuestion();
       });
 
@@ -1594,6 +1637,14 @@
           generateQuestion();
         }
       });
+
+      // 页面加载即锁定左栏宽度（加减法 6 按钮状态），避免切换模式时宽度变化
+      (function lockWidthOnLoad() {
+        const wasHidden = numberRangeContainer.classList.contains('hidden');
+        if (wasHidden) numberRangeContainer.classList.remove('hidden');
+        lockLeftColumnWidth();
+        if (wasHidden) numberRangeContainer.classList.add('hidden');
+      })();
     })();
 
     // 统一启动入口
