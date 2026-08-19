@@ -435,14 +435,6 @@
       text-align: center;
     }
 
-    .math-question-label {
-      color: var(--text-secondary);
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
     .math-question-row {
       display: flex;
       align-items: center;
@@ -492,9 +484,9 @@
 
     .math-options-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      max-width: 420px;
+      max-width: 100%;
       margin: 0 auto;
     }
 
@@ -834,7 +826,6 @@
 
         <!-- 题目卡片 -->
         <div id="question-card" class="math-question-card hidden">
-          <p class="math-question-label">当前题目</p>
           <div class="math-question-row">
             <div id="question" class="math-question" aria-live="polite">3 + 4 = ?</div>
             <div id="question-feedback" class="math-question-feedback hidden">
