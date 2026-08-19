@@ -443,12 +443,51 @@
       margin-bottom: 10px;
     }
 
+    .math-question-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
     .math-question {
       font-size: 1.75rem;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 28px;
       line-height: 1.2;
+      transition: color 0.25s ease;
+    }
+
+    .math-question.correct {
+      color: #28a745;
+    }
+
+    .math-question.wrong {
+      color: #d6342a;
+    }
+
+    /* 行内反馈：与题目同区域显示，融为一体 */
+    .math-question-feedback {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      animation: fadeInUp 0.35s ease;
+    }
+
+    .math-question-feedback>i {
+      font-size: 1.4rem;
+    }
+
+    .math-question-feedback.success {
+      color: #28a745;
+    }
+
+    .math-question-feedback.danger {
+      color: #d6342a;
     }
 
     .math-options-grid {
@@ -493,65 +532,6 @@
     .math-option-btn.wrong {
       background: linear-gradient(135deg, #ff3b30, #d6342a);
       box-shadow: 0 2px 10px rgba(255, 59, 48, 0.3);
-    }
-
-    /* 结果反馈 */
-    .math-feedback {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      text-align: left;
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      margin-top: 20px;
-      animation: fadeInUp 0.35s ease;
-    }
-
-    .math-feedback>i {
-      font-size: 1.8rem;
-      flex-shrink: 0;
-    }
-
-    .math-feedback-title {
-      font-weight: 700;
-      font-size: 1.05rem;
-    }
-
-    .math-feedback-desc {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      margin-top: 2px;
-    }
-
-    .math-feedback-strong {
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .math-feedback-success {
-      background: rgba(52, 199, 89, 0.1);
-      border-left: 4px solid #34c759;
-    }
-
-    .math-feedback-success>i {
-      color: #34c759;
-    }
-
-    .math-feedback-success .math-feedback-title {
-      color: #28a745;
-    }
-
-    .math-feedback-danger {
-      background: rgba(255, 59, 48, 0.08);
-      border-left: 4px solid #ff3b30;
-    }
-
-    .math-feedback-danger>i {
-      color: #ff3b30;
-    }
-
-    .math-feedback-danger .math-feedback-title {
-      color: #d6342a;
     }
 
     @keyframes fadeInUp {
@@ -855,28 +835,18 @@
         <!-- 题目卡片 -->
         <div id="question-card" class="math-question-card hidden">
           <p class="math-question-label">当前题目</p>
-          <div id="question" class="math-question" aria-live="polite">3 + 4 = ?</div>
+          <div class="math-question-row">
+            <div id="question" class="math-question" aria-live="polite">3 + 4 = ?</div>
+            <div id="question-feedback" class="math-question-feedback hidden">
+              <i id="feedback-icon" class="fas fa-check-circle" aria-hidden="true"></i>
+              <span id="feedback-text">答对了！</span>
+            </div>
+          </div>
           <div id="options-container" class="math-options-grid"><!-- 选项由JS生成 --></div>
 
-          <!-- 结果反馈 -->
-          <div id="feedback-container" class="hidden">
-            <div id="correct-answer" class="math-feedback math-feedback-success hidden">
-              <i class="fas fa-check-circle" aria-hidden="true"></i>
-              <div>
-                <p class="math-feedback-title">答对了！真棒！</p>
-                <p class="math-feedback-desc">继续保持！</p>
-              </div>
-            </div>
-            <div id="wrong-answer" class="math-feedback math-feedback-danger hidden">
-              <i class="fas fa-times-circle" aria-hidden="true"></i>
-              <div>
-                <p class="math-feedback-title">答错了！</p>
-                <p class="math-feedback-desc" id="wrong-answer-desc">正确答案是：<span id="correct-value" class="math-feedback-strong"></span></p>
-              </div>
-            </div>
-            <div class="math-next-wrap">
-              <button id="next-question-btn" class="math-next-btn hidden" type="button">下一题</button>
-            </div>
+          <!-- 下一题按钮 -->
+          <div id="feedback-container" class="math-next-wrap hidden">
+            <button id="next-question-btn" class="math-next-btn hidden" type="button">下一题</button>
           </div>
         </div>
 
@@ -1039,12 +1009,11 @@
       const nineNineRandomBtn = $('nine-nine-random-btn');
       const questionCard = $('question-card');
       const questionEl = $('question');
+      const questionFeedback = $('question-feedback');
+      const feedbackIcon = $('feedback-icon');
+      const feedbackText = $('feedback-text');
       const optionsContainer = $('options-container');
       const feedbackContainer = $('feedback-container');
-      const correctAnswerEl = $('correct-answer');
-      const wrongAnswerEl = $('wrong-answer');
-      const wrongAnswerDesc = $('wrong-answer-desc');
-      const correctValueEl = $('correct-value');
       const correctCountEl = $('correct-count');
       const totalCountEl = $('total-count');
       const wrongQuestionsContainer = $('wrong-questions-container');
@@ -1168,8 +1137,8 @@
         }
 
         feedbackContainer.classList.add('hidden');
-        correctAnswerEl.classList.add('hidden');
-        wrongAnswerEl.classList.add('hidden');
+        questionFeedback.classList.add('hidden');
+        questionEl.classList.remove('correct', 'wrong');
         nextQuestionBtn.classList.add('hidden');
         questionAttempted = false;
 
@@ -1505,8 +1474,7 @@
         correctCountEl.textContent = correctCount;
         totalCountEl.textContent = totalCount;
 
-        feedbackContainer.classList.remove('hidden');
-
+        // 反馈与题目融为一体：题目文字变色，行内显示反馈
         if (isCorrect) {
           // 答对：锁定全部选项、高亮正确项，自动进入下一题（重试答对同样处理）
           optionsContainer.querySelectorAll('button').forEach(button => {
@@ -1517,9 +1485,15 @@
             if (hit) button.classList.add('correct');
             else button.classList.remove('wrong');
           });
-          correctAnswerEl.classList.remove('hidden');
-          wrongAnswerEl.classList.add('hidden');
+          questionEl.classList.remove('wrong');
+          questionEl.classList.add('correct');
+          questionFeedback.classList.remove('danger');
+          questionFeedback.classList.add('success');
+          feedbackIcon.className = 'fas fa-check-circle';
+          feedbackText.textContent = '答对了！';
+          questionFeedback.classList.remove('hidden');
           nextQuestionBtn.classList.add('hidden');
+          feedbackContainer.classList.add('hidden');
           autoNextTimeout = setTimeout(generateQuestion, AUTO_NEXT_DELAY);
         } else {
           // 答错：不提前揭示正确答案，保留所有选项可重试，仅标记点错的选项；
@@ -1532,10 +1506,15 @@
             else if (button !== btn) button.classList.remove('wrong');
           });
           btn.classList.add('wrong');
-          correctAnswerEl.classList.add('hidden');
-          wrongAnswerEl.classList.remove('hidden');
-          wrongAnswerDesc.textContent = '再试一次，你一定能答对！';
+          questionEl.classList.remove('correct');
+          questionEl.classList.add('wrong');
+          questionFeedback.classList.remove('success');
+          questionFeedback.classList.add('danger');
+          feedbackIcon.className = 'fas fa-times-circle';
+          feedbackText.textContent = '再试一次，你一定能答对！';
+          questionFeedback.classList.remove('hidden');
           nextQuestionBtn.classList.remove('hidden');
+          feedbackContainer.classList.remove('hidden');
         }
       }
 
