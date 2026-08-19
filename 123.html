@@ -981,6 +981,13 @@
       let isNineNineMultiplicationMode = false;
       let isNineNineOrderMode = true;
       let currentNineNineIndex = 0;
+      // 九九乘法随机模式：81 个组合的洗牌题库池，取完一轮重新洗牌（保证覆盖）
+      let nineNinePool = null;
+      let nineNinePoolIndex = 0;
+      // 乘除余模式：乘法题洗牌题库池；除法两个方向交替出题（保证每轮全覆盖）
+      let multDivPool = null;
+      let multDivPoolIndex = 0;
+      let divDirectionUsed = new Map();
       let correctCount = 0;
       let totalCount = 0;
       let wrongQuestions = [];
@@ -989,7 +996,7 @@
       let questionAttempted = false;
       let selectedMaxNumber = null;
       const AUTO_NEXT_DELAY = 1000;
-      // 九九乘法顺序模式：单轮（81题）答题统计，用于一轮完成反馈
+      // 九九乘法：单轮（81题）答题统计，用于一轮完成反馈
       let nineRoundCorrect = 0;
       let nineRoundTotal = 0;
       let roundBannerTimer = null;
@@ -1070,6 +1077,12 @@
         numberRangeContainer.classList.add('hidden');
         nineNineModeContainer.classList.add('hidden');
         questionCard.classList.remove('hidden');
+        // 重新进入时重置题库池与内部循环，从新一轮乘法开始
+        multDivPool = null;
+        multDivPoolIndex = 0;
+        subModeIndex = 0;
+        lastMultiplicationQuestion = null;
+        lastDivisionQuestion = null;
         generateQuestion();
       });
 
@@ -1084,6 +1097,8 @@
         currentNineNineIndex = 0;
         nineRoundCorrect = 0;
         nineRoundTotal = 0;
+        nineNinePool = null;
+        nineNinePoolIndex = 0;
       });
 
       // 重置数字范围按钮状态
@@ -1122,8 +1137,28 @@
         nineNineRandomBtn.classList.add('active');
         nineNineOrderBtn.classList.remove('active');
         questionCard.classList.remove('hidden');
+        // 重新洗牌并开始新一轮，保证本轮 81 题覆盖全部组合
+        nineNinePool = buildShuffledPairs();
+        nineNinePoolIndex = 0;
+        nineRoundCorrect = 0;
+        nineRoundTotal = 0;
         generateQuestion();
       });
+
+      // 生成 1×1 ~ 9×9 全部 81 个组合并洗牌（Fisher-Yates）
+      function buildShuffledPairs() {
+        const pairs = [];
+        for (let a = 1; a <= 9; a++) {
+          for (let b = 1; b <= 9; b++) {
+            pairs.push([a, b]);
+          }
+        }
+        for (let i = pairs.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+        }
+        return pairs;
+      }
 
       // 生成新问题
       function generateQuestion() {
@@ -1210,9 +1245,20 @@
               nineRoundTotal = 0;
             }
           } else {
-            // 随机模式
-            num1 = Math.floor(Math.random() * 9) + 1;
-            num2 = Math.floor(Math.random() * 9) + 1;
+            // 随机模式：洗牌题库池，每轮 81 题恰好覆盖全部组合
+            if (!nineNinePool || nineNinePoolIndex >= nineNinePool.length) {
+              // 走完一轮（81题）后展示本轮成绩并重新洗牌
+              if (nineNinePool && nineRoundTotal > 0) {
+                showRoundComplete(nineRoundCorrect, nineRoundTotal);
+                nineRoundCorrect = 0;
+                nineRoundTotal = 0;
+              }
+              nineNinePool = buildShuffledPairs();
+              nineNinePoolIndex = 0;
+            }
+            const pair = nineNinePool[nineNinePoolIndex++];
+            num1 = pair[0];
+            num2 = pair[1];
           }
 
           currentQuestion = {
@@ -1228,8 +1274,14 @@
           subModeIndex = (subModeIndex + 1) % 3;
 
           if (subMode === 0) {
-            const num1 = Math.floor(Math.random() * 9) + 1;
-            const num2 = Math.floor(Math.random() * 9) + 1;
+            // 洗牌题库池：每轮 81 道乘法题恰好覆盖全部组合
+            if (!multDivPool || multDivPoolIndex >= multDivPool.length) {
+              multDivPool = buildShuffledPairs();
+              multDivPoolIndex = 0;
+            }
+            const pair = multDivPool[multDivPoolIndex++];
+            const num1 = pair[0];
+            const num2 = pair[1];
 
             currentQuestion = {
               type: 'multiplication',
@@ -1245,30 +1297,36 @@
               answer: num1 * num2
             };
           } else if (subMode === 1) {
-            // 除法：由上一个乘法题派生
+            // 除法：由上一个乘法题派生。同一组合的两个除法方向交替出题，
+            // 与对调组合 (b,a) 同步互补，保证每轮 81 道除法恰好覆盖全部除法口诀
             if (!lastMultiplicationQuestion) {
               subModeIndex = 0;
               generateQuestion();
               return;
             }
 
-            const useFirstNumAsDivisor = Math.random() > 0.5;
+            const mulNum1 = lastMultiplicationQuestion.num1;
+            const mulNum2 = lastMultiplicationQuestion.num2;
+            const pairKey = `${mulNum1},${mulNum2}`;
+            // 方向交替：上次出过"除以第一个因数"，本次出"除以第二个因数"，反之亦然
+            const useFirstNumAsDivisor = divDirectionUsed.get(pairKey) !== 'second';
+            divDirectionUsed.set(pairKey, useFirstNumAsDivisor ? 'second' : 'first');
 
             if (useFirstNumAsDivisor) {
               currentQuestion = {
                 type: 'division',
                 num1: lastMultiplicationQuestion.answer,
-                num2: lastMultiplicationQuestion.num1,
-                answer: lastMultiplicationQuestion.num2,
-                questionText: `${lastMultiplicationQuestion.answer} ÷ ${lastMultiplicationQuestion.num1} = ?`
+                num2: mulNum1,
+                answer: mulNum2,
+                questionText: `${lastMultiplicationQuestion.answer} ÷ ${mulNum1} = ?`
               };
             } else {
               currentQuestion = {
                 type: 'division',
                 num1: lastMultiplicationQuestion.answer,
-                num2: lastMultiplicationQuestion.num2,
-                answer: lastMultiplicationQuestion.num1,
-                questionText: `${lastMultiplicationQuestion.answer} ÷ ${lastMultiplicationQuestion.num2} = ?`
+                num2: mulNum2,
+                answer: mulNum1,
+                questionText: `${lastMultiplicationQuestion.answer} ÷ ${mulNum2} = ?`
               };
             }
 
@@ -1460,8 +1518,8 @@
             updateWrongQuestionsDisplay();
           }
 
-          // 九九乘法顺序模式：单轮成绩只统计首次作答
-          if (isNineNineMultiplicationMode && isNineNineOrderMode) {
+          // 九九乘法（顺序/随机）：单轮成绩只统计首次作答
+          if (isNineNineMultiplicationMode) {
             nineRoundTotal++;
             if (isCorrect) nineRoundCorrect++;
           }
@@ -1568,7 +1626,7 @@
         wrongQuestionsContainer.appendChild(fragment);
       }
 
-      // 九九乘法顺序模式一轮（81题）完成提示
+      // 九九乘法一轮（81题）完成提示
       function showRoundComplete(correct, total) {
         if (roundBannerTimer) clearTimeout(roundBannerTimer);
         const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
