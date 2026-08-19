@@ -483,29 +483,30 @@
     }
 
     .math-options-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       gap: 12px;
-      max-width: 100%;
+      flex-wrap: nowrap;
       margin: 0 auto;
     }
 
+    /* 答案选项：胶囊形，浅色背景，尺寸小巧 */
     .math-option-btn {
-      padding: 16px 10px;
-      border-radius: var(--radius-md);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(135deg, #0071e3, #0066cc);
-      border: none;
+      padding: 8px 22px;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
       cursor: pointer;
       transition: all var(--transition-fast);
-      box-shadow: 0 2px 10px rgba(0, 113, 227, 0.3);
     }
 
     .math-option-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 8px 20px rgba(0, 113, 227, 0.35);
+      background: var(--bg-active);
+      transform: translateY(-1px);
     }
 
     .math-option-btn:active {
@@ -518,11 +519,15 @@
 
     .math-option-btn.correct {
       background: linear-gradient(135deg, #34c759, #28a745);
+      color: #fff;
+      border-color: transparent;
       box-shadow: 0 2px 10px rgba(52, 199, 89, 0.3);
     }
 
     .math-option-btn.wrong {
       background: linear-gradient(135deg, #ff3b30, #d6342a);
+      color: #fff;
+      border-color: transparent;
       box-shadow: 0 2px 10px rgba(255, 59, 48, 0.3);
     }
 
@@ -1337,7 +1342,7 @@
       function generateOptions(correctAnswer) {
         optionsContainer.innerHTML = '';
 
-        // 合并题（商和余数）：4 个选项都是"x 余 y"格式，其中一个是正确组合
+        // 合并题（商和余数）：3 个选项都是"x 余 y"格式，其中一个是正确组合
         if (currentQuestion.type === 'modulo') {
           const { quotient, remainder, num2 } = currentQuestion;
 
@@ -1359,12 +1364,12 @@
             return { q: parseInt(parts[0]), r: parseInt(parts[1]) };
           });
 
-          // 洗牌取 3 个干扰组合
+          // 洗牌取 2 个干扰组合
           for (let i = pool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [pool[i], pool[j]] = [pool[j], pool[i]];
           }
-          const allAnswers = [{ q: quotient, r: remainder }, ...pool.slice(0, 3)];
+          const allAnswers = [{ q: quotient, r: remainder }, ...pool.slice(0, 2)];
 
           // 洗牌混入正确组合
           for (let i = allAnswers.length - 1; i > 0; i--) {
@@ -1387,7 +1392,7 @@
         const wrongAnswers = [];
         const answerRange = isArithmeticMode ? correctAnswer < 100 ? 10 : 50 : 50;
 
-        while (wrongAnswers.length < 3) {
+        while (wrongAnswers.length < 2) {
           let wrongAnswer;
 
           if (isArithmeticMode) {
@@ -1593,7 +1598,7 @@
         if (e.target.closest('input, textarea, select')) return;
         if (questionCard.classList.contains('hidden')) return;
 
-        if (e.key >= '1' && e.key <= '4') {
+        if (e.key >= '1' && e.key <= '3') {
           const optionButtons = optionsContainer.querySelectorAll('button');
           const index = parseInt(e.key) - 1;
           if (optionButtons[index]) optionButtons[index].click();
