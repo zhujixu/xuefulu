@@ -267,6 +267,12 @@
                 text-align: center;
                 padding: 8px 0;
             }
+
+            /* 蓝色姓名区域：选中文本时不显示任何选区高亮 */
+            #nameDisplay::selection {
+                background: transparent;
+                color: inherit;
+            }
         }
     </style>
 </head>
@@ -313,7 +319,9 @@
 
                 <!-- 新增区域，显示姓名 -->
                 <div id="nameDisplay"
-                    class="bg-blue-500 text-white font-bold text-center flex items-center justify-center text-[clamp(5rem,3vw,10rem)] rounded-xl shadow-lg p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-primary/50 h-full">
+                    class="bg-blue-500 text-white font-bold text-center flex items-center justify-center text-[clamp(5rem,3vw,10rem)] rounded-xl p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-primary/50 h-full cursor-pointer active:scale-95 select-none"
+                    style="box-shadow:none;-webkit-tap-highlight-color:transparent;"
+                    title="点击此处标记为出勤；点击区域外空白处标记为缺勤">
                     暂无考勤
                 </div>
 
@@ -348,6 +356,10 @@
                     <button id="nameBtn" class="attendance-btn bg-white text-neutral border-gray-300" disabled>
                         <span class="font-bold">序号和姓名</span>
                     </button>
+                    <button id="historyToggleBtn"
+                        class="attendance-btn bg-white text-neutral border-gray-300" aria-pressed="false" disabled>
+                        <i class="fa fa-history mr-1"></i>历史考勤
+                    </button>
                     <button id="lateBtn"
                         class="attendance-btn bg-attendance-late/90 text-white hover:bg-attendance-late border border-attendance-late/30"
                         disabled>
@@ -367,6 +379,10 @@
                         class="attendance-btn bg-attendance-present/90 text-white hover:bg-attendance-present border border-attendance-present/30"
                         disabled>
                         <i class="fa fa-check mr-1"></i>出勤
+                    </button>
+                    <button id="visualizeBtn"
+                        class="attendance-btn bg-purple-500 text-white hover:bg-purple-600 transition-colors" disabled>
+                        <i class="fa fa-bar-chart mr-1"></i> 缺勤统计
                     </button>
                     <button id="exportStatsBtn"
                         class="attendance-btn bg-blue-500 text-white hover:bg-blue-600 transition-colors" disabled>
@@ -423,33 +439,46 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- 历史考勤区域 -->
-            <div id="statsSection" class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <div class="flex flex-wrap justify-between items-center mb-6">
-                    <h2 class="text-xl font-semibold">历史考勤</h2>
-                </div>
+                <!-- 历史考勤面板（默认隐藏，点击"历史考勤"按钮后展示） -->
+                <div id="historyAttendancePanel" class="mt-8 hidden">
+                    <div class="flex flex-wrap justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">历史考勤</h3>
+                    </div>
 
-                <div class="overflow-x-auto">
-                    <table id="attendanceTable" class="attendance-table">
-                        <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>姓名</th>
-                                <th>迟到次数</th>
-                                <th>早退次数</th>
-                                <th>缺勤次数</th>
-                                <th>出勤次数</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendanceTableBody">
-                            <!-- 表格内容将通过JavaScript动态生成 -->
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table id="attendanceTable" class="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>姓名</th>
+                                    <th>迟到次数</th>
+                                    <th>早退次数</th>
+                                    <th>缺勤次数</th>
+                                    <th>出勤次数</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody">
+                                <!-- 表格内容将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
+
+        <!-- 数据可视化弹窗 -->
+        <div id="visualizeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">缺勤统计</h3>
+                    <button id="closeVisualizeBtn" class="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                        aria-label="关闭">×</button>
+                </div>
+                <div id="absenceChart" class="w-full"></div>
+                <p id="visualizeSummary" class="mt-4 text-sm text-gray-500 text-center"></p>
+            </div>
+        </div>
 
         <!-- 页脚区域 -->
         <footer class="mt-5 text-center text-gray-500">
@@ -503,6 +532,8 @@
         const earlyLeaveBtn = document.getElementById('earlyLeaveBtn');
         const absentBtn = document.getElementById('absentBtn');
         const presentBtn = document.getElementById('presentBtn');
+        const historyToggleBtn = document.getElementById('historyToggleBtn');
+        const visualizeBtn = document.getElementById('visualizeBtn');
         const progressBar = document.getElementById('progressBar');
         const progressText = document.getElementById('progressText');
         const attendanceTableBody = document.getElementById('attendanceTableBody');
@@ -510,9 +541,13 @@
         const resetStatsBtn = document.getElementById('resetStatsBtn');
         const exportStatsBtn = document.getElementById('exportStatsBtn');
         const attendanceSection = document.getElementById('attendanceSection');
-        const statsSection = document.getElementById('statsSection');
         const todayAttendanceSection = document.getElementById('todayAttendanceSection');
+        const historyAttendancePanel = document.getElementById('historyAttendancePanel');
         const nameDisplay = document.getElementById('nameDisplay');
+        const visualizeModal = document.getElementById('visualizeModal');
+        const closeVisualizeBtn = document.getElementById('closeVisualizeBtn');
+        const absenceChart = document.getElementById('absenceChart');
+        const visualizeSummary = document.getElementById('visualizeSummary');
 
         // 汇总数据DOM元素
         const summaryPresent = document.getElementById('summaryPresent');
@@ -623,6 +658,102 @@
             return cell;
         }
 
+        // ===== 历史考勤面板 =====
+
+        // 切换历史考勤面板显示
+        function toggleHistoryAttendance() {
+            const isHidden = historyAttendancePanel.classList.contains('hidden');
+            if (isHidden) {
+                historyAttendancePanel.classList.remove('hidden');
+                historyToggleBtn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+                historyToggleBtn.classList.remove('bg-white', 'text-neutral', 'border-gray-300');
+                historyToggleBtn.setAttribute('aria-pressed', 'true');
+            } else {
+                historyAttendancePanel.classList.add('hidden');
+                historyToggleBtn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+                historyToggleBtn.classList.add('bg-white', 'text-neutral', 'border-gray-300');
+                historyToggleBtn.setAttribute('aria-pressed', 'false');
+            }
+            // 确保展示的是最新数据
+            updateAttendanceTable();
+        }
+
+        // ===== 数据可视化 =====
+
+        // HTML 转义，防止姓名中的特殊字符破坏图表
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, c => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[c]));
+        }
+
+        // 渲染缺勤次数统计图
+        function renderAbsenceChart() {
+            const data = nameData
+                .map(name => ({ name, count: attendanceStats[name]?.缺勤 || 0 }))
+                .filter(d => d.count > 0)
+                .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'zh'));
+
+            const total = data.reduce((s, d) => s + d.count, 0);
+
+            if (data.length === 0) {
+                absenceChart.innerHTML = '<p class="text-center text-gray-400 py-8">暂无缺勤记录</p>';
+                visualizeSummary.textContent = '所有学生均无缺勤记录';
+                return;
+            }
+
+            const maxCount = Math.max(1, ...data.map(d => d.count));
+
+            const labelWidth = 96;
+            const barHeight = 26;
+            const barGap = 8;
+            const rightPad = 42;
+            const topPad = 16;
+            const chartWidth = 640;
+            const chartHeight = topPad + data.length * (barHeight + barGap) + 10;
+            const maxBarWidth = chartWidth - labelWidth - rightPad;
+
+            let svg = `<svg viewBox="0 0 ${chartWidth} ${chartHeight}" width="100%" role="img" aria-label="缺勤统计图">`;
+
+            // 横向刻度网格线（0 到最大值，最多 5 条）
+            const gridCount = Math.min(5, maxCount);
+            for (let i = 0; i <= gridCount; i++) {
+                const value = (maxCount / gridCount) * i;
+                const x = labelWidth + (value / maxCount) * maxBarWidth;
+                svg += `<line x1="${x}" y1="${topPad - 6}" x2="${x}" y2="${chartHeight - 4}" stroke="#e5e7eb" stroke-width="1"></line>`;
+                if (i > 0) {
+                    svg += `<text x="${x}" y="${chartHeight - 6}" text-anchor="middle" font-size="10" fill="#9ca3af">${Math.round(value)}</text>`;
+                }
+            }
+
+            data.forEach((d, i) => {
+                const y = topPad + i * (barHeight + barGap);
+                const barW = Math.max(d.count > 0 ? 4 : 2, (d.count / maxCount) * maxBarWidth);
+                svg += `<text x="${labelWidth - 8}" y="${y + barHeight / 2 + 4}" text-anchor="end" font-size="12" fill="#374151">${escapeHtml(d.name)}</text>`;
+                svg += `<rect x="${labelWidth}" y="${y}" width="${barW}" height="${barHeight}" rx="4" fill="${d.count > 0 ? '#EF4444' : '#E5E7EB'}"><title>${escapeHtml(d.name)}：缺勤 ${d.count} 次</title></rect>`;
+                svg += `<text x="${labelWidth + barW + 6}" y="${y + barHeight / 2 + 4}" font-size="12" fill="#111827">${d.count}</text>`;
+            });
+
+            svg += '</svg>';
+            absenceChart.innerHTML = svg;
+            visualizeSummary.textContent = `有缺勤记录的学生 ${data.length} 名，累计缺勤 ${total} 次`;
+        }
+
+        // 打开数据可视化弹窗
+        function openVisualizeModal() {
+            renderAbsenceChart();
+            visualizeModal.classList.remove('hidden');
+        }
+
+        // 关闭数据可视化弹窗
+        function closeVisualizeModal() {
+            visualizeModal.classList.add('hidden');
+        }
+
         // 初始化
         function init() {
             // 加载本地存储数据
@@ -634,8 +765,33 @@
             earlyLeaveBtn.addEventListener('click', () => updateAttendanceStatus('早退'));
             absentBtn.addEventListener('click', () => updateAttendanceStatus('缺勤'));
             presentBtn.addEventListener('click', () => updateAttendanceStatus('出勤'));
+            // 点击姓名区域等同于点击"出勤"
+            nameDisplay.addEventListener('click', () => {
+                if (nameBtn.textContent === '已完成考勤' || !nameData[currentStudentIndex]) return;
+                updateAttendanceStatus('出勤');
+            });
             resetStatsBtn.addEventListener('click', clearCacheAndRefresh);
             exportStatsBtn.addEventListener('click', exportStatsData);
+            historyToggleBtn.addEventListener('click', toggleHistoryAttendance);
+            visualizeBtn.addEventListener('click', openVisualizeModal);
+            closeVisualizeBtn.addEventListener('click', closeVisualizeModal);
+            visualizeModal.addEventListener('click', (e) => {
+                if (e.target === visualizeModal) closeVisualizeModal();
+            });
+
+            // 点击姓名区域之外的空白区域视为"缺勤"
+            document.addEventListener('click', (e) => {
+                // 考勤未开始或已结束时忽略
+                if (nameBtn.textContent === '已完成考勤' || !nameData[currentStudentIndex]) return;
+                // 有缺勤记录下拉打开时，本次点击用于收起下拉，不触发缺勤
+                if (document.querySelector('.absent-dropdown.open')) {
+                    closeAllAbsentDropdowns();
+                    return;
+                }
+                // 蓝色姓名区域由单独监听处理（出勤）；交互元素和内容区域不触发缺勤
+                if (e.target.closest('#nameDisplay, button, a, input, label, table, .absent-dropdown, .step-card, .summary-card, #attendanceSection, #todayAttendanceSection, #visualizeModal, footer')) return;
+                updateAttendanceStatus('缺勤');
+            });
 
             // 全局点击/Esc/滚动时关闭缺勤记录下拉
             document.addEventListener('click', (e) => {
@@ -644,7 +800,10 @@
                 }
             });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeAllAbsentDropdowns();
+                if (e.key === 'Escape') {
+                    closeAllAbsentDropdowns();
+                    closeVisualizeModal();
+                }
             });
             window.addEventListener('resize', closeAllAbsentDropdowns);
             window.addEventListener('scroll', closeAllAbsentDropdowns, true);
@@ -775,6 +934,8 @@
                     earlyLeaveBtn.disabled = false;
                     absentBtn.disabled = false;
                     presentBtn.disabled = false;
+                    historyToggleBtn.disabled = false;
+                    visualizeBtn.disabled = false;
                     exportStatsBtn.disabled = false;
 
                     // 更新进度条
