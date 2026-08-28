@@ -601,11 +601,6 @@
                                 type="button">
                                 <i class="fa fa-camera mr-1"></i>保存截图
                             </button>
-                            <button id="closeVisualizeBtn"
-                                class="visualize-tab bg-blue-500 text-white hover:bg-blue-600"
-                                type="button">
-                                <i class="fa fa-times-circle mr-1"></i>关闭弹窗
-                            </button>
                         </div>
                         <div id="absencePanel">
                             <div id="absenceChart" class="w-full"></div>
@@ -690,7 +685,6 @@
         const historyAttendancePanel = document.getElementById('historyAttendancePanel');
         const nameDisplay = document.getElementById('nameDisplay');
         const visualizeModal = document.getElementById('visualizeModal');
-        const closeVisualizeBtn = document.getElementById('closeVisualizeBtn');
         const visualizeTabs = document.querySelectorAll('#visualizeTabs .visualize-tab[data-tab]');
         const absencePanel = document.getElementById('absencePanel');
         const latePanel = document.getElementById('latePanel');
@@ -1167,7 +1161,6 @@
             });
             saveScreenshotBtn.addEventListener('click', saveScreenshot);
             mainScreenshotBtn.addEventListener('click', saveMainScreenshot);
-            closeVisualizeBtn.addEventListener('click', closeVisualizeModal);
             visualizeModal.addEventListener('click', (e) => {
                 if (e.target === visualizeModal) closeVisualizeModal();
             });
