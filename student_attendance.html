@@ -210,16 +210,21 @@
 
             /* 图示数据统计类型切换按钮 */
             .visualize-tabs {
-                text-align: center;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
+                /* 左右内边距对应 SVG viewBox(640) 中 labelWidth(112) 与 rightPad(42) 的比例 */
+                padding: 0 6.5625% 2px 17.5%;
                 margin-bottom: 16px;
                 white-space: nowrap;
                 overflow-x: auto;
-                padding-bottom: 2px;
             }
 
             .visualize-tab {
                 display: inline-block;
-                margin: 0 4px 4px;
+                flex: 0 0 auto;
+                margin: 0;
                 padding: 0 16px;
                 height: 40px;
                 line-height: 40px;
