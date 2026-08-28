@@ -1127,6 +1127,43 @@
       NOTIFICATION_DURATION: 3000
     };
 
+    // ==================== 清除缓存并刷新 ====================
+    // 清除 Cache Storage 缓存，并给当前地址追加时间戳参数，让浏览器视为新地址、强制重新拉取页面（不走缓存）
+    function forceRefreshWithCacheClear() {
+      if ('caches' in window) {
+        caches.keys().then(names =>
+          Promise.all(names.map(name => caches.delete(name)))
+        );
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.set('_t', Date.now().toString());
+      window.location.replace(url.toString());
+    }
+
+    // 打开页面时自动执行一次"清除缓存并刷新"（每个标签页/会话仅一次，避免反复刷新造成死循环）
+    (function autoClearCacheAndRefresh() {
+      try {
+        const url = new URL(window.location.href);
+        const isAutoRefreshLoad = url.searchParams.has('_t');
+
+        // 自动刷新后加载回来的页面：标记本次会话已完成，并清理地址栏的时间戳参数
+        if (isAutoRefreshLoad) {
+          sessionStorage.setItem('autoRefreshDone', '1');
+          url.searchParams.delete('_t');
+          history.replaceState(null, '', url.pathname + url.search + url.hash);
+          return;
+        }
+
+        // 每个标签页/会话只自动刷新一次
+        if (sessionStorage.getItem('autoRefreshDone') === '1') return;
+        sessionStorage.setItem('autoRefreshDone', '1');
+
+        forceRefreshWithCacheClear();
+      } catch (error) {
+        console.error('自动刷新失败:', error);
+      }
+    })();
+
     // 卡片配色方案 - Apple 生态色系（适配浅色背景）
     const CARD_COLORS = [
       { accent: '#0071e3', glow: 'rgba(0,113,227,0.08)', border: 'rgba(0,113,227,0.2)' },
@@ -1647,6 +1684,7 @@
           handlers.downloadPage();
         }
       },
+
     };
 
     // ==================== 初始化 ====================
