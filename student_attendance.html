@@ -172,15 +172,15 @@
 
             /* 汇总卡片样式 */
             .summary-card {
-                @apply rounded-xl p-4 flex flex-col items-center justify-center text-center shadow-sm border transition-all duration-300;
+                @apply rounded-xl p-4 flex flex-row items-center justify-center gap-2 shadow-sm border transition-all duration-300;
             }
             
             .summary-card .count {
-                @apply text-2xl font-bold mt-1 mb-1;
+                @apply text-2xl font-bold;
             }
             
             .summary-card .label {
-                @apply text-sm font-medium;
+                @apply text-sm font-medium whitespace-nowrap;
             }
 
             /* 今日异常人员名单 */
@@ -509,6 +509,11 @@
                         <div id="summaryPresent" class="count text-attendance-present">0</div>
                         <div class="percent text-xs text-gray-500">0%</div>
                     </div>
+                    <div class="summary-card border-attendance-absent/30 bg-attendance-absent/5">
+                        <div class="label text-attendance-absent">缺勤人数</div>
+                        <div id="summaryAbsent" class="count text-attendance-absent">0</div>
+                        <div class="percent text-xs text-gray-500">0%</div>
+                    </div>
                     <div class="summary-card border-attendance-late/30 bg-attendance-late/5">
                         <div class="label text-attendance-late">迟到人数</div>
                         <div id="summaryLate" class="count text-attendance-late">0</div>
@@ -519,15 +524,16 @@
                         <div id="summaryEarly" class="count text-attendance-early">0</div>
                         <div class="percent text-xs text-gray-500">0%</div>
                     </div>
-                    <div class="summary-card border-attendance-absent/30 bg-attendance-absent/5">
-                        <div class="label text-attendance-absent">缺勤人数</div>
-                        <div id="summaryAbsent" class="count text-attendance-absent">0</div>
-                        <div class="percent text-xs text-gray-500">0%</div>
-                    </div>
                 </div>
 
                 <!-- 今日异常人员名单 -->
                 <div id="todayNameLists" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="name-list-card border-attendance-absent/30 bg-attendance-absent/5">
+                        <div class="name-list-title text-attendance-absent">
+                            <i class="fa fa-times mr-1"></i>缺勤名单<span class="name-list-date"></span>
+                        </div>
+                        <div id="absentNameList" class="name-list-content"></div>
+                    </div>
                     <div class="name-list-card border-attendance-late/30 bg-attendance-late/5">
                         <div class="name-list-title text-attendance-late">
                             <i class="fa fa-clock-o mr-1"></i>迟到名单<span class="name-list-date"></span>
@@ -539,12 +545,6 @@
                             <i class="fa fa-sign-out mr-1"></i>早退名单<span class="name-list-date"></span>
                         </div>
                         <div id="earlyNameList" class="name-list-content"></div>
-                    </div>
-                    <div class="name-list-card border-attendance-absent/30 bg-attendance-absent/5">
-                        <div class="name-list-title text-attendance-absent">
-                            <i class="fa fa-times mr-1"></i>缺勤名单<span class="name-list-date"></span>
-                        </div>
-                        <div id="absentNameList" class="name-list-content"></div>
                     </div>
                 </div>
 
