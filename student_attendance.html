@@ -180,6 +180,93 @@
             .summary-card .label {
                 @apply text-sm font-medium;
             }
+
+            /* 缺勤记录下拉样式 */
+            .absent-dropdown {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                user-select: none;
+            }
+
+            .absent-dropdown-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                background: #f9fafb;
+                color: #6b7280;
+                font-size: 10px;
+                line-height: 1;
+                cursor: pointer;
+                padding: 0;
+                transition: all 0.2s ease;
+            }
+
+            .absent-dropdown-btn:hover {
+                background: #eef2ff;
+                color: #4f46e5;
+                border-color: #c7d2fe;
+            }
+
+            .absent-dropdown-menu {
+                display: none;
+                z-index: 50;
+                min-width: 260px;
+                max-width: 320px;
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.18);
+                padding: 10px;
+                text-align: left;
+            }
+
+            .absent-dropdown.open .absent-dropdown-menu {
+                display: block;
+            }
+
+            .absent-dropdown-title {
+                font-weight: 600;
+                font-size: 12px;
+                color: #374151;
+                padding-bottom: 6px;
+                margin-bottom: 6px;
+                border-bottom: 1px solid #f3f4f6;
+            }
+
+            .absent-dropdown-list {
+                max-height: 220px;
+                overflow-y: auto;
+            }
+
+            .absent-dropdown-item {
+                font-size: 12px;
+                color: #4b5563;
+                padding: 4px 6px;
+                border-radius: 6px;
+                line-height: 1.4;
+            }
+
+            .absent-dropdown-item:nth-child(odd) {
+                background: #f9fafb;
+            }
+
+            .absent-dropdown-item:hover {
+                background: #eef2ff;
+            }
+
+            .absent-dropdown-empty {
+                font-size: 12px;
+                color: #9ca3af;
+                text-align: center;
+                padding: 8px 0;
+            }
         }
     </style>
 </head>
@@ -327,8 +414,7 @@
                                 <th>迟到次数</th>
                                 <th>早退次数</th>
                                 <th>缺勤次数</th>
-                                <th>正常出勤次数</th>
-                                <th>总出勤次数</th>
+                                <th>出勤次数</th>
                                 <th>状态更新</th>
                             </tr>
                         </thead>
@@ -354,8 +440,7 @@
                                 <th>迟到次数</th>
                                 <th>早退次数</th>
                                 <th>缺勤次数</th>
-                                <th>正常出勤次数</th>
-                                <th>总出勤次数</th>
+                                <th>出勤次数</th>
                             </tr>
                         </thead>
                         <tbody id="attendanceTableBody">
@@ -405,6 +490,7 @@
         let todayAttendance = {}; // 今日考勤数据
         let attendanceToggle = {}; // 记录按钮状态
         let lastUpdatedCells = {}; // 记录最后更新的单元格
+        let absenceHistory = {}; // 缺勤历史记录（每次缺勤记录一次北京时间）
         let totalStudents = 0;
         let remainingStudents = []; // 剩余未抽取的学生索引
         let currentStudentIndex = -1; // 当前学生索引
@@ -434,6 +520,109 @@
         const summaryEarly = document.getElementById('summaryEarly');
         const summaryAbsent = document.getElementById('summaryAbsent');
 
+        // ===== 北京时间与缺勤历史 =====
+
+        // 获取当前北京时间（优先使用页面顶部已同步的时间源）
+        function getBeijingNow() {
+            if (typeof window.getBeijingTime === 'function') {
+                return window.getBeijingTime();
+            }
+            dayjs.extend(window.dayjs_plugin_utc);
+            dayjs.extend(window.dayjs_plugin_timezone);
+            return dayjs().tz('Asia/Shanghai');
+        }
+
+        // 格式化当前北京时间
+        function formatBeijingNow() {
+            return getBeijingNow().format('YYYY-MM-DD HH:mm:ss');
+        }
+
+        // 记录/移除缺勤历史
+        function recordAbsenceHistory(name, action) {
+            if (!absenceHistory[name]) absenceHistory[name] = [];
+            if (action === 'add') {
+                absenceHistory[name].push(formatBeijingNow());
+            } else if (action === 'remove') {
+                absenceHistory[name].pop();
+            }
+        }
+
+        // 关闭所有缺勤记录下拉
+        function closeAllAbsentDropdowns() {
+            document.querySelectorAll('.absent-dropdown.open').forEach(d => d.classList.remove('open'));
+        }
+
+        // 切换缺勤记录下拉
+        function toggleAbsentDropdown(btn) {
+            const wrapper = btn.closest('.absent-dropdown');
+            const isOpen = wrapper.classList.contains('open');
+            closeAllAbsentDropdowns();
+            if (!isOpen) {
+                wrapper.classList.add('open');
+                const menu = wrapper.querySelector('.absent-dropdown-menu');
+                const rect = wrapper.getBoundingClientRect();
+                const menuWidth = menu.offsetWidth || 260;
+                menu.style.position = 'fixed';
+                menu.style.top = (rect.bottom + 4) + 'px';
+                menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - menuWidth - 8)) + 'px';
+            }
+        }
+
+        // 创建缺勤次数单元格（含历史记录下拉）
+        function createAbsentCell(count, name, highlighted) {
+            const cell = document.createElement('td');
+            if (highlighted) cell.className = 'today-attendance-absent';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'absent-dropdown';
+
+            const countSpan = document.createElement('span');
+            countSpan.className = 'absent-count';
+            countSpan.textContent = count;
+            wrapper.appendChild(countSpan);
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'absent-dropdown-btn';
+            btn.title = '查看缺勤历史记录';
+            btn.setAttribute('aria-label', '查看缺勤历史记录');
+            btn.innerHTML = '<i class="fa fa-chevron-down" aria-hidden="true"></i>';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleAbsentDropdown(btn);
+            });
+            wrapper.appendChild(btn);
+
+            const menu = document.createElement('div');
+            menu.className = 'absent-dropdown-menu';
+
+            const history = absenceHistory[name] || [];
+            const title = document.createElement('div');
+            title.className = 'absent-dropdown-title';
+            title.textContent = `缺勤记录（共 ${history.length} 次）`;
+            menu.appendChild(title);
+
+            const list = document.createElement('div');
+            list.className = 'absent-dropdown-list';
+            if (history.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'absent-dropdown-empty';
+                empty.textContent = '暂无缺勤记录';
+                list.appendChild(empty);
+            } else {
+                history.forEach((entry, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'absent-dropdown-item';
+                    item.textContent = `${i + 1}. ${entry}`;
+                    list.appendChild(item);
+                });
+            }
+            menu.appendChild(list);
+            wrapper.appendChild(menu);
+            cell.appendChild(wrapper);
+            return cell;
+        }
+
         // 初始化
         function init() {
             // 加载本地存储数据
@@ -447,6 +636,18 @@
             presentBtn.addEventListener('click', () => updateAttendanceStatus('出勤'));
             resetStatsBtn.addEventListener('click', clearCacheAndRefresh);
             exportStatsBtn.addEventListener('click', exportStatsData);
+
+            // 全局点击/Esc/滚动时关闭缺勤记录下拉
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.absent-dropdown')) {
+                    closeAllAbsentDropdowns();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeAllAbsentDropdowns();
+            });
+            window.addEventListener('resize', closeAllAbsentDropdowns);
+            window.addEventListener('scroll', closeAllAbsentDropdowns, true);
 
             // 更新UI
             updateAttendanceTable();
@@ -477,6 +678,27 @@
                     const worksheet = workbook.Sheets[firstSheetName];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
+                    // 读取缺勤记录表（如果导出的文件包含该表，可还原缺勤时间）
+                    const absenceSheetName = workbook.SheetNames.find(s => s.includes('缺勤记录'));
+                    let absenceTimesByStudent = {};
+                    if (absenceSheetName) {
+                        const absenceRows = XLSX.utils.sheet_to_json(workbook.Sheets[absenceSheetName], { header: 1 });
+                        if (absenceRows.length > 1) {
+                            const absHeaders = absenceRows[0] || [];
+                            const absNameIdx = absHeaders.findIndex(h => h && (h.includes('姓名') || h.includes('名字')));
+                            const absTimeIdx = absHeaders.findIndex(h => h && (h.includes('缺勤时间') || h.includes('时间')));
+                            absenceRows.slice(1).forEach(row => {
+                                const n = row[absNameIdx];
+                                if (!n) return;
+                                const t = row[absTimeIdx];
+                                if (t === undefined || t === null || String(t).trim() === '') return;
+                                const timeStr = typeof t === 'number' ? formatExcelSerialDate(t) : String(t).trim();
+                                if (!absenceTimesByStudent[n]) absenceTimesByStudent[n] = [];
+                                absenceTimesByStudent[n].push(timeStr);
+                            });
+                        }
+                    }
+
                     // 检查是否包含所需的列
                     const headers = jsonData[0] || [];
                     const nameColumnIndex = findNameColumnIndex(headers);
@@ -490,13 +712,18 @@
                         迟到次数: headers.findIndex(h => h.includes('迟到次数')),
                         早退次数: headers.findIndex(h => h.includes('早退次数')),
                         缺勤次数: headers.findIndex(h => h.includes('缺勤次数')),
-                        正常出勤次数: headers.findIndex(h => h.includes('正常出勤次数') || h.includes('出勤次数')),
-                        总出勤次数: headers.findIndex(h => h.includes('总出勤次数'))
+                        正常出勤次数: headers.findIndex(h => h.includes('正常出勤次数')),
+                        出勤次数: headers.findIndex(h => String(h).trim() === '出勤次数')
                     };
+                    // 出勤总次数列：优先取"出勤次数"，其次兼容旧文件中的"总出勤次数"
+                    const totalPresentIndex = columnIndices.出勤次数 > -1
+                        ? columnIndices.出勤次数
+                        : headers.findIndex(h => h.includes('总出勤次数'));
 
                     // 从第2行开始提取姓名数据和考勤数据
                     nameData = [];
                     attendanceStats = {};
+                    absenceHistory = {};
 
                     jsonData.slice(1).forEach(row => {
                         const name = row[nameColumnIndex];
@@ -508,16 +735,25 @@
                         const normalPresent = parseInt(row[columnIndices.正常出勤次数]) || 0;
                         const late = parseInt(row[columnIndices.迟到次数]) || 0;
                         const early = parseInt(row[columnIndices.早退次数]) || 0;
+                        const absentCount = parseInt(row[columnIndices.缺勤次数]) || 0;
 
                         attendanceStats[name] = {
                             迟到: late,
                             早退: early,
-                            缺勤: parseInt(row[columnIndices.缺勤次数]) || 0,
+                            缺勤: absentCount,
                             正常出勤: normalPresent,
-                            总出勤: columnIndices.总出勤次数 > -1
-                                ? parseInt(row[columnIndices.总出勤次数]) || 0
+                            总出勤: totalPresentIndex > -1
+                                ? parseInt(row[totalPresentIndex]) || 0
                                 : normalPresent + late + early // 计算总出勤次数
                         };
+
+                        // 初始化缺勤历史记录：优先使用缺勤记录表中的时间，不足部分用占位项补齐
+                        const importedTimes = absenceTimesByStudent[name] || [];
+                        const history = importedTimes.slice();
+                        for (let i = history.length; i < absentCount; i++) {
+                            history.push('导入数据（无具体时间）');
+                        }
+                        absenceHistory[name] = history;
                     });
 
                     if (nameData.length === 0) {
@@ -656,6 +892,13 @@
             }
             todayAttendance[name].总计 += 1;
 
+            // 记录缺勤历史（北京时间）：进入缺勤时新增，离开缺勤时移除
+            if (normalizedStatus === '缺勤' && previousStatus !== '缺勤') {
+                recordAbsenceHistory(name, 'add');
+            } else if (normalizedStatus !== '缺勤' && previousStatus === '缺勤') {
+                recordAbsenceHistory(name, 'remove');
+            }
+
             // 更新历史考勤数据
             updateHistoricalAttendance(name, normalizedStatus, previousStatus);
 
@@ -737,20 +980,14 @@
                 earlyCell.textContent = attendanceStats[name]?.早退 || 0;
                 row.appendChild(earlyCell);
 
-                // 缺勤次数
-                const absentCell = document.createElement('td');
-                absentCell.textContent = attendanceStats[name]?.缺勤 || 0;
+                // 缺勤次数（含历史记录下拉）
+                const absentCell = createAbsentCell(attendanceStats[name]?.缺勤 || 0, name, false);
                 row.appendChild(absentCell);
 
-                // 正常出勤次数
-                const normalPresentCell = document.createElement('td');
-                normalPresentCell.textContent = attendanceStats[name]?.正常出勤 || 0;
-                row.appendChild(normalPresentCell);
-
-                // 总出勤次数
-                const totalPresentCell = document.createElement('td');
-                totalPresentCell.textContent = attendanceStats[name]?.总出勤 || 0;
-                row.appendChild(totalPresentCell);
+                // 出勤次数
+                const presentCell = document.createElement('td');
+                presentCell.textContent = attendanceStats[name]?.总出勤 || 0;
+                row.appendChild(presentCell);
 
                 attendanceTableBody.appendChild(row);
             });
@@ -792,28 +1029,18 @@
                 }
                 row.appendChild(earlyCell);
 
-                // 缺勤次数
-                const absentCell = document.createElement('td');
-                const absentCount = todayAttendance[name]?.缺勤 || 0;
-                absentCell.textContent = absentCount;
-                if (absentCount === 1) {
-                    absentCell.className = 'today-attendance-absent';
-                }
+                // 缺勤次数（含历史记录下拉）
+                const absentCell = createAbsentCell(
+                    todayAttendance[name]?.缺勤 || 0,
+                    name,
+                    (todayAttendance[name]?.缺勤 || 0) === 1
+                );
                 row.appendChild(absentCell);
 
-                // 正常出勤次数
-                const normalPresentCell = document.createElement('td');
-                const normalPresentCount = todayAttendance[name]?.正常出勤 || 0;
-                normalPresentCell.textContent = normalPresentCount;
-                if (normalPresentCount === 1) {
-                    normalPresentCell.className = 'today-attendance-present';
-                }
-                row.appendChild(normalPresentCell);
-
-                // 总出勤次数
-                const totalPresentCell = document.createElement('td');
-                totalPresentCell.textContent = todayAttendance[name]?.总出勤 || 0;
-                row.appendChild(totalPresentCell);
+                // 出勤次数
+                const presentCell = document.createElement('td');
+                presentCell.textContent = todayAttendance[name]?.总出勤 || 0;
+                row.appendChild(presentCell);
 
                 // 状态更新列
                 const actionCell = document.createElement('td');
@@ -875,6 +1102,13 @@
                 todayAttendance[name].总出勤 += 1;
             }
             todayAttendance[name].总计 += 1;
+
+            // 记录缺勤历史（北京时间）：进入缺勤时新增，离开缺勤时移除
+            if (status === '缺勤' && previousStatus !== '缺勤') {
+                recordAbsenceHistory(name, 'add');
+            } else if (status !== '缺勤' && previousStatus === '缺勤') {
+                recordAbsenceHistory(name, 'remove');
+            }
 
             // 更新历史考勤数据
             updateHistoricalAttendance(name, status, previousStatus);
@@ -1008,8 +1242,7 @@
 
                 // 创建导出数据
                 const exportData = [
-                    ['序号', '姓名', '迟到次数', '早退次数', '缺勤次数',
-                        '正常出勤次数', '总出勤次数']
+                    ['序号', '姓名', '迟到次数', '早退次数', '缺勤次数', '出勤次数']
                 ];
 
                 // 添加每个学生的数据
@@ -1020,7 +1253,6 @@
                         attendanceStats[name]?.迟到 || 0,
                         attendanceStats[name]?.早退 || 0,
                         attendanceStats[name]?.缺勤 || 0,
-                        attendanceStats[name]?.正常出勤 || 0,
                         attendanceStats[name]?.总出勤 || 0
                     ]);
                 });
@@ -1029,6 +1261,16 @@
                 const ws = XLSX.utils.aoa_to_sheet(exportData);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "历史考勤");
+
+                // 创建缺勤记录表（含具体北京时间），供再次导入时还原
+                const absenceRows = [['姓名', '缺勤时间']];
+                nameData.forEach(name => {
+                    (absenceHistory[name] || []).forEach(t => {
+                        absenceRows.push([name, t]);
+                    });
+                });
+                const wsAbsence = XLSX.utils.aoa_to_sheet(absenceRows);
+                XLSX.utils.book_append_sheet(wb, wsAbsence, "缺勤记录");
 
                 // 获取当前时间（年月日时分秒）
                 const now = new Date();
@@ -1052,10 +1294,19 @@
             return num < 10 ? '0' + num : num;
         }
 
+        // 辅助函数：将 Excel 日期序列号格式化为 YYYY-MM-DD HH:mm:ss
+        function formatExcelSerialDate(serial) {
+            const d = XLSX.SSF.parse_date_code(serial);
+            if (!d) return String(serial);
+            const p = n => (n < 10 ? '0' + n : '' + n);
+            return `${d.y}-${p(d.m)}-${p(d.d)} ${p(d.H)}:${p(d.M)}:${p(d.S)}`;
+        }
+
         // 保存到本地存储
         function saveToLocalStorage() {
             localStorage.setItem('nameData', JSON.stringify(nameData));
             localStorage.setItem('attendanceStats', JSON.stringify(attendanceStats));
+            localStorage.setItem('absenceHistory', JSON.stringify(absenceHistory));
             localStorage.setItem('todayAttendance', JSON.stringify(todayAttendance));
             localStorage.setItem('attendanceToggle', JSON.stringify(attendanceToggle));
             localStorage.setItem('totalStudents', totalStudents);
@@ -1080,6 +1331,25 @@
             if (savedAttendanceStats) {
                 attendanceStats = JSON.parse(savedAttendanceStats);
             }
+
+            const savedAbsenceHistory = localStorage.getItem('absenceHistory');
+            if (savedAbsenceHistory) {
+                absenceHistory = JSON.parse(savedAbsenceHistory);
+            } else {
+                absenceHistory = {};
+            }
+
+            // 兼容旧缓存数据：为已有缺勤次数补齐历史记录占位项，保证下拉记录数与统计一致
+            Object.keys(attendanceStats).forEach(name => {
+                const count = attendanceStats[name]?.缺勤 || 0;
+                const history = absenceHistory[name] || [];
+                if (history.length < count) {
+                    for (let i = history.length; i < count; i++) {
+                        history.push('导入数据（无具体时间）');
+                    }
+                    absenceHistory[name] = history;
+                }
+            });
 
             if (savedTodayAttendance) {
                 todayAttendance = JSON.parse(savedTodayAttendance);
@@ -1121,11 +1391,12 @@
 	        dayjs.extend(window.dayjs_plugin_timezone);
 	        const BJ_TZ = 'Asia/Shanghai';
 	        const SYNC_INTERVAL_MS = 5 * 60 * 1000;
-	        let timeOffset = 0, syncTimer = null;
-	        const timeEl = document.getElementById('currentDateTime');
-	        const syncStatusEl = document.getElementById('timeSyncStatus');
-	        function getBeijingTime() { return dayjs(Date.now() + timeOffset).tz(BJ_TZ); }
-	        function updateDisplay() {
+        let timeOffset = 0, syncTimer = null;
+        const timeEl = document.getElementById('currentDateTime');
+        const syncStatusEl = document.getElementById('timeSyncStatus');
+        function getBeijingTime() { return dayjs(Date.now() + timeOffset).tz(BJ_TZ); }
+        window.getBeijingTime = getBeijingTime;
+        function updateDisplay() {
 	            if (!timeEl) return;
 	            const now = getBeijingTime();
 	            const weekdays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
