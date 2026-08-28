@@ -66,7 +66,6 @@
       filter: blur(80px);
       z-index: 0;
       pointer-events: none;
-      animation: float 8s ease-in-out infinite;
     }
 
     .bg-orb-1 {
@@ -83,20 +82,6 @@
       width: min(400px, 40vw);
       height: min(400px, 40vw);
       background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
-      animation-delay: -2s;
-      animation-direction: reverse;
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0) translateX(0);
-      }
-
-      50% {
-        transform: translateY(-30px) translateX(20px);
-      }
     }
 
     /* ==================== 布局容器 ==================== */
@@ -248,39 +233,12 @@
       flex-wrap: wrap;
     }
 
-    /* 头部操作按钮：胶囊样式与专属配色（绿-微信 / 蓝-添加 / 橙-下载） */
+    /* 头部操作按钮：胶囊样式（配色见全局 .btn-* 定义） */
     .links-header .btn {
       border-radius: 999px;
       padding: 6px 14px;
       font-size: 0.85rem;
       box-shadow: 0 2px 10px var(--btn-shadow);
-    }
-
-    .links-header .btn-wechat {
-      background: linear-gradient(135deg, #07c160, #06ad56);
-      --btn-shadow: rgba(7, 193, 96, 0.35);
-    }
-
-    .links-header .btn-wechat:hover {
-      background: linear-gradient(135deg, #06ad56, #059a4c);
-    }
-
-    .links-header .btn-primary {
-      background: linear-gradient(135deg, #0071e3, #0066cc);
-      --btn-shadow: rgba(0, 113, 227, 0.35);
-    }
-
-    .links-header .btn-primary:hover {
-      background: linear-gradient(135deg, #0077ed, #0069d6);
-    }
-
-    .links-header .btn-success {
-      background: linear-gradient(135deg, #ff9500, #f08600);
-      --btn-shadow: rgba(255, 149, 0, 0.35);
-    }
-
-    .links-header .btn-success:hover {
-      background: linear-gradient(135deg, #f08a00, #e07d00);
     }
 
     .btn {
@@ -294,8 +252,6 @@
       transition: all var(--transition-normal);
       font-size: 0.95rem;
       outline: none;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-subtle);
       white-space: nowrap;
       color: #fff;
@@ -316,29 +272,30 @@
     }
 
     .btn-primary {
-      background: var(--accent);
+      background: linear-gradient(135deg, #0071e3, #0066cc);
+      --btn-shadow: rgba(0, 113, 227, 0.35);
     }
 
     .btn-primary:hover {
-      background: var(--accent-hover);
+      background: linear-gradient(135deg, #0077ed, #0069d6);
     }
 
     .btn-success {
-      --btn-shadow: rgba(52, 199, 89, 0.4);
-      background: #34c759;
+      background: linear-gradient(135deg, #ff9500, #f08600);
+      --btn-shadow: rgba(255, 149, 0, 0.35);
     }
 
     .btn-success:hover {
-      background: #28a745;
+      background: linear-gradient(135deg, #f08a00, #e07d00);
     }
 
     .btn-wechat {
-      --btn-shadow: rgba(7, 193, 96, 0.4);
-      background: #07c160;
+      background: linear-gradient(135deg, #07c160, #06ad56);
+      --btn-shadow: rgba(7, 193, 96, 0.35);
     }
 
     .btn-wechat:hover {
-      background: #06ad56;
+      background: linear-gradient(135deg, #06ad56, #059a4c);
     }
 
     .btn-wechat i {
@@ -382,8 +339,6 @@
     /* ==================== 链接卡片 ==================== */
     .link-item {
       background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       border-radius: var(--radius-md);
       padding: 16px 18px;
       display: flex;
@@ -1127,43 +1082,6 @@
       NOTIFICATION_DURATION: 3000
     };
 
-    // ==================== 清除缓存并刷新 ====================
-    // 清除 Cache Storage 缓存，并给当前地址追加时间戳参数，让浏览器视为新地址、强制重新拉取页面（不走缓存）
-    function forceRefreshWithCacheClear() {
-      if ('caches' in window) {
-        caches.keys().then(names =>
-          Promise.all(names.map(name => caches.delete(name)))
-        );
-      }
-      const url = new URL(window.location.href);
-      url.searchParams.set('_t', Date.now().toString());
-      window.location.replace(url.toString());
-    }
-
-    // 打开页面时自动执行一次"清除缓存并刷新"（每个标签页/会话仅一次，避免反复刷新造成死循环）
-    (function autoClearCacheAndRefresh() {
-      try {
-        const url = new URL(window.location.href);
-        const isAutoRefreshLoad = url.searchParams.has('_t');
-
-        // 自动刷新后加载回来的页面：标记本次会话已完成，并清理地址栏的时间戳参数
-        if (isAutoRefreshLoad) {
-          sessionStorage.setItem('autoRefreshDone', '1');
-          url.searchParams.delete('_t');
-          history.replaceState(null, '', url.pathname + url.search + url.hash);
-          return;
-        }
-
-        // 每个标签页/会话只自动刷新一次
-        if (sessionStorage.getItem('autoRefreshDone') === '1') return;
-        sessionStorage.setItem('autoRefreshDone', '1');
-
-        forceRefreshWithCacheClear();
-      } catch (error) {
-        console.error('自动刷新失败:', error);
-      }
-    })();
-
     // 卡片配色方案 - Apple 生态色系（适配浅色背景）
     const CARD_COLORS = [
       { accent: '#0071e3', glow: 'rgba(0,113,227,0.08)', border: 'rgba(0,113,227,0.2)' },
@@ -1785,32 +1703,21 @@
         syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       }
 
-      let best = null;
-      let bestRtt = Infinity;
-
-      // 多轮探测（3次），取最低 RTT 的结果（网络抖动最小）
-      for (let attempt = 0; attempt < 3; attempt++) {
+      // 单次探测：网络时间 = 服务器时间 + 单向延迟（RTT/2）
+      try {
         const t0 = performance.now();
-        try {
-          const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
-          const data = await res.json();
-          const t1 = performance.now();
-          if (data.status === 1 && data.data && data.data.timestamp) {
-            const rtt = t1 - t0;
-            if (rtt < bestRtt) {
-              bestRtt = rtt;
-              // 估算网络时间：服务器时间 + 单向延迟（RTT/2）
-              best = data.data.timestamp + Math.round(rtt / 2);
-            }
-          }
-        } catch (e) { continue; }
-      }
+        const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
+        const data = await res.json();
+        const t1 = performance.now();
 
-      if (best) {
-        TIME.offset = best - Date.now();
+        if (!(data.status === 1 && data.data && data.data.timestamp)) {
+          throw new Error('invalid response');
+        }
+
+        TIME.offset = data.data.timestamp + Math.round((t1 - t0) / 2) - Date.now();
         if (syncStatusEl) syncStatusEl.innerHTML = '';
         updateFooterYear(false);
-      } else {
+      } catch (e) {
         if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
         updateFooterYear(true);
       }
