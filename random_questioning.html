@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -7,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>随机问答</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
@@ -132,32 +134,161 @@
             }
         }
     </style>
+    <style>
+        /* ==================== 顶部品牌区（与 index.html 顶部保持一致） ==================== */
+        header {
+            text-align: center;
+            padding: clamp(20px, 5vw, 30px) 20px 10px;
+            color: #1d1d1f;
+            margin-bottom: 0;
+        }
+
+        .logo {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo i {
+            color: #0071e3;
+            filter: drop-shadow(0 0 8px rgba(0, 113, 227, 0.3));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .download-tip {
+            display: block;
+            text-align: center;
+            color: #86868b;
+            font-size: 0.875rem;
+            padding: 8px 20px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .download-tip:hover {
+            color: #0071e3;
+        }
+
+        .download-tip i {
+            margin-right: 6px;
+            color: #86868b;
+        }
+
+        .download-tip .highlight {
+            background-color: #fde047;
+            color: #111827;
+            font-weight: 700;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+
+        .header-logo-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .brand-accent {
+            color: #0071e3;
+            text-shadow: 0 0 10px rgba(0, 113, 227, 0.3);
+        }
+
+        .time-display {
+            text-align: center;
+            padding: 6px 0;
+            color: #86868b;
+            position: relative;
+            z-index: 1;
+        }
+
+        .time-display .time-main {
+            font-size: 1.05rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .time-display .time-sync-status {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* 背景装饰 */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-orb-1 {
+            top: -10%;
+            right: -5%;
+            width: min(500px, 50vw);
+            height: min(500px, 50vw);
+            background: radial-gradient(circle, rgba(0, 113, 227, 0.06) 0%, transparent 70%);
+        }
+
+        .bg-orb-2 {
+            bottom: -10%;
+            left: -5%;
+            width: min(400px, 40vw);
+            height: min(400px, 40vw);
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, transparent 70%);
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                flex-direction: column;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 font-sans text-neutral">
-    <div class="container mx-auto px-4 pt-8 pb-5 max-w-7xl">
+    <!-- 背景装饰 -->
+    <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+    <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+    <div class="container relative z-10 mx-auto px-4 pb-5 max-w-7xl">
         <!-- 头部区域 -->
         <header class="mb-8 text-center">
-            <h1
-                class="inline-flex items-center justify-center gap-3 sm:gap-4 text-[clamp(1.8rem,5vw,2.8rem)] font-bold text-neutral mb-3">
-                <a href="https://xuefulu.ai/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;gap:inherit;">
-                    <i class="fa fa-graduation-cap"
-                        style="color:#F59E0B;filter:drop-shadow(0 0 8px rgba(245,158,11,0.3));"></i>
-                    <span>学府路1号 · 随机问答 · <span style="color:#F59E0B">xuefulu</span><span
-                            style="color:#EF4444">.ai</span></span>
-                </a>
-            </h1>
+            <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+                <h1 class="logo">
+                    <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                    <span>学府路<span class="brand-accent">1</span>号 · 随机问答 · <span class="brand-accent">xuefulu.ai</span></span>
+                </h1>
+            </a>
 
-            <a href="https://xuefulu.ai/" target="_blank" rel="noopener"
-                class="block text-center text-sm text-gray-500 mb-3 hover:text-primary transition-all duration-300">
-                <i class="fa fa-external-link text-primary mr-1"></i>打开浏览器，在地址栏输入 <span class="bg-yellow-300 text-gray-900 font-bold px-1.5 py-0.5 rounded">xuefulu.ai</span>，按下 <span class="bg-yellow-300 text-gray-900 font-bold px-1.5 py-0.5 rounded">Enter</span> 即可访问学府路1号！
+            <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
+                <i class="fa fa-external-link" aria-hidden="true"></i>打开浏览器，在地址栏输入
+                <span class="highlight">xuefulu.ai</span>，按下 <span class="highlight">Enter</span> 即可访问学府路1号！
             </a>
 
             <!-- 时间显示 -->
-            <div class="text-center py-1.5 text-gray-500 relative z-10 mb-3">
-                <span class="text-base font-normal tracking-wide">
+            <div class="time-display">
+                <span class="time-main">
                     <span id="currentDateTime">--</span>
-                    <span class="text-xs opacity-50 ml-1.5 align-middle" id="timeSyncStatus"><i class="fa fa-spinner fa-spin"></i></span>
+                    <span class="time-sync-status" id="timeSyncStatus"><i class="fa fa-spinner fa-spin"></i></span>
                 </span>
             </div>
 
