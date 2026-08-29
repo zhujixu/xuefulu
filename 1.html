@@ -1172,8 +1172,9 @@
       });
     }
 
-    // ==================== Favicon 加载（源站优先 → Google 兜底 → 学士帽，带缓存） ====================
+    // ==================== Favicon 加载（favicon.im → 源站 → 学士帽，带缓存与超时） ====================
     const faviconCache = new Map();
+    const FAVICON_TIMEOUT_MS = 3000;
 
     function renderFaviconFallback(container) {
       container.innerHTML = '<i class="fas fa-graduation-cap favicon-fallback"></i>';
@@ -1194,8 +1195,9 @@
       }
 
       const sources = [
-        `https://${domain}/favicon.ico`,
-        `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+        // throw-error-on-404：favicon.im 找不到图标时返回 404 而非灰色占位，触发 onerror 继续降级
+        `https://favicon.im/${domain}?larger=true&throw-error-on-404=true`,
+        `https://${domain}/favicon.ico`
       ];
 
       let index = 0;
@@ -1207,17 +1209,28 @@
         }
         const img = new Image();
         img.alt = '';
+        img.referrerPolicy = 'no-referrer';
+        let settled = false;
+        const timer = setTimeout(() => {
+          if (settled) return;
+          settled = true;
+          index++;
+          tryNext();
+        }, FAVICON_TIMEOUT_MS);
         img.onload = () => {
-          // Google 服务取不到时返回 16×16 默认图标，继续降级
-          if (index === 1 && img.naturalWidth <= 16) {
-            index++;
-            tryNext();
-            return;
-          }
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
           faviconCache.set(domain, img);
           container.appendChild(img);
         };
-        img.onerror = () => { index++; tryNext(); };
+        img.onerror = () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          index++;
+          tryNext();
+        };
         img.src = sources[index];
       };
       tryNext();
