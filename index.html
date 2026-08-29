@@ -1172,7 +1172,7 @@
       });
     }
 
-    // ==================== Favicon 加载（favicon.im → 源站 → DuckDuckGo → 学士帽，带缓存与超时） ====================
+    // ==================== Favicon 加载（favicon.im → 源站 → 学士帽，带缓存与超时） ====================
     const faviconCache = new Map();
     const FAVICON_TIMEOUT_MS = 3000;
 
@@ -1197,8 +1197,7 @@
       const sources = [
         // throw-error-on-404：favicon.im 找不到图标时返回 404 而非灰色占位，触发 onerror 继续降级
         `https://favicon.im/${domain}?larger=true&throw-error-on-404=true`,
-        `https://${domain}/favicon.ico`,
-        `https://icons.duckduckgo.com/ip3/${domain}.ico`
+        `https://${domain}/favicon.ico`
       ];
 
       let index = 0;
