@@ -349,7 +349,7 @@
       box-shadow: 0 2px 10px rgba(0, 113, 227, 0.35);
     }
 
-    /* 加减法数字范围选项：琥珀色系，与模式按钮区分 */
+    /* 加减法题型选项（100以内 / 加减混合）：琥珀色系，与模式按钮区分 */
     .math-pill-btn.range-opt {
       border-color: rgba(255, 149, 0, 0.35);
       background: rgba(255, 149, 0, 0.08);
@@ -385,6 +385,25 @@
       color: #fff;
       border-color: transparent;
       box-shadow: 0 2px 10px rgba(52, 199, 89, 0.35);
+    }
+
+    /* 乘除混合模式选项：紫色系，与模式按钮区分 */
+    .math-pill-btn.mult-mixed-opt {
+      border-color: rgba(175, 82, 222, 0.35);
+      background: rgba(175, 82, 222, 0.08);
+      color: #7a2ea8;
+    }
+
+    .math-pill-btn.mult-mixed-opt:hover {
+      background: rgba(175, 82, 222, 0.18);
+      color: #5c1f80;
+    }
+
+    .math-pill-btn.mult-mixed-opt.active {
+      background: linear-gradient(135deg, #af52de, #9a34c6);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(175, 82, 222, 0.35);
     }
 
     /* 成绩统计（右侧栏顶部）：卡片风格与错题记录项一致 */
@@ -827,11 +846,10 @@
         <!-- 运算类型选择（选项按钮内联显示在对应模式按钮右侧） -->
         <div class="math-mode-switch">
           <button id="arithmetic-btn" class="math-mode-btn" type="button">加减法</button>
-          <!-- 数字范围选择（仅加减法） -->
+          <!-- 加减法题型选择（仅加减法模式下显示） -->
           <span id="number-range-container" class="math-pill-btns hidden">
-            <button class="math-pill-btn range-opt" type="button" data-value="10">10以内</button>
-            <button class="math-pill-btn range-opt" type="button" data-value="100">100以内</button>
-            <button class="math-pill-btn range-opt" type="button" data-value="1000">1000以内</button>
+            <button id="within100-btn" class="math-pill-btn range-opt" type="button" data-value="100">100以内</button>
+            <button id="arithmetic-mixed-btn" class="math-pill-btn range-opt" type="button">加减混合</button>
           </span>
           <button id="nine-nine-multiplication-btn" class="math-mode-btn" type="button">九九乘法</button>
           <!-- 九九乘法模式选择 -->
@@ -840,6 +858,10 @@
             <button id="nine-nine-random-btn" class="math-pill-btn nine-mode-opt" type="button">随机</button>
           </span>
           <button id="multiplication-btn" class="math-mode-btn" type="button">乘除余</button>
+          <!-- 乘除余题型选择（仅乘除余模式下显示） -->
+          <span id="mult-mixed-container" class="math-pill-btns hidden">
+            <button id="mult-mixed-btn" class="math-pill-btn mult-mixed-opt" type="button">乘除混合</button>
+          </span>
         </div>
 
         <!-- 题目卡片 -->
@@ -1011,6 +1033,8 @@
       let isAddition = true;
       let isArithmeticMode = false;
       let isNineNineMultiplicationMode = false;
+      let isArithmeticMixed = false;
+      let isMultDivMixed = false;
       let isNineNineOrderMode = true;
       let currentNineNineIndex = 0;
       // 九九乘法随机模式：81 个组合的洗牌题库池，取完一轮重新洗牌（保证覆盖）
@@ -1042,6 +1066,10 @@
       const nineNineModeContainer = $('nine-nine-mode-container');
       const nineNineOrderBtn = $('nine-nine-order-btn');
       const nineNineRandomBtn = $('nine-nine-random-btn');
+      const within100Btn = $('within100-btn');
+      const arithmeticMixedBtn = $('arithmetic-mixed-btn');
+      const multMixedContainer = $('mult-mixed-container');
+      const multMixedBtn = $('mult-mixed-btn');
       const questionCard = $('question-card');
       const questionEl = $('question');
       const questionFeedback = $('question-feedback');
@@ -1070,7 +1098,7 @@
         }
       }
 
-      // 锁定左栏宽度为"加减法状态"（6 个按钮同一行）的宽度，
+      // 锁定左栏宽度为"加减法状态"（全部按钮同一行）的宽度，
       // 切换九九乘法/乘除余时按钮数量变化，但左栏宽度保持不变
       function lockLeftColumnWidth() {
         const card = document.querySelector('.math-card');
@@ -1091,10 +1119,14 @@
       arithmeticBtn.addEventListener('click', () => {
         isArithmeticMode = true;
         isNineNineMultiplicationMode = false;
+        isArithmeticMixed = false;
+        isMultDivMixed = false;
         clearAutoNext();
         setModeButtonActive(arithmeticBtn);
         numberRangeContainer.classList.remove('hidden');
         nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.add('hidden');
+        multMixedBtn.classList.remove('active');
         questionCard.classList.add('hidden');
         selectedMaxNumber = null;
         resetRangeButtons();
@@ -1104,10 +1136,13 @@
       multiplicationBtn.addEventListener('click', () => {
         isArithmeticMode = false;
         isNineNineMultiplicationMode = false;
+        isMultDivMixed = false;
         clearAutoNext();
         setModeButtonActive(multiplicationBtn);
         numberRangeContainer.classList.add('hidden');
         nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.remove('hidden');
+        multMixedBtn.classList.remove('active');
         questionCard.classList.remove('hidden');
         // 重新进入时重置题库池与内部循环，从新一轮乘法开始
         multDivPool = null;
@@ -1122,10 +1157,13 @@
       nineNineMultiplicationBtn.addEventListener('click', () => {
         isArithmeticMode = false;
         isNineNineMultiplicationMode = true;
+        isMultDivMixed = false;
         clearAutoNext();
         setModeButtonActive(nineNineMultiplicationBtn);
         numberRangeContainer.classList.add('hidden');
         nineNineModeContainer.classList.remove('hidden');
+        multMixedContainer.classList.add('hidden');
+        multMixedBtn.classList.remove('active');
         questionCard.classList.add('hidden');
         currentNineNineIndex = 0;
         nineRoundCorrect = 0;
@@ -1134,23 +1172,47 @@
         nineNinePoolIndex = 0;
       });
 
-      // 重置数字范围按钮状态
+      // 重置加减法题型按钮状态
       function resetRangeButtons() {
         document.querySelectorAll('.math-pill-btn[data-value]').forEach(btn => btn.classList.remove('active'));
+        arithmeticMixedBtn.classList.remove('active');
       }
 
-      // 选择数字范围并立即开始测试
-      document.querySelectorAll('.math-pill-btn[data-value]').forEach(button => {
-        button.addEventListener('click', () => {
-          resetRangeButtons();
-          button.classList.add('active');
-          selectedMaxNumber = parseInt(button.dataset.value);
+      // 选择"100以内"并立即开始出题（保持原有的加→对应减交替逻辑）
+      within100Btn.addEventListener('click', () => {
+        if (!isArithmeticMode) return;
+        isArithmeticMixed = false;
+        resetRangeButtons();
+        within100Btn.classList.add('active');
+        selectedMaxNumber = 100;
+        questionCard.classList.remove('hidden');
+        generateQuestion();
+      });
 
-          if (isArithmeticMode) {
-            questionCard.classList.remove('hidden');
-            generateQuestion();
-          }
-        });
+      // 选择"加减混合"：生成 2 个运算符、含加减两种运算的连式题
+      arithmeticMixedBtn.addEventListener('click', () => {
+        if (!isArithmeticMode) return;
+        isArithmeticMixed = true;
+        resetRangeButtons();
+        arithmeticMixedBtn.classList.add('active');
+        selectedMaxNumber = null;
+        questionCard.classList.remove('hidden');
+        generateQuestion();
+      });
+
+      // 选择"乘除混合"：生成 2 个运算符、含乘除两种运算的连式题
+      multMixedBtn.addEventListener('click', () => {
+        isArithmeticMode = false;
+        isNineNineMultiplicationMode = false;
+        isMultDivMixed = true;
+        clearAutoNext();
+        setModeButtonActive(multiplicationBtn);
+        numberRangeContainer.classList.add('hidden');
+        nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.remove('hidden');
+        multMixedBtn.classList.add('active');
+        questionCard.classList.remove('hidden');
+        generateQuestion();
       });
 
       // 九九乘法模式选择
@@ -1193,6 +1255,141 @@
         return pairs;
       }
 
+      // ==================== 混合题型出题器 ====================
+
+      // 数组洗牌（Fisher-Yates）
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      // 生成 count 个运算符的序列：加减混合题必须同时含 + 与 -
+      function buildMixedAddSubOps(count) {
+        const plusCount = 1 + Math.floor(Math.random() * (count - 1));
+        const ops = [];
+        for (let i = 0; i < plusCount; i++) ops.push('+');
+        for (let i = 0; i < count - plusCount; i++) ops.push('-');
+        return shuffleArray(ops);
+      }
+
+      // 生成 count 个运算符的序列：乘除混合题必须同时含 × 与 ÷
+      function buildMixedMulDivOps(count) {
+        const multCount = 1 + Math.floor(Math.random() * (count - 1));
+        const ops = [];
+        for (let i = 0; i < multCount; i++) ops.push('×');
+        for (let i = 0; i < count - multCount; i++) ops.push('÷');
+        return shuffleArray(ops);
+      }
+
+      // 加减混合：2 个 + / - 运算符（两种都要出现），
+      // 参与运算的每个数字、每一步中间结果和最终结果都控制在 0~100
+      function generateArithmeticMixedQuestion() {
+        for (let outer = 0; outer < 200; outer++) {
+          const opCount = 2; // 固定 2 个运算符
+          for (let attempt = 0; attempt < 2000; attempt++) {
+            const ops = buildMixedAddSubOps(opCount);
+            const nums = [1 + Math.floor(Math.random() * 100)];
+            let value = nums[0];
+            let valid = true;
+
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '+') {
+                const maxAdd = 100 - value;
+                if (maxAdd < 1) { valid = false; break; }
+                const add = 1 + Math.floor(Math.random() * maxAdd);
+                nums.push(add);
+                value += add;
+              } else {
+                if (value < 1) { valid = false; break; }
+                const sub = 1 + Math.floor(Math.random() * value);
+                nums.push(sub);
+                value -= sub;
+              }
+            }
+            if (!valid) continue;
+
+            let result = nums[0];
+            const parts = [String(nums[0])];
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '+') result += nums[i + 1];
+              else result -= nums[i + 1];
+              parts.push(` ${ops[i]} ${nums[i + 1]}`);
+            }
+
+            return {
+              type: 'mixed-arithmetic',
+              answer: result,
+              questionText: parts.join('') + ' = ?'
+            };
+          }
+        }
+        // 兜底：正常随机几乎不会走到这里
+        return {
+          type: 'mixed-arithmetic',
+          answer: 60,
+          questionText: '50 + 30 - 20 = ?'
+        };
+      }
+
+      // 乘除混合：2 个 × / ÷ 运算符（两种都要出现），
+      // 参与运算的每个数字都只用 2~9，
+      // 每一步中间结果和最终结果都控制在 1~100，
+      // 每一步除法都能整除，除数取当前值的真因数
+      function generateMixedMultDivQuestion() {
+        for (let outer = 0; outer < 200; outer++) {
+          const opCount = 2; // 固定 2 个运算符
+          for (let attempt = 0; attempt < 2000; attempt++) {
+            const ops = buildMixedMulDivOps(opCount);
+            const nums = [2 + Math.floor(Math.random() * 8)]; // 2~9
+            let value = nums[0];
+            let valid = true;
+
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '×') {
+                const maxFactor = Math.min(9, Math.floor(100 / value));
+                if (maxFactor < 2) { valid = false; break; }
+                const factor = 2 + Math.floor(Math.random() * (maxFactor - 1));
+                nums.push(factor);
+                value *= factor;
+              } else {
+                const divisors = [];
+                for (let d = 2; d <= 9 && d * 2 <= value; d++) {
+                  if (value % d === 0) divisors.push(d);
+                }
+                if (divisors.length === 0) { valid = false; break; }
+                const divisor = divisors[Math.floor(Math.random() * divisors.length)];
+                nums.push(divisor);
+                value = Math.floor(value / divisor);
+              }
+            }
+            if (!valid) continue;
+
+            let result = nums[0];
+            const parts = [String(nums[0])];
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '×') result *= nums[i + 1];
+              else result = Math.floor(result / nums[i + 1]);
+              parts.push(` ${ops[i]} ${nums[i + 1]}`);
+            }
+
+            return {
+              type: 'mixed-mult-div',
+              answer: result,
+              questionText: parts.join('') + ' = ?'
+            };
+          }
+        }
+        // 兜底：正常随机几乎不会走到这里
+        return {
+          type: 'mixed-mult-div',
+          answer: 12,
+          questionText: '6 × 8 ÷ 4 = ?'
+        };
+      }
+
       // 生成新问题
       function generateQuestion() {
         if (autoNextTimeout) {
@@ -1206,9 +1403,11 @@
         nextQuestionBtn.classList.add('hidden');
         questionAttempted = false;
 
-        if (isArithmeticMode) {
+        if (isArithmeticMode && isArithmeticMixed) {
+          currentQuestion = generateArithmeticMixedQuestion();
+        } else if (isArithmeticMode) {
           if (selectedMaxNumber === null) {
-            alert('请先选择数字范围！');
+            alert('请先选择题型！');
             return;
           }
 
@@ -1301,6 +1500,8 @@
             answer: num1 * num2,
             questionText: `${num1} × ${num2} = ?`
           };
+        } else if (isMultDivMixed) {
+          currentQuestion = generateMixedMultDivQuestion();
         } else {
           // 乘除余模式：乘法 → 除法 → 取余 → 求被除数 循环出题
           const subMode = subModeIndex;
@@ -1520,7 +1721,16 @@
 
             if (wrongAnswer < 0) {
               wrongAnswer = correctAnswer + deviation;
-            } else if (selectedMaxNumber && wrongAnswer > selectedMaxNumber) {
+            } else if (wrongAnswer > 100) {
+              wrongAnswer = correctAnswer - deviation;
+            }
+          } else if (currentQuestion.type === 'mixed-mult-div') {
+            const deviation = Math.floor(Math.random() * 5) + 1;
+            wrongAnswer = correctAnswer + (Math.random() > 0.5 ? deviation : -deviation);
+
+            if (wrongAnswer < 1) {
+              wrongAnswer = correctAnswer + deviation;
+            } else if (wrongAnswer > 100) {
               wrongAnswer = correctAnswer - deviation;
             }
           } else if (isNineNineMultiplicationMode) {
@@ -1736,7 +1946,7 @@
         }
       });
 
-      // 页面加载即锁定左栏宽度（加减法 6 按钮状态），避免切换模式时宽度变化
+      // 页面加载即锁定左栏宽度（加减法题型展开状态），避免切换模式时宽度变化
       (function lockWidthOnLoad() {
         const wasHidden = numberRangeContainer.classList.contains('hidden');
         if (wasHidden) numberRangeContainer.classList.remove('hidden');
