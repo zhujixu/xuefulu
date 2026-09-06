@@ -1766,6 +1766,19 @@
         });
       }
 
+      // 答题音效：答对播放 https://xuefulu.ai/yes.wav，答错播放 https://xuefulu.ai/no.wav
+      const correctAudio = new Audio('https://xuefulu.ai/yes.wav');
+      const wrongAudio = new Audio('https://xuefulu.ai/no.wav');
+
+      function playFeedbackSound(isCorrect) {
+        const audio = isCorrect ? correctAudio : wrongAudio;
+        audio.currentTime = 0;
+        const playPromise = audio.play();
+        if (playPromise) {
+          playPromise.catch(() => {});
+        }
+      }
+
       // 检查答案
       function checkAnswer(e) {
         const btn = e.target;
@@ -1780,6 +1793,9 @@
           userAnswer = parseInt(btn.dataset.value);
           isCorrect = userAnswer === currentQuestion.answer;
         }
+
+        // 答题音效：答对播放 yes.wav，答错播放 no.wav（重试点击同样触发）
+        playFeedbackSound(isCorrect);
 
         // 仅首次作答计入成绩；答错后可再次点击选择答案，重试答对不再重复计分
         const isFirstAttempt = !questionAttempted;
