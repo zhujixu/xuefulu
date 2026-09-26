@@ -50,7 +50,6 @@
     body .footer-link:hover { color: #1d1d1f; }
     body .time-display .time-main { color: #86868b; font-weight: 400; }
     body .download-card .version-text { color: #1d1d1f; }
-    body .download-card .filename-text { color: #515154; }
     body .download-btn { color: #ffffff; }
     body .download-subtitle a { color: #0071e3; }
 
@@ -159,11 +158,6 @@
     .download-card .info-label { font-size: 0.875rem; color: var(--text-secondary); white-space: nowrap; }
     .download-card .version-text { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--text-primary); }
     .download-card .release-date-text { font-size: 0.875rem; color: var(--text-secondary); }
-    .download-card .filename-text {
-      font-size: 0.875rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background: var(--code-bg); color: var(--text-primary);
-      padding: 0.25rem 0.5rem; border-radius: 0.25rem; word-break: break-all;
-    }
 
     .download-btn {
       width: 100%; margin-top: 1rem; padding: 0.75rem 1rem;
@@ -277,7 +271,6 @@
           if (item.error) return '<div class="architecture"><h3>' + escapeHtml(item.label) + '</h3><p class="product-status">暂时无法获取此版本，请重新获取或前往官网。</p></div>';
           return '<div class="architecture">' +
             '<div class="info-row"><span class="info-label">' + '最新版本：' + '</span><span class="version-text">' + escapeHtml(item.version) + '</span></div>' +
-            '<div class="info-row"><span class="info-label">文件名：</span><span class="filename-text">' + escapeHtml(item.filename) + '</span></div>' +
             '<div class="info-row"><span class="info-label">更新日期：</span><span class="release-date-text" title="官方版本时间（北京时间）">' + escapeHtml(item.updateDate || '暂未获取') + '</span></div>' +
             '<a class="download-btn" href="' + escapeAttr(item.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + icons.download + ' 下载 ' + escapeHtml(item.label) + '</a></div>';
         }).join('') : '<p class="product-status">暂未获取到此平台安装包</p>') + '</div></div>';

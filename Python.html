@@ -50,7 +50,6 @@
     body .footer-link:hover { color: #1d1d1f; }
     body .time-display .time-main { color: #86868b; font-weight: 400; }
     body .download-card .version-text { color: #1d1d1f; }
-    body .download-card .filename-text { color: #515154; }
     body .download-btn { color: #ffffff; }
     body .download-subtitle a { color: #0071e3; }
 
@@ -159,11 +158,6 @@
     .download-card .info-label { font-size: 0.875rem; color: var(--text-secondary); white-space: nowrap; }
     .download-card .version-text { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--text-primary); }
     .download-card .release-date-text { font-size: 0.875rem; color: var(--text-secondary); }
-    .download-card .filename-text {
-      font-size: 0.875rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background: var(--code-bg); color: var(--text-primary);
-      padding: 0.25rem 0.5rem; border-radius: 0.25rem; word-break: break-all;
-    }
 
     .download-btn {
       width: 100%; margin-top: 1rem; padding: 0.75rem 1rem;
@@ -326,7 +320,6 @@
           '<div class="card-body">' +
             '<div class="space-y-4">' +
               '<div class="info-row"><span class="info-label">最新版本：</span><span class="version-text">' + escapeHtml(data.version) + '</span></div>' +
-              '<div class="info-row"><span class="info-label">文件名：</span><span class="filename-text">' + escapeHtml(data.filename) + '</span></div>' +
               releaseDateHtml +
               '<a class="download-btn" href="' + escapeAttr(data.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' +
                 icons.download + (isWindows ? ' 下载 Windows x64' : ' 下载 Apple Silicon（M 系列）') +
