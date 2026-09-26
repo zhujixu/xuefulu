@@ -5,7 +5,7 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <meta name="description" content="今天你 AI 赋能了吗?打开浏览器,在地址栏输入 xuefulu.ai ,按下 Enter 即可访问学府路1号!">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>下载 Python 学府路1号 xuefulu.ai</title>
+  <title>下载 TraeCode 学府路1号 xuefulu.ai</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
   <style>
     /* ==================== 基础重置 ==================== */
@@ -225,20 +225,9 @@
     };
 
     // ============== Constants ==============
-    var EOL_API = 'https://endoflife.date/api/python.json';
-    var GITHUB_TAGS_API = 'https://api.github.com/repos/python/cpython/tags?per_page=100';
-    var ALIYUN_WINDOWS = 'https://mirrors.aliyun.com/python-release/windows/';
-    var ALIYUN_MACOS = 'https://mirrors.aliyun.com/python-release/macos/';
     var TIME_API = 'https://api.shijian.online/timestamp/';
 
     // ============== Data Helpers ==============
-    function parseVersion(tag) {
-      if (!tag) return null;
-      var m = tag.match(/^v?(\d+)\.(\d+)\.(\d+)$/);
-      if (!m) return null;
-      return { major: parseInt(m[1]), minor: parseInt(m[2]), patch: parseInt(m[3]), str: m[1] + '.' + m[2] + '.' + m[3] };
-    }
-
     async function fetchWithTimeout(url, timeoutMs, options) {
       timeoutMs = timeoutMs || 8000;
       var controller = new AbortController();
@@ -250,54 +239,8 @@
       } finally { clearTimeout(timer); }
     }
 
-    // ============== Data Sources ==============
-    // 主数据源：endoflife.date（免认证、无速率限制、支持 CORS），一次请求拿到最新稳定版和发布日期
-    async function fetchLatestFromEOL() {
-      var data = await fetchWithTimeout(EOL_API);
-      var best = null;
-      for (var i = 0; i < data.length; i++) {
-        var parsed = parseVersion(data[i] && data[i].latest);
-        if (!parsed) continue;
-        if (!best ||
-            parsed.major > best.major ||
-            (parsed.major === best.major && parsed.minor > best.minor) ||
-            (parsed.major === best.major && parsed.minor === best.minor && parsed.patch > best.patch)) {
-          best = { version: parsed.str, releaseDate: (data[i].latestReleaseDate || '').slice(0, 10) };
-        }
-      }
-      if (!best) throw new Error('未找到版本信息');
-      return best;
-    }
-
-    // 备用数据源：GitHub tags（有未认证速率限制，仅作为兜底，不再额外请求发布日期）
-    async function fetchLatestFromGitHub() {
-      var data = await fetchWithTimeout(GITHUB_TAGS_API);
-      var stableVersions = [];
-      for (var idx = 0; idx < data.length; idx++) {
-        var parsed = parseVersion(data[idx] && data[idx].name);
-        if (parsed) stableVersions.push(parsed);
-      }
-      stableVersions.sort(function(a,b) {
-        if (a.major !== b.major) return b.major - a.major;
-        if (a.minor !== b.minor) return b.minor - a.minor;
-        return b.patch - a.patch;
-      });
-      if (stableVersions.length === 0) throw new Error('未找到版本信息');
-      return { version: stableVersions[0].str, releaseDate: '' };
-    }
-
-    function buildData(version, releaseDate, isFallback) {
-      var winFilename = 'python-' + version + '-amd64.exe';
-      var macFilename = 'python-' + version + '-macos11.pkg';
-      return {
-        isFallback: !!isFallback,
-        windows: { platform: 'Windows', version: version, filename: winFilename, downloadUrl: ALIYUN_WINDOWS + winFilename, mirrorUrl: ALIYUN_WINDOWS, releaseDate: releaseDate },
-        macos: { platform: 'MacOS', version: version, filename: macFilename, downloadUrl: ALIYUN_MACOS + macFilename, mirrorUrl: ALIYUN_MACOS, releaseDate: releaseDate }
-      };
-    }
-
     // ============== App State ==============
-    var state = { loading: true, data: null, year: new Date().getFullYear() };
+    var state = { traeLoading: true, traeData: null, traeError: false, year: new Date().getFullYear() };
     var appEl = document.getElementById('app');
 
     function escapeHtml(str) {
@@ -309,32 +252,102 @@
       return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function renderCard(data, platform) {
-      var isWindows = platform === 'windows';
-      var icon = isWindows ? icons.windows : icons.macos;
-      var mirrorUrl = data.mirrorUrl || (isWindows ? ALIYUN_WINDOWS : ALIYUN_MACOS);
-      var releaseDateHtml = data.releaseDate
-        ? '<div class="info-row"><span class="info-label">更新日期：</span><span class="release-date-text">' + escapeHtml(data.releaseDate) + '</span></div>'
-        : '';
+    // TraeCode：按平台/架构读取真实版本及地址，不根据版本号拼接 URL。
+    var TRAE_APIS = [
+      'https://api.trae.cn/icube/api/v1/native/version/trae/cn/latest',
+      'https://api.trae.ai/icube/api/v1/native/version/trae/cn/latest'
+    ];
 
-      return (
-        '<div class="download-card">' +
-          '<div class="card-header ' + platform + '">' +
-            icon +
-            '<h2><a href="' + escapeAttr(mirrorUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(data.platform) + '</a></h2>' +
-          '</div>' +
-          '<div class="card-body">' +
-            '<div class="space-y-4">' +
-              '<div class="info-row"><span class="info-label">最新版本：</span><span class="version-text">' + escapeHtml(data.version) + '</span></div>' +
-              '<div class="info-row"><span class="info-label">文件名：</span><span class="filename-text">' + escapeHtml(data.filename) + '</span></div>' +
-              releaseDateHtml +
-              '<a class="download-btn" href="' + escapeAttr(data.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' +
-                icons.download + (isWindows ? ' 下载 Windows x64' : ' 下载 Apple Silicon（M 系列）') +
-              '</a>' +
-            '</div>' +
-          '</div>' +
-        '</div>'
-      );
+    function parseTraeManifest(payload) {
+      var manifest = payload && payload.data && payload.data.manifest;
+      if (!manifest) throw new Error('未找到 TraeCode 版本信息');
+      function pick(platform, arch, label) {
+        var entries = manifest[platform] && manifest[platform].versions;
+        if (!Array.isArray(entries)) return null;
+        var candidates = entries.filter(function(item) {
+          if (!item || item.arch !== arch || typeof item.version !== 'string' || !item.version.trim()) return false;
+          try {
+            var url = new URL(item.url);
+            return url.protocol === 'https:' && ['lf-cdn.trae.com.cn', 'lf-cdn.trae.ai'].indexOf(url.hostname) !== -1;
+          } catch(e) { return false; }
+        });
+        var item = candidates.find(function(item) { return item.region === 'cn'; }) || candidates[0];
+        if (!item) return null;
+        return { label: label, version: item.version, downloadUrl: item.url,
+          filename: new URL(item.url).pathname.split('/').pop() };
+      }
+      var data = {
+        windows: [pick('win32', 'x64', 'Windows x64')].filter(Boolean),
+        macos: [pick('darwin', 'apple', 'Apple Silicon（M 系列）')].filter(Boolean)
+      };
+      if (!data.windows.length && !data.macos.length) throw new Error('暂无可用安装包');
+      return data;
+    }
+
+    async function fetchTraeUpdateDate(item) {
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, 5000);
+      try {
+        // HEAD 仅读取响应头，不下载安装包；按北京时间显示文件更新时间。
+        var response = await fetch(item.downloadUrl, {
+          method: 'HEAD', credentials: 'omit', signal: controller.signal
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        var modified = response.headers.get('Last-Modified');
+        var date = modified ? new Date(modified) : null;
+        if (!date || !Number.isFinite(date.getTime())) throw new Error('没有文件更新日期');
+        var parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).formatToParts(date);
+        var values = {};
+        parts.forEach(function(part) { values[part.type] = part.value; });
+        item.updateDate = values.year + '-' + values.month + '-' + values.day;
+      } catch(e) { item.updateDate = ''; }
+      finally { clearTimeout(timer); }
+    }
+
+    function renderTraeCard(platform, entries) {
+      return '<div class="download-card"><div class="card-header ' + platform + '">' +
+        icons[platform] + '<h2>' + (platform === 'windows' ? 'Windows' : 'macOS') + '</h2></div>' +
+        '<div class="card-body">' + (entries.length ? entries.map(function(item) {
+          return '<div class="architecture">' +
+            '<div class="info-row"><span class="info-label">' + (state.traeError ? '上次版本：' : '最新版本：') + '</span><span class="version-text">' + escapeHtml(item.version) + '</span></div>' +
+            '<div class="info-row"><span class="info-label">文件名：</span><span class="filename-text">' + escapeHtml(item.filename) + '</span></div>' +
+            '<div class="info-row"><span class="info-label">更新日期：</span><span class="release-date-text" title="安装包文件更新时间（北京时间）">' + escapeHtml(item.updateDate || '暂未获取') + '</span></div>' +
+            '<a class="download-btn" href="' + escapeAttr(item.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + icons.download + ' 下载 ' + escapeHtml(item.label) + '</a></div>';
+        }).join('') : '<p class="product-status">暂未获取到此平台安装包</p>') + '</div></div>';
+    }
+
+    function renderTrae() {
+      return '<section class="cards-wrapper" aria-labelledby="trae-title"><h2 class="product-title" id="trae-title">TraeCode</h2>' +
+        (state.traeLoading && !state.traeData ? '<p class="product-status" role="status">正在获取 TraeCode 最新版本...</p>' : '') +
+        (state.traeError ? '<div class="stale-warning" role="status">' + (state.traeData ? '实时更新失败，当前显示上次获取的版本，可能不是最新版本。' : '暂时无法获取 TraeCode 最新版本。') + '</div>' : '') +
+        (state.traeData ? '<div class="cards-grid">' + renderTraeCard('windows', state.traeData.windows) + renderTraeCard('macos', state.traeData.macos) + '</div>' : '') +
+        (state.traeError ? '<button type="button" class="download-btn" id="retry-trae"' + (state.traeLoading ? ' disabled' : '') + '>' + (state.traeLoading ? '正在重试...' : '重新获取') + '</button><a class="download-tip" href="https://www.trae.cn/download" target="_blank" rel="noopener noreferrer">前往 Trae 官方下载中心</a>' : '') + '</section>';
+    }
+
+    async function fetchTraeData() {
+      if (fetchTraeData.pending) return;
+      fetchTraeData.pending = true;
+      state.traeLoading = true;
+      render();
+      try {
+        var result;
+        for (var i = 0; i < TRAE_APIS.length; i++) {
+          try {
+            result = parseTraeManifest(await fetchWithTimeout(TRAE_APIS[i], 8000, { cache: 'no-store', credentials: 'omit' }));
+            break;
+          } catch(e) { if (i === TRAE_APIS.length - 1) throw e; }
+        }
+        await Promise.all(result.windows.concat(result.macos).map(fetchTraeUpdateDate));
+        state.traeData = result;
+        state.traeError = false;
+      } catch(e) { state.traeError = true; }
+      finally {
+        state.traeLoading = false;
+        fetchTraeData.pending = false;
+        render();
+      }
     }
 
     function renderHeader() {
@@ -357,45 +370,16 @@
     }
 
     function render() {
-      var d = state.data;
-      appEl.innerHTML = '<div class="container">' + renderHeader() +
-        '<section class="cards-wrapper" aria-labelledby="python-title"><h2 class="product-title" id="python-title">Python</h2>' +
-        (state.loading && !d ? '<p class="product-status" role="status">正在获取 Python 最新版本...</p>' : '') +
-        (d ? (d.isFallback ? '<div class="stale-warning">实时数据获取失败，当前显示为备用版本信息，可能不是最新版本</div>' : '') +
-          '<div class="cards-grid">' + (d.windows ? renderCard(d.windows, 'windows') : '') + (d.macos ? renderCard(d.macos, 'macos') : '') + '</div>' : '') +
-        '</section>' +
+      appEl.innerHTML = '<div class="container">' + renderHeader() + renderTrae() +
         '<footer class="footer"><div class="footer-content">' +
           '<a href="https://xuefulu.ai" target="_blank" rel="noopener" class="footer-link"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span id="footerYear">' + state.year + '</span> 学府路1号 xuefulu.ai</a>' +
           '<span class="separator" aria-hidden="true">|</span>' +
           '<a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>' +
         '</div></footer></div>';
+      var retry = document.getElementById('retry-trae');
+      if (retry) retry.addEventListener('click', fetchTraeData);
       if (window.__updateClockDisplay) window.__updateClockDisplay();
     }
-
-    // ============== Fetch Logic ==============
-    window.__fetchData = async function fetchData() {
-      state.loading = true;
-      render();
-
-      var result = null;
-      try { result = await fetchLatestFromEOL(); }
-      catch(e1) { result = null; }
-
-      if (result) {
-        state.data = buildData(result.version, result.releaseDate, false);
-      } else {
-        try { result = await fetchLatestFromGitHub(); }
-        catch(e2) { result = null; }
-        // 最终兜底：写死的已知版本，界面会显示备用提示
-        state.data = result
-          ? buildData(result.version, result.releaseDate, true)
-          : buildData('3.14.7', '2026-08-05', true);
-      }
-
-      state.loading = false;
-      render();
-      initTimeSync();
-    };
 
     // ============== 时间同步 ==============
     // 用原生 Intl 替代 dayjs，无外部依赖；定时器只注册一次，刷新页面时按 id 重新查找节点
@@ -499,10 +483,10 @@
     var refreshTimer = null;
     function startAutoRefresh() {
       if (refreshTimer) return;
-      refreshTimer = setInterval(function() { window.__fetchData(); }, 5 * 60 * 1000);
+      refreshTimer = setInterval(function() { fetchTraeData(); }, 5 * 60 * 1000);
     }
 
-    window.__fetchData();
+    fetchTraeData();
     initTimeSync();
     startAutoRefresh();
   </script>
