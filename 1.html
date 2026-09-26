@@ -1181,7 +1181,9 @@
     }
 
     function loadFavicon(domain, container) {
-      if (!domain) {
+      const normalizedDomain = (domain || '').toLowerCase().replace(/\.$/, '');
+      const isLocalSite = normalizedDomain === 'xuefulu.ai' || normalizedDomain.endsWith('.xuefulu.ai');
+      if (!domain || isLocalSite) {
         renderFaviconFallback(container);
         return;
       }
