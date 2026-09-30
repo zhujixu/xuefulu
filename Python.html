@@ -307,9 +307,6 @@
       var isWindows = platform === 'windows';
       var icon = isWindows ? icons.windows : icons.macos;
       var mirrorUrl = data.mirrorUrl || (isWindows ? ALIYUN_WINDOWS : ALIYUN_MACOS);
-      var releaseDateHtml = data.releaseDate
-        ? '<div class="info-row"><span class="info-label">更新日期：</span><span class="release-date-text">' + escapeHtml(data.releaseDate) + '</span></div>'
-        : '';
 
       return (
         '<div class="download-card">' +
@@ -320,7 +317,6 @@
           '<div class="card-body">' +
             '<div class="space-y-4">' +
               '<div class="info-row"><span class="info-label">最新版本：</span><span class="version-text">' + escapeHtml(data.version) + '</span></div>' +
-              releaseDateHtml +
               '<a class="download-btn" href="' + escapeAttr(data.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' +
                 icons.download + (isWindows ? ' 下载 Windows x64' : ' 下载 Apple Silicon（M 系列）') +
               '</a>' +

@@ -271,7 +271,6 @@
           if (item.error) return '<div class="architecture"><h3>' + escapeHtml(item.label) + '</h3><p class="product-status">暂时无法获取此版本，请重新获取或前往官网。</p></div>';
           return '<div class="architecture">' +
             '<div class="info-row"><span class="info-label">' + '最新版本：' + '</span><span class="version-text">' + escapeHtml(item.version) + '</span></div>' +
-            '<div class="info-row"><span class="info-label">更新日期：</span><span class="release-date-text" title="官方版本时间（北京时间）">' + escapeHtml(item.updateDate || '暂未获取') + '</span></div>' +
             '<a class="download-btn" href="' + escapeAttr(item.downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + icons.download + ' 下载 ' + escapeHtml(item.label) + '</a></div>';
         }).join('') : '<p class="product-status">暂未获取到此平台安装包</p>') + '</div></div>';
     }
