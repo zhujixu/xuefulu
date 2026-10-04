@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python程序设计 学习路线与导读</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --text: #333;
+    --card: #fff;
+    --code-bg: #eef1f5;
+    --code-text: #c7254e;
+    --pre-bg: #282c34;
+    --pre-text: #abb2bf;
+    --border: #d0d7de;
+    --table-even: #f6f8fa;
+    --h1: #1a1a1a;
+    --h2: #3776ab;
+    --tip-bg: #fff8e1;
+    --tip-border: #ffd43b;
+  }
+  body.dark {
+    --bg: #1e1e1e;
+    --text: #d4d4d4;
+    --card: #2a2a2a;
+    --code-bg: #3a3a3a;
+    --code-text: #ff9e9e;
+    --pre-bg: #111;
+    --pre-text: #ccc;
+    --border: #444;
+    --table-even: #2f2f2f;
+    --h1: #f0f0f0;
+    --h2: #6cb6ff;
+    --tip-bg: #3a3320;
+    --tip-border: #ffd43b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .3s, color .3s;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+  /* 侧边目录 */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    font-size: 14px;
+  }
+  .sidebar h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--h2);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s, color .2s;
+  }
+  .sidebar a:hover {
+    background: var(--code-bg);
+    color: var(--h2);
+  }
+  /* 主内容 */
+  .content { flex: 1; min-width: 0; }
+  /* 页面主标题（可点击） */
+  .page-title {
+    display: block;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #3776ab, #2a5d8a);
+    padding: 18px 20px;
+    border-radius: 10px;
+    margin: 0 0 24px 0;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(55,118,171,.3);
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .page-title:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(55,118,171,.45);
+  }
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #3776ab;
+    padding-bottom: 10px;
+    color: var(--h1);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 32px;
+    color: var(--h2);
+    border-left: 5px solid #ffd43b;
+    padding-left: 10px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 17px;
+    margin-top: 22px;
+    color: var(--text);
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    color: var(--code-text);
+  }
+  pre {
+    background: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: #3776ab; color: #fff; }
+  tr:nth-child(even) { background: var(--table-even); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .warn {
+    background: #ffe6e6;
+    border-left: 5px solid #e53935;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  body.dark .warn { background: #4a1f1f; color: #ffd4d4; }
+  /* 超链接样式 */
+  a.link {
+    color: #3776ab;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  a.link:hover { color: #e53935; }
+  body.dark a.link { color: #6cb6ff; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+
+  /* 深色切换按钮 */
+  #themeBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  #themeBtn:hover { background: #2a5d8a; }
+
+  /* 响应式 */
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; position: static; order: -1; }
+    #themeBtn { top: 10px; right: 10px; padding: 6px 12px; font-size: 13px; }
+    .page-title { font-size: 16px; padding: 14px; }
+  }
+
+
+/* === 增强：代码块 / 署名 === */
+.cb { margin: 16px 0; border-radius: 8px; overflow: hidden; background: var(--pre-bg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.cb-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+          padding: 6px 12px; background: rgba(255,255,255,.07);
+          border-bottom: 1px solid rgba(255,255,255,.09); }
+.cb-lang { font-size: 12px; color: #9aa4b2; font-family: Consolas, Monaco, monospace; letter-spacing: .5px; }
+.cb-copy { background: transparent; border: 1px solid #4b5263; color: #c8cdd8; border-radius: 5px;
+           padding: 2px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+           transition: background .15s, border-color .15s, color .15s; }
+.cb-copy:hover { background: #3776ab; border-color: #3776ab; color: #fff; }
+.cb-copy.ok { background: #2ea043; border-color: #2ea043; color: #fff; }
+.cb-body { display: flex; align-items: stretch; }
+.cb-lines { flex: 0 0 auto; padding: 16px 10px 16px 14px; text-align: right; color: #636d83;
+            font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            border-right: 1px solid rgba(255,255,255,.08); }
+.cb-lines span { display: block; }
+.cb-body pre { flex: 1 1 auto; min-width: 0; margin: 0; padding: 16px 16px 16px 14px;
+               border-radius: 0; background: transparent; }
+.cb-body pre code { padding: 0; }
+/* 语法高亮：VS Code Dark+ 配色 */
+.tok-kw  { color: #c586c0; }
+.tok-kw2 { color: #569cd6; }
+.tok-str { color: #ce9178; }
+.tok-num { color: #b5cea8; }
+.tok-cmt { color: #6a9955; font-style: italic; }
+.tok-fn  { color: #dcdcaa; }
+.tok-cls { color: #4ec9b0; }
+.tok-op  { color: #d4d4d4; }
+/* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
+.warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
+.warn .warn-links a { word-break: break-all; }
+/* 页眉署名（尾缀固定，开头的「实时北京时间」由 CLOCK_JS 每秒刷新） */
+.byline { text-align: center; font-size: 14px; opacity: .78; margin: -14px 0 20px;
+          letter-spacing: .5px; }
+.byline a { color: var(--h2); text-decoration: none; }
+.byline a:hover { text-decoration: underline; }
+/* 时钟数字等宽：避免每秒跳字时整行左右抖动 */
+.byline .bj-clock { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+/* === 增强：侧边目录可折叠 === */
+/* 侧边目录＝左侧竖排书签，默认收起。样式全部依附 .sb-ready（JS 加的），无 JS 时完全不影响原版式 */
+
+/* 外层：收 44px / 展 44+面板；sticky 钉在左侧，随页面滚动常驻，且任何状态都垂直居中 */
+.sidebar.sb-ready {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 44px;
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  position: sticky;
+  top: 50vh;                /* 粘住点＝视口垂直中线（不能用 top: 50%，百分比按父级整页高算） */
+  transform: translateY(-50%);  /* 再上移自身一半高度 → 收起/展开都居中，展开时不会跳回顶部 */
+  align-self: flex-start;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  z-index: 30;
+}
+/* 首次挂载时先禁用过渡，避免「原版 240px 宽 → 收起 44px」在加载瞬间抖一下（JS 两帧后移除本类） */
+.sidebar.sb-ready.sb-noanim { transition: none !important; }
+.sidebar.sb-ready.sb-expanded {
+  /* 面板宽度由 JS 量出「最长标题不折行」所需宽度，写进 --sb-panel-w（默认 196px） */
+  width: calc(44px + var(--sb-panel-w, 196px));
+}
+
+/* 工具条＝一枚 44px 宽的竖排书签：深色切换图标区在上、目录区在下，**共用同一块渐变底色与投影**，
+   视觉上是一整枚按钮（内部是两个各自可点的功能区——button 不能嵌套 button，所以用本列承载外观） */
+.sb-col {
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 0;              /* 不要圆角：与正文左边缘齐平的方角书签 */
+  background: linear-gradient(180deg, #5d9bd4 0%, #3776ab 58%, #2b5f8d 100%);
+  box-shadow: 0 6px 18px rgba(55,118,171,.32), inset 0 1px 0 rgba(255,255,255,.26);
+  transition: transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dark .sb-col { background: linear-gradient(180deg, #4a8bc2 0%, #30699b 58%, #245078 100%); }
+.sb-col:hover { transform: translateX(3px); box-shadow: 0 9px 26px rgba(55,118,171,.46), inset 0 1px 0 rgba(255,255,255,.26); }
+/* 展开时书脊与面板必须严丝合缝，悬停不再位移 */
+.sidebar.sb-ready.sb-expanded .sb-col:hover { transform: none; }
+
+/* 竖排书签本体（目录区）：透明，底色与投影都由 .sb-col 提供，两块功能区共用一枚按钮的外观 */
+.sb-tab {
+  flex: 1 1 auto;                /* 在这一列里占满剩余高度：收起＝152px，展开＝随面板一起拉长 */
+  box-sizing: border-box;
+  width: 44px;
+  height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 15px 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-tab:hover { background-color: rgba(255,255,255,.1); }
+.sb-tab:active { background-color: rgba(255,255,255,.2); }
+.sb-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.sb-tab .sb-ico { display: block; width: 17px; height: 17px; flex: none; }
+.sb-tab .sb-vt {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  letter-spacing: .26em;
+  white-space: nowrap;
+}
+.sb-tab .sb-chev { display: block; width: 11px; height: 11px; flex: none; opacity: .72; }
+
+/* 深色/浅色切换：不再单独占一格，而是并入书签内部——书签顶部一个 44×38 的图标区，
+   底部一条极淡的分隔线与目录区分开，共用 .sb-col 的渐变底色，看起来就是一整枚按钮。
+   图标一律用 background-image 画、不用文字：页面自身脚本每次切换都会改写它的 textContent，
+   塞子元素会被冲掉。整段挂在 body.sb-on 下：JS 没跑（没这个类）时按钮仍是原版右上角样式。 */
+body.sb-on #themeBtn {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;                  /* 隐掉「🌙 深色」文字，只留图标 */
+  line-height: 0;
+  text-indent: -9999px;
+  color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sb-on #themeBtn:hover { background-color: rgba(255,255,255,.12); }
+body.sb-on #themeBtn:active { background-color: rgba(255,255,255,.22); }
+body.sb-on #themeBtn:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 深色模式下换成太阳图标（底色仍由 .sb-col 提供，随 body.dark 自动加深） */
+body.dark.sb-on #themeBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4.4'/%3E%3Cpath d='M12 1.4v2.2M12 20.4v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.4 12h2.2M20.4 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6'/%3E%3C/svg%3E");
+}
+
+/* 展开出来的目录面板（沿用原版卡片观感，方角） */
+.sb-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: none;
+  padding: 16px 14px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 6px 22px rgba(0,0,0,.08);
+}
+.sidebar.sb-ready.sb-expanded .sb-panel { display: block; animation: sbIn .22s ease; }
+@keyframes sbIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.sb-head {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--h2);
+}
+
+/* 遮罩：只在窄屏（抽屉模式）用得上 */
+.sb-mask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+body.sb-open .sb-mask { opacity: 1; visibility: visible; }
+
+@media (max-width: 820px) {
+  /* 窄屏：书签脱离文档流钉在左边缘；展开则是整屏抽屉，正文不重排 */
+  .sidebar.sb-ready {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    max-height: none;
+    transition: none;
+  }
+  .sb-tab { height: 138px; }
+  .sidebar.sb-ready.sb-expanded {
+    top: 0;
+    transform: none;
+    width: min(92vw, calc(44px + var(--sb-panel-w, 196px)));
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+  }
+  .sb-mask { display: block; }
+  body.sb-on .layout { padding-left: 60px; }   /* 给固定的书签让出位置，避免压住正文 */
+}
+
+@media print {
+  .sb-mask, .sidebar.sb-ready { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<button id="themeBtn">🌙 深色</button>
+
+<div class="layout">
+
+  <!-- 侧边目录 -->
+  <aside class="sidebar">
+    <h3>目录</h3>
+    <a href="#sec1">一、这套教程怎么用</a>
+    <a href="#sec2">二、学习路线总览</a>
+    <a href="#sec3">三、逐篇导览</a>
+    <a href="#sec4">四、三种学习节奏</a>
+    <a href="#sec5">五、必须吃透的十篇</a>
+    <a href="#sec6">六、每一页怎么看</a>
+    <a href="#sec7">七、每天 30 分钟怎么安排</a>
+    <a href="#sec8">八、常见问题</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <a class="page-title" href="https://xuefulu.ai" target="_blank">
+      Python程序设计 学习路线与导读
+    </a>
+
+    
+    <div class="byline"><span class="bj-clock">2026年10月04日 星期日 19:37:13</span> 广州城市理工学院 经济学院 朱继绪 zhujixu@foxmail.com</div>
+
+    <div class="warn">
+      <span class="warn-links">常用网址：学府路 1 号 <a class="link" href="https://xuefulu.ai/" target="_blank">https://xuefulu.ai</a>　｜　下载 Python <a class="link" href="https://xuefulu.ai/Python.html" target="_blank">https://xuefulu.ai/Python.html</a>　｜　下载 TraeCode <a class="link" href="https://xuefulu.ai/TraeCode.html" target="_blank">https://xuefulu.ai/TraeCode.html</a></span>
+    </div>
+
+    <h1>Python 系列教程：学习路线与导读</h1>
+
+    <h2 id="sec1">一、这套教程怎么用</h2>
+
+<p>这是一套<strong>从零开始的 Python 系列教程</strong>，一共 30 篇，按「先会用、再懂原理、最后做出东西」的顺序排下来。每一篇都能单独看懂，但连起来看收获最大。</p>
+<table><thead><tr><th>它适合谁</th><th>它不适合谁</th></tr></thead><tbody><tr><td>完全没写过代码，想从第一行 <code>print</code> 学起的人</td><td>已经能熟练写 Python、想直接看高级特性的人</td></tr><tr><td>学过一点但总是「会看不会写」，想补上手感的人</td><td>想找一本完整语言手册当参考书来查的人</td></tr><tr><td>想把 Python 用在数据处理、办公自动化上的人</td><td>只想要一段现成代码、不愿意理解为什么的人</td></tr></tbody></table>
+<p><strong>开始之前只需要准备两样东西：</strong>一台能上网的电脑，和一点点耐心。安装步骤在第 1 篇和第 2 篇里写得很细，跟着做就行——不会让你去配环境变量、也不会让你装一堆用不上的东西。</p>
+<div class="tip">这套教程有一个特点：<strong>每篇末尾都有一套随堂自测（单选，点一下立刻判分）</strong>。这不是装饰——做题是唯一能检查「我到底会不会」的廉价办法。建议每篇都做到全对再往下走，错的那几道题，回到正文对应的那一节重看一遍，比囫囵吞下去快得多。</div>
+
+    <h2 id="sec2">二、学习路线总览：七个阶段，30 篇</h2>
+<p>整套教程分七个阶段。每个阶段都是一个「能独立站住」的小台阶——学完就有能拿出手的东西，不用等全部学完才敢动手：</p>
+<table><thead><tr><th>阶段</th><th>篇目</th><th>学完这个阶段，你能做什么</th></tr></thead><tbody><tr><td>一、起步</td><td><a class="link" href="1.IDLE.html">1.IDLE</a>　<a class="link" href="2.TraeCode.html">2.TraeCode</a>　<a class="link" href="3.语法规范.html">3.语法规范</a></td><td>把环境跑起来：能在自己电脑上写出并运行一个 Python 文件，知道代码该怎么排版</td></tr><tr><td>二、基础零件</td><td><a class="link" href="4.输入输出.html">4.输入输出</a>　<a class="link" href="5.运算符.html">5.运算符</a>　<a class="link" href="6.数据类型.html">6.数据类型</a>　<a class="link" href="7.内置函数.html">7.内置函数</a>　<a class="link" href="8.字符串.html">8.字符串</a>　<a class="link" href="9.导入库的方法.html">9.导入库的方法</a>　<a class="link" href="10.time库与random库.html">10.time库与random库</a></td><td>会跟程序「对话」：拿输入、算结果、处理文字、调用现成的库</td></tr><tr><td>三、流程控制</td><td><a class="link" href="11.选择结构.html">11.选择结构</a>　<a class="link" href="12.条件表达式.html">12.条件表达式</a>　<a class="link" href="13.循环结构.html">13.循环结构</a></td><td>让程序会思考：会写判断和循环，不再只会从头执行到尾</td></tr><tr><td>四、数据容器</td><td><a class="link" href="14.列表.html">14.列表</a>　<a class="link" href="15.元组.html">15.元组</a>　<a class="link" href="16.切片操作.html">16.切片操作</a>　<a class="link" href="17.序列解包.html">17.序列解包</a>　<a class="link" href="18.字典.html">18.字典</a>　<a class="link" href="19.集合.html">19.集合</a></td><td>一次装下一堆数据：会用列表、元组、字典、集合管理成批数据</td></tr><tr><td>五、函数与迭代</td><td><a class="link" href="20.函数.html">20.函数</a>　<a class="link" href="21.递归.html">21.递归</a>　<a class="link" href="22.生成器与迭代器.html">22.生成器与迭代器</a></td><td>把代码收成块：会封装函数、会写递归、会写省内存的生成器</td></tr><tr><td>六、文件与库</td><td><a class="link" href="23.异常处理.html">23.异常处理</a>　<a class="link" href="24.文件处理.html">24.文件处理</a>　<a class="link" href="25.模块与包.html">25.模块与包</a>　<a class="link" href="26.常用标准库.html">26.常用标准库</a>　<a class="link" href="27.正则表达式.html">27.正则表达式</a></td><td>跟外部世界打交道：能读写文件、拆自己的模块、用标准库和正则处理真实数据</td></tr><tr><td>七、进阶与实战</td><td><a class="link" href="28.面向对象编程.html">28.面向对象编程</a>　<a class="link" href="29.综合实战：班级成绩统计程序.html">29.综合实战：班级成绩统计程序</a>　<a class="link" href="30.TraeCode打包可执行程序.html">30.TraeCode打包可执行程序</a></td><td>做出一个作品：会用面向对象组织代码，能独立完成一个小程序并打包发给别人</td></tr></tbody></table>
+<p>看完这张表你应该发现一件事：<strong>前三个阶段占了一半篇幅</strong>，但它们都不是「高级内容」。这是故意的——所有卡住初学者的地方，八成都在这些看起来最基础的地方（变量类型、缩进、循环边界）。把它们吃透，后面反而越学越轻松。</p>
+<div class="warn">阶段只是「大致顺序」，不是硬规定。如果你已经会写循环和函数，完全可以先跳到第四、第六阶段；但如果学到第六阶段（文件与库）觉得吃力，<strong>八成是第四阶段的字典用得还不够熟</strong>，回头补一补比硬撑划算。</div>
+
+    <h2 id="sec3">三、30 篇逐篇导览（点标题直接打开）</h2>
+
+<p>下面这张表就是整套教程的全目录。<strong>篇名可以直接点开</strong>，一句话帮你判断「这篇讲的是不是我正需要的东西」：</p>
+<table><thead><tr><th>编号 / 篇名</th><th>这篇讲什么</th></tr></thead><tbody><tr><td><strong><a class="link" href="1.IDLE.html">1.IDLE</a></strong></td><td>认识 Python 自带的编辑器，写出并运行第一个程序</td></tr><tr><td><strong><a class="link" href="2.TraeCode.html">2.TraeCode</a></strong></td><td>装上真正的代码编辑器，学会新建文件、运行、常用快捷键</td></tr><tr><td><strong><a class="link" href="3.语法规范.html">3.语法规范</a></strong></td><td>缩进、注释、命名规则——让代码长得像样、别人能看懂</td></tr><tr><td><strong><a class="link" href="4.输入输出.html">4.输入输出</a></strong></td><td>用 <code>input()</code> 把数据拿进来，用 <code>print()</code> 把结果送出去</td></tr><tr><td><strong><a class="link" href="5.运算符.html">5.运算符</a></strong></td><td>加减乘除、整除取余、比较、逻辑运算，全都在这</td></tr><tr><td><strong><a class="link" href="6.数据类型.html">6.数据类型</a></strong></td><td>数字、字符串、布尔值、<code>None</code>——七种类型一次认清，以及什么时候转谁</td></tr><tr><td><strong><a class="link" href="7.内置函数.html">7.内置函数</a></strong></td><td>不用 <code>import</code> 就能直接用的那批函数：<code>len</code>、<code>sum</code>、<code>range</code>、<code>sorted</code> 等</td></tr><tr><td><strong><a class="link" href="8.字符串.html">8.字符串</a></strong></td><td>索引、切片、常用方法、<code>f-string</code> 格式化文本</td></tr><tr><td><strong><a class="link" href="9.导入库的方法.html">9.导入库的方法</a></strong></td><td><code>import</code> 的四种写法，学会把别人写好的能力装进自己的程序</td></tr><tr><td><strong><a class="link" href="10.time库与random库.html">10.time库与random库</a></strong></td><td>让程序会看时间（<code>time</code>）、会掷骰子（<code>random</code>）</td></tr><tr><td><strong><a class="link" href="11.选择结构.html">11.选择结构</a></strong></td><td><code>if</code> / <code>elif</code> / <code>else</code>：让程序学会做判断</td></tr><tr><td><strong><a class="link" href="12.条件表达式.html">12.条件表达式</a></strong></td><td>一行写完的二选一写法，以及它为什么有时候反而不好读</td></tr><tr><td><strong><a class="link" href="13.循环结构.html">13.循环结构</a></strong></td><td><code>for</code> / <code>while</code> / <code>break</code> / <code>continue</code>：让程序学会重复干活</td></tr><tr><td><strong><a class="link" href="14.列表.html">14.列表</a></strong></td><td>一个变量装下一串数：增删改查、排序、遍历</td></tr><tr><td><strong><a class="link" href="15.元组.html">15.元组</a></strong></td><td>写下来就不许改——什么时候用元组比列表更合适</td></tr><tr><td><strong><a class="link" href="16.切片操作.html">16.切片操作</a></strong></td><td>一行取出序列里的一段，<code>[start:stop:step]</code> 一次讲清</td></tr><tr><td><strong><a class="link" href="17.序列解包.html">17.序列解包</a></strong></td><td>一行拆出多个值，以及那个「一次不够用」的星号</td></tr><tr><td><strong><a class="link" href="18.字典.html">18.字典</a></strong></td><td>按名字找到对应的值——最常用的数据结构之一</td></tr><tr><td><strong><a class="link" href="19.集合.html">19.集合</a></strong></td><td>不重复的一袋东西：去重、交集、并集、差集</td></tr><tr><td><strong><a class="link" href="20.函数.html">20.函数</a></strong></td><td>把重复的代码收成一个按钮：参数、返回值、默认值、作用域</td></tr><tr><td><strong><a class="link" href="21.递归.html">21.递归</a></strong></td><td>函数自己叫自己：递归的写法、终止条件与常见陷阱</td></tr><tr><td><strong><a class="link" href="22.生成器与迭代器.html">22.生成器与迭代器</a></strong></td><td>一次只算一个：迭代器、生成器函数、生成器表达式，省内存地遍历</td></tr><tr><td><strong><a class="link" href="23.异常处理.html">23.异常处理</a></strong></td><td><code>try</code> / <code>except</code> / <code>finally</code>：让程序不再一出错就崩掉</td></tr><tr><td><strong><a class="link" href="24.文件处理.html">24.文件处理</a></strong></td><td>把数据存进本子：读写文本文件、编码问题、<code>with</code> 的用法</td></tr><tr><td><strong><a class="link" href="25.模块与包.html">25.模块与包</a></strong></td><td>把自己的代码拆成多个文件：模块、包、<code>if __name__ == '__main__'</code>、虚拟环境</td></tr><tr><td><strong><a class="link" href="26.常用标准库.html">26.常用标准库</a></strong></td><td>标准库四件工具：<code>pathlib</code>、<code>json</code>、<code>csv</code>、<code>datetime</code></td></tr><tr><td><strong><a class="link" href="27.正则表达式.html">27.正则表达式</a></strong></td><td>用「模式」从文本里捞数据：<code>re</code> 模块与常用元字符</td></tr><tr><td><strong><a class="link" href="28.面向对象编程.html">28.面向对象编程</a></strong></td><td>自己动手造一个「类型」：类、对象、属性、方法</td></tr><tr><td><strong><a class="link" href="29.综合实战：班级成绩统计程序.html">29.综合实战：班级成绩统计程序</a></strong></td><td>把前面所有工具拼成一个真正能用的成绩统计程序</td></tr><tr><td><strong><a class="link" href="30.TraeCode打包可执行程序.html">30.TraeCode打包可执行程序</a></strong></td><td>把自己的程序打包成别人双击就能跑的可执行文件</td></tr></tbody></table>
+<div class="tip">建议把它当「地图」用：卡在哪一步，回来查一下该看哪一篇，比从头翻一遍快。比如「我想读一个 Excel 导出的表格」——看第 24 篇（文件处理）和第 26 篇（<code>csv</code>）；「我要判断输入是不是手机号」——第 27 篇（正则表达式）。</div>
+
+    <h2 id="sec4">四、三种学习节奏：按你的时间挑一条</h2>
+
+<p>不是每个人都需要把 30 篇从头读到尾。按自己的目的挑一条走：</p>
+<table><thead><tr><th>节奏</th><th>怎么走</th><th>适合谁</th></tr></thead><tbody><tr><td><strong>速通</strong><br>约 10 篇</td><td><a class="link" href="4.输入输出.html">4.输入输出</a> → <a class="link" href="5.运算符.html">5.运算符</a> → <a class="link" href="6.数据类型.html">6.数据类型</a> → <a class="link" href="11.选择结构.html">11.选择结构</a> → <a class="link" href="13.循环结构.html">13.循环结构</a> → <a class="link" href="14.列表.html">14.列表</a> → <a class="link" href="18.字典.html">18.字典</a> → <a class="link" href="20.函数.html">20.函数</a> → <a class="link" href="23.异常处理.html">23.异常处理</a> → <a class="link" href="24.文件处理.html">24.文件处理</a></td><td>只想尽快能写出「读文件、算一算、输出结果」的小脚本</td></tr><tr><td><strong>常规</strong><br>全部 30 篇</td><td>按编号顺序走，每篇自测做到全对再往下</td><td>想在几周内系统掌握 Python 基础，目标最稳</td></tr><tr><td><strong>精读</strong><br>30 篇 ＋ 动手改造</td><td>在常规的基础上，把 <a class="link" href="29.综合实战：班级成绩统计程序.html">29.综合实战：班级成绩统计程序</a> 里的程序<strong>改成自己的题目</strong>（账单统计、图书借阅、课程表……），改到能跑通为止</td><td>要为后续的学习或工作真正用上 Python</td></tr></tbody></table>
+<p>注意「常规」那一栏的关键词是<strong>「按编号顺序」</strong>。这套教程的编号就是精心排过的教学顺序——前面的假设都会在后面用到，跳着看容易出现「这个词怎么没讲过」的挫败感。</p>
+<div class="tip">如果你时间很碎（比如每天只有 20 分钟），推荐「一次一篇、当天做自测」的节奏，而不是「一天啃五篇、不做题」。前者两周下来能记住的东西，比后者多得多。</div>
+
+    <h2 id="sec5">五、这十篇必须吃透（其余的能跑通就行）</h2>
+
+<p>30 篇都一样重要是假的。下面这十篇是<strong>后面所有内容的公共地基</strong>——它们出问题，会以「莫名其妙的报错」的形式，在很远的地方冒出来：</p>
+<table><thead><tr><th>篇目</th><th>为什么非吃透不可</th></tr></thead><tbody><tr><td><a class="link" href="6.数据类型.html">6.数据类型</a></td><td>所有诡异的报错，一半来自「拿字符串当数字用」。类型这一关不过，后面全是坑</td></tr><tr><td><a class="link" href="8.字符串.html">8.字符串</a></td><td>字符串是处理真实数据时最常打交道的类型，切片和方法必须熟练到不用查</td></tr><tr><td><a class="link" href="11.选择结构.html">11.选择结构</a></td><td><code>if</code> 是逻辑的入口；判断条件写错，程序不会报错，只会算错</td></tr><tr><td><a class="link" href="13.循环结构.html">13.循环结构</a></td><td>循环边界（从 0 开始、包不包含末尾）是初学者最大的错误来源</td></tr><tr><td><a class="link" href="14.列表.html">14.列表</a></td><td>列表是后面一切「批量数据」的原型，不熟就没法往下走</td></tr><tr><td><a class="link" href="18.字典.html">18.字典</a></td><td>字典是 Python 里最有用的数据结构，没有之一。统计、查找、配置全靠它</td></tr><tr><td><a class="link" href="20.函数.html">20.函数</a></td><td>不会写函数，代码超过 50 行就会变成一团乱麻</td></tr><tr><td><a class="link" href="23.异常处理.html">23.异常处理</a></td><td>真实世界的数据永远有意外；不会处理异常，程序就只是个玩具</td></tr><tr><td><a class="link" href="24.文件处理.html">24.文件处理</a></td><td>不会读写文件，程序的结果关掉窗口就消失了</td></tr><tr><td><a class="link" href="29.综合实战：班级成绩统计程序.html">29.综合实战：班级成绩统计程序</a></td><td>综合实战。前面的知识点只有在这里被串起来一次，才算真正学会</td></tr></tbody></table>
+<div class="warn"><strong>判断「吃透了没有」的标准很简单</strong>：给你一个类似的小题目，你能不能不看教程、只查语法，把它写出来？能，就算过；不能，就再多做一遍自测里那道相关的题。另外这十篇里有四篇是「数据结构 + 控制流」——听着枯燥，但它们是唯一值得反复练的部分。</div>
+
+    <h2 id="sec6">六、每一页怎么看：页面上的四个东西</h2>
+
+<p>30 篇的页面长得一样，认识这四个东西，用起来会顺手很多：</p>
+<table><thead><tr><th>页面上的东西</th><th>它是干什么的</th><th>怎么用</th></tr></thead><tbody><tr><td>左侧的竖排小书签</td><td>全篇的目录</td><td>点一下展开，再点任意一节直接跳过去；不点也不挡正文</td></tr><tr><td>右上角的圆钮</td><td>切换浅色 / 深色</td><td>晚上看改用深色；你的选择会被浏览器记住</td></tr><tr><td>深色代码块</td><td>可以直接运行的 Python 代码 / 运行结果 / 报错原文</td><td>右上角有<strong>复制</strong>按钮，复制到编辑器里就能跑</td></tr><tr><td>文末的随堂自测</td><td>单选，点了立刻判分并给出解析</td><td>做完看正确率；错题重看对应小节</td></tr></tbody></table>
+<p>顺便说一句：代码块里的输出，<strong>都是真的跑出来的</strong>，不是手写上去的。所以你可以放心照着敲——如果结果对不上，那是环境或输入的问题，不是教程写错了。</p>
+<p>先验证一下你手上的环境是通的。新建一个文件，写下这两行：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-str">'Hello, Python!'</span>)
+<span class="tok-fn">print</span>(<span class="tok-num">1</span> <span class="tok-op">+</span> <span class="tok-num">2</span> <span class="tok-op">+</span> <span class="tok-num">3</span>)</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>Hello, Python!
+6</code></pre>
+</div>
+</div>
+<div class="tip">跑不出上面这个结果，就先回到第 1 篇和第 2 篇。<strong>不要在环境没通的时候硬学下去</strong>——那会把「环境问题」误当成「我学不会」，这是劝退初学者最常见的一种方式。</div>
+
+    <h2 id="sec7">七、每天 30 分钟，具体怎么安排</h2>
+
+<p>「每天学一点」最容易失败的两种方式是：只读不写、或者一坐两小时。下面这个节奏是照着「宁可少、不能断」设计的：</p>
+<table><thead><tr><th>时间</th><th>做什么</th></tr></thead><tbody><tr><td>前 5 分钟</td><td>把<strong>上一篇的代码</strong>重新敲一遍（不复制），跑了看输出对不对</td></tr><tr><td>中间 15 分钟</td><td>读新的一篇，<strong>每个代码块都亲手敲一遍</strong>；报错也不怕，报错信息正好对着「报错手册」那一节看</td></tr><tr><td>最后 10 分钟</td><td>做这一篇的随堂自测。做错的题，把解析读一遍，再回正文找到对应小节</td></tr></tbody></table>
+<p>关于「亲手敲一遍」，值得多说一句：<strong>复制粘贴和省下的那三分钟，代价是学不会</strong>。敲的时候你会注意到缩进、括号、引号这些细节——而这些细节恰恰就是初学者 90% 的报错来源。等你把某一类代码敲到「手比脑子快」，才可以开始复制。</p>
+<div class="warn"><strong>卡住超过 20 分钟就先跳过</strong>，在纸上记下卡住的那句话，继续往后读。很多概念不是「当场想通」的，而是学到后面、回头看才忽然明白的。但跳过之后<strong>一定要在三天内回来补</strong>，否则那个坑会一直留在那里。</div>
+
+    <h2 id="sec8">八、常见问题</h2>
+
+<p><strong>Q：完全没有数学基础，能学吗？</strong><br>能。这套教程里出现的数学只有加减乘除、取余、求平均，第 5 篇讲完就够用了。Python 是一门「表达逻辑」的语言，不是数学课。</p>
+
+<p><strong>Q：学完这 30 篇，算是什么水平？</strong><br>能把「读文件 → 清洗 → 计算 → 输出 → 存盘」这条链路独立走通，能看懂别人的基础代码，能自己查文档用新库。这已经足够应付大部分数据处理、办公自动化的日常任务，也是继续学数据分析、Web 或人工智能的合格起点。</p>
+
+<p><strong>Q：为什么要先学 IDLE，再学 TraeCode，不能直接用最好的编辑器吗？</strong><br>因为 IDLE 是 Python 自带的，<strong>零安装、零配置</strong>。第 1 篇用它把「程序是什么」这件事讲清楚，不带任何编辑器功能的干扰；第 2 篇再换成真正干活的编辑器，学快捷键和调试。顺序反过来，你会在还没搞懂程序的时候先被配置问题劝退。</p>
+
+<p><strong>Q：看的时候都懂，自己写就写不出来，怎么办？</strong><br>这是常态，不是你笨。原因是「看懂」用的是<strong>再认</strong>（看到答案才想起），而「写出」用的是<strong>回忆</strong>。唯一的办法是增加回忆的次数：把示例代码关掉自己默写一遍、把题目换个数据再做一遍。第 29 篇的综合实战就是为此设计的——它逼你把零散的知识点重新组织一次。</p>
+
+<p><strong>Q：需要背语法吗？</strong><br>需要背的很少，但有三个东西要熟练到不用想：<strong>常用内置函数的名字</strong>（第 7 篇）、<strong>列表和字典的增删改查写法</strong>（第 14、18 篇）、<strong>字符串的切片和方法名</strong>（第 8 篇）。其余一律现查。真正需要「背」的是思维方式——遇到问题先想「数据长什么样」，再想「分几步做」，这个习惯才是一辈子的。</p>
+
+<p><strong>Q：学完这套，下一步该学什么？</strong><br>先别急着往上学。最划算的下一步是<strong>把第 29 篇的程序改成三个自己的版本</strong>（比如换成记账、通讯录、课程表），全部跑通。等你能不查教程地独立写出来，再按兴趣挑方向：数据处理去看 <code>pandas</code>，自动化去看 <code>openpyxl</code> / <code>requests</code>，Web 去看 <code>Flask</code> 或 <code>FastAPI</code>。到那时候你会发现，真正难的从来不是新库，而是这 30 篇里那些最基础的东西。</p>
+
+
+
+  </main>
+</div>
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = '☀️ 浅色';
+  }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+<script>
+
+</script>
+
+<script>
+// === 增强：代码块复制 ===
+(function () {
+  function clipboardWrite(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-2000px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('copy failed'));
+    });
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+  document.querySelectorAll('.cb-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.cb');
+      var code = box ? box.querySelector('code') : null;
+      if (!code) { return; }
+      var text = code.innerText.replace(/\u00a0/g, ' ').replace(/\n+$/, '');
+      clipboardWrite(text).then(
+        function () { flash(btn, '已复制'); },
+        function () { flash(btn, '复制失败'); }
+      );
+    });
+  });
+})();
+</script>
+
+<script>
+// === 增强：页眉北京时间 ===
+(function () {
+  var el = document.querySelector('.byline .bj-clock');
+  if (!el) { return; }
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function beijingNow() {
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+  }
+  function render() {
+    var d = beijingNow();
+    el.textContent = d.getFullYear() + '年' + pad(d.getMonth() + 1) + '月' + pad(d.getDate()) + '日 '
+      + WEEK[d.getDay()] + ' '
+      + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+
+<script>
+// === 增强：侧边目录可折叠 ===
+(function () {
+  /* 侧边目录：默认收起成左侧竖排书签，随页面滚动常驻；点它展开/收起 */
+  var sb = document.querySelector('.sidebar');
+  if (!sb || sb.querySelector('.sb-tab')) { return; }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var D_MENU  = 'M3 5h14M3 10h14M3 15h14';      /* ☰：内联 SVG 画，避免 ☰ 字符渲染成豆腐块 */
+  var D_CLOSE = 'M5.5 5.5l9 9M14.5 5.5l-9 9';
+  var D_RIGHT = 'M7.5 4.5l5 5.5-5 5.5';         /* › */
+  var D_LEFT  = 'M12.5 4.5l-5 5.5 5 5.5';       /* ‹ */
+
+  function setD(el, d) {
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    el.appendChild(p);
+  }
+  function mkIcon(cls, d) {
+    var el = document.createElementNS(NS, 'svg');
+    el.setAttribute('class', cls);
+    el.setAttribute('viewBox', '0 0 20 20');
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.9');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    setD(el, d);
+    return el;
+  }
+  function narrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+  }
+
+  /* 把 <h3>目录</h3> 与原有链接重新组织：书签 + 面板 */
+  var head = sb.querySelector('h3');
+  var label = head ? head.textContent.trim() : '目录';
+  if (head && head.parentNode) { head.parentNode.removeChild(head); }
+
+  var list = document.createElement('nav');
+  list.className = 'sb-list';
+  list.setAttribute('aria-label', label);
+  while (sb.firstChild) { list.appendChild(sb.firstChild); }
+
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'sb-tab';
+  tab.setAttribute('aria-controls', 'sbPanel');
+  var ico = mkIcon('sb-ico', D_MENU);
+  var vt = document.createElement('span');
+  vt.className = 'sb-vt';
+  vt.textContent = label;
+  var chev = mkIcon('sb-chev', D_RIGHT);
+  tab.appendChild(ico);
+  tab.appendChild(vt);
+  tab.appendChild(chev);
+
+  var panel = document.createElement('div');
+  panel.className = 'sb-panel';
+  panel.id = 'sbPanel';
+  var pTitle = document.createElement('div');
+  pTitle.className = 'sb-head';
+  pTitle.textContent = label;
+  panel.appendChild(pTitle);
+  panel.appendChild(list);
+
+  /* 深色/浅色切换：从右上角挪进书签内部的顶部图标区（挪节点不会丢它原有的点击事件） */
+  var theme = document.getElementById('themeBtn');
+
+  var col = document.createElement('div');
+  col.className = 'sb-col';
+  if (theme) {
+    theme.setAttribute('title', '切换深色 / 浅色主题');
+    theme.setAttribute('aria-label', '切换深色 / 浅色主题');
+    col.appendChild(theme);
+  }
+  col.appendChild(tab);
+
+  sb.appendChild(col);
+  sb.appendChild(panel);
+  sb.classList.add('sb-ready', 'sb-noanim');
+  document.body.classList.add('sb-on');
+
+  var mask = document.createElement('div');
+  mask.className = 'sb-mask';
+  mask.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(mask);
+
+  function isOpen() { return sb.classList.contains('sb-expanded'); }
+
+  /* 量出「目录里每个标题都不折行」需要的面板宽度，写进 --sb-panel-w，让展开态宽度自适应 */
+  function fitWidth() {
+    var keep = panel.getAttribute('style');
+    panel.style.cssText = 'display:block;position:absolute;left:-99999px;top:0;width:auto;' +
+                          'white-space:nowrap;overflow:visible;';
+    var need = Math.ceil(panel.getBoundingClientRect().width);
+    if (keep === null) { panel.removeAttribute('style'); } else { panel.setAttribute('style', keep); }
+    if (!need) { return; }
+    /* 上限：宽屏不超过视口 46%，窄屏（抽屉是浮层）可占到 90%，都只为防个别超长标题把正文挤没 */
+    var cap = narrow() ? window.innerWidth * 0.90 - 44 : window.innerWidth * 0.46;
+    sb.style.setProperty('--sb-panel-w', Math.min(need, Math.max(Math.round(cap), 196)) + 'px');
+  }
+
+  function setOpen(open) {
+    sb.classList.toggle('sb-expanded', open);
+    document.body.classList.toggle('sb-open', open);
+    tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tab.setAttribute('aria-label', open ? '收起目录' : '展开目录');
+    tab.title = open ? '收起目录' : '展开目录';
+    vt.textContent = open ? '收起' : label;
+    setD(ico, open ? D_CLOSE : D_MENU);
+    setD(chev, open ? D_LEFT : D_RIGHT);
+  }
+  setOpen(false);   /* 默认收起 */
+  fitWidth();       /* 收起状态下面板是 display:none，正好用离屏副本量宽度，量完即恢复 */
+  /* 字体（含回退）落定后再量一次，避免首帧用错字体算出偏窄的宽度 */
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(fitWidth, function () {});
+  }
+
+  tab.addEventListener('click', function () { setOpen(!isOpen()); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); }
+  });
+  /* 展开状态下，点「书签 / 面板」之外的任意空白处（正文、页眉、遮罩…）自动收起。
+     用 click 而不是 pointerdown：宽屏收起会让正文变宽重排，若在鼠标抬起前就重排，
+     这一下点击可能落空（点正文链接会「没反应」）。用 click 则原点击先正常派发完，再收起。 */
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) { return; }
+    var t = e.target;
+    if (t && sb.contains(t)) { return; }   /* 点在自己身上（书签、面板、主题按钮）不收起 */
+    setOpen(false);
+  });
+  /* 窄屏是抽屉，点目录项跳转后自动收起；宽屏是分栏，留着方便连着点 */
+  list.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && isOpen() && narrow()) { setOpen(false); }
+  });
+  mask.addEventListener('click', function () { setOpen(false); });
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!narrow() && isOpen()) { document.body.classList.remove('sb-open'); }
+    /* 视口宽度变化较大时重量一次（窄屏/宽屏的上限不同；字号是 px 固定的，无需每次都量） */
+    if (Math.abs(window.innerWidth - lastW) > 60) { lastW = window.innerWidth; fitWidth(); }
+  });
+  /* 初次布局落下后再放开过渡，之后的展开/收起才带宽度动画 */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { sb.classList.remove('sb-noanim'); });
+  });
+})();
+</script>
+
+</body>
+</html>
