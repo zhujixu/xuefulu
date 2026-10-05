@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python 基础教程 正则表达式</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+<style>
+  :root {
+    --bg: #fafafa;
+    --text: #333;
+    --card: #fff;
+    --code-bg: #eef1f5;
+    --code-text: #c7254e;
+    --pre-bg: #282c34;
+    --pre-text: #abb2bf;
+    --border: #d0d7de;
+    --table-even: #f6f8fa;
+    --h1: #1a1a1a;
+    --h2: #3776ab;
+    --ai-bg: #edf2fe;
+    --ai-border: #4c6ef5;
+    --tip-bg: #fff8e1;
+    --tip-border: #ffd43b;
+  }
+  body.dark {
+    --bg: #1e1e1e;
+    --text: #d4d4d4;
+    --card: #2a2a2a;
+    --code-bg: #3a3a3a;
+    --code-text: #ff9e9e;
+    --pre-bg: #111;
+    --pre-text: #ccc;
+    --border: #444;
+    --table-even: #2f2f2f;
+    --h1: #f0f0f0;
+    --h2: #6cb6ff;
+    --ai-bg: #232842;
+    --ai-border: #748ffc;
+    --tip-bg: #3a3320;
+    --tip-border: #ffd43b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .3s, color .3s;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+  /* 侧边目录 */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    font-size: 14px;
+  }
+  .sidebar h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--h2);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s, color .2s;
+  }
+  .sidebar a:hover {
+    background: var(--code-bg);
+    color: var(--h2);
+  }
+  /* 主内容 */
+  .content { flex: 1; min-width: 0; }
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #3776ab;
+    padding-bottom: 10px;
+    color: var(--h1);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 32px;
+    color: var(--h2);
+    border-left: 5px solid #ffd43b;
+    padding-left: 10px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 17px;
+    margin-top: 22px;
+    color: var(--text);
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    color: var(--code-text);
+  }
+  pre {
+    background: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: #3776ab; color: #fff; }
+  tr:nth-child(even) { background: var(--table-even); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+
+  .ai-tip {
+    background: var(--ai-bg);
+    border-left: 5px solid var(--ai-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .ai-tip p { margin: 6px 0; }
+  .ai-tip p:first-child { margin-top: 0; }
+  .ai-tip p:last-child { margin-bottom: 0; }
+  .warn {
+    background: #ffe6e6;
+    border-left: 5px solid #e53935;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  body.dark .warn { background: #4a1f1f; color: #ffd4d4; }
+  /* 超链接样式 */
+  a.link {
+    color: #3776ab;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  a.link:hover { color: #e53935; }
+  body.dark a.link { color: #6cb6ff; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+
+  /* 深色切换按钮 */
+  #themeBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  #themeBtn:hover { background: #2a5d8a; }
+
+  /* 响应式 */
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; position: static; order: -1; }
+    #themeBtn { top: 10px; right: 10px; padding: 6px 12px; font-size: 13px; }
+  }
+
+  /* ===== 随堂自测（选择题模块） ===== */
+  .quiz {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .quiz-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .quiz-bar .quiz-score { font-weight: bold; color: var(--h2); }
+  .quiz-reset {
+    margin-left: auto;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .quiz-reset:hover { background: #2a5d8a; }
+  .q {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 4px;
+  }
+  .q:first-of-type { border-top: none; }
+  .q-title {
+    font-weight: bold;
+    margin: 0 0 10px;
+    line-height: 1.7;
+  }
+  .q-no {
+    display: inline-block;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: #3776ab;
+    color: #fff;
+    font-size: 13px;
+    font-weight: normal;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .q.passed .q-no { background: #2e9b52; }
+  .q.failed .q-no { background: #e53935; }
+  ul.q-opts {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  li.opt {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  li.opt:hover { border-color: var(--h2); }
+  .q.answered li.opt { cursor: default; }
+  .q.answered li.opt:hover { border-color: var(--border); }
+  li.opt.correct {
+    background: #e6f7ec;
+    border-color: #2e9b52;
+    color: #1b6b39;
+    font-weight: bold;
+  }
+  li.opt.wrong {
+    background: #ffe6e6;
+    border-color: #e53935;
+    color: #a01f1c;
+  }
+  li.opt.correct:hover, li.opt.wrong:hover { border-color: inherit; }
+  li.opt.dim { opacity: .5; }
+  body.dark li.opt.correct { background: #12351f; border-color: #3fbf6b; color: #9ff0bb; }
+  body.dark li.opt.wrong { background: #3a1a1a; border-color: #e53935; color: #ffb3b3; }
+  .q-explain {
+    display: none;
+    margin: 12px 0 4px;
+    padding: 10px 14px;
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .q.answered .q-explain { display: block; }
+  .q-result {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .q-result.show { display: block; }
+/* === 增强：代码块 / 署名 === */
+.cb { margin: 16px 0; border-radius: 8px; overflow: hidden; background: var(--pre-bg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.cb-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+          padding: 6px 12px; background: rgba(255,255,255,.07);
+          border-bottom: 1px solid rgba(255,255,255,.09); }
+.cb-lang { font-size: 12px; color: #9aa4b2; font-family: Consolas, Monaco, monospace; letter-spacing: .5px; }
+.cb-copy { background: transparent; border: 1px solid #4b5263; color: #c8cdd8; border-radius: 5px;
+           padding: 2px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+           transition: background .15s, border-color .15s, color .15s; }
+.cb-copy:hover { background: #3776ab; border-color: #3776ab; color: #fff; }
+.cb-copy.ok { background: #2ea043; border-color: #2ea043; color: #fff; }
+.cb-body { display: flex; align-items: stretch; }
+.cb-lines { flex: 0 0 auto; padding: 16px 10px 16px 14px; text-align: right; color: #636d83;
+            font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            border-right: 1px solid rgba(255,255,255,.08); }
+.cb-lines span { display: block; }
+.cb-body pre { flex: 1 1 auto; min-width: 0; margin: 0; padding: 16px 16px 16px 14px;
+               border-radius: 0; background: transparent; }
+.cb-body pre code { padding: 0; }
+/* 语法高亮：VS Code Dark+ 配色 */
+.tok-kw  { color: #c586c0; }
+.tok-kw2 { color: #569cd6; }
+.tok-str { color: #ce9178; }
+.tok-num { color: #b5cea8; }
+.tok-cmt { color: #6a9955; font-style: italic; }
+.tok-fn  { color: #dcdcaa; }
+.tok-cls { color: #4ec9b0; }
+.tok-op  { color: #d4d4d4; }
+/* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
+.warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
+.warn .warn-links a { word-break: break-all; }
+/* === 增强：侧边目录可折叠 === */
+/* 侧边目录＝左侧竖排书签，默认收起。样式全部依附 .sb-ready（JS 加的），无 JS 时完全不影响原版式 */
+
+/* 外层：收 44px / 展 44+面板；sticky 钉在左侧，随页面滚动常驻，且任何状态都垂直居中 */
+.sidebar.sb-ready {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 44px;
+  /* 上限比「视口高 − 48」再紧 24px：保证 top = 50vh − H/2 恒 ≥ 32px（父容器上内边距）。
+     低于这个值时（矮窗口）书签的静态位置比粘住线还靠下，sticky 只能把元素往下推、不能往上提，
+     于是头几像素会跟着正文滚——留 24px 余量后永远是被推到线上，任何窗口高都不例外。 */
+  max-height: calc(100vh - 72px);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  position: sticky;
+  /* 居中必须落在**布局盒**上：top = 50vh - 自身高度的一半，高度由 JS 实测写进 --sb-top。
+     ⚠️ 不能用 transform: translateY(-50%) 做居中——transform 只挪画面、不挪盒子，而 sticky 判
+     「不越出父容器」时按**没挪过的盒子**算：滚到页底（父容器底边正好贴到视口底）整枚书签会被顶高。
+     导航页父容器只 3744px 高，实测展开态在页底偏了 130px（讲义父容器一万八，从没碰到这个上限）。
+     改成 top: calc(50vh - H/2) 后布局盒本身就居中，底部只占 50vh + H/2 ≤ 视口高（H ≤ 100vh-72px）。 */
+  top: var(--sb-top, 50vh);
+  /* 品牌行（index 首三行）在 `.layout` **之前**（＝页面最顶端），
+     于是书签的**静态位置**被整体推低了「品牌行高 + 外边距 + .layout 上内边距」那么多。
+     sticky 只能把元素往下推、不能往上提：展开态面板在页顶会被切掉（实测 1200×800 切掉一截）。
+     解法＝用等量**负上外边距**把静态位置提回版式顶端——`--sb-head` 由 JS 实测（＝文档顶到
+     `.layout` 上边的距离），于是书签的渲染位置**始终落在视口中线**。
+     没 JS 时 `--sb-head` 缺省 0：静态位置就停在品牌行下方，不重叠、不切屏，只是位置偏低。 */
+  margin-top: calc(-1 * var(--sb-head, 0px));
+  /* 还有第二处夹取要放开：sticky 要求元素**底部也不越出父容器底边**。
+     `.layout` 后面若还有页脚（导航页有 108px 页脚 + 30px 外边距），滚到最底时父容器底边升到视口里，
+     书签就被顶高——而且只在小窗口暴露：视口越高，页脚占比越小，越碰不到。实测导航页展开态
+     （H=590）页底偏移：视口 1113px 时 0，713px 时 −84px，533px 时 −122px，413px 时 −122px。
+     父容器底边之外本来就没有内容要避让，给一个足够大的负 margin-bottom 即可——负外边距只**放宽
+     允许范围**，不改元素在流里的位置（实测文档高、其余滚动位置逐像素不变）。−100vh 远超任何页脚高度。 */
+  margin-bottom: -100vh;
+  align-self: flex-start;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  z-index: 30;
+}
+/* 首次挂载时先禁用过渡，避免「原版 240px 宽 → 收起 44px」在加载瞬间抖一下（JS 两帧后移除本类） */
+.sidebar.sb-ready.sb-noanim { transition: none !important; }
+.sidebar.sb-ready.sb-expanded {
+  /* 面板宽度由 JS 量出「最长标题不折行」所需宽度，写进 --sb-panel-w（默认 196px） */
+  width: calc(44px + var(--sb-panel-w, 196px));
+}
+
+/* 工具条＝一枚 44px 宽的竖排书签：深色切换图标区在上、目录区在下，**共用同一块渐变底色与投影**，
+   视觉上是一整枚按钮（内部是两个各自可点的功能区——button 不能嵌套 button，所以用本列承载外观） */
+.sb-col {
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 0;              /* 不要圆角：与正文左边缘齐平的方角书签 */
+  background: linear-gradient(180deg, #5d9bd4 0%, #3776ab 58%, #2b5f8d 100%);
+  box-shadow: 0 6px 18px rgba(55,118,171,.32), inset 0 1px 0 rgba(255,255,255,.26);
+  transition: transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dark .sb-col { background: linear-gradient(180deg, #4a8bc2 0%, #30699b 58%, #245078 100%); }
+.sb-col:hover { transform: translateX(3px); box-shadow: 0 9px 26px rgba(55,118,171,.46), inset 0 1px 0 rgba(255,255,255,.26); }
+/* 展开时书脊与面板必须严丝合缝，悬停不再位移 */
+.sidebar.sb-ready.sb-expanded .sb-col:hover { transform: none; }
+
+/* 竖排书签本体（目录区）：透明，底色与投影都由 .sb-col 提供，两块功能区共用一枚按钮的外观 */
+.sb-tab {
+  flex: 1 1 auto;                /* 在这一列里占满剩余高度：收起＝152px，展开＝随面板一起拉长 */
+  box-sizing: border-box;
+  width: 44px;
+  height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 15px 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-tab:hover { background-color: rgba(255,255,255,.1); }
+.sb-tab:active { background-color: rgba(255,255,255,.2); }
+.sb-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.sb-tab .sb-ico { display: block; width: 17px; height: 17px; flex: none; }
+.sb-tab .sb-vt {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  letter-spacing: .26em;
+  white-space: nowrap;
+}
+.sb-tab .sb-chev { display: block; width: 11px; height: 11px; flex: none; opacity: .72; }
+
+/* 深色/浅色切换：不再单独占一格，而是并入书签内部——书签顶部一个 44×38 的图标区，
+   底部一条极淡的分隔线与目录区分开，共用 .sb-col 的渐变底色，看起来就是一整枚按钮。
+   图标一律用 background-image 画、不用文字：页面自身脚本每次切换都会改写它的 textContent，
+   塞子元素会被冲掉。整段挂在 body.sb-on 下：JS 没跑（没这个类）时按钮仍是原版右上角样式。 */
+body.sb-on #themeBtn {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;                  /* 隐掉「🌙 深色」文字，只留图标 */
+  line-height: 0;
+  text-indent: -9999px;
+  color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sb-on #themeBtn:hover { background-color: rgba(255,255,255,.12); }
+body.sb-on #themeBtn:active { background-color: rgba(255,255,255,.22); }
+body.sb-on #themeBtn:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 深色模式下换成太阳图标（底色仍由 .sb-col 提供，随 body.dark 自动加深） */
+body.dark.sb-on #themeBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4.4'/%3E%3Cpath d='M12 1.4v2.2M12 20.4v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.4 12h2.2M20.4 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6'/%3E%3C/svg%3E");
+}
+
+/* 展开出来的目录面板（沿用原版卡片观感，方角） */
+.sb-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: none;
+  padding: 16px 14px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 6px 22px rgba(0,0,0,.08);
+}
+.sidebar.sb-ready.sb-expanded .sb-panel { display: block; animation: sbIn .22s ease; }
+@keyframes sbIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.sb-head {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--h2);
+}
+
+/* 遮罩：只在窄屏（抽屉模式）用得上 */
+.sb-mask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+body.sb-open .sb-mask { opacity: 1; visibility: visible; }
+
+@media (max-width: 820px) {
+  /* 窄屏：书签脱离文档流钉在左边缘；展开则是整屏抽屉，正文不重排 */
+  .sidebar.sb-ready {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    max-height: none;
+    margin-top: 0;      /* ⚠️ 抽屉是 fixed：负外边距会把整枚书签顶出视口，必须显式归零（见 --sb-head） */
+    margin-bottom: 0;   /* 抽屉是 fixed，没有父容器可夹，负外边距在这里无意义 */
+    transition: none;
+  }
+  .sb-tab { height: 138px; }
+  .sidebar.sb-ready.sb-expanded {
+    top: 0;
+    transform: none;
+    width: min(92vw, calc(44px + var(--sb-panel-w, 196px)));
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+  }
+  .sb-mask { display: block; }
+  body.sb-on .layout { padding-left: 60px; }   /* 给固定的书签让出位置，避免压住正文 */
+}
+
+@media print {
+  .sb-mask, .sidebar.sb-ready { display: none !important; }
+}
+/* === 增强：顶部品牌行 === */
+/* 顶部三行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
+   ⚠️ `.top-brand` 的**位置**在 `<body>` 直下（`.layout` 之前；历史形态曾在 `<main>` 内），
+   所以这里补上 `max-width:1200px; margin:… auto 0` —— 这两条合起来正好复刻 index 的
+   「`body{padding:clamp(10px,3vw,20px)}` + `.container{max-width:1200px;margin:0 auto}`」几何：
+   1280 视口下量到 x=40 / w=1200 / 中心 640，与 index 的 <header> 逐像素一致（此前在内容栏里
+   只有 w=1076、中心 678，用户反馈「看起来不一样」）。 */
+.top-brand { max-width: 1200px; margin: clamp(10px, 3vw, 20px) auto 0;
+  text-align: center; padding: clamp(20px, 5vw, 30px) 20px 10px; color: #1d1d1f;
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* 品牌行与**下方内容**的间距（用户要求「常用网址语句和上方的间距…可参考
+   index.html 中北京时间与下方间距」）：
+     index 里 `.time-display` 底边 → 下一个面板顶边 = 0px（时间行自带 6px 下内边距 ＋ header
+     的 10px 下内边距 = **视觉 16px**）；
+     讲义页/导航页里 `.top-brand` 底边 → `.warn` 顶边还额外压着 `.layout{padding:32px 24px}`
+     的上内边距，视觉 48px —— 明显偏大。
+   把紧跟在品牌行后面的那个 `.layout` 的**上内边距归零**，视觉间距即精确等于 index 的 16px。
+   窄屏分支里 `.layout{padding:16px}` 也会被这条（特指度更高）覆盖，同样对齐 index。 */
+.top-brand + .layout { padding-top: 0; }
+/* ① 学士帽 logo 行 */
+.top-brand .header-logo-link { display: block; text-decoration: none; color: inherit; }
+.top-brand .logo {
+  display: inline-flex; align-items: center; justify-content: center; gap: 15px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700;
+  text-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+.top-brand .logo i { color: #0071e3; filter: drop-shadow(0 0 8px rgba(0,113,227,.3));
+  animation: tp-pulse 2s ease-in-out infinite; }
+@keyframes tp-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.top-brand .brand-accent { color: #0071e3; text-shadow: 0 0 10px rgba(0,113,227,.3); }
+/* ② 「今天你 AI 赋能了吗?」下载提示行 */
+.top-brand .download-tip {
+  display: block; text-align: center; color: #86868b; font-size: .875rem;
+  padding: 8px 20px; text-decoration: none; transition: color .2s ease;
+}
+.top-brand .download-tip:hover { color: #0071e3; }
+.top-brand .download-tip i { margin-right: 6px; color: #86868b; }
+.top-brand .download-tip .highlight {
+  background-color: #fde047; color: #111827; font-weight: 700;
+  padding: .125rem .375rem; border-radius: .25rem;
+}
+/* ③ 实时北京时间行 */
+.top-brand .time-display { text-align: center; padding: 6px 0; color: #86868b;
+  position: relative; z-index: 1; }
+.top-brand .time-display .time-main { font-size: 1.05rem; font-weight: 400; letter-spacing: .5px; }
+.top-brand .time-display .time-sync-status { font-size: .7rem; opacity: .5;
+  margin-left: 6px; vertical-align: middle; }
+/* 深色主题（index 没有深色模式，这几条是按用户「深色下自动提亮」的要求新增的）：
+   正文色与灰字、品牌蓝各提亮一档；浅色下一律与 index.html 完全一致。 */
+body.dark .top-brand { color: #f0f0f0; }
+body.dark .top-brand .download-tip,
+body.dark .top-brand .download-tip i,
+body.dark .top-brand .time-display { color: #a1a1a6; }
+body.dark .top-brand .download-tip:hover { color: #4dabf7; }
+body.dark .top-brand .logo i,
+body.dark .top-brand .brand-accent { color: #4dabf7; }
+body.dark .top-brand .logo i { filter: drop-shadow(0 0 8px rgba(77,171,247,.45)); }
+@media (max-width: 480px) { .top-brand .logo { flex-direction: column; gap: 10px; } }
+/* === 增强：标题行 === */
+/* 页首「标题行」：正文大标题（h1）与末尾的「返回教程导航」提示**合成一行、同一块黄底黑字**
+   —— 整条标题就是一个链接、整块可点。
+   现行形态（用户要求「整行统一成黄底黑字」）：标题文字不再是蓝色、左侧那根
+   4px 蓝色竖条取消、末尾提示也不再自成一块小黄标 —— 整条标题行统一成一块黄底（#fde047）、
+   黑字（#111827）、加粗的块；此前形态是「蓝色标题 + 左侧蓝竖条 + 末尾黄色小标」。 */
+.title-row { background-color: #fde047; color: #111827;
+             width: fit-content; max-width: 100%;
+             margin: 6px 0 18px; padding: 8px 16px; border-radius: 4px; }
+/* 悬停：整块黄底压深一档（整块可点，给个反馈） */
+.title-row:hover { background-color: #facc15; }
+/* h1 的默认装束（26px、3px 蓝色下边框、下边距）在标题行里要全部让位 */
+.title-row h1, .title-row .page-heading { margin: 0; padding: 0; border: 0;
+             font-size: 22px; font-weight: 700; line-height: 1.4;
+             letter-spacing: .5px; color: #111827; }
+/* 整条标题即链接（`display:block` 让整块黄底都能点）。⚠️ class **仍然是 `page-title`**：
+   `snapshot_page.py` / `check_nav.py` / `fix_page_title_home()` 都靠这个选择器定位「页首链接」，
+   改名会全线断掉。下面把历史蓝色牌匾规则（渐变底、白字、大内边距、圆角、阴影）
+   的属性**逐个复位**。 */
+.title-row .page-title { color: inherit; text-decoration: none; background: none;
+             display: block; margin: 0; padding: 0; border: 0; border-radius: 0;
+             box-shadow: none; transform: none; }
+.title-row .page-title:hover { text-decoration: none; }
+/* 末尾的提示块：整行已经是黄底黑字，所以它**不再自成一块**——底色/内边距/圆角全部去掉，
+   只留一小段间距（`.5em`）＋ 前面那颗小图标；字号字重随 h1（22px / 700）。
+   ⚠️ `span.highlight` 这个标签与 class **必须保留**：`enhance_tutorial._h1_text()` /
+   `snapshot_page.py` / `pages_sync.py` 都靠 `_HIGHLIGHT_SPAN_RE` 把它从 h1 文案里剥掉，
+   删了快照的 `page_title` 会拖上提示语。 */
+.title-row .highlight { background: none; color: inherit; padding: 0; border-radius: 0;
+             margin-left: .5em; white-space: normal; }
+/* 提示前面那颗小图标（Font Awesome）：随字号缩放（em），别写死 px，免得窄屏比例失衡 */
+.title-row .highlight i { margin-right: .3em; font-size: .9em; }
+@media (max-width: 640px) {
+  .title-row h1, .title-row .page-heading { font-size: 19px; }
+}
+/* === 增强：站点页脚 === */
+/* 页脚：`.footer / .footer-content / .footer-link / :hover / .separator / 窄屏分支` 逐条照抄
+   index.html（它的 CSS 变量在此展开成字面值：
+     --text-secondary #86868b ｜ --accent #0071e3 ｜ --text-primary #1d1d1f ｜ --transition-fast .2s ease）。
+   多出来的两条定位声明与一行字体栈见上方 Python 注释的 ①② 两条。 */
+.footer { max-width: 1200px; margin: 0 auto clamp(10px, 3vw, 20px);
+  text-align: center; color: #86868b; padding: 20px 0 20px; font-size: .9rem;
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.footer-content { display: flex; align-items: center; justify-content: center;
+  gap: 16px; flex-wrap: wrap; }
+.footer-link { color: #0071e3; text-decoration: none; transition: all .2s ease;
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+.footer-link:hover { color: #1d1d1f; text-decoration: underline; transform: translateY(-2px); }
+.separator { opacity: .4; }
+/* 「版式底边 → 页脚」这一段间距对齐 index（用户要求：
+   「每个页面底部信息与上方的间距保持和 index.html 中底部信息和上方的间距一致」）。
+   index 里页脚紧贴内容块，视觉间距就是页脚自身的 padding-top（20px）；
+   而本技能的内容区 `.layout` 自带下内边距（讲义 32px、导航 8px、窄屏 16px），
+   正文末元素又常带下外边距 —— 实测「正文末元素底边 → 页脚文字顶边」被撑到 52px（讲义）/ 34px（导航）。
+   把这两样归零后该间距＝20px，与 index 逐像素一致。用 `:has(+ .footer)` 只为自证
+   「只命中以页脚收尾的版式」（页脚恒为 `.layout` 的紧邻兄弟，由 inject_site_footer 保证）；
+   不支持 :has 的老浏览器会退回原来的偏大间距，不破版。 */
+.layout:has(+ .footer) { padding-bottom: 0; }
+.layout:has(+ .footer) .content > *:last-child { margin-bottom: 0; }
+/* 深色主题（index 没有深色模式，这几条是按顶部品牌行同样的口径新增的）：
+   灰字与品牌蓝各提亮一档，浅色下一律与 index.html 完全一致。 */
+body.dark .footer { color: #a1a1a6; }
+body.dark .footer-link { color: #4dabf7; }
+body.dark .footer-link:hover { color: #f0f0f0; }
+@media (max-width: 480px) {
+  .footer-content { flex-direction: column; gap: 8px; }
+  .separator { display: none; }
+}
+</style>
+</head>
+<body>
+
+<button id="themeBtn">🌙 深色</button>
+
+    <!-- 增强：顶部品牌行（克隆自 index.html 页首三行，勿手改） -->
+    <div class="top-brand">
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+        <div class="logo">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          <span>学府路<span class="brand-accent">1</span>号 · <span class="brand-accent">xuefulu.ai</span></span>
+        </div>
+      </a>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
+        <i class="fas fa-external-link" aria-hidden="true"></i><span class="highlight">今天你 AI 赋能了吗?</span>打开浏览器,在地址栏输入
+        <span class="highlight">xuefulu.ai</span>
+        ,按下 <span class="highlight">Enter</span> 即可访问学府路1号!
+      </a>
+      <div class="time-display">
+        <span class="time-main"><span id="currentDateTime">2026年10月05日 星期一 22:19:20</span><span class="time-sync-status" id="timeSyncStatus"></span></span>
+      </div>
+    </div>
+    <!-- /增强：顶部品牌行 -->
+
+<div class="layout">
+
+  <!-- 侧边目录 -->
+  <aside class="sidebar">
+    <h3>目录</h3>
+    <a href="#sec1">一、正则是什么：用「模式」找文字</a>
+    <a href="#sec2">二、re 的四个主力函数</a>
+    <a href="#sec3">三、元字符速查表</a>
+    <a href="#sec4">四、贪婪与懒惰：<code>.*</code> 到底吃多少</a>
+    <a href="#sec5">五、分组：把要的那一段单独拎出来</a>
+    <a href="#sec6">六、实战：四个常用模式</a>
+    <a href="#sec7">七、re.compile 与常用 flags</a>
+    <a href="#sec8">八、常见坑</a>
+    <a href="#sec9">九、报错手册</a>
+    <a href="#sec10">十、十个基础案例</a>
+    <a href="#sec11">十一、常见问题</a>
+    <a href="#quiz">十二、随堂自测</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <div class="warn">
+      <span class="warn-links">常用网址：学府路1号 <a class="link" href="https://xuefulu.ai/" target="_blank">https://xuefulu.ai</a>　｜　下载 Python <a class="link" href="https://xuefulu.ai/Python.html" target="_blank">https://xuefulu.ai/Python.html</a>　｜　下载 TraeCode <a class="link" href="https://xuefulu.ai/TraeCode.html" target="_blank">https://xuefulu.ai/TraeCode.html</a></span>
+    </div>
+
+    <!-- 增强：标题行（页首大标题 + 返回导航提示，勿手改） -->
+    <div class="title-row">
+      <h1 class="page-heading"><a class="page-title" href="1-教程导航.html">Python 正则表达式：用「模式」从文本里捞数据<span class="highlight"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>点击此处可返回 Python 基础教程导航页</span></a></h1>
+    </div>
+    <!-- /增强：标题行 -->
+
+    <h2 id="sec1">一、正则是什么：用「模式」找文字</h2>
+
+<p>第 10 篇《字符串》里学过 <code>'abc' in text</code>、<code>text.find('abc')</code> 这类找法。它们只能找<strong>一模一样</strong>的内容。可真实需求经常是「找一段<strong>长得像</strong>的东西」：</p>
+<table><thead><tr><th>需求</th><th>不用正则怎么写</th><th>用正则</th></tr></thead><tbody><tr><td>找出一段文字里所有的数字</td><td>循环 + 判断每个字符是不是 <code>0-9</code></td><td><code>\d+</code></td></tr><tr><td>判断这串是不是手机号</td><td>写一长串 <code>if</code> 判断长度、首位、每一位</td><td><code>1[3-9]\d{9}</code></td></tr><tr><td>把 <code>2026/10/04</code> 改成 <code>2026-10-04</code></td><td>切分、拼接、判断格式</td><td>一条替换搞定</td></tr><tr><td>找出所有邮箱</td><td>几乎写不出来</td><td><code>[\w.]+@[\w.]+\.[a-z]{2,}</code></td></tr></tbody></table>
+<p><strong>正则表达式</strong>（regular expression）就是用来描述「一段文字长什么样」的一套小语言。它不解决新问题，但能把「逐字符判断」这种啰嗦活压缩成一行。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'小明的电话是 13800138000，座位号 15'</span>
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d+'</span>, text))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['13800138000', '15']</code></pre>
+</div>
+</div>
+<div class="tip">正则的正确定位是：<strong>「临时用来捞数据」的工具</strong>。一段文本里反复要取同一种东西，用它最省事；但如果你的程序里有十几条长正则，那往往该换成 csv / json 这种有结构的数据格式（第 28 篇《常用标准库》里讲过）。</div>
+
+    <h2 id="sec2">二、<code>re</code> 的四个主力函数</h2>
+
+<p><code>re</code> 是标准库，跟着 Python 一起装好。日常干活，四个函数覆盖九成场景：</p>
+<table><thead><tr><th>函数</th><th>干什么</th><th>返回什么</th></tr></thead><tbody><tr><td><code>search(模式, 文本)</code></td><td>在文本里<strong>找第一个</strong>符合的</td><td>匹配对象，找不到是 <code>None</code></td></tr><tr><td><code>match(模式, 文本)</code></td><td>只从<strong>开头</strong>匹配</td><td>匹配对象，找不到是 <code>None</code></td></tr><tr><td><code>findall(模式, 文本)</code></td><td>找出<strong>全部</strong>符合的</td><td>列表（最常用）</td></tr><tr><td><code>sub(模式, 新内容, 文本)</code></td><td>把符合的<strong>替换掉</strong></td><td>替换后的新字符串</td></tr></tbody></table>
+<h3>2.1 <code>search</code>：找第一个</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'abc123def'</span>
+m <span class="tok-op">=</span> re.<span class="tok-fn">search</span>(<span class="tok-str">r'\d+'</span>, text)
+<span class="tok-fn">print</span>(m)
+<span class="tok-fn">print</span>(<span class="tok-str">'取到内容：'</span>, m.<span class="tok-fn">group</span>())
+<span class="tok-fn">print</span>(<span class="tok-str">'它在哪里：'</span>, m.<span class="tok-fn">span</span>())</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>&lt;re.Match object; span=(3, 6), match='123'&gt;
+取到内容： 123
+它在哪里： (3, 6)</code></pre>
+</div>
+</div>
+<h3>2.2 <code>match</code>：只认开头——这是最容易搞错的一个</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'search 找 abc123 里的数字：'</span>, re.<span class="tok-fn">search</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'abc123'</span>).<span class="tok-fn">group</span>())
+<span class="tok-fn">print</span>(<span class="tok-str">'match  找 abc123 里的数字：'</span>, re.<span class="tok-kw">match</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'abc123'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'match  找 123abc 里的数字：'</span>, re.<span class="tok-kw">match</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'123abc'</span>).<span class="tok-fn">group</span>())</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>search 找 abc123 里的数字： <span class="tok-num">123</span>
+<span class="tok-kw">match</span>  找 abc123 里的数字： <span class="tok-kw2">None</span>
+<span class="tok-kw">match</span>  找 <span class="tok-num">123</span>abc 里的数字： <span class="tok-num">123</span></code></pre>
+</div>
+</div>
+<p><code>search</code> 从<strong>任意位置</strong>开始找，<code>match</code> <strong>只认开头</strong>。上面第二个打印 <code>None</code>，就是因为字符串开头是字母而不是数字。</p>
+<div class="warn"><strong>要用哪一个是看需求，不是看哪个顺手。</strong>判断「这串是不是手机号」要用 <code>fullmatch</code>（整串完全匹配）；判断「里面有没有手机号」才用 <code>search</code>。用错会导致「只要开头像就算通过」这种漏洞。</div>
+<h3>2.3 <code>findall</code>：一次找全部</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'a1b22c333'</span>
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d+'</span>, text))
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'[a-z]+'</span>, text))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>['1', '22', '333']
+['a', 'b', 'c']</code></pre>
+</div>
+</div>
+<p>返回的是<strong>字符串列表</strong>——想当成数字算，还要自己转 <code>int()</code>（和 csv 那一篇的坑一样）。</p>
+<h3>2.4 <code>sub</code>：替换</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'#'</span>, <span class="tok-str">'a1b22c333'</span>))
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">''</span>, <span class="tok-str">'a1b22c333'</span>))      <span class="tok-cmt"># 换成空串 = 删掉</span>
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'\s+'</span>, <span class="tok-str">' '</span>, <span class="tok-str">'小明   88   统计一班'</span>))  <span class="tok-cmt"># 多个空白压成一个</span></code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>a#b#c#
+abc
+小明 88 统计一班</code></pre>
+</div>
+</div>
+<div class="tip"><code>re.sub(r'\s+', ' ', 文本)</code> 是清洗数据时最常用的一条：把连续的空格、制表符统统压成一个空格。做数据整理时几乎每个项目都会用到。</div>
+
+    <h2 id="sec3">三、元字符速查表</h2>
+
+<p>正则的「词汇」不多，下面这张表覆盖了绝大多数日常用法。<strong>不用背，用的时候回来查。</strong></p>
+<h3>3.1 表示「某一类字符」</h3>
+<table><thead><tr><th>写法</th><th>含义</th><th>匹配的例子</th></tr></thead><tbody><tr><td><code>.</code></td><td>任意一个字符（默认不含换行）</td><td><code>a</code>、<code>1</code>、<code>中</code></td></tr><tr><td><code>\d</code></td><td>一个数字</td><td><code>0</code>~<code>9</code></td></tr><tr><td><code>\D</code></td><td>一个非数字</td><td><code>a</code>、空格</td></tr><tr><td><code>\w</code></td><td>一个「字」：字母、数字、下划线，<strong>以及中文</strong></td><td><code>a</code>、<code>5</code>、<code>_</code>、<code>中</code></td></tr><tr><td><code>\s</code></td><td>一个空白字符</td><td>空格、Tab、换行</td></tr><tr><td><code>[abc]</code></td><td>方括号里的任意一个</td><td><code>a</code> 或 <code>b</code> 或 <code>c</code></td></tr><tr><td><code>[a-z]</code></td><td>a 到 z 里的任意一个</td><td><code>g</code></td></tr><tr><td><code>[^0-9]</code></td><td>方括号里之外的任意一个（<code>^</code> 是「除了」）</td><td><code>a</code>、空格</td></tr></tbody></table>
+<h3>3.2 表示「位置」</h3>
+<table><thead><tr><th>写法</th><th>含义</th><th>说明</th></tr></thead><tbody><tr><td><code>^</code></td><td>字符串开头</td><td>在方括号里表示「除了」，位置不同意思不同</td></tr><tr><td><code>$</code></td><td>字符串结尾</td><td><code>\d+$</code> 表示以数字结尾</td></tr><tr><td><code>\b</code></td><td>单词边界</td><td>找独立的词时用</td></tr></tbody></table>
+<h3>3.3 表示「几个」——量词</h3>
+<table><thead><tr><th>写法</th><th>含义</th><th>例子</th></tr></thead><tbody><tr><td><code>*</code></td><td>0 个或多个</td><td><code>a*b</code> 能匹配 <code>b</code>、<code>ab</code>、<code>aaab</code></td></tr><tr><td><code>+</code></td><td>1 个或多个（至少一个）</td><td><code>a+b</code> 不能匹配 <code>b</code></td></tr><tr><td><code>?</code></td><td>0 个或 1 个</td><td><code>a?b</code> 能匹配 <code>b</code>、<code>ab</code></td></tr><tr><td><code>{3}</code></td><td>恰好 3 个</td><td><code>\d{3}</code> 匹配 <code>123</code></td></tr><tr><td><code>{2,5}</code></td><td>2 到 5 个</td><td><code>\d{2,5}</code></td></tr><tr><td><code>{2,}</code></td><td>至少 2 个</td><td><code>\d{2,}</code></td></tr></tbody></table>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'+ 至少要一个：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'a+b'</span>, <span class="tok-str">'b ab aab aaab'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'* 可以一个都没有：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'a*b'</span>, <span class="tok-str">'b ab aab aaab'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'{3} 恰好三个：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d{3}'</span>, <span class="tok-str">'12 123 1234'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>+ 至少要一个： ['ab', 'aab', 'aaab']
+* 可以一个都没有： ['b', 'ab', 'aab', 'aaab']
+{3} 恰好三个： ['123', '123']</code></pre>
+</div>
+</div>
+<p>看第三行要留意：<code>1234</code> 里被找出来的也是 <code>123</code>——<code>{3}</code> 是「恰好三个」，多出来的第四个不参与。想「至少三个」得写 <code>\d{3,}</code>。</p>
+
+    <h2 id="sec4">四、贪婪与懒惰：<code>.*</code> 到底吃多少</h2>
+
+<p>量词有个默认脾气：<strong>能多吃就多吃</strong>，这叫「贪婪」（greedy）。行为差异在下面这个例子里看得最清楚：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'&lt;a&gt;&lt;b&gt;'</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'贪婪   &lt;.*&gt; ：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'&lt;.*&gt;'</span>, text))
+<span class="tok-fn">print</span>(<span class="tok-str">'懒惰 &lt;.*?&gt; ：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'&lt;.*?&gt;'</span>, text))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>贪婪   &lt;.*&gt; ： ['&lt;a&gt;&lt;b&gt;']
+懒惰 &lt;.*?&gt; ： ['&lt;a&gt;', '&lt;b&gt;']</code></pre>
+</div>
+</div>
+<p>两行只差一个 <code>?</code>，结果完全不同：</p>
+<table><thead><tr><th>写法</th><th>叫法</th><th>怎么吃</th><th>这里的结果</th></tr></thead><tbody><tr><td><code>&lt;.*&gt;</code></td><td>贪婪</td><td>一路吃到<strong>最远</strong>的那个 <code>&gt;</code></td><td>一整串 <code>&lt;a&gt;&lt;b&gt;</code></td></tr><tr><td><code>&lt;.*?&gt;</code></td><td>懒惰（非贪婪）</td><td>吃到<strong>最近</strong>的那个就停</td><td>两段 <code>&lt;a&gt;</code> 和 <code>&lt;b&gt;</code></td></tr></tbody></table>
+<p>想变懒惰，就是<strong>在量词后面再加一个 <code>?</code></strong>：<code>*?</code>、<code>+?</code>、<code>??</code>、<code>{2,5}?</code> 都成立。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'价格：12.5元，折扣价 8.8元'</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'贪婪：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d+\.?\d*'</span>, text))
+<span class="tok-fn">print</span>(<span class="tok-str">'再看一对引号：'</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">'  贪婪  "(.*)" ：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'"(.*)"'</span>, <span class="tok-str">'他说"你好"，又说"再见"'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'  懒惰 "(.*?)" ：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'"(.*?)"'</span>, <span class="tok-str">'他说"你好"，又说"再见"'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">示意</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code>贪婪： ['12.5', '8.8']
+再看一对引号：
+  贪婪  "(.*)" ： ['你好"，又说"再见']
+  懒惰 "(.*?)" ： ['你好', '再见']</code></pre>
+</div>
+</div>
+<div class="tip">判断口诀：<strong>如果你要的是「每一段分别取出来」，就加 <code>?</code> 变懒惰；如果你要的是「从第一个到最后一个整段」，就用默认的贪婪。</strong>实际写的时候，见到 <code>.*</code> 先想一下这个问题，能省掉很多「结果为什么是一整坨」的困惑。</div>
+
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜元字符是正则的字母表，速查表交给 AI 生成最省事。</p>
+<p>打开任意 AI 对话工具（网页版或 App 都可以），试试这样问：<code>把 . \d \w \s + * ? {m,n} 整理成一张表：符号、含义、一个能匹配的例子和一个不匹配的例子</code></p>
+</div>
+
+        <h2 id="sec5">五、分组：把要的那一段单独拎出来</h2>
+
+<p>用圆括号 <code>()</code> 把模式中的一部分括起来，就把这部分<strong>单独标了出来</strong>，叫一个「组」（group）。</p>
+<h3>5.1 按编号取</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+m <span class="tok-op">=</span> re.<span class="tok-fn">search</span>(<span class="tok-str">r'(\d{4})-(\d{2})-(\d{2})'</span>, <span class="tok-str">'日期：2026-10-04'</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">'整段：'</span>, m.<span class="tok-fn">group</span>(<span class="tok-num">0</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'第 1 组（年）：'</span>, m.<span class="tok-fn">group</span>(<span class="tok-num">1</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'第 2 组（月）：'</span>, m.<span class="tok-fn">group</span>(<span class="tok-num">2</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'第 3 组（日）：'</span>, m.<span class="tok-fn">group</span>(<span class="tok-num">3</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'一次全拿出来：'</span>, m.<span class="tok-fn">groups</span>())</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code>整段： 2026-10-04
+第 1 组（年）： 2026
+第 2 组（月）： 10
+第 3 组（日）： 04
+一次全拿出来： ('2026', '10', '04')</code></pre>
+</div>
+</div>
+<p><code>group(0)</code> 是<strong>整段匹配</strong>，<code>group(1)</code> 往后才是各个括号里的内容。这个「0 号是全体」的规矩要记住。</p>
+<h3>5.2 按名字取（推荐）</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+m <span class="tok-op">=</span> re.<span class="tok-fn">search</span>(<span class="tok-str">r'(?P&lt;year&gt;\d{4})-(?P&lt;month&gt;\d{2})-(?P&lt;day&gt;\d{2})'</span>, <span class="tok-str">'2026-10-04'</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">'年：'</span>, m.<span class="tok-fn">group</span>(<span class="tok-str">'year'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'一次全拿出来：'</span>, m.<span class="tok-fn">groupdict</span>())</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>年： 2026
+一次全拿出来： {'year': '2026', 'month': '10', 'day': '04'}</code></pre>
+</div>
+</div>
+<p>写法是 <code>(?P&lt;名字&gt;模式)</code>。<strong>组一多，用名字取值比数编号靠谱得多</strong>——加一个括号就要重数一遍编号，很容易错。</p>
+<h3>5.3 在替换里用组</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'(\d{4})/(\d{2})/(\d{2})'</span>, <span class="tok-str">r'\1-\2-\3'</span>, <span class="tok-str">'日期：2026/10/04'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>日期：2026-10-04</code></pre>
+</div>
+</div>
+<p>替换内容里写 <code>\1</code> <code>\2</code>，就等于「把第 1 组、第 2 组的内容放这里」。注意替换串也写了 <code>r</code> 前缀。</p>
+<h3>5.4 只想分组、不想占编号：<code>(?:...)</code></h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'带编号：  '</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'(\d{3})-(\d{4})'</span>, <span class="tok-str">'010-1234'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'不占编号：(?:...)'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'(?:\d{3})-(\d{4})'</span>, <span class="tok-str">'010-1234'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>带编号：   [('010', '1234')]
+不占编号：(?:...) ['1234']</code></pre>
+</div>
+</div>
+<p>加了 <code>?:</code> 的括号<strong>只起到「把几个字符圈在一起」的作用，不参与编号、也不出现在结果里</strong>。当 <code>findall</code> 遇到多个组时，它返回的是「组的元组」而不是整段——这时候 <code>?:</code> 就能把不关心的那部分摘掉。</p>
+
+    <h2 id="sec6">六、实战：四个常用模式</h2>
+
+<p>下面四个模式是日常最常用的，读懂它们的构成，比背下来更有用。</p>
+<h3>6.1 手机号：<code>1[3-9]\d{9}</code></h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'联系方式：13800138000，备用 13900139000，错误示范 12345678901'</span>
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'1[3-9]\d{9}'</span>, text))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['13800138000', '13900139000']</code></pre>
+</div>
+</div>
+<p>拆开看：<code>1</code> 打头 → <code>[3-9]</code> 第二位是 3 到 9 → <code>\d{9}</code> 后面再跟 9 位数字，一共 11 位。<code>12345678901</code> 没被选中，因为第二位是 <code>2</code>。</p>
+<h3>6.2 邮箱：<code>[\w.]+@[\w.]+\.[a-z]{2,}</code></h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'邮箱 zhangsan@example.com 和一个 a@b.cn'</span>
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'[\w.]+@[\w.]+\.[a-z]{2,}'</span>, text))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['zhangsan@example.com', 'a@b.cn']</code></pre>
+</div>
+</div>
+<p>拆开看：<code>[\w.]+</code> 用户名（字母数字下划线点）→ <code>@</code> → <code>[\w.]+</code> 域名 → <code>\.</code> 一个真正的点 → <code>[a-z]{2,}</code> 结尾至少两位字母。</p>
+<h3>6.3 日期归一：把 <code>/</code> 换成 <code>-</code></h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'(\d{4})/(\d{2})/(\d{2})'</span>, <span class="tok-str">r'\1-\2-\3'</span>, <span class="tok-str">'开学日期：2026/09/01'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>开学日期：2026-09-01</code></pre>
+</div>
+</div>
+<h3>6.4 提取并计算：把价格加起来</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'苹果 5.5元，香蕉 3.2元，橙子 6.8元'</span>
+prices <span class="tok-op">=</span> [<span class="tok-fn">float</span>(x) <span class="tok-kw">for</span> x <span class="tok-kw2">in</span> re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d+\.\d+'</span>, text)]
+<span class="tok-fn">print</span>(<span class="tok-str">'价格：'</span>, prices)
+<span class="tok-fn">print</span>(<span class="tok-str">'合计：'</span>, <span class="tok-fn">round</span>(<span class="tok-fn">sum</span>(prices), <span class="tok-num">1</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>价格： [5.5, 3.2, 6.8]
+合计： 15.5</code></pre>
+</div>
+</div>
+<p>这一段把「提取 → 转类型 → 计算」三步串了起来，是最实用的组合：<strong><code>findall</code> 拿到的一定是字符串，要算数就得自己转。</strong></p>
+<table><thead><tr><th>要解决的问题</th><th>模式</th><th>用法</th></tr></thead><tbody><tr><td>取所有数字</td><td><code>\d+</code></td><td><code>findall</code></td></tr><tr><td>取所有小数</td><td><code>\d+\.\d+</code></td><td><code>findall</code> + <code>float</code></td></tr><tr><td>验证是不是手机号</td><td><code>1[3-9]\d{9}</code></td><td><code>fullmatch</code></td></tr><tr><td>找所有邮箱</td><td><code>[\w.]+@[\w.]+\.[a-z]{2,}</code></td><td><code>findall</code></td></tr><tr><td>多个空白压成一个</td><td><code>\s+</code></td><td><code>sub</code></td></tr><tr><td>去掉首尾空格</td><td><code>^\s+|\s+$</code></td><td><code>sub</code>（其实 <code>strip()</code> 更简单）</td></tr></tbody></table>
+
+    <h2 id="sec7">七、<code>re.compile</code> 与常用 flags</h2>
+
+<h3>7.1 编译成对象，反复用</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+phone <span class="tok-op">=</span> re.<span class="tok-fn">compile</span>(<span class="tok-str">r'1[3-9]\d{9}'</span>)      <span class="tok-cmt"># 编译一次</span>
+
+<span class="tok-fn">print</span>(phone.<span class="tok-fn">findall</span>(<span class="tok-str">'联系 13800138000'</span>))
+<span class="tok-fn">print</span>(phone.<span class="tok-fn">search</span>(<span class="tok-str">'我的号是 13900139000'</span>).<span class="tok-fn">group</span>())
+<span class="tok-fn">print</span>(<span class="tok-fn">bool</span>(phone.<span class="tok-fn">fullmatch</span>(<span class="tok-str">'13800138000'</span>)))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>['13800138000']
+13900139000
+True</code></pre>
+</div>
+</div>
+<p>同一个模式要用很多次时，<code>compile()</code> 一次、之后重复使用，写起来也更整齐。</p>
+<div class="tip"><strong>但别为了「性能」而 compile。</strong>Python 内部本来就会缓存最近用过的模式，写一两处 <code>re.findall(...)</code> 完全没问题。<code>compile()</code> 的真正好处是<strong>可读性</strong>：模式起个名字（<code>phone</code>）比在代码里到处撒一串符号清楚得多。</div>
+<h3>7.2 三个常用 flags</h3>
+<table><thead><tr><th>flag</th><th>含义</th><th>什么时候用</th></tr></thead><tbody><tr><td><code>re.I</code></td><td>忽略大小写（ignore case）</td><td>找 <code>python</code> 时不想漏掉 <code>Python</code></td></tr><tr><td><code>re.M</code></td><td>多行模式：<code>^</code> 和 <code>$</code> 匹配每一行的行首行尾</td><td>逐行处理一段文本</td></tr><tr><td><code>re.S</code></td><td>让 <code>.</code> 也匹配换行</td><td>跨行抓内容</td></tr></tbody></table>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'不加 I：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'python'</span>, <span class="tok-str">'Python PYTHON python'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'加了 I：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'python'</span>, <span class="tok-str">'Python PYTHON python'</span>, re.<span class="tok-cls">I</span>))
+
+text <span class="tok-op">=</span> <span class="tok-str">'abc\n123\nxyz'</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'不加 M：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'^\d+'</span>, text))
+<span class="tok-fn">print</span>(<span class="tok-str">'加了 M：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'^\d+'</span>, text, re.<span class="tok-cls">M</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code>不加 I： ['python']
+加了 I： ['Python', 'PYTHON', 'python']
+不加 M： []
+加了 M： ['123']</code></pre>
+</div>
+</div>
+<p>多个 flag 用竖线连起来：<code>re.I | re.M</code>。</p>
+<div class="warn"><code>re.M</code> 那一组的对比很值得注意：不加时 <code>^</code> 只认<strong>整段文字</strong>的开头（开头是 <code>abc</code>，所以没匹配到数字）；加了 <code>re.M</code> 之后 <code>^</code> 变成「每一行的开头」，才把中间那行 <code>123</code> 捞出来。</div>
+
+    <h2 id="sec8">八、常见坑</h2>
+
+<h3>坑 1：忘了写 <code>r</code> 前缀</h3>
+<p>正则里的 <code>\d</code>、<code>\s</code>、<code>\b</code> 在普通字符串里是「无效转义」，Python 会警告你。虽然多数情况还能跑，但有些模式会<strong>被悄悄改掉意思</strong>，非常难查。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">'\d+'</span>, <span class="tok-str">'a1b22'</span>))      <span class="tok-cmt"># 少了 r 前缀</span></code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['1', '22']</code></pre>
+</div>
+</div><p>运行会成功，但解释器会先给一句警告：</p><div class="warn"><code>&lt;string&gt;:3: SyntaxWarning: invalid escape sequence '\d'</code></div>
+<p><strong>处理办法：所有正则串一律加 <code>r</code> 前缀</strong>，写成 <code>r'\d+'</code>。这样反斜杠就是反斜杠本身，不会被 Python 先解释一遍。</p>
+<h3>坑 2：拿 <code>None</code> 去调 <code>.group()</code></h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+m <span class="tok-op">=</span> re.<span class="tok-fn">search</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'这段文字里没有数字'</span>)
+<span class="tok-fn">print</span>(m.<span class="tok-fn">group</span>())      <span class="tok-cmt"># m 是 None</span></code></pre>
+</div>
+</div><p>运行后会报错（逐字照抄解释器）：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">报错</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>AttributeError: 'NoneType' object has no attribute 'group'</code></pre>
+</div>
+</div>
+<p><code>search</code> / <code>match</code> 找不到时返回的是 <code>None</code>，<code>None</code> 当然没有 <code>group()</code>。</p>
+<p><strong>处理办法：</strong>先判断再取。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+m <span class="tok-op">=</span> re.<span class="tok-fn">search</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'这段文字里没有数字'</span>)
+<span class="tok-kw">if</span> m:
+    <span class="tok-fn">print</span>(<span class="tok-str">'找到了：'</span>, m.<span class="tok-fn">group</span>())
+<span class="tok-kw">else</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">'没找到'</span>)</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>没找到</code></pre>
+</div>
+</div>
+<h3>坑 3：把 <code>match</code> 当成 <code>search</code> 用</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+text <span class="tok-op">=</span> <span class="tok-str">'订单号 A123'</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'match 只认开头：'</span>, re.<span class="tok-kw">match</span>(<span class="tok-str">r'\d+'</span>, text))
+<span class="tok-fn">print</span>(<span class="tok-str">'search 任意位置：'</span>, re.<span class="tok-fn">search</span>(<span class="tok-str">r'\d+'</span>, text).<span class="tok-fn">group</span>())</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw">match</span> 只认开头： <span class="tok-kw2">None</span>
+search 任意位置： <span class="tok-num">123</span></code></pre>
+</div>
+</div>
+<p><strong>处理办法：</strong>「这串<strong>整体</strong>是不是符合格式」用 <code>fullmatch</code>；「里面<strong>有没有</strong>符合的」用 <code>search</code>；<code>match</code> 只在明确「必须从开头算起」时才用。</p>
+<h3>坑 4：模式里该转义的没转义</h3>
+<p><code>.</code> 在正则里是「任意字符」，想表示真正的点必须写 <code>\.</code>：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'没转义：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d.\d'</span>, <span class="tok-str">'1a2 1.2'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'转了义：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d\.\d'</span>, <span class="tok-str">'1a2 1.2'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>没转义： ['1a2', '1.2']
+转了义： ['1.2']</code></pre>
+</div>
+</div>
+<p>要转义的还有：<code>\. \* \+ \? \( \) \[ \] \{ \} \| \^ \$ /</code>。找不准时，一个稳妥的判断是：<strong>这个符号在正则里有特殊含义吗？有就加反斜杠。</strong></p>
+<h3>坑 5：<code>findall</code> 带分组后返回的东西变了</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'没有组：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d{3}-\d{4}'</span>, <span class="tok-str">'010-1234'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'有一个组：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'(\d{3})-\d{4}'</span>, <span class="tok-str">'010-1234'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'两个组：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'(\d{3})-(\d{4})'</span>, <span class="tok-str">'010-1234'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>没有组： ['010-1234']
+有一个组： ['010']
+两个组： [('010', '1234')]</code></pre>
+</div>
+</div>
+<p>没有组时返回「整段」；有组之后返回的就变成「组」了——一个组返回字符串，多个组返回元组，整段反而拿不到了。不想要这个效果就用 <code>(?:...)</code>。</p>
+<h3>坑 6：以为 <code>*</code> 和 <code>+</code> 是一回事</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+
+<span class="tok-fn">print</span>(<span class="tok-str">'a* 匹配 bb：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'a*'</span>, <span class="tok-str">'bb'</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">'a+ 匹配 bb：'</span>, re.<span class="tok-fn">findall</span>(<span class="tok-str">r'a+'</span>, <span class="tok-str">'bb'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>a* 匹配 bb： ['', '', '']
+a+ 匹配 bb： []</code></pre>
+</div>
+</div>
+<p><code>*</code> 允许「一个都没有」，所以在没有 <code>a</code> 的地方也会匹配出<strong>空字符串</strong>（这里出现了 3 次空匹配）。<code>+</code> 要求至少一个，没有就什么都匹配不到。<strong>要「至少一个」的时候就写 <code>+</code>，别用 <code>*</code>。</strong></p>
+
+    <h2 id="sec9">九、报错手册</h2>
+
+<p>报错原文都是从本机解释器逐字抄下来的，对照着找就行。</p>
+<table><thead><tr><th>报错 / 警告原文（最后一行）</th><th>什么情况</th><th>怎么改</th></tr></thead><tbody><tr><td><code>AttributeError: 'NoneType' object has no attribute 'group'</code></td><td><code>search</code> / <code>match</code> 没找到（返回 <code>None</code>），却直接调了 <code>.group()</code></td><td>先 <code>if m:</code> 判断，再取 <code>group()</code></td></tr><tr><td><code>re.PatternError: missing ), unterminated subpattern at position 0</code></td><td>括号没配对（少写或多写 <code>)</code>）</td><td>从头数一遍括号；长模式分段写、分段测</td></tr><tr><td><code>re.PatternError: bad character range</code></td><td>方括号里的范围写反了，如 <code>[9-0]</code></td><td>改成 <code>[0-9]</code></td></tr><tr><td><code>SyntaxWarning: invalid escape sequence '\d'</code></td><td>正则串忘了加 <code>r</code> 前缀</td><td>写成 <code>r'\d+'</code></td></tr><tr><td><code>TypeError: expected string or bytes-like object</code></td><td>把数字或其他类型传给了 <code>re</code> 的函数</td><td>先 <code>str(值)</code> 转成字符串</td></tr><tr><td><code>re.PatternError: nothing to repeat at position 0</code></td><td>把量词写在了开头，如 <code>*abc</code></td><td>量词必须跟在「要重复的东西」后面</td></tr></tbody></table>
+<p>下面几条是「不报错，但结果不对」的，比报错更值得当心：</p>
+<table><thead><tr><th>现象</th><th>原因</th><th>怎么改</th></tr></thead><tbody><tr><td>只匹配到开头，中间明明有</td><td>用了 <code>match</code></td><td>改用 <code>search</code></td></tr><tr><td>本来想要好几段，结果全挤成一段</td><td>用了贪婪的 <code>.*</code></td><td>加 <code>?</code> 变懒惰：<code>.*?</code></td></tr><tr><td><code>findall</code> 返回的元组少了一截</td><td>模式里加了分组改变了返回内容</td><td>不想要的组写成 <code>(?:...)</code></td></tr><tr><td><code>fullmatch</code> 判手机号总是不通过</td><td>字符串带了空格或换行</td><td>先 <code>.strip()</code> 再判</td></tr></tbody></table>
+
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜正则靠实战题养手感。</p>
+<p>打开任意 AI 对话工具（网页版或 App 都可以），试试这样问：<code>出 3 道正则题：提取文本里所有金额、校验 18 位身份证号（末位可能是 X）、把各种格式的日期统一成 YYYY-MM-DD。给我测试文本，我写完你判分</code></p>
+</div>
+
+        <h2 id="sec10">十、十个基础案例</h2>
+
+<p>下面十个例子都很短，建议每个都亲手敲一遍、跑一遍。</p>
+<h3>1. 把一句话里的数字全捞出来</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d+'</span>, <span class="tok-str">'小明语文 88 分，数学 92 分'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['88', '92']</code></pre>
+</div>
+</div>
+<h3>2. 判断一串是不是 11 位手机号</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-kw">def</span> <span class="tok-fn">is_phone</span>(s):
+    <span class="tok-kw">return</span> <span class="tok-fn">bool</span>(re.<span class="tok-fn">fullmatch</span>(<span class="tok-str">r'1[3-9]\d{9}'</span>, s))
+
+<span class="tok-fn">print</span>(<span class="tok-fn">is_phone</span>(<span class="tok-str">'13800138000'</span>))
+<span class="tok-fn">print</span>(<span class="tok-fn">is_phone</span>(<span class="tok-str">'1380013800'</span>))
+<span class="tok-fn">print</span>(<span class="tok-fn">is_phone</span>(<span class="tok-str">'13800138000 '</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>True
+False
+False</code></pre>
+</div>
+</div>
+<h3>3. 找出所有邮箱</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'[\w.]+@[\w.]+\.[a-z]{2,}'</span>, <span class="tok-str">'发给 zhangsan@example.com 或 a@b.cn'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['zhangsan@example.com', 'a@b.cn']</code></pre>
+</div>
+</div>
+<h3>4. 把日期里的斜杠换成短横</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'(\d{4})/(\d{2})/(\d{2})'</span>, <span class="tok-str">r'\1-\2-\3'</span>, <span class="tok-str">'2026/10/04 开学'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>2026-10-04 开学</code></pre>
+</div>
+</div>
+<h3>5. 多个连续空格压成一个</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'\s+'</span>, <span class="tok-str">' '</span>, <span class="tok-str">'小明    88      统计一班'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>小明 88 统计一班</code></pre>
+</div>
+</div>
+<h3>6. 隐藏手机号中间四位</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-fn">print</span>(re.<span class="tok-fn">sub</span>(<span class="tok-str">r'(\d{3})\d{4}(\d{4})'</span>, <span class="tok-str">r'\1****\2'</span>, <span class="tok-str">'13800138000'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>138****8000</code></pre>
+</div>
+</div>
+<h3>7. 用命名组解析一段「日期+温度」</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+m <span class="tok-op">=</span> re.<span class="tok-fn">search</span>(<span class="tok-str">r'(?P&lt;date&gt;\d{4}-\d{2}-\d{2})\s+(?P&lt;temp&gt;-?\d+℃)'</span>, <span class="tok-str">'2026-10-04 19℃'</span>)
+<span class="tok-fn">print</span>(m.<span class="tok-fn">groupdict</span>())</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>{'date': '2026-10-04', 'temp': '19℃'}</code></pre>
+</div>
+</div>
+<h3>8. 用 findall + float 把价格加总</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+text <span class="tok-op">=</span> <span class="tok-str">'苹果 5.5元，香蕉 3.2元'</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-fn">sum</span>(<span class="tok-fn">float</span>(x) <span class="tok-kw">for</span> x <span class="tok-kw2">in</span> re.<span class="tok-fn">findall</span>(<span class="tok-str">r'\d+\.\d+'</span>, text)), <span class="tok-num">1</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>8.7</code></pre>
+</div>
+</div>
+<h3>9. 忽略大小写地统计关键词出现次数</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+text <span class="tok-op">=</span> <span class="tok-str">'Python 很好用，python 也很好用，PYTHON 最常用'</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'出现了'</span>, <span class="tok-fn">len</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'python'</span>, text, re.<span class="tok-cls">I</span>)), <span class="tok-str">'次'</span>)</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>出现了 3 次</code></pre>
+</div>
+</div>
+<h3>10. 只保留中文字符</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> re
+<span class="tok-fn">print</span>(re.<span class="tok-fn">findall</span>(<span class="tok-str">r'[\u4e00-\u9fa5]+'</span>, <span class="tok-str">'Name:小明 Age:18'</span>))</code></pre>
+</div>
+</div><p>输出：</p><div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span></div>
+<pre><code>['小明']</code></pre>
+</div>
+</div>
+
+    <h2 id="sec11">十一、常见问题</h2>
+
+<p><strong>Q：正则难吗？要背多少？</strong><br>不用背。只需要记住三件事：<code>\d</code> 是数字、<code>+</code> 是「一个或多个」、<code>()</code> 是分组。其余全部现场查第三节的表。写了十几个模式之后，常用的那些自然就记住了。</p>
+<p><strong>Q：<code>search</code>、<code>match</code>、<code>fullmatch</code> 怎么选？</strong><br>一句话：<strong>整串必须完全符合 → <code>fullmatch</code>；只要里面出现就算 → <code>search</code>；必须从开头算起 → <code>match</code></strong>。校验类需求（手机号、学号、日期格式）基本都用 <code>fullmatch</code>。</p>
+<p><strong>Q：为什么我的 <code>.*</code> 把整段都吃掉了？</strong><br>因为量词默认贪婪。在量词后加 <code>?</code> 变成 <code>.*?</code> 就是「吃到最近的那个就停」。判断标准是：你要「每一段分别取」还是「整段一次取」。</p>
+<p><strong>Q：正则能不能用来解析 HTML / JSON？</strong><br><strong>不要。</strong>这些结构有嵌套，正则处理不了嵌套（这不是你写得不够好，是正则本身的能力边界）。JSON 用 <code>json</code> 库，表格用 <code>csv</code> 库，HTML 用专门的解析库。正则只适合「从一坨文本里捞固定形状的片段」。</p>
+<p><strong>Q：模式写得太长看不懂怎么办？</strong><br>分段写、分段测。先用 <code>print(re.findall(...))</code> 把一小段模式调通，再往外套。另外把模式<strong>存进变量或 <code>compile()</code></strong> 并起个名字（<code>phone</code>、<code>email</code>），比在代码里直接撒一串符号清楚得多。</p>
+<p><strong>Q：这个和「网络数据采集」有什么关系？</strong><br>关系很大——网页拿回来是一大坨 HTML 文本，从中捞出标题、价格、日期这类固定形状的片段时，正则是最快的工具。学完这一篇再去看数据采集，会顺手很多。</p>
+
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜正则是「写了就忘」的典型，AI 是最好的正则解释器——让它写完<strong>逐段讲解</strong>，再配测试用例。</p>
+<p>打开任意 AI 对话工具（网页版或 App 都可以），试试这样问：<code>写一个匹配中国大陆手机号的正则表达式，逐段解释每个符号的含义，再给 5 个测试用例，其中包含 2 个应该匹配失败的例子</code></p>
+</div>
+
+    <h2 id="quiz">十二、随堂自测（12 题）</h2>
+    <p>点击选项即可判分，答错的题会立刻显示解析。</p>
+    <div class="quiz" id="quizBox">
+      <div class="quiz-bar">
+        <span id="quizProgress">已答 0 / 12 · 正确 0</span>
+        <span class="quiz-score" id="quizScore">—</span>
+        <button class="quiz-reset" id="quizReset" type="button">重新答题</button>
+      </div>
+      <div class="q" data-no="1" data-answer="1">
+        <p class="q-title"><span class="q-no">1</span><code>re.findall(r'\d+', 'a1b22c333')</code> 的结果是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>[1, 22, 333]</code></li>
+          <li class="opt" data-i="1">B. <code>['1', '22', '333']</code></li>
+          <li class="opt" data-i="2">C. <code>['1', '2', '2', '3', '3', '3']</code></li>
+          <li class="opt" data-i="3">D. <code>6</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong><code>\d+</code> 是「一个或多个数字」，所以连续的数字会被当成一整段。<code>findall</code> 返回的永远是<strong>字符串列表</strong>——要算数得自己 <code>int()</code> 转。答案 A 里的元素是数字类型，那得靠推导式转出来。</div>
+      </div>
+      <div class="q" data-no="2" data-answer="2">
+        <p class="q-title"><span class="q-no">2</span><code>re.search()</code> 和 <code>re.match()</code> 的区别是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 两者完全一样</li>
+          <li class="opt" data-i="1">B. <code>search</code> 从头找，<code>match</code> 从任意位置找</li>
+          <li class="opt" data-i="2">C. <code>search</code> 从任意位置找，<code>match</code> 只从开头匹配</li>
+          <li class="opt" data-i="3">D. <code>match</code> 只能匹配数字</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>方向正好和直觉相反，这是最常搞混的一组。<code>re.match(r'\d+', 'abc123')</code> 会返回 <code>None</code>，因为开头是字母；<code>re.search</code> 则能找到 <code>123</code>。要「整串完全匹配」应该用 <code>fullmatch</code>。</div>
+      </div>
+      <div class="q" data-no="3" data-answer="3">
+        <p class="q-title"><span class="q-no">3</span><code>re.findall(r'&lt;.*&gt;', '&lt;a&gt;&lt;b&gt;')</code> 的结果是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>['&lt;a&gt;', '&lt;b&gt;']</code></li>
+          <li class="opt" data-i="1">B. <code>'&lt;a&gt;&lt;b&gt;'</code></li>
+          <li class="opt" data-i="2">C. <code>[]</code></li>
+          <li class="opt" data-i="3">D. <code>['&lt;a&gt;&lt;b&gt;']</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong><code>.*</code> 默认是<strong>贪婪</strong>的，会一路吃到文本里最远的那个 <code>&gt;</code>，所以整串被一次匹配完。想分成两段就得加 <code>?</code> 写成 <code>&lt;.*?&gt;</code>，让它「吃到最近的 <code>&gt;</code> 就停」。</div>
+      </div>
+      <div class="q" data-no="4" data-answer="0">
+        <p class="q-title"><span class="q-no">4</span>正则模式 <code>r'\d{3}'</code> 在文本 <code>'12 123 1234'</code> 里会匹配到什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>['123']</code></li>
+          <li class="opt" data-i="1">B. <code>['123', '123']</code></li>
+          <li class="opt" data-i="2">C. <code>['12', '123', '1234']</code></li>
+          <li class="opt" data-i="3">D. 什么都匹配不到</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong><code>{3}</code> 是「<strong>恰好</strong>三个数字」。<code>12</code> 不够三个、不匹配；<code>1234</code> 里只有前三个数字组成一次匹配，多出来的第四个不参与。想要「至少三个」得写 <code>\d{3,}</code>。</div>
+      </div>
+      <div class="q" data-no="5" data-answer="1">
+        <p class="q-title"><span class="q-no">5</span>代码里出现 <code>re.findall('\d+', text)</code>（没有 <code>r</code> 前缀），会有什么后果？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 语法错误，程序根本不能运行</li>
+          <li class="opt" data-i="1">B. 能跑，但解释器会给一句 <code>SyntaxWarning: invalid escape sequence '\d'</code></li>
+          <li class="opt" data-i="2">C. 结果和加了 r 完全一样，也没有任何提示</li>
+          <li class="opt" data-i="3">D. 自动变成 <code>\\d+</code>，结果不同</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>普通的 <code>'\d'</code> 在 Python 里是无效转义，解释器会警告。多数情况结果碰巧一样，但有些模式会被悄悄改掉意思，很难查。<strong>处理办法就一条：所有正则串一律加 <code>r</code> 前缀。</strong></div>
+      </div>
+      <div class="q" data-no="6" data-answer="2">
+        <p class="q-title"><span class="q-no">6</span><code>re.search(r'\d+', '这段文字里没有数字').group()</code> 会怎样？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 返回空字符串</li>
+          <li class="opt" data-i="1">B. 返回 <code>None</code></li>
+          <li class="opt" data-i="2">C. 报 <code>AttributeError: 'NoneType' object has no attribute 'group'</code></li>
+          <li class="opt" data-i="3">D. 自动返回文本里最近的数字</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong><code>search</code> 找不到时返回 <code>None</code>，紧接着调 <code>.group()</code> 就报 <code>AttributeError</code>。正确写法是先判断：<code>if m:</code> 再取 <code>m.group()</code>；或者直接用 <code>findall</code>（找不到时返回空列表，不会报错）。</div>
+      </div>
+      <div class="q" data-no="7" data-answer="3">
+        <p class="q-title"><span class="q-no">7</span>用命名组解析日期，取值应该怎么写？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>m.group(7)</code></li>
+          <li class="opt" data-i="1">B. <code>m.get('year')</code></li>
+          <li class="opt" data-i="2">C. <code>m.year</code></li>
+          <li class="opt" data-i="3">D. <code>m.group('year')</code> 或 <code>m.groupdict()</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>命名组的写法是 <code>(?P&lt;名字&gt;模式)</code>，取值用 <code>group('名字')</code>，一次全取用 <code>groupdict()</code>。返回值是字符串，要算数还得转 <code>int()</code>。组一多，用名字比数编号可靠得多。</div>
+      </div>
+      <div class="q" data-no="8" data-answer="0">
+        <p class="q-title"><span class="q-no">8</span>把 <code>2026/10/04</code> 改成 <code>2026-10-04</code>，正确的写法是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>re.sub(r'(\d{4})/(\d{2})/(\d{2})', r'\1-\2-\3', text)</code></li>
+          <li class="opt" data-i="1">B. <code>re.sub(r'(\d{4})/(\d{2})/(\d{2})', '-', text)</code></li>
+          <li class="opt" data-i="2">C. <code>re.findall(r'/.*-', text)</code></li>
+          <li class="opt" data-i="3">D. <code>re.match(r'\d{4}', text)</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>用括号把三段分别圈起来，替换串里用 <code>\1</code> <code>\2</code> <code>\3</code> 把组放回去，就完成了「换分隔符」的操作。B 会把整段日期替换成一个减号，C 和 D 根本不做替换。</div>
+      </div>
+      <div class="q" data-no="9" data-answer="1">
+        <p class="q-title"><span class="q-no">9</span><code>re.findall(r'(\d{3})-(\d{4})', '010-1234')</code> 返回什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>['010-1234']</code></li>
+          <li class="opt" data-i="1">B. <code>[('010', '1234')]</code></li>
+          <li class="opt" data-i="2">C. <code>['010', '1234']</code></li>
+          <li class="opt" data-i="3">D. <code>['1234']</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>模式里有几个组，<code>findall</code> 返回的就是组的元组：一个组返回字符串，多个组返回元组，<strong>整段反而拿不到了</strong>。不想要这个效果，把不关心的组写成 <code>(?:...)</code>。</div>
+      </div>
+      <div class="q" data-no="10" data-answer="2">
+        <p class="q-title"><span class="q-no">10</span><code>re.match(r'\d+', 'abc123')</code> 返回 <code>None</code>，想找到里面的 <code>123</code> 应该改成？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>re.match(r'\d+', 'abc123', re.I)</code></li>
+          <li class="opt" data-i="1">B. <code>re.match(r'.*\d+', 'abc123')</code>，这样最规范</li>
+          <li class="opt" data-i="2">C. <code>re.search(r'\d+', 'abc123')</code></li>
+          <li class="opt" data-i="3">D. <code>re.findall(r'\d', 'abc123')</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong><code>match</code> 只认开头，开头是 <code>a</code> 自然匹配不到；换成 <code>search</code> 就能从任意位置找。C 虽然能匹配上，但 <code>.*</code> 会吞掉前面的内容，取 <code>group()</code> 得到的是 <code>'abc123'</code> 而不是 <code>'123'</code>。</div>
+      </div>
+      <div class="q" data-no="11" data-answer="0">
+        <p class="q-title"><span class="q-no">11</span>判断用户输入的字符串是不是 11 位手机号，「整串必须完全符合」，应该用哪个函数？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>re.fullmatch</code></li>
+          <li class="opt" data-i="1">B. <code>re.match</code></li>
+          <li class="opt" data-i="2">C. <code>re.search</code></li>
+          <li class="opt" data-i="3">D. <code>re.findall</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>校验格式要用 <code>fullmatch</code>：整串必须完全符合才算通过。<code>search</code> / <code>match</code> 只要<strong>一部分</strong>匹配上就会返回结果，会出现 <code>'13800138000abc'</code> 也被判为合法这种漏洞。另外记得先 <code>.strip()</code> 去掉首尾空格。</div>
+      </div>
+      <div class="q" data-no="12" data-answer="3">
+        <p class="q-title"><span class="q-no">12</span>想「忽略大小写」地查找，应该怎么做？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 在模式末尾写 <code>!</code></li>
+          <li class="opt" data-i="1">B. 只能靠 <code>text.lower()</code> 预处理，re 不支持</li>
+          <li class="opt" data-i="2">C. 把模式整个写成大写</li>
+          <li class="opt" data-i="3">D. 加上 <code>re.I</code> 参数，如 <code>re.findall(r'python', text, re.I)</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong><code>re.I</code>（ignore case）忽略大小写，<code>re.M</code> 让 <code>^</code> <code>$</code> 按行匹配，<code>re.S</code> 让 <code>.</code> 也能匹配换行。多个 flag 用竖线连：<code>re.I | re.M</code>。预处理 <code>lower()</code> 也能用，但不是唯一办法。</div>
+      </div>
+      <div class="q-result" id="quizResult"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- 增强：站点页脚（克隆自 index.html 的 footer，勿手改） -->
+<footer class="footer">
+  <div class="footer-content">
+    <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span id="footerYear">2026</span> 学府路1号 xuefulu.ai</a></span>
+    <span class="separator" aria-hidden="true">|</span>
+    <a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>
+  </div>
+</footer>
+<!-- /增强：站点页脚 -->
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = '☀️ 浅色';
+  }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+<script>
+  /* ===== 随堂自测逻辑 ===== */
+  (function () {
+    const box = document.getElementById('quizBox');
+    if (!box) return;
+
+    const qs = Array.from(box.querySelectorAll('.q'));
+    const total = qs.length;
+    const bar = document.getElementById('quizProgress');
+    const scoreEl = document.getElementById('quizScore');
+    const resetBtn = document.getElementById('quizReset');
+    const resultEl = document.getElementById('quizResult');
+    let done = 0;
+    let right = 0;
+    const wrongList = [];
+
+    function update() {
+      bar.textContent = '已答 ' + done + ' / ' + total + ' · 正确 ' + right;
+      if (done === 0) {
+        scoreEl.textContent = '—';
+      } else if (done < total) {
+        scoreEl.textContent = Math.round(right / done * 100) + '%';
+      } else {
+        scoreEl.textContent = '正确率 ' + Math.round(right / total * 100) + '%（' + right + '/' + total + '）';
+      }
+      if (done === total) {
+        let msg;
+        if (wrongList.length === 0) {
+          msg = '🎉 全部答对，这一节你掌握得很扎实，可以进入下一个教程了。';
+        } else {
+          msg = '错题：第 ' + wrongList.join('、') + ' 题。建议回到对应小节再看一遍，' +
+                '然后点右上角「重新答题」检验一次。';
+        }
+        resultEl.textContent = msg;
+        resultEl.classList.add('show');
+      } else {
+        resultEl.classList.remove('show');
+      }
+    }
+
+    function pick(q, li) {
+      if (q.classList.contains('answered')) return;
+      q.classList.add('answered');
+      const ans = Number(q.dataset.answer);
+      const picked = Number(li.dataset.i);
+
+      q.querySelectorAll('.opt').forEach(function (o) {
+        const i = Number(o.dataset.i);
+        if (i === ans) o.classList.add('correct');
+        else if (i === picked) o.classList.add('wrong');
+        else o.classList.add('dim');
+      });
+
+      if (picked === ans) {
+        right++;
+        q.classList.add('passed');
+      } else {
+        q.classList.add('failed');
+        wrongList.push(q.dataset.no || (qs.indexOf(q) + 1));
+      }
+      done++;
+      update();
+    }
+
+    box.addEventListener('click', function (e) {
+      const li = e.target.closest('.opt');
+      if (!li) return;
+      const q = li.closest('.q');
+      if (q) pick(q, li);
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        qs.forEach(function (q) {
+          q.classList.remove('answered', 'passed', 'failed');
+          q.querySelectorAll('.opt').forEach(function (o) {
+            o.classList.remove('correct', 'wrong', 'dim');
+          });
+        });
+        done = 0;
+        right = 0;
+        wrongList.length = 0;
+        update();
+        document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    update();
+  })();
+</script>
+
+<script>
+// === 增强：代码块复制 ===
+(function () {
+  function clipboardWrite(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-2000px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('copy failed'));
+    });
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+  document.querySelectorAll('.cb-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.cb');
+      var code = box ? box.querySelector('code') : null;
+      if (!code) { return; }
+      var text = code.innerText.replace(/\u00a0/g, ' ').replace(/\n+$/, '');
+      clipboardWrite(text).then(
+        function () { flash(btn, '已复制'); },
+        function () { flash(btn, '复制失败'); }
+      );
+    });
+  });
+})();
+</script>
+
+<script>
+// === 增强：页眉北京时间 ===
+(function () {
+  var el = document.getElementById('currentDateTime');
+  if (!el) { return; }
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function beijingNow() {
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+  }
+  function render() {
+    var d = beijingNow();
+    el.textContent = d.getFullYear() + '年' + pad(d.getMonth() + 1) + '月' + pad(d.getDate()) + '日 '
+      + WEEK[d.getDay()] + ' '
+      + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    /* 页脚 © 后面的年份（`#footerYear`）：静态写死 2026 只是「没 JS 时的兜底」，这里按北京时间刷新，
+       免得跨年后页面上的年份停在过去（index.html 也是这么做的，见它的 updateFooterYear）。 */
+    var y = document.getElementById('footerYear');
+    if (y) { y.textContent = d.getFullYear(); }
+  }
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+
+<script>
+// === 增强：侧边目录可折叠 ===
+(function () {
+  /* 侧边目录：默认收起成左侧竖排书签，随页面滚动常驻；点它展开/收起 */
+  var sb = document.querySelector('.sidebar');
+  if (!sb || sb.querySelector('.sb-tab')) { return; }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var D_MENU  = 'M3 5h14M3 10h14M3 15h14';      /* ☰：内联 SVG 画，避免 ☰ 字符渲染成豆腐块 */
+  var D_CLOSE = 'M5.5 5.5l9 9M14.5 5.5l-9 9';
+  var D_RIGHT = 'M7.5 4.5l5 5.5-5 5.5';         /* › */
+  var D_LEFT  = 'M12.5 4.5l-5 5.5 5 5.5';       /* ‹ */
+
+  function setD(el, d) {
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    el.appendChild(p);
+  }
+  function mkIcon(cls, d) {
+    var el = document.createElementNS(NS, 'svg');
+    el.setAttribute('class', cls);
+    el.setAttribute('viewBox', '0 0 20 20');
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.9');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    setD(el, d);
+    return el;
+  }
+  function narrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+  }
+
+  /* 把 <h3>目录</h3> 与原有链接重新组织：书签 + 面板 */
+  var head = sb.querySelector('h3');
+  var label = head ? head.textContent.trim() : '目录';
+  if (head && head.parentNode) { head.parentNode.removeChild(head); }
+
+  var list = document.createElement('nav');
+  list.className = 'sb-list';
+  list.setAttribute('aria-label', label);
+  while (sb.firstChild) { list.appendChild(sb.firstChild); }
+
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'sb-tab';
+  tab.setAttribute('aria-controls', 'sbPanel');
+  var ico = mkIcon('sb-ico', D_MENU);
+  var vt = document.createElement('span');
+  vt.className = 'sb-vt';
+  vt.textContent = label;
+  var chev = mkIcon('sb-chev', D_RIGHT);
+  tab.appendChild(ico);
+  tab.appendChild(vt);
+  tab.appendChild(chev);
+
+  var panel = document.createElement('div');
+  panel.className = 'sb-panel';
+  panel.id = 'sbPanel';
+  var pTitle = document.createElement('div');
+  pTitle.className = 'sb-head';
+  pTitle.textContent = label;
+  panel.appendChild(pTitle);
+  panel.appendChild(list);
+
+  /* 深色/浅色切换：从右上角挪进书签内部的顶部图标区（挪节点不会丢它原有的点击事件） */
+  var theme = document.getElementById('themeBtn');
+
+  var col = document.createElement('div');
+  col.className = 'sb-col';
+  if (theme) {
+    theme.setAttribute('title', '切换深色 / 浅色主题');
+    theme.setAttribute('aria-label', '切换深色 / 浅色主题');
+    col.appendChild(theme);
+  }
+  col.appendChild(tab);
+
+  sb.appendChild(col);
+  sb.appendChild(panel);
+  sb.classList.add('sb-ready', 'sb-noanim');
+  document.body.classList.add('sb-on');
+
+  var mask = document.createElement('div');
+  mask.className = 'sb-mask';
+  mask.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(mask);
+
+  function isOpen() { return sb.classList.contains('sb-expanded'); }
+
+  /* 量出「目录里每个标题都不折行」需要的面板宽度，写进 --sb-panel-w，让展开态宽度自适应 */
+  function fitWidth() {
+    var keep = panel.getAttribute('style');
+    panel.style.cssText = 'display:block;position:absolute;left:-99999px;top:0;width:auto;' +
+                          'white-space:nowrap;overflow:visible;';
+    var need = Math.ceil(panel.getBoundingClientRect().width);
+    if (keep === null) { panel.removeAttribute('style'); } else { panel.setAttribute('style', keep); }
+    if (!need) { return; }
+    /* 上限：宽屏不超过视口 46%，窄屏（抽屉是浮层）可占到 90%，都只为防个别超长标题把正文挤没 */
+    var cap = narrow() ? window.innerWidth * 0.90 - 44 : window.innerWidth * 0.46;
+    sb.style.setProperty('--sb-panel-w', Math.min(need, Math.max(Math.round(cap), 196)) + 'px');
+  }
+
+  /* 让「垂直居中」落在布局盒上：把 sticky 的 top 设成 50vh - 自身高度的一半。
+     与 CSS 里的注释是同一件事；这里每次尺寸变化都重算一次（收起↔展开高度差很大：190 ↔ 面板高）。 */
+  var lastTop = '';
+  /* 「页头高度」＝文档顶到 `.layout` 上边的那一段（品牌行 + 它的外边距）。书签的 sticky 静态位置
+     被它推低，CSS 里用等量负外边距抵消（见 --sb-head 那段注释）。⚠️ 必须在量高度**之前**写进去，
+     否则先量到旧布局下的高度、算出的 --sb-top 会晚一帧才纠正。 */
+  var lastHead = '';
+  function pushHead() {
+    var lay = document.querySelector('.layout');
+    var v = (lay ? Math.max(0, Math.round(lay.getBoundingClientRect().top + window.scrollY)) : 0) + 'px';
+    if (v === lastHead) { return; }
+    lastHead = v;
+    sb.style.setProperty('--sb-head', v);
+  }
+  function centerTop() {
+    pushHead();
+    var h = sb.getBoundingClientRect().height;
+    if (!h) { return; }
+    var v = 'calc(50vh - ' + (h / 2).toFixed(1) + 'px)';
+    if (v === lastTop) { return; }
+    lastTop = v;
+    sb.style.setProperty('--sb-top', v);
+  }
+
+  function setOpen(open) {
+    sb.classList.toggle('sb-expanded', open);
+    document.body.classList.toggle('sb-open', open);
+    tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tab.setAttribute('aria-label', open ? '收起目录' : '展开目录');
+    tab.title = open ? '收起目录' : '展开目录';
+    vt.textContent = open ? '收起' : label;
+    setD(ico, open ? D_CLOSE : D_MENU);
+    setD(chev, open ? D_LEFT : D_RIGHT);
+    centerTop();   /* 收起/展开高度差很大，每次开合都重新居中 */
+  }
+  setOpen(false);   /* 默认收起 */
+  fitWidth();       /* 收起状态下面板是 display:none，正好用离屏副本量宽度，量完即恢复 */
+  centerTop();
+  /* 字体（含回退）落定后再量一次，避免首帧用错字体算出偏窄的宽度 */
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { fitWidth(); centerTop(); }, function () {});
+  }
+
+  tab.addEventListener('click', function () { setOpen(!isOpen()); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); }
+  });
+  /* 展开状态下，点「书签 / 面板」之外的任意空白处（正文、页眉、遮罩…）自动收起。
+     用 click 而不是 pointerdown：宽屏收起会让正文变宽重排，若在鼠标抬起前就重排，
+     这一下点击可能落空（点正文链接会「没反应」）。用 click 则原点击先正常派发完，再收起。 */
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) { return; }
+    var t = e.target;
+    if (t && sb.contains(t)) { return; }   /* 点在自己身上（书签、面板、主题按钮）不收起 */
+    setOpen(false);
+  });
+  /* 窄屏是抽屉，点目录项跳转后自动收起；宽屏是分栏，留着方便连着点 */
+  list.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && isOpen() && narrow()) { setOpen(false); }
+  });
+  mask.addEventListener('click', function () { setOpen(false); });
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!narrow() && isOpen()) { document.body.classList.remove('sb-open'); }
+    /* 视口宽度变化较大时重量一次（窄屏/宽屏的上限不同；字号是 px 固定的，无需每次都量） */
+    if (Math.abs(window.innerWidth - lastW) > 60) { lastW = window.innerWidth; fitWidth(); }
+    centerTop();   /* 视口高度变了（含手机地址栏收放）→ top 里的 50vh 跟着变，但重算一次更稳 */
+  });
+  /* 兜底：面板高度会随内容换行/字体加载而变，任何尺寸变化都重新居中一次（值没变时 centerTop 直接返回，
+     不会和 ResizeObserver 形成回环——改 top 不影响尺寸） */
+  if (window.ResizeObserver) { new ResizeObserver(centerTop).observe(sb); }
+  /* 初次布局落下后再放开过渡，之后的展开/收起才带宽度动画 */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { sb.classList.remove('sb-noanim'); });
+  });
+})();
+</script>
+
+</body>
+</html>
