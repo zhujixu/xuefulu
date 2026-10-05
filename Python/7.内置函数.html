@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python程序设计 内置函数</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --text: #333;
+    --card: #fff;
+    --code-bg: #eef1f5;
+    --code-text: #c7254e;
+    --pre-bg: #282c34;
+    --pre-text: #abb2bf;
+    --border: #d0d7de;
+    --table-even: #f6f8fa;
+    --h1: #1a1a1a;
+    --h2: #3776ab;
+    --tip-bg: #fff8e1;
+    --tip-border: #ffd43b;
+  }
+  body.dark {
+    --bg: #1e1e1e;
+    --text: #d4d4d4;
+    --card: #2a2a2a;
+    --code-bg: #3a3a3a;
+    --code-text: #ff9e9e;
+    --pre-bg: #111;
+    --pre-text: #ccc;
+    --border: #444;
+    --table-even: #2f2f2f;
+    --h1: #f0f0f0;
+    --h2: #6cb6ff;
+    --tip-bg: #3a3320;
+    --tip-border: #ffd43b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .3s, color .3s;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+  /* 侧边目录 */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    font-size: 14px;
+  }
+  .sidebar h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--h2);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s, color .2s;
+  }
+  .sidebar a:hover {
+    background: var(--code-bg);
+    color: var(--h2);
+  }
+  /* 主内容 */
+  .content { flex: 1; min-width: 0; }
+  /* 页面主标题（可点击） */
+  .page-title {
+    display: block;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #3776ab, #2a5d8a);
+    padding: 18px 20px;
+    border-radius: 10px;
+    margin: 0 0 24px 0;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(55,118,171,.3);
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .page-title:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(55,118,171,.45);
+  }
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #3776ab;
+    padding-bottom: 10px;
+    color: var(--h1);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 32px;
+    color: var(--h2);
+    border-left: 5px solid #ffd43b;
+    padding-left: 10px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 17px;
+    margin-top: 22px;
+    color: var(--text);
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    color: var(--code-text);
+  }
+  pre {
+    background: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: #3776ab; color: #fff; }
+  tr:nth-child(even) { background: var(--table-even); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .warn {
+    background: #ffe6e6;
+    border-left: 5px solid #e53935;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  body.dark .warn { background: #4a1f1f; color: #ffd4d4; }
+  /* 超链接样式 */
+  a.link {
+    color: #3776ab;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  a.link:hover { color: #e53935; }
+  body.dark a.link { color: #6cb6ff; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+
+  /* 深色切换按钮 */
+  #themeBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  #themeBtn:hover { background: #2a5d8a; }
+
+  /* 响应式 */
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; position: static; order: -1; }
+    #themeBtn { top: 10px; right: 10px; padding: 6px 12px; font-size: 13px; }
+    .page-title { font-size: 16px; padding: 14px; }
+  }
+
+  /* ===== 随堂自测（选择题模块） ===== */
+  .quiz {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .quiz-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .quiz-bar .quiz-score { font-weight: bold; color: var(--h2); }
+  .quiz-reset {
+    margin-left: auto;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .quiz-reset:hover { background: #2a5d8a; }
+  .q {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 4px;
+  }
+  .q:first-of-type { border-top: none; }
+  .q-title {
+    font-weight: bold;
+    margin: 0 0 10px;
+    line-height: 1.7;
+  }
+  .q-no {
+    display: inline-block;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: #3776ab;
+    color: #fff;
+    font-size: 13px;
+    font-weight: normal;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .q.passed .q-no { background: #2e9b52; }
+  .q.failed .q-no { background: #e53935; }
+  ul.q-opts {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  li.opt {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  li.opt:hover { border-color: var(--h2); }
+  .q.answered li.opt { cursor: default; }
+  .q.answered li.opt:hover { border-color: var(--border); }
+  li.opt.correct {
+    background: #e6f7ec;
+    border-color: #2e9b52;
+    color: #1b6b39;
+    font-weight: bold;
+  }
+  li.opt.wrong {
+    background: #ffe6e6;
+    border-color: #e53935;
+    color: #a01f1c;
+  }
+  li.opt.correct:hover, li.opt.wrong:hover { border-color: inherit; }
+  li.opt.dim { opacity: .5; }
+  body.dark li.opt.correct { background: #12351f; border-color: #3fbf6b; color: #9ff0bb; }
+  body.dark li.opt.wrong { background: #3a1a1a; border-color: #e53935; color: #ffb3b3; }
+  .q-explain {
+    display: none;
+    margin: 12px 0 4px;
+    padding: 10px 14px;
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .q.answered .q-explain { display: block; }
+  .q-result {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .q-result.show { display: block; }
+/* === 增强：代码块 / 署名 === */
+.cb { margin: 16px 0; border-radius: 8px; overflow: hidden; background: var(--pre-bg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.cb-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+          padding: 6px 12px; background: rgba(255,255,255,.07);
+          border-bottom: 1px solid rgba(255,255,255,.09); }
+.cb-lang { font-size: 12px; color: #9aa4b2; font-family: Consolas, Monaco, monospace; letter-spacing: .5px; }
+.cb-copy { background: transparent; border: 1px solid #4b5263; color: #c8cdd8; border-radius: 5px;
+           padding: 2px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+           transition: background .15s, border-color .15s, color .15s; }
+.cb-copy:hover { background: #3776ab; border-color: #3776ab; color: #fff; }
+.cb-copy.ok { background: #2ea043; border-color: #2ea043; color: #fff; }
+.cb-body { display: flex; align-items: stretch; }
+.cb-lines { flex: 0 0 auto; padding: 16px 10px 16px 14px; text-align: right; color: #636d83;
+            font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            border-right: 1px solid rgba(255,255,255,.08); }
+.cb-lines span { display: block; }
+.cb-body pre { flex: 1 1 auto; min-width: 0; margin: 0; padding: 16px 16px 16px 14px;
+               border-radius: 0; background: transparent; }
+.cb-body pre code { padding: 0; }
+/* 语法高亮：VS Code Dark+ 配色 */
+.tok-kw  { color: #c586c0; }
+.tok-kw2 { color: #569cd6; }
+.tok-str { color: #ce9178; }
+.tok-num { color: #b5cea8; }
+.tok-cmt { color: #6a9955; font-style: italic; }
+.tok-fn  { color: #dcdcaa; }
+.tok-cls { color: #4ec9b0; }
+.tok-op  { color: #d4d4d4; }
+/* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
+.warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
+.warn .warn-links a { word-break: break-all; }
+/* 页眉署名（尾缀固定，开头的「实时北京时间」由 CLOCK_JS 每秒刷新） */
+.byline { text-align: center; font-size: 14px; opacity: .78; margin: -14px 0 20px;
+          letter-spacing: .5px; }
+.byline a { color: var(--h2); text-decoration: none; }
+.byline a:hover { text-decoration: underline; }
+/* 时钟数字等宽：避免每秒跳字时整行左右抖动 */
+.byline .bj-clock { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+/* === 增强：侧边目录可折叠 === */
+/* 侧边目录＝左侧竖排书签，默认收起。样式全部依附 .sb-ready（JS 加的），无 JS 时完全不影响原版式 */
+
+/* 外层：收 44px / 展 44+面板；sticky 钉在左侧，随页面滚动常驻，且任何状态都垂直居中 */
+.sidebar.sb-ready {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 44px;
+  /* 上限比「视口高 − 48」再紧 24px：保证 top = 50vh − H/2 恒 ≥ 32px（父容器上内边距）。
+     低于这个值时（矮窗口）书签的静态位置比粘住线还靠下，sticky 只能把元素往下推、不能往上提，
+     于是头几像素会跟着正文滚——留 24px 余量后永远是被推到线上，任何窗口高都不例外。 */
+  max-height: calc(100vh - 72px);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  position: sticky;
+  /* 居中必须落在**布局盒**上：top = 50vh - 自身高度的一半，高度由 JS 实测写进 --sb-top。
+     ⚠️ 不能用 transform: translateY(-50%) 做居中——transform 只挪画面、不挪盒子，而 sticky 判
+     「不越出父容器」时按**没挪过的盒子**算：滚到页底（父容器底边正好贴到视口底）整枚书签会被顶高。
+     导航页父容器只 3744px 高，实测展开态在页底偏了 130px（讲义父容器一万八，从没碰到这个上限）。
+     改成 top: calc(50vh - H/2) 后布局盒本身就居中，底部只占 50vh + H/2 ≤ 视口高（H ≤ 100vh-72px）。 */
+  top: var(--sb-top, 50vh);
+  /* 还有第二处夹取要放开：sticky 要求元素**底部也不越出父容器底边**。
+     `.layout` 后面若还有页脚（导航页有 108px 页脚 + 30px 外边距），滚到最底时父容器底边升到视口里，
+     书签就被顶高——而且只在小窗口暴露：视口越高，页脚占比越小，越碰不到。实测导航页展开态
+     （H=590）页底偏移：视口 1113px 时 0，713px 时 −84px，533px 时 −122px，413px 时 −122px。
+     父容器底边之外本来就没有内容要避让，给一个足够大的负 margin-bottom 即可——负外边距只**放宽
+     允许范围**，不改元素在流里的位置（实测文档高、其余滚动位置逐像素不变）。−100vh 远超任何页脚高度。 */
+  margin-bottom: -100vh;
+  align-self: flex-start;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  z-index: 30;
+}
+/* 首次挂载时先禁用过渡，避免「原版 240px 宽 → 收起 44px」在加载瞬间抖一下（JS 两帧后移除本类） */
+.sidebar.sb-ready.sb-noanim { transition: none !important; }
+.sidebar.sb-ready.sb-expanded {
+  /* 面板宽度由 JS 量出「最长标题不折行」所需宽度，写进 --sb-panel-w（默认 196px） */
+  width: calc(44px + var(--sb-panel-w, 196px));
+}
+
+/* 工具条＝一枚 44px 宽的竖排书签：深色切换图标区在上、目录区在下，**共用同一块渐变底色与投影**，
+   视觉上是一整枚按钮（内部是两个各自可点的功能区——button 不能嵌套 button，所以用本列承载外观） */
+.sb-col {
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 0;              /* 不要圆角：与正文左边缘齐平的方角书签 */
+  background: linear-gradient(180deg, #5d9bd4 0%, #3776ab 58%, #2b5f8d 100%);
+  box-shadow: 0 6px 18px rgba(55,118,171,.32), inset 0 1px 0 rgba(255,255,255,.26);
+  transition: transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dark .sb-col { background: linear-gradient(180deg, #4a8bc2 0%, #30699b 58%, #245078 100%); }
+.sb-col:hover { transform: translateX(3px); box-shadow: 0 9px 26px rgba(55,118,171,.46), inset 0 1px 0 rgba(255,255,255,.26); }
+/* 展开时书脊与面板必须严丝合缝，悬停不再位移 */
+.sidebar.sb-ready.sb-expanded .sb-col:hover { transform: none; }
+
+/* 竖排书签本体（目录区）：透明，底色与投影都由 .sb-col 提供，两块功能区共用一枚按钮的外观 */
+.sb-tab {
+  flex: 1 1 auto;                /* 在这一列里占满剩余高度：收起＝152px，展开＝随面板一起拉长 */
+  box-sizing: border-box;
+  width: 44px;
+  height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 15px 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-tab:hover { background-color: rgba(255,255,255,.1); }
+.sb-tab:active { background-color: rgba(255,255,255,.2); }
+.sb-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.sb-tab .sb-ico { display: block; width: 17px; height: 17px; flex: none; }
+.sb-tab .sb-vt {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  letter-spacing: .26em;
+  white-space: nowrap;
+}
+.sb-tab .sb-chev { display: block; width: 11px; height: 11px; flex: none; opacity: .72; }
+
+/* 深色/浅色切换：不再单独占一格，而是并入书签内部——书签顶部一个 44×38 的图标区，
+   底部一条极淡的分隔线与目录区分开，共用 .sb-col 的渐变底色，看起来就是一整枚按钮。
+   图标一律用 background-image 画、不用文字：页面自身脚本每次切换都会改写它的 textContent，
+   塞子元素会被冲掉。整段挂在 body.sb-on 下：JS 没跑（没这个类）时按钮仍是原版右上角样式。 */
+body.sb-on #themeBtn {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;                  /* 隐掉「🌙 深色」文字，只留图标 */
+  line-height: 0;
+  text-indent: -9999px;
+  color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sb-on #themeBtn:hover { background-color: rgba(255,255,255,.12); }
+body.sb-on #themeBtn:active { background-color: rgba(255,255,255,.22); }
+body.sb-on #themeBtn:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 深色模式下换成太阳图标（底色仍由 .sb-col 提供，随 body.dark 自动加深） */
+body.dark.sb-on #themeBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4.4'/%3E%3Cpath d='M12 1.4v2.2M12 20.4v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.4 12h2.2M20.4 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6'/%3E%3C/svg%3E");
+}
+
+/* 展开出来的目录面板（沿用原版卡片观感，方角） */
+.sb-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: none;
+  padding: 16px 14px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 6px 22px rgba(0,0,0,.08);
+}
+.sidebar.sb-ready.sb-expanded .sb-panel { display: block; animation: sbIn .22s ease; }
+@keyframes sbIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.sb-head {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--h2);
+}
+
+/* 遮罩：只在窄屏（抽屉模式）用得上 */
+.sb-mask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+body.sb-open .sb-mask { opacity: 1; visibility: visible; }
+
+@media (max-width: 820px) {
+  /* 窄屏：书签脱离文档流钉在左边缘；展开则是整屏抽屉，正文不重排 */
+  .sidebar.sb-ready {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    max-height: none;
+    margin-bottom: 0;   /* 抽屉是 fixed，没有父容器可夹，负外边距在这里无意义 */
+    transition: none;
+  }
+  .sb-tab { height: 138px; }
+  .sidebar.sb-ready.sb-expanded {
+    top: 0;
+    transform: none;
+    width: min(92vw, calc(44px + var(--sb-panel-w, 196px)));
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+  }
+  .sb-mask { display: block; }
+  body.sb-on .layout { padding-left: 60px; }   /* 给固定的书签让出位置，避免压住正文 */
+}
+
+@media print {
+  .sb-mask, .sidebar.sb-ready { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<button id="themeBtn">🌙 深色</button>
+
+<div class="layout">
+
+  <!-- 侧边目录 -->
+  <aside class="sidebar">
+    <h3>目录</h3>
+    <a href="#sec1">一、内置函数是什么</a>
+    <a href="#sec2">二、数学运算类</a>
+    <a href="#sec3">三、类型转换类</a>
+    <a href="#sec4">四、序列操作类</a>
+    <a href="#sec5">五、高级操作类</a>
+    <a href="#sec6">六、字符与编码类</a>
+    <a href="#sec7">七、输入输出与文件操作</a>
+    <a href="#sec8">八、对象信息类</a>
+    <a href="#sec9">九、最容易搞混的几组对比</a>
+    <a href="#sec10">十、三个小例子</a>
+    <a href="#sec11">十一、常见问题</a>
+    <a href="#quiz">十二、随堂自测</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <a class="page-title" href="课程导航.html">
+      Python程序设计 内置函数
+    </a>
+
+    
+    <div class="byline"><span class="bj-clock">2026年09月28日 星期一 20:09:29</span> 广州城市理工学院 经济学院 朱继绪</div>
+
+    <div class="warn">
+      <span class="warn-links">常用网址：学府路 1 号 <a class="link" href="https://xuefulu.ai/" target="_blank">https://xuefulu.ai</a>　｜　下载 Python <a class="link" href="https://xuefulu.ai/Python.html" target="_blank">https://xuefulu.ai/Python.html</a>　｜　下载 TraeCode <a class="link" href="https://xuefulu.ai/TraeCode.html" target="_blank">https://xuefulu.ai/TraeCode.html</a></span>
+    </div>
+
+    <h1>Python 内置函数：七类常用函数一次讲清</h1>
+
+    <h2 id="sec1">一、内置函数是什么</h2>
+
+<p>前面几篇里，我们已经用过好几个「拿来就用」的东西了：<code>print()</code> 负责输出、<code>input()</code> 负责收数据、<code>len()</code> 负责数长度、<code>type()</code> 负责看类型。它们有一个共同的名字——<strong>内置函数</strong>。</p>
+<p>「内置」两个字的意思很直白：<strong>Python 装好就自带，不用导入、不用定义，写出来就能用。</strong>就像手机里预装的相机和计算器，开机就在那儿，不用自己装。</p>
+
+<h3>1.1 内置函数长什么样</h3>
+<p>用起来只有一个套路：<strong>函数名（要处理的东西）</strong>。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-str">"你好"</span>)        <span class="tok-cmt"># 把 "你好" 交给 print，它负责显示出来</span>
+<span class="tok-fn">len</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>])       <span class="tok-cmt"># 把列表交给 len，它负责数出有几个</span>
+<span class="tok-fn">abs</span>(<span class="tok-op">-</span><span class="tok-num">5</span>)              <span class="tok-cmt"># 把 -5 交给 abs，它负责变成正的</span></code></pre>
+</div>
+</div>
+<p>可以这样理解：<strong>你把东西递给一个工具，工具把处理好的结果还给你。</strong>括号里的东西叫「参数」，还回来的东西叫「返回值」。</p>
+
+<h3>1.2 它和别处的函数有什么不一样</h3>
+<table><thead><tr><th>称呼</th><th>怎么来的</th><th>要不要先准备</th><th>例子</th></tr></thead><tbody><tr><td><strong>内置函数</strong></td><td>Python 自带</td><td>不用，装好就有</td><td><code>len()</code> <code>max()</code> <code>sorted()</code></td></tr><tr><td>模块里的函数</td><td>别的文件里写好的</td><td>要先 <code>import</code> 进来</td><td><code>math.sqrt()</code>（先 <code>import math</code>）</td></tr><tr><td>自己写的函数</td><td>你自己 <code>def</code> 出来的</td><td>要先定义</td><td>第 20 篇《函数》里讲</td></tr></tbody></table>
+<p>第 3 篇《语法规范》里讲过一个容易混的点：<code>print</code>、<code>input</code>、<code>len</code> 这些 <strong>不是关键字，而是内置函数</strong>。关键字是语法里的零件（不能拿来当变量名），内置函数是现成的工具（名字可以被你覆盖，但强烈不建议）。</p>
+
+<h3>1.3 怎么自己查一个函数</h3>
+<ol>
+<li><strong>看说明书：</strong>写 <code>help(函数名)</code>，会把官方说明打印出来（英文的）。例：<code>help(abs)</code>。</li>
+<li><strong>看某类东西都会干什么：</strong>写 <code>dir(类型)</code>。例：<code>dir(str)</code> 能列出一大串名字，第 8 篇讲过的 <code>upper()</code>、<code>isalpha()</code> 都在里面。</li>
+<li><strong>翻官方文档：</strong>搜「Python built-in functions」，第一条就是。</li>
+</ol>
+<div class="tip">Python 3 的内置名字有一百多个，但这里面包含了 <code>int</code>、<code>str</code>、<code>bool</code> 这些类型和 <code>True</code>、<code>False</code> 这类常量。<strong>真正算「函数」的有几十个，新手要熟练的就是本篇这三十来个</strong>，不用全背。</div>
+
+<h3>1.4 按用途分成七类</h3>
+<p>本篇按下面这张表来讲。先看个整体印象，后面每一类单独一节。</p>
+<table><thead><tr><th>类别</th><th>包含哪些函数</th><th>主要用途</th></tr></thead><tbody><tr><td>① 数学运算类</td><td><code>abs</code> <code>max</code> <code>min</code> <code>sum</code> <code>pow</code> <code>round</code> <code>divmod</code></td><td>算绝对值、比大小、求和、四舍五入</td></tr><tr><td>② 类型转换类</td><td><code>bool</code> <code>int</code> <code>float</code> <code>str</code> <code>list</code> <code>tuple</code> <code>dict</code> <code>set</code></td><td>把一种类型变成另一种</td></tr><tr><td>③ 序列操作类</td><td><code>len</code> <code>sorted</code> <code>reversed</code> <code>enumerate</code> <code>zip</code></td><td>数个数、排序、配编号、两两配对</td></tr><tr><td>④ 高级操作类</td><td><code>range</code> <code>map</code> <code>filter</code> <code>reduce</code></td><td>生成数列、批量处理、筛选</td></tr><tr><td>⑤ 字符与编码类</td><td><code>chr</code> <code>ord</code></td><td>字符和编号互相转换</td></tr><tr><td>⑥ 输入输出与文件</td><td><code>print</code> <code>input</code> <code>open</code></td><td>显示、读键盘、读写文件</td></tr><tr><td>⑦ 对象信息类</td><td><code>id</code> <code>type</code> <code>eval</code></td><td>看身份、看类型、执行字符串表达式</td></tr></tbody></table>
+
+    <h2 id="sec2">二、数学运算类（7 个）</h2>
+
+<p>这一类最直观：给你一个数或一串数，帮你算出另一个数。</p>
+<table><thead><tr><th>函数</th><th>干什么</th><th>例子</th><th>结果</th></tr></thead><tbody><tr><td><code>abs(x)</code></td><td>求绝对值（去掉负号）</td><td><code>abs(-5)</code></td><td><code>5</code></td></tr><tr><td><code>max(...)</code></td><td>求最大值</td><td><code>max([1, 3, 5, 2])</code></td><td><code>5</code></td></tr><tr><td><code>min(...)</code></td><td>求最小值</td><td><code>min([4, 2, 7, 1])</code></td><td><code>1</code></td></tr><tr><td><code>sum(x)</code></td><td>把一串数字加起来</td><td><code>sum([1, 2, 3, 4])</code></td><td><code>10</code></td></tr><tr><td><code>pow(x, y)</code></td><td>x 的 y 次方</td><td><code>pow(2, 3)</code></td><td><code>8</code></td></tr><tr><td><code>round(x)</code></td><td>四舍五入</td><td><code>round(2.7)</code></td><td><code>3</code></td></tr><tr><td><code>divmod(x, y)</code></td><td>一次拿到商和余数</td><td><code>divmod(10, 3)</code></td><td><code>(3, 1)</code></td></tr></tbody></table>
+<h3>2.1 abs()：把负号去掉</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">abs</span>(<span class="tok-op">-</span><span class="tok-num">5</span>))       <span class="tok-cmt"># 5</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">abs</span>(<span class="tok-num">3.14</span>))     <span class="tok-cmt"># 3.14</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">abs</span>(<span class="tok-op">-</span><span class="tok-num">0.25</span>))    <span class="tok-cmt"># 0.25</span></code></pre>
+</div>
+</div>
+<p>常用在「不管正负，我只看差多少」的场合，比如比较两个数相差多大。</p>
+
+<h3>2.2 max() 和 min()：两种用法都行</h3>
+<p>它们既能<strong>收一串东西</strong>，也能<strong>收好几个单独的参数</strong>——这是新手最容易迷糊的一点。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span></div>
+<pre><code><span class="tok-cmt"># 用法一：括号里放一个「一串东西」</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">max</span>([<span class="tok-num">1</span>, <span class="tok-num">3</span>, <span class="tok-num">5</span>, <span class="tok-num">2</span>]))     <span class="tok-cmt"># 5</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">min</span>((<span class="tok-num">4</span>, <span class="tok-num">2</span>, <span class="tok-num">7</span>, <span class="tok-num">1</span>)))     <span class="tok-cmt"># 1</span>
+
+<span class="tok-cmt"># 用法二：括号里放好几个单独的值</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">max</span>(<span class="tok-num">10</span>, <span class="tok-num">20</span>, <span class="tok-num">5</span>))        <span class="tok-cmt"># 20</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">min</span>(<span class="tok-num">8</span>, <span class="tok-num">3</span>, <span class="tok-num">6</span>))          <span class="tok-cmt"># 3</span>
+
+<span class="tok-cmt"># 字符串也能比，按「字典顺序」一个字符一个字符比</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">max</span>(<span class="tok-str">"abc"</span>, <span class="tok-str">"abd"</span>, <span class="tok-str">"abe"</span>))   <span class="tok-cmt"># abe</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">min</span>(<span class="tok-str">"xyz"</span>, <span class="tok-str">"xy"</span>, <span class="tok-str">"xya"</span>))    <span class="tok-cmt"># xy   （短的更小）</span></code></pre>
+</div>
+</div>
+<p>如果要比的不是数值本身，而是「按什么标准比」，可以加 <code>key=</code>：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code>words <span class="tok-op">=</span> [<span class="tok-str">"apple"</span>, <span class="tok-str">"hi"</span>, <span class="tok-str">"banana"</span>]
+<span class="tok-fn">print</span>(<span class="tok-fn">max</span>(words))            <span class="tok-cmt"># banana  （字母顺序最后）</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">max</span>(words, key<span class="tok-op">=</span><span class="tok-fn">len</span>))   <span class="tok-cmt"># banana  （按长度比，最长的是它）</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">min</span>(words, key<span class="tok-op">=</span><span class="tok-fn">len</span>))   <span class="tok-cmt"># hi      （最短的是它）</span></code></pre>
+</div>
+</div>
+<h3>2.3 sum()：一串数字求和</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">sum</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>, <span class="tok-num">4</span>]))       <span class="tok-cmt"># 10</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sum</span>((<span class="tok-num">5</span>, <span class="tok-num">6</span>, <span class="tok-num">7</span>)))          <span class="tok-cmt"># 18</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sum</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>], <span class="tok-num">10</span>))      <span class="tok-cmt"># 16   （第二个参数是「起点」，从 10 开始加）</span></code></pre>
+</div>
+</div><div class="tip"><code>sum()</code> 只能加数字。<code>sum([1, "2"])</code> 会报 <code>TypeError</code>，因为数字和文字不能相加（第 5 篇《运算符》里讲过的老问题）。<br>另外，较新的 <code>Python 3</code> 版本 里，<code>sum()</code> 对小数求和做了精度优化：<code>sum([0.1, 0.2, 0.3])</code> 会得到干净的 <code>0.6</code>，而手写 <code>0.1 + 0.2 + 0.3</code> 会得到 <code>0.6000000000000001</code>（第 6 篇讲过的浮点精度问题）。</div>
+<h3>2.4 pow()：次方，还能顺带取余</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">pow</span>(<span class="tok-num">2</span>, <span class="tok-num">3</span>))        <span class="tok-cmt"># 8     2 的 3 次方</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">pow</span>(<span class="tok-num">3</span>, <span class="tok-num">2</span>))        <span class="tok-cmt"># 9     3 的 2 次方</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">pow</span>(<span class="tok-num">2</span>, <span class="tok-num">3</span>, <span class="tok-num">5</span>))     <span class="tok-cmt"># 3     2³ = 8，8 除以 5 余 3（第三个参数是「再对谁取余」）</span></code></pre>
+</div>
+</div>
+<p>平时算次方直接写 <code>2 ** 3</code> 更方便；<code>pow()</code> 的长处是带上第三个参数时，能一次性算出「次方再取余」，处理很大的数字时很快。</p>
+
+<h3>2.5 round()：四舍五入（但有坑）</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">3.14159</span>, <span class="tok-num">2</span>))   <span class="tok-cmt"># 3.14   第二个参数是「保留几位小数」</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">3.14159</span>, <span class="tok-num">3</span>))   <span class="tok-cmt"># 3.142</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">2.7</span>))          <span class="tok-cmt"># 3      不写位数就取整</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">4.49</span>))         <span class="tok-cmt"># 4</span></code></pre>
+</div>
+</div><div class="tip"><code>round()</code> 并不总是你想的那个「四舍五入」。<code>round(2.5)</code> 得到的是 <code>2</code>（不是 3），<code>round(2.675, 2)</code> 得到的是 <code>2.67</code>。<strong>原因和正确用法见第九节 9.3。</strong></div>
+<h3>2.6 divmod()：商和余数一次拿走</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">divmod</span>(<span class="tok-num">10</span>, <span class="tok-num">3</span>))    <span class="tok-cmt"># (3, 1)   10 除以 3：商 3，余 1</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">divmod</span>(<span class="tok-num">20</span>, <span class="tok-num">4</span>))    <span class="tok-cmt"># (5, 0)   正好除尽，余数是 0</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">divmod</span>(<span class="tok-num">7</span>, <span class="tok-num">2</span>))     <span class="tok-cmt"># (3, 1)</span></code></pre>
+</div>
+</div>
+<p>它是 <code>//</code> 和 <code>%</code> 两个运算符的合体：<code>divmod(10, 3)</code> 等价于 <code>(10 // 3, 10 % 3)</code>。拿到的是个元组，可以一次拆成两个变量：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>q, r <span class="tok-op">=</span> <span class="tok-fn">divmod</span>(<span class="tok-num">17</span>, <span class="tok-num">5</span>)
+<span class="tok-fn">print</span>(q, r)             <span class="tok-cmt"># 3 2</span></code></pre>
+</div>
+</div>
+
+    <h2 id="sec3">三、类型转换类（8 个）</h2>
+
+<p>这一类干的活只有一件：<strong>把一种类型变成另一种</strong>。第 4 篇里 <code>int(input(...))</code> 用的就是它。</p>
+<table><thead><tr><th>函数</th><th>变成什么</th><th>例子</th><th>结果</th></tr></thead><tbody><tr><td><code>bool(x)</code></td><td>真假值</td><td><code>bool(0)</code></td><td><code>False</code></td></tr><tr><td><code>int(x)</code></td><td>整数</td><td><code>int('10')</code></td><td><code>10</code></td></tr><tr><td><code>float(x)</code></td><td>小数</td><td><code>float('3.2')</code></td><td><code>3.2</code></td></tr><tr><td><code>str(x)</code></td><td>字符串</td><td><code>str(123)</code></td><td><code>'123'</code></td></tr><tr><td><code>list(x)</code></td><td>列表</td><td><code>list('abc')</code></td><td><code>['a', 'b', 'c']</code></td></tr><tr><td><code>tuple(x)</code></td><td>元组</td><td><code>tuple([1, 2, 3])</code></td><td><code>(1, 2, 3)</code></td></tr><tr><td><code>dict(x)</code></td><td>字典</td><td><code>dict(a=1, b=2)</code></td><td><code>{'a': 1, 'b': 2}</code></td></tr><tr><td><code>set(x)</code></td><td>集合（自动去重）</td><td><code>set([1, 2, 2, 3])</code></td><td><code>{1, 2, 3}</code></td></tr></tbody></table>
+<h3>3.1 三个最常用的：int / float / str</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">int</span>(<span class="tok-num">3.14</span>))        <span class="tok-cmt"># 3      小数变整数是「砍掉小数部分」，不是四舍五入</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">int</span>(<span class="tok-str">'10'</span>))        <span class="tok-cmt"># 10     文字里的数字能变过来</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">int</span>(<span class="tok-kw2">True</span>))        <span class="tok-cmt"># 1      真假值也能变，True 就是 1</span>
+
+<span class="tok-fn">print</span>(<span class="tok-fn">float</span>(<span class="tok-num">5</span>))         <span class="tok-cmt"># 5.0</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">float</span>(<span class="tok-str">'3.2'</span>))     <span class="tok-cmt"># 3.2</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">float</span>(<span class="tok-kw2">False</span>))     <span class="tok-cmt"># 0.0</span>
+
+<span class="tok-fn">print</span>(<span class="tok-fn">str</span>(<span class="tok-num">123</span>))         <span class="tok-cmt"># '123'   变回文字</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">str</span>(<span class="tok-kw2">True</span>))        <span class="tok-cmt"># 'True'</span></code></pre>
+</div>
+</div><div class="warn"><code>int(3.14)</code> 是 <code>3</code>，<strong>小数部分直接扔掉，不做四舍五入</strong>。想四舍五入要另外用 <code>round(3.14)</code>。</div>
+<h3>3.2 转换的结果要「接住」</h3>
+<p>转换<strong>不会改动原来的变量</strong>，它只是算出一个新值还给你。必须用变量接住才有用：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code>x <span class="tok-op">=</span> <span class="tok-str">"18"</span>
+
+<span class="tok-fn">int</span>(x)              <span class="tok-cmt"># 算出一个 18，但没人接，马上就被丢掉了</span>
+<span class="tok-fn">print</span>(x)            <span class="tok-cmt"># 输出 18（还是字符串，前后都有引号）</span>
+
+y <span class="tok-op">=</span> <span class="tok-fn">int</span>(x)          <span class="tok-cmt"># 这样才对：用 y 接住</span>
+<span class="tok-fn">print</span>(y <span class="tok-op">+</span> <span class="tok-num">1</span>)        <span class="tok-cmt"># 19</span></code></pre>
+</div>
+</div><div class="tip">判断「接到没接到」的小办法：<strong>看等号左边有没有变量</strong>。<code>int(x)</code> 单独一行什么也不会发生，写 <code>y = int(x)</code> 才留下结果。</div>
+<h3>3.3 列表、元组、字典、集合之间也能互相转</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-str">'abc'</span>))                <span class="tok-cmt"># ['a', 'b', 'c']  字符串拆成单个字符</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>((<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>)))            <span class="tok-cmt"># [1, 2, 3]        元组转列表</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">tuple</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]))           <span class="tok-cmt"># (1, 2, 3)        列表转元组</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">set</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]))          <span class="tok-cmt"># {1, 2, 3}        去重</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>(<span class="tok-fn">set</span>([<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">3</span>, <span class="tok-num">2</span>])))  <span class="tok-cmt"># [1, 2, 3]        去重之后再排序</span>
+
+<span class="tok-cmt"># 字典要用「键值对」来建</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">dict</span>(a<span class="tok-op">=</span><span class="tok-num">1</span>, b<span class="tok-op">=</span><span class="tok-num">2</span>))                                  <span class="tok-cmt"># {'a': 1, 'b': 2}</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">dict</span>([(<span class="tok-str">'name'</span>, <span class="tok-str">'张三'</span>), (<span class="tok-str">'age'</span>, <span class="tok-num">18</span>)]))           <span class="tok-cmt"># {'name': '张三', 'age': 18}</span></code></pre>
+</div>
+</div>
+<p>这几个转换在第 6 篇《基本数据类型》里都埋过伏笔，现在你知道它们其实都是内置函数了。</p>
+
+    <h2 id="sec4">四、序列操作类（5 个）</h2>
+
+<p>这一类管的是「一串东西」——字符串、列表、元组、字典都算。数个数、排序、配编号、两两配对，全靠它们。</p>
+<table><thead><tr><th>函数</th><th>干什么</th><th>例子</th><th>结果</th></tr></thead><tbody><tr><td><code>len(x)</code></td><td>数有多少个元素</td><td><code>len('hello')</code></td><td><code>5</code></td></tr><tr><td><code>sorted(x)</code></td><td>排序，返回<strong>新列表</strong></td><td><code>sorted([3, 1, 4, 2])</code></td><td><code>[1, 2, 3, 4]</code></td></tr><tr><td><code>reversed(x)</code></td><td>倒过来</td><td><code>list(reversed([1, 2, 3]))</code></td><td><code>[3, 2, 1]</code></td></tr><tr><td><code>enumerate(x)</code></td><td>每个元素配上序号</td><td><code>list(enumerate(['a', 'b']))</code></td><td><code>[(0, 'a'), (1, 'b')]</code></td></tr><tr><td><code>zip(a, b)</code></td><td>两串合成一对一对</td><td><code>list(zip([1, 2], ['a', 'b']))</code></td><td><code>[(1, 'a'), (2, 'b')]</code></td></tr></tbody></table>
+<h3>4.1 len()：数一数有几个</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">len</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>, <span class="tok-num">4</span>]))        <span class="tok-cmt"># 4</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">len</span>(<span class="tok-str">'hello'</span>))             <span class="tok-cmt"># 5</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">len</span>(<span class="tok-str">'你好世界'</span>))          <span class="tok-cmt"># 4   中文字也算 1 个</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">len</span>({<span class="tok-str">'a'</span>: <span class="tok-num">1</span>, <span class="tok-str">'b'</span>: <span class="tok-num">2</span>}))     <span class="tok-cmt"># 2   字典数的是「有几对键值」</span></code></pre>
+</div>
+</div>
+<h3>4.2 sorted()：从小到大排</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>([<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">4</span>, <span class="tok-num">2</span>]))                    <span class="tok-cmt"># [1, 2, 3, 4]</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>([<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">4</span>, <span class="tok-num">2</span>], reverse<span class="tok-op">=</span><span class="tok-kw2">True</span>))      <span class="tok-cmt"># [4, 3, 2, 1]  从大到小</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>(<span class="tok-str">'dcba'</span>))                          <span class="tok-cmt"># ['a', 'b', 'c', 'd']</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>((<span class="tok-num">5</span>, <span class="tok-num">3</span>, <span class="tok-num">1</span>)))                       <span class="tok-cmt"># [5, 3, 1] 升序结果是 [1, 3, 5]</span></code></pre>
+</div>
+</div>
+<p>还可以用 <code>key=</code> 指定「按什么排」：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>words <span class="tok-op">=</span> [<span class="tok-str">'banana'</span>, <span class="tok-str">'hi'</span>, <span class="tok-str">'apple'</span>]
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>(words, key<span class="tok-op">=</span><span class="tok-fn">len</span>))       <span class="tok-cmt"># ['hi', 'apple', 'banana']  按长度</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>([<span class="tok-op">-</span><span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>], key<span class="tok-op">=</span><span class="tok-fn">abs</span>))  <span class="tok-cmt"># [1, 2, -3]                 按绝对值</span></code></pre>
+</div>
+</div><div class="tip"><code>sorted()</code> 只是<strong>算出一份新的排好序的列表还给你</strong>，原来的列表一点没变。要改原来那个列表，得用列表自己的 <code>.sort()</code>——两者的区别见 9.1。</div>
+<h3>4.3 reversed()：倒过来</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">reversed</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>])))   <span class="tok-cmt"># [3, 2, 1]</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">reversed</span>(<span class="tok-str">'abc'</span>)))       <span class="tok-cmt"># ['c', 'b', 'a']</span></code></pre>
+</div>
+</div><div class="warn"><code>reversed()</code> 还回来的是一个「反向迭代器」，<strong>不能直接打印或取下标</strong>。想看结果要包一层 <code>list()</code>：<code>print(reversed([1, 2, 3]))</code> 只会显示一串看不懂的地址。</div>
+<p>如果只是想把字符串倒过来，第 8 篇里那个切片写法更短：<code>'abc'[::-1]</code>。</p>
+
+<h3>4.4 enumerate()：一边拿序号，一边拿元素</h3>
+<p>遍历列表时想知道「这是第几个」，它最省事。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span></div>
+<pre><code>names <span class="tok-op">=</span> [<span class="tok-str">'小明'</span>, <span class="tok-str">'小红'</span>, <span class="tok-str">'小刚'</span>]
+<span class="tok-kw">for</span> i, name <span class="tok-kw2">in</span> <span class="tok-fn">enumerate</span>(names):
+    <span class="tok-fn">print</span>(i, name)
+<span class="tok-cmt"># 0 小明</span>
+<span class="tok-cmt"># 1 小红</span>
+<span class="tok-cmt"># 2 小刚</span>
+
+<span class="tok-cmt"># 让编号从 1 开始，加 start=1</span>
+<span class="tok-kw">for</span> i, name <span class="tok-kw2">in</span> <span class="tok-fn">enumerate</span>(names, start<span class="tok-op">=</span><span class="tok-num">1</span>):
+    <span class="tok-fn">print</span>(i, name)
+<span class="tok-cmt"># 1 小明</span>
+<span class="tok-cmt"># 2 小红</span>
+<span class="tok-cmt"># 3 小刚</span></code></pre>
+</div>
+</div><div class="tip">不写 <code>start</code> 的话序号<strong>从 0 开始</strong>——这是 Python 的习惯（第 8 篇讲索引时也是从 0 开始的）。给人看的编号一般要写 <code>start=1</code>。</div>
+<h3>4.5 zip()：像拉链一样合起来</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span></div>
+<pre><code>names <span class="tok-op">=</span> [<span class="tok-str">'小明'</span>, <span class="tok-str">'小红'</span>, <span class="tok-str">'小刚'</span>]
+scores <span class="tok-op">=</span> [<span class="tok-num">88</span>, <span class="tok-num">95</span>, <span class="tok-num">76</span>]
+
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">zip</span>(names, scores)))
+<span class="tok-cmt"># [('小明', 88), ('小红', 95), ('小刚', 76)]</span>
+
+<span class="tok-cmt"># 最常见用法：边配对边取</span>
+<span class="tok-kw">for</span> name, score <span class="tok-kw2">in</span> <span class="tok-fn">zip</span>(names, scores):
+    <span class="tok-fn">print</span>(name, score)
+
+<span class="tok-cmt"># 也能一次拉三条</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">zip</span>(<span class="tok-str">'abc'</span>, [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>], [<span class="tok-kw2">True</span>, <span class="tok-kw2">False</span>, <span class="tok-kw2">True</span>])))
+<span class="tok-cmt"># [('a', 1, True), ('b', 2, False), ('c', 3, True)]</span></code></pre>
+</div>
+</div>
+<p>配上字典，两个列表能立刻变成一张对照表（第 6 篇的字典派上用场了）：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">dict</span>(<span class="tok-fn">zip</span>(names, scores)))
+<span class="tok-cmt"># {'小明': 88, '小红': 95, '小刚': 76}</span></code></pre>
+</div>
+</div><div class="tip"><code>zip()</code> 以<strong>最短的那一串为准</strong>，多出来的部分直接丢掉：<code>list(zip([1, 2, 3], ['a', 'b']))</code> 只会得到 <code>[(1, 'a'), (2, 'b')]</code>，那个 3 不见了。</div>
+<h3>4.6 顺便认识 any() 和 all()</h3>
+<p>示例里没提，但做判断时很好用，一起收着：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">any</span>([<span class="tok-num">0</span>, <span class="tok-num">0</span>, <span class="tok-num">1</span>]))    <span class="tok-cmt"># True    只要有「一个」为真就是 True</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">any</span>([<span class="tok-num">0</span>, <span class="tok-num">0</span>, <span class="tok-num">0</span>]))    <span class="tok-cmt"># False   全是假才 False</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">all</span>([<span class="tok-num">1</span>, <span class="tok-num">1</span>, <span class="tok-num">0</span>]))    <span class="tok-cmt"># False   有一个假就是 False</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">all</span>([<span class="tok-num">1</span>, <span class="tok-num">1</span>, <span class="tok-num">1</span>]))    <span class="tok-cmt"># True    全是真才 True</span></code></pre>
+</div>
+</div><div class="tip">空列表是特例：<code>all([])</code> 是 <code>True</code>、<code>any([])</code> 是 <code>False</code>。记法：<code>all</code> 要「挑不出毛病」才算通过，一个都没得挑，那就通过；<code>any</code> 要「找出一个」，一个都没有，<div class="tip"><strong>现在用不顺手很正常。</strong>本节的 <code>len()</code>、<code>max()</code>、<code>sorted()</code>、<code>zip()</code> 主要伺候列表这种「一串东西」，而列表要到第 14 篇才正式开讲。这里先见个面，等列表学完回头看，马上就亲切了。</div>就没找到。</div>
+
+    <h2 id="sec5">五、高级操作类（4 个）</h2>
+
+<p>这一类比前面难一点，<strong>看懂了会用就行</strong>，不必强求一次记住。它们的共同点是：把「对每个元素做同样的事」这件事，写得比 for 循环更短。</p>
+<table><thead><tr><th>函数</th><th>干什么</th><th>例子</th><th>结果</th></tr></thead><tbody><tr><td><code>range(a, b, n)</code></td><td>生成一串整数</td><td><code>list(range(1, 10, 2))</code></td><td><code>[1, 3, 5, 7, 9]</code></td></tr><tr><td><code>map(f, x)</code></td><td>把每个元素都用 f 处理一遍</td><td><code>list(map(len, ['a', 'bb']))</code></td><td><code>[1, 2]</code></td></tr><tr><td><code>filter(f, x)</code></td><td>只留下 f 判为真的元素</td><td><code>list(filter(str.isdigit, 'a1b2'))</code></td><td><code>['1', '2']</code></td></tr><tr><td><code>reduce(f, x)</code></td><td>把一串「揉」成一个值</td><td><code>reduce(lambda a, b: a + b, [1, 2, 3])</code></td><td><code>6</code></td></tr></tbody></table>
+<h3>5.1 range()：生成一串整数</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">range</span>(<span class="tok-num">5</span>)))            <span class="tok-cmt"># [0, 1, 2, 3, 4]</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">range</span>(<span class="tok-num">2</span>, <span class="tok-num">6</span>)))         <span class="tok-cmt"># [2, 3, 4, 5]</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">range</span>(<span class="tok-num">1</span>, <span class="tok-num">10</span>, <span class="tok-num">2</span>)))     <span class="tok-cmt"># [1, 3, 5, 7, 9]  第三个参数是「每次加几」</span>
+
+<span class="tok-kw">for</span> i <span class="tok-kw2">in</span> <span class="tok-fn">range</span>(<span class="tok-num">3</span>):
+    <span class="tok-fn">print</span>(i)                     <span class="tok-cmt"># 0 1 2</span></code></pre>
+</div>
+</div><div class="tip">和切片一样：<strong>含头不含尾</strong>。<code>range(5)</code> 从 0 数到 4，不包括 5；<code>range(2, 6)</code> 不包括 6。</div>
+<h3>5.2 先认识 lambda：一行的临时小函数</h3>
+<p>后面三个函数都要「递一个规则进去」，这个规则常写成 <code>lambda</code>。它就是<strong>一个没有名字的迷你函数</strong>，格式是 <code>lambda 参数: 结果</code>。<strong>完整的函数写法在第 20 篇《函数》里讲</strong>，这里先做到「看得懂、照着会改」就够了。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-cmt"># 这两行效果一样：</span>
+<span class="tok-kw">def</span> <span class="tok-fn">double</span>(x):        <span class="tok-cmt"># 正常写法：要起名字，要写 return</span>
+    <span class="tok-kw">return</span> x <span class="tok-op">*</span> <span class="tok-num">2</span>
+
+double2 <span class="tok-op">=</span> <span class="tok-kw">lambda</span> x: x <span class="tok-op">*</span> <span class="tok-num">2</span>    <span class="tok-cmt"># lambda 写法：一行搞定，连名字都是临时起的</span>
+
+<span class="tok-fn">print</span>(<span class="tok-fn">double</span>(<span class="tok-num">3</span>), <span class="tok-fn">double2</span>(<span class="tok-num">3</span>))   <span class="tok-cmt"># 6 6</span></code></pre>
+</div>
+</div><div class="tip">看 <code>lambda x: x * 2</code> 时，在心里读成「<strong>给一个 x，还你 x 乘 2</strong>」就好。冒号后面是结果，不用写 <code>return</code>。</div>
+<h3>5.3 map()：每个元素都过一遍同一个处理</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+<pre><code>nums <span class="tok-op">=</span> [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]
+
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">map</span>(<span class="tok-kw">lambda</span> x: x <span class="tok-op">*</span> <span class="tok-num">2</span>, nums)))    <span class="tok-cmt"># [2, 4, 6]  每个都乘 2</span>
+
+<span class="tok-cmt"># 递现成的函数进去也行</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">map</span>(<span class="tok-fn">str</span>, [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>])))           <span class="tok-cmt"># ['1', '2', '3']  每个都变字符串</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">map</span>(<span class="tok-fn">len</span>, [<span class="tok-str">'a'</span>, <span class="tok-str">'bb'</span>, <span class="tok-str">'ccc'</span>])))  <span class="tok-cmt"># [1, 2, 3]        每个都量长度</span>
+
+<span class="tok-cmt"># 也能同时处理两串（一一对应）</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">map</span>(<span class="tok-kw">lambda</span> x, y: x <span class="tok-op">+</span> y, [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>], [<span class="tok-num">4</span>, <span class="tok-num">5</span>, <span class="tok-num">6</span>])))   <span class="tok-cmt"># [5, 7, 9]</span></code></pre>
+</div>
+</div>
+<h3>5.4 filter()：只留下符合条件的</h3>
+<p>前面那支 <code>lambda</code> 要能判断真假：真就留下，假就丢掉。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code>nums <span class="tok-op">=</span> [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>, <span class="tok-num">4</span>]
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">filter</span>(<span class="tok-kw">lambda</span> x: x <span class="tok-op">%</span> <span class="tok-num">2</span> <span class="tok-op">==</span> <span class="tok-num">0</span>, nums)))   <span class="tok-cmt"># [2, 4]  只留偶数</span>
+
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">filter</span>(<span class="tok-fn">str</span>.isdigit, <span class="tok-str">'a1b2c3'</span>)))        <span class="tok-cmt"># ['1', '2', '3']  只留数字</span>
+
+<span class="tok-cmt"># 第一个参数写 None，就按「真假」自动筛（第 6 篇《数据类型》里的假值清单）</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">filter</span>(<span class="tok-kw2">None</span>, [<span class="tok-num">0</span>, <span class="tok-num">1</span>, <span class="tok-kw2">False</span>, <span class="tok-kw2">True</span>])))    <span class="tok-cmt"># [1, True]</span></code></pre>
+</div>
+</div>
+<h3>5.5 reduce()：把一串揉成一个</h3>
+<p>它不在内置函数里，要先从 <code>functools</code> 里请出来（这是唯一需要 import 的一个）。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-kw2">from</span> functools <span class="tok-kw2">import</span> reduce
+
+<span class="tok-fn">print</span>(<span class="tok-fn">reduce</span>(<span class="tok-kw">lambda</span> a, b: a <span class="tok-op">+</span> b, [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>, <span class="tok-num">4</span>]))    <span class="tok-cmt"># 10   等于 ((1+2)+3)+4</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">reduce</span>(<span class="tok-kw">lambda</span> a, b: a <span class="tok-op">*</span> b, [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]))       <span class="tok-cmt"># 6    连乘</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">reduce</span>(<span class="tok-kw">lambda</span> a, b: a <span class="tok-kw">if</span> a <span class="tok-op">&gt;</span> b <span class="tok-kw">else</span> b, [<span class="tok-num">5</span>, <span class="tok-num">3</span>, <span class="tok-num">7</span>, <span class="tok-num">2</span>]))   <span class="tok-cmt"># 7  变相的求最大值</span></code></pre>
+</div>
+</div><div class="tip"><code>map()</code>、<code>filter()</code>、<code>reversed()</code> 还回来的都不是列表，而是「迭代器」——<strong>想看结果就包一层 <code>list()</code></strong>。原因见 9.5。<br>另外说实话：<code>map</code> 和 <code>filter</code> 能做的事，用 for 循环加 <code>if</code> 也都做得到，而且更好读。先能看懂别人的代码，写的时候挑顺手的就行。</div>
+
+    <h2 id="sec6">六、字符与编码类（2 个）</h2>
+
+<p>这一对函数是「互相反着来」的搭档：一个把字符换成编号，一个把编号换回字符。</p>
+<table><thead><tr><th>函数</th><th>方向</th><th>例子</th><th>结果</th></tr></thead><tbody><tr><td><code>chr(n)</code></td><td>编号 → 字符</td><td><code>chr(65)</code></td><td><code>'A'</code></td></tr><tr><td><code>ord(s)</code></td><td>字符 → 编号</td><td><code>ord('A')</code></td><td><code>65</code></td></tr></tbody></table>
+<p>这里的「编号」叫 <strong>Unicode 码位</strong>，就是全世界每个字符在计算机里对应的一个数字。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">chr</span>(<span class="tok-num">65</span>))       <span class="tok-cmt"># A</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">chr</span>(<span class="tok-num">97</span>))       <span class="tok-cmt"># a</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">chr</span>(<span class="tok-num">26417</span>))    <span class="tok-cmt"># 朱     中文也有编号</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'A'</span>))      <span class="tok-cmt"># 65</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'a'</span>))      <span class="tok-cmt"># 97</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'朱'</span>))      <span class="tok-cmt"># 26417</span></code></pre>
+</div>
+</div><div class="tip">记方向的办法：<strong><code>ord</code> 是 order（顺序、序号），把字符变成序号；<code>chr</code> 是 character（字符），把序号变回字符。</strong>两个来回转能还原：<code>chr(ord('朱'))</code> 还是 <code>'朱'</code>。</div>
+<h3>6.1 有什么用</h3>
+<p>最典型的用法是<strong>让字母按编号移动</strong>——比如把 <code>'A'</code> 往后挪两位变成 <code>'C'</code>：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">chr</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'A'</span>) <span class="tok-op">+</span> <span class="tok-num">2</span>))     <span class="tok-cmt"># C</span>
+
+<span class="tok-cmt"># 大小写字母的编号正好差 32</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'a'</span>) <span class="tok-op">-</span> <span class="tok-fn">ord</span>(<span class="tok-str">'A'</span>))   <span class="tok-cmt"># 32</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">chr</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'a'</span>) <span class="tok-op">-</span> <span class="tok-num">32</span>))    <span class="tok-cmt"># A   小写变大写（手写版，实际用 .upper() 更方便）</span></code></pre>
+</div>
+</div>
+<p>也能拿来生成一段字母表：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>letters <span class="tok-op">=</span> [<span class="tok-fn">chr</span>(i) <span class="tok-kw">for</span> i <span class="tok-kw2">in</span> <span class="tok-fn">range</span>(<span class="tok-fn">ord</span>(<span class="tok-str">'a'</span>), <span class="tok-fn">ord</span>(<span class="tok-str">'e'</span>) <span class="tok-op">+</span> <span class="tok-num">1</span>)]
+<span class="tok-fn">print</span>(letters)               <span class="tok-cmt"># ['a', 'b', 'c', 'd', 'e']</span></code></pre>
+</div>
+</div><div class="tip"><code>ord()</code> 一次只能传<strong>一个</strong>字符。<code>ord('ab')</code> 会报 <code>TypeError: ord() expected a character, but string of length 2 found</code>；想一次转一串，得用 <code>list(map(ord, 'ab'))</code>。</div>
+
+    <h2 id="sec7">七、输入输出与文件操作（3 个）</h2>
+
+<p>这三个前面几篇都见过，这里补上「它们也是内置函数」这个身份，并把文件读写说清楚。</p>
+
+<h3>7.1 print()：输出</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-str">'Hello, World!'</span>)          <span class="tok-cmt"># Hello, World!</span>
+<span class="tok-fn">print</span>(<span class="tok-num">1</span> <span class="tok-op">+</span> <span class="tok-num">2</span>)                    <span class="tok-cmt"># 3       括号里可以先算再显示</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'a'</span>, <span class="tok-str">'b'</span>, <span class="tok-str">'c'</span>, sep<span class="tok-op">=</span><span class="tok-str">'-'</span>)   <span class="tok-cmt"># a-b-c   用 sep 改分隔符</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'第一行'</span>, end<span class="tok-op">=</span><span class="tok-str">''</span>)          <span class="tok-cmt"># 结尾默认换行，改掉就不换行</span>
+<span class="tok-fn">print</span>(<span class="tok-str">'接着同一行'</span>)</code></pre>
+</div>
+</div><div class="tip"><code>sep</code> 和 <code>end</code> 这两个开关第 4 篇《输入输出》讲得很细，忘了可以回去翻。</div>
+<h3>7.2 input()：读键盘，拿到的永远是字符串</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code>name <span class="tok-op">=</span> <span class="tok-fn">input</span>(<span class="tok-str">'请输入你的名字：'</span>)
+age <span class="tok-op">=</span> <span class="tok-fn">input</span>(<span class="tok-str">'请输入你的年龄：'</span>)
+
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>(name))    <span class="tok-cmt"># &lt;class 'str'&gt;</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>(age))     <span class="tok-cmt"># &lt;class 'str'&gt;   即使你输的是 18，也是文字 "18"</span></code></pre>
+</div>
+</div>
+<p>所以要当数字用，必须自己转一次，这就是第 4 篇里那个 <code>int(input(...))</code>：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code>age <span class="tok-op">=</span> <span class="tok-fn">int</span>(<span class="tok-fn">input</span>(<span class="tok-str">'请输入你的年龄：'</span>))
+<span class="tok-fn">print</span>(age <span class="tok-op">+</span> <span class="tok-num">1</span>)       <span class="tok-cmt"># 现在才能做加法</span></code></pre>
+</div>
+</div>
+<h3>7.3 open()：打开文件</h3>
+<p>它负责<strong>打开一个文件，还给你一个文件对象</strong>，后面读还是写都由参数决定。</p>
+<table><thead><tr><th>模式</th><th>含义</th><th>注意</th></tr></thead><tbody><tr><td><code>'r'</code></td><td>只读（默认）</td><td>文件必须已存在，否则报 <code>FileNotFoundError</code></td></tr><tr><td><code>'w'</code></td><td>写入</td><td><strong>会清空原内容</strong>；文件不存在就新建</td></tr><tr><td><code>'a'</code></td><td>追加</td><td>在末尾接着写，不清空原内容</td></tr></tbody></table>
+<p>最稳的写法是配 <code>with</code>，用完自动关文件：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span></div>
+<pre><code><span class="tok-cmt"># 读一个文件（假设 score.txt 里每行一个分数）</span>
+<span class="tok-kw">with</span> <span class="tok-fn">open</span>(<span class="tok-str">'score.txt'</span>, <span class="tok-str">'r'</span>, encoding<span class="tok-op">=</span><span class="tok-str">'utf-8'</span>) <span class="tok-kw2">as</span> f:
+    lines <span class="tok-op">=</span> f.<span class="tok-fn">readlines</span>()          <span class="tok-cmt"># 一次读所有行，得到一个列表</span>
+<span class="tok-fn">print</span>(lines)                       <span class="tok-cmt"># ['95\n', '88\n', '76\n']</span>
+
+<span class="tok-cmt"># 每行末尾有个换行符，用 strip() 去掉（第 8 篇《字符串》里的字符串方法）</span>
+scores <span class="tok-op">=</span> [<span class="tok-fn">int</span>(x.<span class="tok-fn">strip</span>()) <span class="tok-kw">for</span> x <span class="tok-kw2">in</span> lines]
+<span class="tok-fn">print</span>(scores)                      <span class="tok-cmt"># [95, 88, 76]</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">sum</span>(scores) <span class="tok-op">/</span> <span class="tok-fn">len</span>(scores))   <span class="tok-cmt"># 86.33333333333333</span>
+
+<span class="tok-cmt"># 写一个文件</span>
+<span class="tok-kw">with</span> <span class="tok-fn">open</span>(<span class="tok-str">'result.txt'</span>, <span class="tok-str">'w'</span>, encoding<span class="tok-op">=</span><span class="tok-str">'utf-8'</span>) <span class="tok-kw2">as</span> f:
+    f.<span class="tok-fn">write</span>(<span class="tok-str">'平均分：'</span> <span class="tok-op">+</span> <span class="tok-fn">str</span>(<span class="tok-fn">sum</span>(scores) <span class="tok-op">/</span> <span class="tok-fn">len</span>(scores)))</code></pre>
+</div>
+</div><div class="tip">读文件一定要写 <code>encoding='utf-8'</code>，<strong>否则中文可能变成乱码</strong>（这是新手最常撞的墙）。<br>另外注意 <code>'w'</code> 模式会<strong>把原文件清空重写</strong>，一不小心就把内容弄丢了；只在末尾加东西要用 <code>'a'</code>。</div>
+<p><code>f.readlines()</code> 读出来的每一行都带着结尾的换行符，所以要先 <code>strip()</code> 再转数字，否则 <code>int('95\n')</code> 会报错。（实际上 <code>int()</code> 会自动忽略两端的空白字符，但先 <code>strip()</code> 是好习惯，也方便做别的判断。）</p>
+
+    <h2 id="sec8">八、对象信息类（3 个）</h2>
+
+<p>这一类不看内容，看的是「这个东西本身」——它是什么类型、是哪一个、能不能算一遍。</p>
+<table><thead><tr><th>函数</th><th>干什么</th><th>例子</th><th>结果</th></tr></thead><tbody><tr><td><code>type(x)</code></td><td>看类型</td><td><code>type(10)</code></td><td><code>&lt;class 'int'&gt;</code></td></tr><tr><td><code>id(x)</code></td><td>看身份编号</td><td><code>id(a)</code></td><td>一串大整数</td></tr><tr><td><code>eval(s)</code></td><td>把字符串当表达式算一遍</td><td><code>eval('1 + 2')</code></td><td><code>3</code></td></tr></tbody></table>
+<h3>8.1 type()：看看这是什么类型</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">type</span>(<span class="tok-num">10</span>))          <span class="tok-cmt"># &lt;class 'int'&gt;</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>(<span class="tok-str">'hello'</span>))     <span class="tok-cmt"># &lt;class 'str'&gt;</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>([<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]))   <span class="tok-cmt"># &lt;class 'list'&gt;</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>(<span class="tok-num">3.14</span>))        <span class="tok-cmt"># &lt;class 'float'&gt;</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">type</span>(<span class="tok-kw2">True</span>))        <span class="tok-cmt"># &lt;class 'bool'&gt;</span></code></pre>
+</div>
+</div><div class="tip">打印出来是 <code>&lt;class 'int'&gt;</code> 这个样子，读的时候只看引号里那个词就行（<code>int</code>）。第 6 篇《基本数据类型》里当「探照灯」用的就是它。</div>
+<h3>8.2 id()：看「是不是同一个东西」</h3>
+<p>每个对象都有一张身份证号，<code>id()</code> 把它拿出来。<strong>同一个对象的 id 一定相同，不同对象的 id 一定不同。</strong></p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+<pre><code>a <span class="tok-op">=</span> [<span class="tok-num">1</span>, <span class="tok-num">2</span>]
+b <span class="tok-op">=</span> [<span class="tok-num">1</span>, <span class="tok-num">2</span>]
+c <span class="tok-op">=</span> a
+
+<span class="tok-fn">print</span>(a <span class="tok-op">==</span> b)              <span class="tok-cmt"># True    内容一样</span>
+<span class="tok-fn">print</span>(a <span class="tok-kw2">is</span> b)              <span class="tok-cmt"># False   但不是同一个东西</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">id</span>(a) <span class="tok-op">==</span> <span class="tok-fn">id</span>(b))      <span class="tok-cmt"># False   身份证号不同</span>
+
+<span class="tok-fn">print</span>(c <span class="tok-kw2">is</span> a)              <span class="tok-cmt"># True    c 就是 a 本人</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">id</span>(c) <span class="tok-op">==</span> <span class="tok-fn">id</span>(a))      <span class="tok-cmt"># True</span></code></pre>
+</div>
+</div><div class="tip">这正是第 6 篇里那个「<code>b = a</code> 陷阱」的底层原因：<code>c = a</code> 只是<strong>给同一个东西又贴了一张标签</strong>，两张标签指的是一个对象（id 相同）；而 <code>b = [1, 2]</code> 是<strong>另外做了一个新东西</strong>（id 不同）。</div><div class="warn"><code>id()</code> 打印出来是一个很大的十进制数（其实是个内存地址）。<strong>每次运行程序都会变，不要把它当成固定编号存起来用</strong>——它只在「同一次运行、同一个对象」的比较里有意义。</div>
+<h3>8.3 eval()：把字符串当表达式算一遍</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">eval</span>(<span class="tok-str">'1 + 2'</span>))            <span class="tok-cmt"># 3</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">eval</span>(<span class="tok-str">'3 * 4 - 1'</span>))        <span class="tok-cmt"># 11</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">eval</span>(<span class="tok-str">'[1, 2, 3]'</span>))        <span class="tok-cmt"># [1, 2, 3]   字符串变成了真正的列表</span>
+
+x <span class="tok-op">=</span> <span class="tok-num">5</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">eval</span>(<span class="tok-str">'x * 2'</span>))            <span class="tok-cmt"># 10   能用前面定义过的变量</span></code></pre>
+</div>
+</div><div class="tip"><code>eval</code> 适合做「小计算器」：把用户输的一整句算式算出来。但它<strong>只能算表达式，不能做赋值</strong>——<code>eval('x = 1')</code> 会报 <code>SyntaxError</code>（要执行一整句语句得用 <code>exec()</code>）。</div><div class="warn"><strong>安全提醒：<code>eval()</code> 会把字符串当成真正的代码来执行。</strong>第 4 篇里提过 <code>eval(input(...))</code> 的写法要谨慎，这里再强调一次：<strong>只对你自己写的、或者你完全信任的字符串用 <code>eval()</code></strong>，别人给你的一段文字不要直接喂给它。做类型转换优先用 <code>int()</code> / <code>float()</code>。</div>
+
+    <h2 id="sec9">九、最容易搞混的几组对比</h2>
+
+<p>这一节专门收拢「长得像、其实不一样」的几组，都是新手真的会写错的。</p>
+
+<h3>9.1 sorted() 和列表的 .sort()</h3>
+<p>一个是<strong>函数</strong>，一个是<strong>列表自带的方法</strong>，行为完全不同：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+<pre><code><span class="tok-cls">L</span> <span class="tok-op">=</span> [<span class="tok-num">3</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>]
+
+<span class="tok-fn">print</span>(<span class="tok-fn">sorted</span>(<span class="tok-cls">L</span>))        <span class="tok-cmt"># [1, 2, 3]   返回一个全新的列表</span>
+<span class="tok-fn">print</span>(<span class="tok-cls">L</span>)                <span class="tok-cmt"># [3, 1, 2]   原来的 L 一点没变</span>
+
+result <span class="tok-op">=</span> <span class="tok-cls">L</span>.<span class="tok-fn">sort</span>()       <span class="tok-cmt"># 列表自己的方法：原地排序</span>
+<span class="tok-fn">print</span>(result)           <span class="tok-cmt"># None        它不返回东西！</span>
+<span class="tok-fn">print</span>(<span class="tok-cls">L</span>)                <span class="tok-cmt"># [1, 2, 3]   但 L 自己已经被改成有序的了</span></code></pre>
+</div>
+</div><table><thead><tr><th>对比项</th><th><code>sorted(L)</code></th><th><code>L.sort()</code></th></tr></thead><tbody><tr><td>是谁</td><td>内置函数</td><td>列表的方法</td></tr><tr><td>要几个参数</td><td><code>sorted(L)</code>（列表当参数传进去）</td><td><code>L.sort()</code>（点号调用）</td></tr><tr><td>返回什么</td><td><strong>新的排好序的列表</strong></td><td><code>None</code></td></tr><tr><td>原列表变没变</td><td><strong>不变</strong></td><td><strong>变了</strong></td></tr></tbody></table><div class="warn">最常见的错误是把 <code>L.sort()</code> 的返回值接住：写成 <code>new = L.sort()</code>，<code>new</code> 会是 <code>None</code>。<strong>原地改的方法都不返回结果</strong>，别去接它。</div>
+<h3>9.2 reversed() 和列表的 .reverse()</h3>
+<p>同样是「函数 vs 方法」的关系，坑法一模一样：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-cls">M</span> <span class="tok-op">=</span> [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">reversed</span>(<span class="tok-cls">M</span>)))    <span class="tok-cmt"># [3, 2, 1]   返回新的，M 没动</span>
+<span class="tok-fn">print</span>(<span class="tok-cls">M</span>)                    <span class="tok-cmt"># [1, 2, 3]</span>
+
+r <span class="tok-op">=</span> <span class="tok-cls">M</span>.<span class="tok-fn">reverse</span>()             <span class="tok-cmt"># 原地倒过来</span>
+<span class="tok-fn">print</span>(r)                    <span class="tok-cmt"># None</span>
+<span class="tok-fn">print</span>(<span class="tok-cls">M</span>)                    <span class="tok-cmt"># [3, 2, 1]</span></code></pre>
+</div>
+</div><div class="tip">记法一句话：<strong>带 <code>ed</code> 的是函数（<code>sorted</code> / <code>reversed</code>），返回新的；不带 <code>ed</code> 的是方法（<code>.sort()</code> / <code>.reverse()</code>），原地改、不给回结果。</strong></div>
+<h3>9.3 round() 的「四舍五入」有时不对</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code><span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">2.5</span>))        <span class="tok-cmt"># 2   ← 你以为会是 3</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">3.5</span>))        <span class="tok-cmt"># 4</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">0.5</span>))        <span class="tok-cmt"># 0</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">round</span>(<span class="tok-num">2.675</span>, <span class="tok-num">2</span>))   <span class="tok-cmt"># 2.67   ← 你以为会是 2.68</span></code></pre>
+</div>
+</div>
+<p>两件事在捣乱：</p>
+<ol>
+<li><strong>「五入」在 Python 里做的是「取最近的偶数」</strong>（数学上叫「银行家舍入」）。所以 <code>2.5</code> 变成 <code>2</code>、<code>3.5</code> 变成 <code>4</code>，在 0.5 这个点上永远往偶数那边靠。</li>
+<li><strong>小数在电脑里存不准</strong>（第 6 篇讲过的浮点精度问题）。<code>2.675</code> 在电脑里真实的值其实是 <code>2.67499999...</code>，所以被「舍」掉了，得到 <code>2.67</code>。</li>
+</ol>
+<div class="tip">实用结论：<strong><code>round()</code> 拿来做「显示」很好，拿来做「精确计算」不行。</strong>算钱、算成绩这类要求严格的地方，要么先放大成整数算完再缩小（<code>round(2.675 * 100) / 100</code>），要么用专门的 <code>decimal</code> 模块，别指望 <code>round()</code>。<br>另外小数点后的位数只影响显示时，其实可以交给 f 字符串：<code>f"{3.14159:.2f}"</code> 得到 <code>'3.14'</code>（第 8 篇讲过）。</div>
+<h3>9.4 type() 和 isinstance()</h3>
+<p><code>isinstance()</code> 示例里没提，但判断类型时比 <code>type()</code> 更常用，顺便认识一下。</p>
+<table><thead><tr><th>对比项</th><th><code>type(x) == int</code></th><th><code>isinstance(x, int)</code></th></tr></thead><tbody><tr><td>问的问题</td><td>「它<strong>就是</strong> int 类型吗」</td><td>「它<strong>算不算</strong> int 这一类」</td></tr><tr><td>子类算不算</td><td>不算</td><td><strong>算</strong></td></tr><tr><td>举例</td><td><code>type(True) == int</code> → <code>False</code></td><td><code>isinstance(True, int)</code> → <code>True</code></td></tr><tr><td>一次查多种类型</td><td>要写好几遍</td><td><code>isinstance(x, (int, float))</code></td></tr></tbody></table><div class="tip"><strong>做类型判断优先用 <code>isinstance()</code></strong>，它更宽松也更符合直觉。为什么 <code>isinstance(True, int)</code> 是 <code>True</code>？因为在 Python 里，真假值本身算整数的一个小分支——这也是 <code>True + 1</code> 等于 <code>2</code> 的原因（第 6 篇提过）。</div>
+<h3>9.5 map() / filter() 返回的不是列表</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code>nums <span class="tok-op">=</span> [<span class="tok-num">1</span>, <span class="tok-num">2</span>, <span class="tok-num">3</span>]
+
+<span class="tok-fn">print</span>(<span class="tok-fn">map</span>(<span class="tok-fn">str</span>, nums))              <span class="tok-cmt"># &lt;map object at 0x...&gt;  看不懂吧</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">map</span>(<span class="tok-fn">str</span>, nums)))        <span class="tok-cmt"># ['1', '2', '3']        包一层才行</span>
+
+<span class="tok-fn">print</span>(<span class="tok-fn">filter</span>(<span class="tok-kw2">None</span>, [<span class="tok-num">0</span>, <span class="tok-num">1</span>]))        <span class="tok-cmt"># &lt;filter object at 0x...&gt;</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">list</span>(<span class="tok-fn">filter</span>(<span class="tok-kw2">None</span>, [<span class="tok-num">0</span>, <span class="tok-num">1</span>])))  <span class="tok-cmt"># [1]</span></code></pre>
+</div>
+</div><table><thead><tr><th>函数</th><th>返回的是</th><th>能直接 print 吗</th><th>能取下标吗</th><th>怎么办</th></tr></thead><tbody><tr><td><code>map()</code></td><td>迭代器</td><td>不能（显示成一串地址）</td><td>不能</td><td>包一层 <code>list()</code></td></tr><tr><td><code>filter()</code></td><td>迭代器</td><td>不能</td><td>不能</td><td>包一层 <code>list()</code></td></tr><tr><td><code>reversed()</code></td><td>迭代器</td><td>不能</td><td>不能</td><td>包一层 <code>list()</code></td></tr><tr><td><code>range()</code></td><td>range 对象</td><td>不能</td><td><strong>能</strong>（<code>range(5)[0]</code> 是 0）</td><td>要看内容还是包 <code>list()</code></td></tr><tr><td><code>sorted()</code></td><td><strong>列表</strong></td><td><strong>能</strong></td><td>能</td><td>不用包</td></tr><tr><td><code>enumerate()</code></td><td>枚举对象</td><td>不能</td><td>不能</td><td>包 <code>list()</code> 或直接 for</td></tr></tbody></table><div class="tip">看到报错 <code>TypeError: 'map' object is not subscriptable</code>，或者 <code>'enumerate' object is not subscriptable</code>，就是忘了包 <code>list()</code>。它们是「边用边算」的，不把结果存起来，所以取不了下标。</div>
+
+    <h2 id="sec10">十、三个小例子</h2>
+
+<p>把前面学的东西串起来用一遍。每个例子都可以直接复制到 IDLE 里跑（第 1 篇讲过怎么新建文件）。</p>
+
+<h3>10.1 例 1：成绩单统计</h3>
+<p>用到 <code>len</code>、<code>sum</code>、<code>max</code>、<code>min</code>、<code>round</code>、<code>sorted</code>。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+<pre><code>scores <span class="tok-op">=</span> [<span class="tok-num">88</span>, <span class="tok-num">95</span>, <span class="tok-num">76</span>, <span class="tok-num">92</span>, <span class="tok-num">60</span>]
+
+<span class="tok-fn">print</span>(<span class="tok-str">"人数:"</span>, <span class="tok-fn">len</span>(scores))
+<span class="tok-fn">print</span>(<span class="tok-str">"总分:"</span>, <span class="tok-fn">sum</span>(scores))
+<span class="tok-fn">print</span>(<span class="tok-str">"平均分:"</span>, <span class="tok-fn">round</span>(<span class="tok-fn">sum</span>(scores) <span class="tok-op">/</span> <span class="tok-fn">len</span>(scores), <span class="tok-num">1</span>))
+<span class="tok-fn">print</span>(<span class="tok-str">"最高分:"</span>, <span class="tok-fn">max</span>(scores))
+<span class="tok-fn">print</span>(<span class="tok-str">"最低分:"</span>, <span class="tok-fn">min</span>(scores))
+<span class="tok-fn">print</span>(<span class="tok-str">"从高到低:"</span>, <span class="tok-fn">sorted</span>(scores, reverse<span class="tok-op">=</span><span class="tok-kw2">True</span>))</code></pre>
+</div>
+</div>
+<p>运行结果：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code>人数: 5
+总分: 411
+平均分: 82.2
+最高分: 95
+最低分: 60
+从高到低: [95, 92, 88, 76, 60]</code></pre>
+</div>
+</div><div class="tip">注意 <code>round(sum(scores) / len(scores), 1)</code> 这一句是<strong>从里往外读</strong>的：先算总分、再除以人数、最后保留一位小数。第 4 篇里那个「括号从里往外看」的方法在这里一样管用。</div>
+<h3>10.2 例 2：名单编号 + 配成绩</h3>
+<p>用到 <code>enumerate</code>、<code>zip</code>、<code>dict</code>。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span></div>
+<pre><code>names <span class="tok-op">=</span> [<span class="tok-str">"小明"</span>, <span class="tok-str">"小红"</span>, <span class="tok-str">"小刚"</span>]
+scores <span class="tok-op">=</span> [<span class="tok-num">88</span>, <span class="tok-num">95</span>, <span class="tok-num">76</span>]
+
+<span class="tok-cmt"># 第一件事：带编号打印名单</span>
+<span class="tok-kw">for</span> i, name <span class="tok-kw2">in</span> <span class="tok-fn">enumerate</span>(names, start<span class="tok-op">=</span><span class="tok-num">1</span>):
+    <span class="tok-fn">print</span>(i, name)
+
+<span class="tok-cmt"># 第二件事：名字和分数一一配对</span>
+<span class="tok-kw">for</span> name, score <span class="tok-kw2">in</span> <span class="tok-fn">zip</span>(names, scores):
+    <span class="tok-fn">print</span>(name, <span class="tok-str">"考了"</span>, score)
+
+<span class="tok-cmt"># 第三件事：直接拼成一张字典表，以后想查谁的分就查谁</span>
+score_table <span class="tok-op">=</span> <span class="tok-fn">dict</span>(<span class="tok-fn">zip</span>(names, scores))
+<span class="tok-fn">print</span>(score_table)
+<span class="tok-fn">print</span>(score_table[<span class="tok-str">"小红"</span>])</code></pre>
+</div>
+</div>
+<p>运行结果：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+<pre><code>1 小明
+2 小红
+3 小刚
+小明 考了 88
+小红 考了 95
+小刚 考了 76
+{'小明': 88, '小红': 95, '小刚': 76}
+95</code></pre>
+</div>
+</div><div class="tip"><code>dict(zip(names, scores))</code> 这个组合非常常用——<strong>两个列表变成一个字典</strong>，一行就够。前提是两个列表的顺序是对得上的。</div>
+<h3>10.3 例 3：从一段文字里挑出所有数字</h3>
+<p>用到 <code>filter</code>、<code>str.isdigit</code>、<code>len</code>、<code>map</code>。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span></div>
+<pre><code>text <span class="tok-op">=</span> <span class="tok-str">"订单A123共4件"</span>
+
+<span class="tok-cmt"># 挑出所有的数字字符</span>
+nums <span class="tok-op">=</span> <span class="tok-fn">list</span>(<span class="tok-fn">filter</span>(<span class="tok-fn">str</span>.isdigit, text))
+<span class="tok-fn">print</span>(<span class="tok-str">"数字字符:"</span>, nums)          <span class="tok-cmt"># ['1', '2', '3', '4']</span>
+<span class="tok-fn">print</span>(<span class="tok-str">"一共几个:"</span>, <span class="tok-fn">len</span>(nums))     <span class="tok-cmt"># 4</span>
+
+<span class="tok-cmt"># 再把它们变成真正的整数</span>
+numbers <span class="tok-op">=</span> <span class="tok-fn">list</span>(<span class="tok-fn">map</span>(<span class="tok-fn">int</span>, nums))
+<span class="tok-fn">print</span>(<span class="tok-str">"整数列表:"</span>, numbers)       <span class="tok-cmt"># [1, 2, 3, 4]</span>
+<span class="tok-fn">print</span>(<span class="tok-str">"加起来:"</span>, <span class="tok-fn">sum</span>(numbers))    <span class="tok-cmt"># 10</span></code></pre>
+</div>
+</div>
+<p>运行结果：</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code>数字字符: ['1', '2', '3', '4']
+一共几个: 4
+整数列表: [1, 2, 3, 4]
+加起来: 10</code></pre>
+</div>
+</div><div class="tip">这里的 <code>filter(str.isdigit, text)</code> 意思是「逐个字符问：你是数字吗？是就留下」。<code>str.isdigit</code> 后面<strong>不写括号</strong>——它在这里是「把这个本领本身递过去」，而不是现在就调用它。这是新手最容易写错的地方（写了括号会直接报错或得到奇怪结果）。</div>
+
+    <h2 id="sec11">十一、常见问题</h2>
+
+<p>下面这些都是按真实报错信息整理的，遇到就先来这儿找。</p>
+<table><thead><tr><th>现象</th><th>原因与处理办法</th></tr></thead><tbody><tr><td><code>TypeError: object of type 'int' has no len()</code></td><td><code>len(10)</code> 报的。<code>len()</code> 只能量「一串东西」（字符串、列表、元组、字典、集合），单个数字没有「长度」这种说法。</td></tr><tr><td><code>ValueError: invalid literal for int() with base 10: '3.5'</code></td><td><code>int('3.5')</code> 报的。<code>int()</code> 认不出带小数点的文字，要分两步：<code>int(float('3.5'))</code> 得到 <code>3</code>。</td></tr><tr><td><code>TypeError: 'int' object is not iterable</code></td><td><code>list(10)</code> 报的。转换的前提是「本来就是一串东西」，单个数字转不了列表。</td></tr><tr><td><code>TypeError: unsupported operand type(s) for +: 'int' and 'str'</code></td><td><code>sum([1, '2'])</code> 报的。<code>sum()</code> 只能加数字，字符串要么先 <code>int()</code> 转过来，要么改用字符串拼接。</td></tr><tr><td><code>ValueError: max() iterable argument is empty</code></td><td><code>max([])</code> 报的。空的东西里挑不出最大值（<code>min([])</code> 同理）。真要处理可能为空的情况，加 <code>default=</code>：<code>max([], default=0)</code>。</td></tr><tr><td><code>TypeError: '&lt;' not supported between instances of 'str' and 'int'</code></td><td><code>sorted([1, 'a'])</code> 报的。排序要求元素之间能比大小，数字和文字不能比。先统一类型再排。</td></tr><tr><td><code>TypeError: 'map' object is not subscriptable</code></td><td><code>map()</code> 返回的是迭代器，不能取下标，也不能直接打印。包一层 <code>list()</code> 就好（<code>filter</code>、<code>reversed</code>、<code>enumerate</code> 同理）。</td></tr><tr><td><code>TypeError: ord() expected a character, but string of length 2 found</code></td><td><code>ord('ab')</code> 报的。<code>ord()</code> 一次只能转一个字符，想转一串用 <code>list(map(ord, 'ab'))</code>。</td></tr><tr><td><code>ValueError: chr() arg not in range(0x110000)</code></td><td><code>chr()</code> 给的编号超出了 Unicode 的范围（写错数字了），换一个合理的编号。</td></tr><tr><td><code>TypeError: unhashable type: 'list'</code></td><td><code>set([[1], [2]])</code> 报的。集合的元素必须是「不可变」的，列表能改所以不行；换成元组 <code>set([(1,), (2,)])</code>。</td></tr><tr><td><code>TypeError: bad operand type for abs(): 'str'</code></td><td><code>abs('abc')</code> 报的。<code>abs()</code> 只能处理数字，先确认你手上的是不是数字。</td></tr><tr><td><code>FileNotFoundError: [Errno 2] No such file or directory: 'score.txt'</code></td><td><code>open()</code> 找不到文件。检查三件事：文件名拼对没、文件和程序在不在同一个文件夹、扩展名有没有漏。<strong>读文件用 <code>'r'</code> 时文件必须已存在。</strong></td></tr><tr><td><code>NameError: name 'abc' is not defined</code></td><td><code>eval('abc')</code> 报的。本来想算字符串，结果忘了写引号，Python 就去找一个叫 <code>abc</code> 的变量了。检查引号。</td></tr><tr><td>写好的 <code>sorted(...)</code> 好像「没生效」</td><td>不是报错，是没接住返回值。<code>sorted()</code> 不改原列表，得写 <code>new = sorted(L)</code>；要改原列表直接用 <code>L.sort()</code>（而且它不返回值）。</td></tr><tr><td><code>round()</code> 的结果和手工算的不一样</td><td>正常现象，见 9.3。0.5 的地方会往偶数靠，加上小数本身存不准。<code>round()</code> 只适合拿来显示，精确计算另想办法。</td></tr><tr><td><code>int(input(...))</code> 用户输了个带小数点的数字就崩</td><td>用户输 <code>18.5</code> 时 <code>int()</code> 会报 <code>ValueError</code>。不确定用户会输整数还是小数时，用 <code>float(input(...))</code>（第 4 篇讲过这一点）。</td></tr></tbody></table>
+
+    <h2 id="quiz">十二、随堂自测（10 题）</h2>
+    <p>点击选项即可判分，答错的题会立刻显示解析。答完可以看到正确率和错题清单，也可以重新答一遍。</p>
+    <div class="quiz" id="quizBox">
+      <div class="quiz-bar">
+        <span id="quizProgress">已答 0 / 10 · 正确 0</span>
+        <span class="quiz-score" id="quizScore">—</span>
+        <button class="quiz-reset" id="quizReset" type="button">重新答题</button>
+      </div>
+      <div class="q" data-no="1" data-answer="1">
+        <p class="q-title"><span class="q-no">1</span>关于「内置函数」，下面哪个说法是对的？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 必须先 import 才能用</li>
+          <li class="opt" data-i="1">B. 不用导入，装好 Python 就能直接用</li>
+          <li class="opt" data-i="2">C. 必须先自己用 def 定义出来</li>
+          <li class="opt" data-i="3">D. 只能用在数字上</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>内置函数是 Python 自带的，<code>print()</code>、<code>len()</code> 装好就能用，不用 import、不用 def。要 import 的是模块里的函数（如 <code>math.sqrt</code>）；内置函数能处理数字、字符串、列表等各种类型，不只数字。</div>
+      </div>
+      <div class="q" data-no="2" data-answer="0">
+        <p class="q-title"><span class="q-no">2</span>divmod(10, 3) 返回什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. (3, 1)</li>
+          <li class="opt" data-i="1">B. 3</li>
+          <li class="opt" data-i="2">C. 1</li>
+          <li class="opt" data-i="3">D. (1, 3)</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>divmod 一次返回「商和余数」，顺序是<strong>先商后余</strong>：10 除以 3 商 3 余 1，所以是 <code>(3, 1)</code>。写成 <code>(1, 3)</code> 就把顺序记反了。它等价于 <code>(10 // 3, 10 % 3)</code>，还能一次拆开：<code>q, r = divmod(10, 3)</code>。</div>
+      </div>
+      <div class="q" data-no="3" data-answer="2">
+        <p class="q-title"><span class="q-no">3</span>round(3.14159, 2) 返回什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 3</li>
+          <li class="opt" data-i="1">B. 3.1</li>
+          <li class="opt" data-i="2">C. 3.14</li>
+          <li class="opt" data-i="3">D. 3.142</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>第二个参数是<strong>保留几位小数</strong>，2 就保留两位，得到 <code>3.14</code>。不写第二个参数才是取整（会得到 3）。写 3 则会得到 <code>3.142</code>，别把参数和结果看混了。</div>
+      </div>
+      <div class="q" data-no="4" data-answer="2">
+        <p class="q-title"><span class="q-no">4</span>用户输入的是文字 "18"，想把它变成整数拿来算，该用哪个？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. str("18")</li>
+          <li class="opt" data-i="1">B. float("18")</li>
+          <li class="opt" data-i="2">C. int("18")</li>
+          <li class="opt" data-i="3">D. bool("18")</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>要整数就用 <code>int()</code>。<code>str()</code> 是变成文字，本来就已经是文字了；<code>float()</code> 得到的是 <code>18.0</code>（小数）；<code>bool()</code> 得到真假值，非空文字都是 <code>True</code>，跟算数没关系。</div>
+      </div>
+      <div class="q" data-no="5" data-answer="1">
+        <p class="q-title"><span class="q-no">5</span>list(enumerate(["a", "b"], start=1)) 的结果是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. [("a", 1), ("b", 2)]</li>
+          <li class="opt" data-i="1">B. [(1, "a"), (2, "b")]</li>
+          <li class="opt" data-i="2">C. [1, 2]</li>
+          <li class="opt" data-i="3">D. ["a", "b"]</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>enumerate 给出的是<strong>「序号在前、元素在后」的元组</strong>，即 <code>(编号, 元素)</code>。选项 A 把顺序弄反了。不写 <code>start</code> 时序号<strong>从 0 开始</strong>，写 <code>start=1</code> 才是从 1 开始。</div>
+      </div>
+      <div class="q" data-no="6" data-answer="1">
+        <p class="q-title"><span class="q-no">6</span>关于 sorted([3, 1, 2])，下面哪个说法对？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 和列表的 .sort() 完全一样，随便用</li>
+          <li class="opt" data-i="1">B. sorted() 返回新列表、原列表不变；.sort() 原地排序并返回 None</li>
+          <li class="opt" data-i="2">C. .sort() 返回排好序的新列表，sorted() 会改原列表</li>
+          <li class="opt" data-i="3">D. sorted() 只能给字符串排序</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>带 <code>ed</code> 的是函数：<code>sorted()</code> 算出一份新列表，原列表一点没变。不带 <code>ed</code> 的是方法：<code>L.sort()</code> 直接改 L 自己，<strong>而且不返回东西（返回 None）</strong>，所以不能写 <code>new = L.sort()</code>。数字、字符串、元组都能排。</div>
+      </div>
+      <div class="q" data-no="7" data-answer="3">
+        <p class="q-title"><span class="q-no">7</span>下面哪个写法得到的<strong>就是列表</strong> [2, 4, 6]？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. map(lambda x: x * 2, [1, 2, 3])</li>
+          <li class="opt" data-i="1">B. list(filter(lambda x: x % 2 == 0, [1, 2, 3]))</li>
+          <li class="opt" data-i="2">C. filter(lambda x: x * 2, [1, 2, 3])</li>
+          <li class="opt" data-i="3">D. list(map(lambda x: x * 2, [1, 2, 3]))</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>只有 <code>list(map(...))</code> 才是列表 [2, 4, 6]。A 少了 <code>list()</code>，得到的是个 map 对象；C 是 filter 对象；B 虽然是列表，但 filter 会按「非 0 为真」筛选，[1,2,3] 里只留下 2，结果是 [2] 不是 [2,4,6]。</div>
+      </div>
+      <div class="q" data-no="8" data-answer="0">
+        <p class="q-title"><span class="q-no">8</span>ord("朱") 和 chr(26417) 这两个函数的关系是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. ord 把字符变成编号，chr 把编号变回字符，两者互为反向操作</li>
+          <li class="opt" data-i="1">B. 两个都是把字符变成编号</li>
+          <li class="opt" data-i="2">C. chr 把字符变成编号，ord 把编号变回字符</li>
+          <li class="opt" data-i="3">D. ord 只能用在英文字母上</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>ord 来自 order（序号），字符 → 编号；chr 来自 character，编号 → 字符，正好反过来，所以 <code>ord('朱')</code> 是 26417、<code>chr(26417)</code> 又是 '朱'。选项 C 把方向说反了；中文、符号都有编号，不只英文字母。</div>
+      </div>
+      <div class="q" data-no="9" data-answer="2">
+        <p class="q-title"><span class="q-no">9</span>写 len(10) 会发生什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 返回 10</li>
+          <li class="opt" data-i="1">B. 返回 1</li>
+          <li class="opt" data-i="2">C. 报 TypeError: object of type 'int' has no len()</li>
+          <li class="opt" data-i="3">D. 返回 0</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>len 只能量「一串东西」——字符串、列表、元组、字典、集合。单个数字没有「长度」这个概念，所以直接报错。想量一个数字，先想清楚你到底要量什么（比如量它转成字符串后有几位，就写 <code>len(str(10))</code>）。</div>
+      </div>
+      <div class="q" data-no="10" data-answer="3">
+        <p class="q-title"><span class="q-no">10</span>写 max([]) 会发生什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 返回 0，因为没有最大值</li>
+          <li class="opt" data-i="1">B. 返回 None</li>
+          <li class="opt" data-i="2">C. 返回空列表 []</li>
+          <li class="opt" data-i="3">D. 报 ValueError: max() iterable argument is empty</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>空的东西里挑不出最大值，Python 会报 <code>ValueError</code> 而不是猜一个 0 或 None 给你。如果数据真可能为空，要提前给个兜底：<code>max([], default=0)</code>。这也是为什么打分、比大小的代码要先判断列表是不是空的。</div>
+      </div>
+      <div class="q-result" id="quizResult"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = '☀️ 浅色';
+  }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+<script>
+  /* ===== 随堂自测逻辑 ===== */
+  (function () {
+    const box = document.getElementById('quizBox');
+    if (!box) return;
+
+    const qs = Array.from(box.querySelectorAll('.q'));
+    const total = qs.length;
+    const bar = document.getElementById('quizProgress');
+    const scoreEl = document.getElementById('quizScore');
+    const resetBtn = document.getElementById('quizReset');
+    const resultEl = document.getElementById('quizResult');
+    let done = 0;
+    let right = 0;
+    const wrongList = [];
+
+    function update() {
+      bar.textContent = '已答 ' + done + ' / ' + total + ' · 正确 ' + right;
+      if (done === 0) {
+        scoreEl.textContent = '—';
+      } else if (done < total) {
+        scoreEl.textContent = Math.round(right / done * 100) + '%';
+      } else {
+        scoreEl.textContent = '正确率 ' + Math.round(right / total * 100) + '%（' + right + '/' + total + '）';
+      }
+      if (done === total) {
+        let msg;
+        if (wrongList.length === 0) {
+          msg = '🎉 全部答对，这一节你掌握得很扎实，可以进入下一个教程了。';
+        } else {
+          msg = '错题：第 ' + wrongList.join('、') + ' 题。建议回到对应小节再看一遍，' +
+                '然后点右上角「重新答题」检验一次。';
+        }
+        resultEl.textContent = msg;
+        resultEl.classList.add('show');
+      } else {
+        resultEl.classList.remove('show');
+      }
+    }
+
+    function pick(q, li) {
+      if (q.classList.contains('answered')) return;
+      q.classList.add('answered');
+      const ans = Number(q.dataset.answer);
+      const picked = Number(li.dataset.i);
+
+      q.querySelectorAll('.opt').forEach(function (o) {
+        const i = Number(o.dataset.i);
+        if (i === ans) o.classList.add('correct');
+        else if (i === picked) o.classList.add('wrong');
+        else o.classList.add('dim');
+      });
+
+      if (picked === ans) {
+        right++;
+        q.classList.add('passed');
+      } else {
+        q.classList.add('failed');
+        wrongList.push(q.dataset.no || (qs.indexOf(q) + 1));
+      }
+      done++;
+      update();
+    }
+
+    box.addEventListener('click', function (e) {
+      const li = e.target.closest('.opt');
+      if (!li) return;
+      const q = li.closest('.q');
+      if (q) pick(q, li);
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        qs.forEach(function (q) {
+          q.classList.remove('answered', 'passed', 'failed');
+          q.querySelectorAll('.opt').forEach(function (o) {
+            o.classList.remove('correct', 'wrong', 'dim');
+          });
+        });
+        done = 0;
+        right = 0;
+        wrongList.length = 0;
+        update();
+        document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    update();
+  })();
+</script>
+
+<script>
+// === 增强：代码块复制 ===
+(function () {
+  function clipboardWrite(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-2000px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('copy failed'));
+    });
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+  document.querySelectorAll('.cb-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.cb');
+      var code = box ? box.querySelector('code') : null;
+      if (!code) { return; }
+      var text = code.innerText.replace(/\u00a0/g, ' ').replace(/\n+$/, '');
+      clipboardWrite(text).then(
+        function () { flash(btn, '已复制'); },
+        function () { flash(btn, '复制失败'); }
+      );
+    });
+  });
+})();
+</script>
+
+<script>
+// === 增强：侧边目录可折叠 ===
+(function () {
+  /* 侧边目录：默认收起成左侧竖排书签，随页面滚动常驻；点它展开/收起 */
+  var sb = document.querySelector('.sidebar');
+  if (!sb || sb.querySelector('.sb-tab')) { return; }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var D_MENU  = 'M3 5h14M3 10h14M3 15h14';      /* ☰：内联 SVG 画，避免 ☰ 字符渲染成豆腐块 */
+  var D_CLOSE = 'M5.5 5.5l9 9M14.5 5.5l-9 9';
+  var D_RIGHT = 'M7.5 4.5l5 5.5-5 5.5';         /* › */
+  var D_LEFT  = 'M12.5 4.5l-5 5.5 5 5.5';       /* ‹ */
+
+  function setD(el, d) {
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    el.appendChild(p);
+  }
+  function mkIcon(cls, d) {
+    var el = document.createElementNS(NS, 'svg');
+    el.setAttribute('class', cls);
+    el.setAttribute('viewBox', '0 0 20 20');
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.9');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    setD(el, d);
+    return el;
+  }
+  function narrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+  }
+
+  /* 把 <h3>目录</h3> 与原有链接重新组织：书签 + 面板 */
+  var head = sb.querySelector('h3');
+  var label = head ? head.textContent.trim() : '目录';
+  if (head && head.parentNode) { head.parentNode.removeChild(head); }
+
+  var list = document.createElement('nav');
+  list.className = 'sb-list';
+  list.setAttribute('aria-label', label);
+  while (sb.firstChild) { list.appendChild(sb.firstChild); }
+
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'sb-tab';
+  tab.setAttribute('aria-controls', 'sbPanel');
+  var ico = mkIcon('sb-ico', D_MENU);
+  var vt = document.createElement('span');
+  vt.className = 'sb-vt';
+  vt.textContent = label;
+  var chev = mkIcon('sb-chev', D_RIGHT);
+  tab.appendChild(ico);
+  tab.appendChild(vt);
+  tab.appendChild(chev);
+
+  var panel = document.createElement('div');
+  panel.className = 'sb-panel';
+  panel.id = 'sbPanel';
+  var pTitle = document.createElement('div');
+  pTitle.className = 'sb-head';
+  pTitle.textContent = label;
+  panel.appendChild(pTitle);
+  panel.appendChild(list);
+
+  /* 深色/浅色切换：从右上角挪进书签内部的顶部图标区（挪节点不会丢它原有的点击事件） */
+  var theme = document.getElementById('themeBtn');
+
+  var col = document.createElement('div');
+  col.className = 'sb-col';
+  if (theme) {
+    theme.setAttribute('title', '切换深色 / 浅色主题');
+    theme.setAttribute('aria-label', '切换深色 / 浅色主题');
+    col.appendChild(theme);
+  }
+  col.appendChild(tab);
+
+  sb.appendChild(col);
+  sb.appendChild(panel);
+  sb.classList.add('sb-ready', 'sb-noanim');
+  document.body.classList.add('sb-on');
+
+  var mask = document.createElement('div');
+  mask.className = 'sb-mask';
+  mask.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(mask);
+
+  function isOpen() { return sb.classList.contains('sb-expanded'); }
+
+  /* 量出「目录里每个标题都不折行」需要的面板宽度，写进 --sb-panel-w，让展开态宽度自适应 */
+  function fitWidth() {
+    var keep = panel.getAttribute('style');
+    panel.style.cssText = 'display:block;position:absolute;left:-99999px;top:0;width:auto;' +
+                          'white-space:nowrap;overflow:visible;';
+    var need = Math.ceil(panel.getBoundingClientRect().width);
+    if (keep === null) { panel.removeAttribute('style'); } else { panel.setAttribute('style', keep); }
+    if (!need) { return; }
+    /* 上限：宽屏不超过视口 46%，窄屏（抽屉是浮层）可占到 90%，都只为防个别超长标题把正文挤没 */
+    var cap = narrow() ? window.innerWidth * 0.90 - 44 : window.innerWidth * 0.46;
+    sb.style.setProperty('--sb-panel-w', Math.min(need, Math.max(Math.round(cap), 196)) + 'px');
+  }
+
+  /* 让「垂直居中」落在布局盒上：把 sticky 的 top 设成 50vh - 自身高度的一半。
+     与 CSS 里的注释是同一件事；这里每次尺寸变化都重算一次（收起↔展开高度差很大：190 ↔ 面板高）。 */
+  var lastTop = '';
+  function centerTop() {
+    var h = sb.getBoundingClientRect().height;
+    if (!h) { return; }
+    var v = 'calc(50vh - ' + (h / 2).toFixed(1) + 'px)';
+    if (v === lastTop) { return; }
+    lastTop = v;
+    sb.style.setProperty('--sb-top', v);
+  }
+
+  function setOpen(open) {
+    sb.classList.toggle('sb-expanded', open);
+    document.body.classList.toggle('sb-open', open);
+    tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tab.setAttribute('aria-label', open ? '收起目录' : '展开目录');
+    tab.title = open ? '收起目录' : '展开目录';
+    vt.textContent = open ? '收起' : label;
+    setD(ico, open ? D_CLOSE : D_MENU);
+    setD(chev, open ? D_LEFT : D_RIGHT);
+    centerTop();   /* 收起/展开高度差很大，每次开合都重新居中 */
+  }
+  setOpen(false);   /* 默认收起 */
+  fitWidth();       /* 收起状态下面板是 display:none，正好用离屏副本量宽度，量完即恢复 */
+  centerTop();
+  /* 字体（含回退）落定后再量一次，避免首帧用错字体算出偏窄的宽度 */
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { fitWidth(); centerTop(); }, function () {});
+  }
+
+  tab.addEventListener('click', function () { setOpen(!isOpen()); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); }
+  });
+  /* 展开状态下，点「书签 / 面板」之外的任意空白处（正文、页眉、遮罩…）自动收起。
+     用 click 而不是 pointerdown：宽屏收起会让正文变宽重排，若在鼠标抬起前就重排，
+     这一下点击可能落空（点正文链接会「没反应」）。用 click 则原点击先正常派发完，再收起。 */
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) { return; }
+    var t = e.target;
+    if (t && sb.contains(t)) { return; }   /* 点在自己身上（书签、面板、主题按钮）不收起 */
+    setOpen(false);
+  });
+  /* 窄屏是抽屉，点目录项跳转后自动收起；宽屏是分栏，留着方便连着点 */
+  list.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && isOpen() && narrow()) { setOpen(false); }
+  });
+  mask.addEventListener('click', function () { setOpen(false); });
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!narrow() && isOpen()) { document.body.classList.remove('sb-open'); }
+    /* 视口宽度变化较大时重量一次（窄屏/宽屏的上限不同；字号是 px 固定的，无需每次都量） */
+    if (Math.abs(window.innerWidth - lastW) > 60) { lastW = window.innerWidth; fitWidth(); }
+    centerTop();   /* 视口高度变了（含手机地址栏收放）→ top 里的 50vh 跟着变，但重算一次更稳 */
+  });
+  /* 兜底：面板高度会随内容换行/字体加载而变，任何尺寸变化都重新居中一次（值没变时 centerTop 直接返回，
+     不会和 ResizeObserver 形成回环——改 top 不影响尺寸） */
+  if (window.ResizeObserver) { new ResizeObserver(centerTop).observe(sb); }
+  /* 初次布局落下后再放开过渡，之后的展开/收起才带宽度动画 */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { sb.classList.remove('sb-noanim'); });
+  });
+})();
+</script>
+
+<script>
+// === 增强：页眉北京时间 ===
+(function () {
+  var el = document.querySelector('.byline .bj-clock');
+  if (!el) { return; }
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function beijingNow() {
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+  }
+  function render() {
+    var d = beijingNow();
+    el.textContent = d.getFullYear() + '年' + pad(d.getMonth() + 1) + '月' + pad(d.getDate()) + '日 '
+      + WEEK[d.getDay()] + ' '
+      + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+
+</body>
+</html>
