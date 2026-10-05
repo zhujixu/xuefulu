@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python 基础教程 语法规范</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --text: #333;
+    --card: #fff;
+    --code-bg: #eef1f5;
+    --code-text: #c7254e;
+    --pre-bg: #282c34;
+    --pre-text: #abb2bf;
+    --border: #d0d7de;
+    --table-even: #f6f8fa;
+    --h1: #1a1a1a;
+    --h2: #3776ab;
+    --ai-bg: #edf2fe;
+    --ai-border: #4c6ef5;
+    --tip-bg: #fff8e1;
+    --tip-border: #ffd43b;
+  }
+  body.dark {
+    --bg: #1e1e1e;
+    --text: #d4d4d4;
+    --card: #2a2a2a;
+    --code-bg: #3a3a3a;
+    --code-text: #ff9e9e;
+    --pre-bg: #111;
+    --pre-text: #ccc;
+    --border: #444;
+    --table-even: #2f2f2f;
+    --h1: #f0f0f0;
+    --h2: #6cb6ff;
+    --ai-bg: #232842;
+    --ai-border: #748ffc;
+    --tip-bg: #3a3320;
+    --tip-border: #ffd43b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .3s, color .3s;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+  /* 侧边目录 */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    font-size: 14px;
+  }
+  .sidebar h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--h2);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s, color .2s;
+  }
+  .sidebar a:hover {
+    background: var(--code-bg);
+    color: var(--h2);
+  }
+  /* 主内容 */
+  .content { flex: 1; min-width: 0; }
+  /* 页面主标题（可点击） */
+  .page-title {
+    display: block;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #3776ab, #2a5d8a);
+    padding: 18px 20px;
+    border-radius: 10px;
+    margin: 0 0 24px 0;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(55,118,171,.3);
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .page-title:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(55,118,171,.45);
+  }
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #3776ab;
+    padding-bottom: 10px;
+    color: var(--h1);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 32px;
+    color: var(--h2);
+    border-left: 5px solid #ffd43b;
+    padding-left: 10px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 17px;
+    margin-top: 22px;
+    color: var(--text);
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    color: var(--code-text);
+  }
+  pre {
+    background: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: #3776ab; color: #fff; }
+  tr:nth-child(even) { background: var(--table-even); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+
+  .ai-tip {
+    background: var(--ai-bg);
+    border-left: 5px solid var(--ai-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .ai-tip p { margin: 6px 0; }
+  .ai-tip p:first-child { margin-top: 0; }
+  .ai-tip p:last-child { margin-bottom: 0; }
+  .warn {
+    background: #ffe6e6;
+    border-left: 5px solid #e53935;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  body.dark .warn { background: #4a1f1f; color: #ffd4d4; }
+  /* 超链接样式 */
+  a.link {
+    color: #3776ab;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  a.link:hover { color: #e53935; }
+  body.dark a.link { color: #6cb6ff; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+
+  /* 深色切换按钮 */
+  #themeBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  #themeBtn:hover { background: #2a5d8a; }
+
+  /* 响应式 */
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; position: static; order: -1; }
+    #themeBtn { top: 10px; right: 10px; padding: 6px 12px; font-size: 13px; }
+    .page-title { font-size: 16px; padding: 14px; }
+  }
+
+  /* ===== 随堂自测（选择题模块） ===== */
+  .quiz {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .quiz-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .quiz-bar .quiz-score { font-weight: bold; color: var(--h2); }
+  .quiz-reset {
+    margin-left: auto;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .quiz-reset:hover { background: #2a5d8a; }
+  .q {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 4px;
+  }
+  .q:first-of-type { border-top: none; }
+  .q-title {
+    font-weight: bold;
+    margin: 0 0 10px;
+    line-height: 1.7;
+  }
+  .q-no {
+    display: inline-block;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: #3776ab;
+    color: #fff;
+    font-size: 13px;
+    font-weight: normal;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .q.passed .q-no { background: #2e9b52; }
+  .q.failed .q-no { background: #e53935; }
+  ul.q-opts {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  li.opt {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  li.opt:hover { border-color: var(--h2); }
+  .q.answered li.opt { cursor: default; }
+  .q.answered li.opt:hover { border-color: var(--border); }
+  li.opt.correct {
+    background: #e6f7ec;
+    border-color: #2e9b52;
+    color: #1b6b39;
+    font-weight: bold;
+  }
+  li.opt.wrong {
+    background: #ffe6e6;
+    border-color: #e53935;
+    color: #a01f1c;
+  }
+  li.opt.correct:hover, li.opt.wrong:hover { border-color: inherit; }
+  li.opt.dim { opacity: .5; }
+  body.dark li.opt.correct { background: #12351f; border-color: #3fbf6b; color: #9ff0bb; }
+  body.dark li.opt.wrong { background: #3a1a1a; border-color: #e53935; color: #ffb3b3; }
+  .q-explain {
+    display: none;
+    margin: 12px 0 4px;
+    padding: 10px 14px;
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .q.answered .q-explain { display: block; }
+  .q-result {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .q-result.show { display: block; }
+/* === 增强：代码块 / 署名 === */
+.cb { margin: 16px 0; border-radius: 8px; overflow: hidden; background: var(--pre-bg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.cb-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+          padding: 6px 12px; background: rgba(255,255,255,.07);
+          border-bottom: 1px solid rgba(255,255,255,.09); }
+.cb-lang { font-size: 12px; color: #9aa4b2; font-family: Consolas, Monaco, monospace; letter-spacing: .5px; }
+.cb-copy { background: transparent; border: 1px solid #4b5263; color: #c8cdd8; border-radius: 5px;
+           padding: 2px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+           transition: background .15s, border-color .15s, color .15s; }
+.cb-copy:hover { background: #3776ab; border-color: #3776ab; color: #fff; }
+.cb-copy.ok { background: #2ea043; border-color: #2ea043; color: #fff; }
+.cb-body { display: flex; align-items: stretch; }
+.cb-lines { flex: 0 0 auto; padding: 16px 10px 16px 14px; text-align: right; color: #636d83;
+            font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            border-right: 1px solid rgba(255,255,255,.08); }
+.cb-lines span { display: block; }
+.cb-body pre { flex: 1 1 auto; min-width: 0; margin: 0; padding: 16px 16px 16px 14px;
+               border-radius: 0; background: transparent; }
+.cb-body pre code { padding: 0; }
+/* 语法高亮：VS Code Dark+ 配色 */
+.tok-kw  { color: #c586c0; }
+.tok-kw2 { color: #569cd6; }
+.tok-str { color: #ce9178; }
+.tok-num { color: #b5cea8; }
+.tok-cmt { color: #6a9955; font-style: italic; }
+.tok-fn  { color: #dcdcaa; }
+.tok-cls { color: #4ec9b0; }
+.tok-op  { color: #d4d4d4; }
+/* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
+.warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
+.warn .warn-links a { word-break: break-all; }
+/* 页眉署名（尾缀固定，开头的「实时北京时间」由 CLOCK_JS 每秒刷新） */
+.byline { text-align: center; font-size: 14px; opacity: .78; margin: -14px 0 20px;
+          letter-spacing: .5px; }
+.byline a { color: var(--h2); text-decoration: none; }
+.byline a:hover { text-decoration: underline; }
+/* 时钟数字等宽：避免每秒跳字时整行左右抖动 */
+.byline .bj-clock { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+/* === 增强：侧边目录可折叠 === */
+/* 侧边目录＝左侧竖排书签，默认收起。样式全部依附 .sb-ready（JS 加的），无 JS 时完全不影响原版式 */
+
+/* 外层：收 44px / 展 44+面板；sticky 钉在左侧，随页面滚动常驻，且任何状态都垂直居中 */
+.sidebar.sb-ready {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 44px;
+  /* 上限比「视口高 − 48」再紧 24px：保证 top = 50vh − H/2 恒 ≥ 32px（父容器上内边距）。
+     低于这个值时（矮窗口）书签的静态位置比粘住线还靠下，sticky 只能把元素往下推、不能往上提，
+     于是头几像素会跟着正文滚——留 24px 余量后永远是被推到线上，任何窗口高都不例外。 */
+  max-height: calc(100vh - 72px);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  position: sticky;
+  /* 居中必须落在**布局盒**上：top = 50vh - 自身高度的一半，高度由 JS 实测写进 --sb-top。
+     ⚠️ 不能用 transform: translateY(-50%) 做居中——transform 只挪画面、不挪盒子，而 sticky 判
+     「不越出父容器」时按**没挪过的盒子**算：滚到页底（父容器底边正好贴到视口底）整枚书签会被顶高。
+     导航页父容器只 3744px 高，实测展开态在页底偏了 130px（讲义父容器一万八，从没碰到这个上限）。
+     改成 top: calc(50vh - H/2) 后布局盒本身就居中，底部只占 50vh + H/2 ≤ 视口高（H ≤ 100vh-72px）。 */
+  top: var(--sb-top, 50vh);
+  /* 还有第二处夹取要放开：sticky 要求元素**底部也不越出父容器底边**。
+     `.layout` 后面若还有页脚（导航页有 108px 页脚 + 30px 外边距），滚到最底时父容器底边升到视口里，
+     书签就被顶高——而且只在小窗口暴露：视口越高，页脚占比越小，越碰不到。实测导航页展开态
+     （H=590）页底偏移：视口 1113px 时 0，713px 时 −84px，533px 时 −122px，413px 时 −122px。
+     父容器底边之外本来就没有内容要避让，给一个足够大的负 margin-bottom 即可——负外边距只**放宽
+     允许范围**，不改元素在流里的位置（实测文档高、其余滚动位置逐像素不变）。−100vh 远超任何页脚高度。 */
+  margin-bottom: -100vh;
+  align-self: flex-start;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  z-index: 30;
+}
+/* 首次挂载时先禁用过渡，避免「原版 240px 宽 → 收起 44px」在加载瞬间抖一下（JS 两帧后移除本类） */
+.sidebar.sb-ready.sb-noanim { transition: none !important; }
+.sidebar.sb-ready.sb-expanded {
+  /* 面板宽度由 JS 量出「最长标题不折行」所需宽度，写进 --sb-panel-w（默认 196px） */
+  width: calc(44px + var(--sb-panel-w, 196px));
+}
+
+/* 工具条＝一枚 44px 宽的竖排书签：深色切换图标区在上、目录区在下，**共用同一块渐变底色与投影**，
+   视觉上是一整枚按钮（内部是两个各自可点的功能区——button 不能嵌套 button，所以用本列承载外观） */
+.sb-col {
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 0;              /* 不要圆角：与正文左边缘齐平的方角书签 */
+  background: linear-gradient(180deg, #5d9bd4 0%, #3776ab 58%, #2b5f8d 100%);
+  box-shadow: 0 6px 18px rgba(55,118,171,.32), inset 0 1px 0 rgba(255,255,255,.26);
+  transition: transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dark .sb-col { background: linear-gradient(180deg, #4a8bc2 0%, #30699b 58%, #245078 100%); }
+.sb-col:hover { transform: translateX(3px); box-shadow: 0 9px 26px rgba(55,118,171,.46), inset 0 1px 0 rgba(255,255,255,.26); }
+/* 展开时书脊与面板必须严丝合缝，悬停不再位移 */
+.sidebar.sb-ready.sb-expanded .sb-col:hover { transform: none; }
+
+/* 竖排书签本体（目录区）：透明，底色与投影都由 .sb-col 提供，两块功能区共用一枚按钮的外观 */
+.sb-tab {
+  flex: 1 1 auto;                /* 在这一列里占满剩余高度：收起＝152px，展开＝随面板一起拉长 */
+  box-sizing: border-box;
+  width: 44px;
+  height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 15px 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-tab:hover { background-color: rgba(255,255,255,.1); }
+.sb-tab:active { background-color: rgba(255,255,255,.2); }
+.sb-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.sb-tab .sb-ico { display: block; width: 17px; height: 17px; flex: none; }
+.sb-tab .sb-vt {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  letter-spacing: .26em;
+  white-space: nowrap;
+}
+.sb-tab .sb-chev { display: block; width: 11px; height: 11px; flex: none; opacity: .72; }
+
+/* 深色/浅色切换：不再单独占一格，而是并入书签内部——书签顶部一个 44×38 的图标区，
+   底部一条极淡的分隔线与目录区分开，共用 .sb-col 的渐变底色，看起来就是一整枚按钮。
+   图标一律用 background-image 画、不用文字：页面自身脚本每次切换都会改写它的 textContent，
+   塞子元素会被冲掉。整段挂在 body.sb-on 下：JS 没跑（没这个类）时按钮仍是原版右上角样式。 */
+body.sb-on #themeBtn {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;                  /* 隐掉「🌙 深色」文字，只留图标 */
+  line-height: 0;
+  text-indent: -9999px;
+  color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sb-on #themeBtn:hover { background-color: rgba(255,255,255,.12); }
+body.sb-on #themeBtn:active { background-color: rgba(255,255,255,.22); }
+body.sb-on #themeBtn:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 深色模式下换成太阳图标（底色仍由 .sb-col 提供，随 body.dark 自动加深） */
+body.dark.sb-on #themeBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4.4'/%3E%3Cpath d='M12 1.4v2.2M12 20.4v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.4 12h2.2M20.4 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6'/%3E%3C/svg%3E");
+}
+
+/* 展开出来的目录面板（沿用原版卡片观感，方角） */
+.sb-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: none;
+  padding: 16px 14px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 6px 22px rgba(0,0,0,.08);
+}
+.sidebar.sb-ready.sb-expanded .sb-panel { display: block; animation: sbIn .22s ease; }
+@keyframes sbIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.sb-head {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--h2);
+}
+
+/* 遮罩：只在窄屏（抽屉模式）用得上 */
+.sb-mask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+body.sb-open .sb-mask { opacity: 1; visibility: visible; }
+
+@media (max-width: 820px) {
+  /* 窄屏：书签脱离文档流钉在左边缘；展开则是整屏抽屉，正文不重排 */
+  .sidebar.sb-ready {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    max-height: none;
+    margin-bottom: 0;   /* 抽屉是 fixed，没有父容器可夹，负外边距在这里无意义 */
+    transition: none;
+  }
+  .sb-tab { height: 138px; }
+  .sidebar.sb-ready.sb-expanded {
+    top: 0;
+    transform: none;
+    width: min(92vw, calc(44px + var(--sb-panel-w, 196px)));
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+  }
+  .sb-mask { display: block; }
+  body.sb-on .layout { padding-left: 60px; }   /* 给固定的书签让出位置，避免压住正文 */
+}
+
+@media print {
+  .sb-mask, .sidebar.sb-ready { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<button id="themeBtn">🌙 深色</button>
+
+<div class="layout">
+
+  <!-- 侧边目录 -->
+  <aside class="sidebar">
+    <h3>目录</h3>
+    <a href="#sec1">一、先认识这四个概念</a>
+    <a href="#sec2">二、缩进：Python 靠“台阶”分层</a>
+    <a href="#sec3">三、注释：写给人的话</a>
+    <a href="#sec4">四、变量：给数据起个名字</a>
+    <a href="#sec5">五、关键字：Python 的自留词</a>
+    <a href="#sec6">六、四个概念一起用：BMI 小计算器</a>
+    <a href="#sec7">七、新手最容易踩的坑</a>
+    <a href="#quiz">八、随堂自测</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <a class="page-title" href="1-教程导航.html">
+      Python 基础教程 语法规范
+    </a>
+
+    
+    <div class="byline"><span class="bj-clock">2026年09月28日 星期一 20:09:29</span> 广州城市理工学院 经济学院 朱继绪</div>
+
+    <div class="warn">
+      <span class="warn-links">常用网址：学府路1号 <a class="link" href="https://xuefulu.ai/" target="_blank">https://xuefulu.ai</a>　｜　下载 Python <a class="link" href="https://xuefulu.ai/Python.html" target="_blank">https://xuefulu.ai/Python.html</a>　｜　下载 TraeCode <a class="link" href="https://xuefulu.ai/TraeCode.html" target="_blank">https://xuefulu.ai/TraeCode.html</a></span>
+    </div>
+
+    <h1>Python 基础语法：缩进、注释、变量、关键字</h1>
+
+    <h2 id="sec1">一、先认识这四个概念</h2>
+
+    <p>先看一小段真实的 Python 程序。现在还不用全懂，只要先有个印象。</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-cmt"># 这是一个小程序：问名字，然后打招呼</span>
+name <span class="tok-op">=</span> <span class="tok-fn">input</span>(<span class="tok-str">"你叫什么名字？"</span>)     <span class="tok-cmt"># name 是变量</span>
+<span class="tok-kw">if</span> name <span class="tok-op">==</span> <span class="tok-str">"小明"</span>:                 <span class="tok-cmt"># if 是关键字</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"你好，小明！"</span>)          <span class="tok-cmt"># 行首 4 个空格，就是缩进</span>
+<span class="tok-kw">else</span>:                              <span class="tok-cmt"># else 也是关键字</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"你好，"</span> <span class="tok-op">+</span> name <span class="tok-op">+</span> <span class="tok-str">"！"</span>)</code></pre>
+</div>
+</div>
+    <p>这段代码里，藏着我们要学的四个概念：</p>
+    <table>
+      <thead>
+        <tr><th>你看到的</th><th>它叫什么</th><th>一句话作用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>行首那 4 个空格</td><td><strong>缩进</strong></td><td>决定这行代码“归谁管”</td></tr>
+        <tr><td><code>#</code> 后面的话</td><td><strong>注释</strong></td><td>写给人的说明，电脑不看</td></tr>
+        <tr><td><code>name</code></td><td><strong>变量</strong></td><td>给数据起的名字</td></tr>
+        <tr><td><code>if</code>、<code>else</code></td><td><strong>关键字</strong></td><td>Python 自己留用的词</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">
+      这一节只要记住一句话就够了：<strong>缩进定层级，注释给人看，变量起名字，关键字不能用。</strong>
+    </div>
+    <p>下面四节，我们一个一个拆开讲。</p>
+
+    <h2 id="sec2">二、缩进：Python 靠“台阶”分层</h2>
+
+    <p>在别的编程语言里，缩进只是“好看”；在 Python 里，缩进是<strong>语法</strong>——它不是装饰，是内容本身。</p>
+    <p>打个比方：写作文时，段落开头空两格，是为了让人一眼看出“新的一段开始了”。Python 的缩进更严格，它靠行首空格的多少，判断这行代码“属于谁”。</p>
+
+    <h3>三条必须记住的规矩</h3>
+    <ol>
+      <li><strong>同一层，空格数要一样。</strong>大家都缩 4 个空格，就都写 4 个，别有的 4 个、有的 2 个。</li>
+      <li><strong>空格和 Tab 别混着用。</strong>看着一样宽，电脑认得不一样，会报错。</li>
+      <li><strong>冒号 <code>:</code> 后面的下一行，一定要缩进。</strong><code>if</code>、<code>else</code>、<code>for</code>、<code>while</code>、<code>def</code> 结尾的那个冒号，就是在说“下面是它的内部”。</li>
+    </ol>
+
+    <h3>实际用在哪里</h3>
+    <p>凡是“满足条件才做”“重复做几次”的地方，都要靠缩进圈出范围。这是它最主要的用途。</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code>age <span class="tok-op">=</span> <span class="tok-num">20</span>
+
+<span class="tok-kw">if</span> age <span class="tok-op">&gt;=</span> <span class="tok-num">18</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">"成年了"</span>)        <span class="tok-cmt"># 缩进了 → 只有 age ≥ 18 才执行</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"可以考驾照"</span>)     <span class="tok-cmt"># 同样缩进 → 和上一行是同一层</span>
+<span class="tok-fn">print</span>(<span class="tok-str">"程序结束"</span>)          <span class="tok-cmt"># 没缩进 → 不管条件如何都会执行</span></code></pre>
+</div>
+</div>
+    <p>运行结果：</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>成年了
+可以考驾照
+程序结束</code></pre>
+</div>
+</div>
+    <p>如果把 <code>age</code> 改成 <code>17</code>，前两行都不会打印，只有最后那行“程序结束”还会打印。这就是缩进的威力：<strong>它决定了哪几行代码是被“管着”的。</strong></p>
+
+    <div class="tip">
+      记忆口诀：<strong>缩进对齐的，就是一伙的；退回顶格的，就是不归它管。</strong>后面学 <code>for</code> 循环、<code>def</code> 函数，全靠这个判断。
+    </div>
+
+    <h3>缩进写错了会怎样</h3>
+    <p>Python 会直接罢工，并在报错信息里给出 <code>IndentationError</code>（缩进错误）。两种最常见的错法：</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-kw">if</span> age <span class="tok-op">&gt;=</span> <span class="tok-num">18</span>:
+<span class="tok-fn">print</span>(<span class="tok-str">"成年了"</span>)      <span class="tok-cmt"># ❌ 忘了缩进，报 IndentationError</span>
+
+<span class="tok-kw">if</span> age <span class="tok-op">&gt;=</span> <span class="tok-num">18</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">"成年了"</span>)      <span class="tok-cmt"># 缩进 4 个空格</span>
+        <span class="tok-fn">print</span>(<span class="tok-str">"太多了"</span>)    <span class="tok-cmt"># ❌ 缩进 8 个空格，和上一行不是一层，同样报错</span></code></pre>
+</div>
+</div>
+    <div class="tip">
+      新手遇到的 <code>IndentationError</code>，九成是“多按了几下空格”或者“空格和 Tab 混用”。改法很简单：把出问题那几行的行首空白全删掉，再用 Tab 键（或统一敲 4 个空格）重新对齐。
+    </div>
+
+    <h2 id="sec3">三、注释：写给人的话</h2>
+
+    <p>注释就是写在代码里的“小纸条”。它只有一个作用：<strong>给人看</strong>。程序运行时，计算机会直接跳过它。</p>
+
+    <h3>为什么值得写</h3>
+    <ol>
+      <li><strong>提醒自己。</strong>过一个月再打开这个文件，还能想起当时在想什么。</li>
+      <li><strong>方便别人。</strong>同学或同事接手你的代码，不用一个字母一个字母地猜。</li>
+      <li><strong>临时关掉某段代码。</strong>调试时不想删代码，加个符号让它先“停用”。</li>
+    </ol>
+
+    <h3>写法一：单行注释，一个井号 <code>#</code></h3>
+    <p>从 <code>#</code> 开始，这一行后面的内容全都算注释。</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code><span class="tok-cmt"># 下面这行用来记录学生姓名</span>
+name <span class="tok-op">=</span> <span class="tok-str">"小明"</span>
+
+price <span class="tok-op">=</span> <span class="tok-num">5.9</span>        <span class="tok-cmt"># 也可以写在代码右边，叫“行尾注释”</span>
+
+<span class="tok-cmt"># print("这行被注释掉了，不会运行")</span></code></pre>
+</div>
+</div>
+    <p>习惯上，<code>#</code> 和代码之间留一个空格，读起来更清爽。</p>
+
+    <h3>写法二：多行注释，三对引号包起来</h3>
+    <p>要写好几行说明，就用三个引号把它们包住，单引号、双引号都可以。</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+<pre><code><span class="tok-str">"""
+这个脚本是我第一次写的练习
+作者：小明
+日期：2026-09-20
+说明：练习变量和注释的用法
+"""</span>
+
+<span class="tok-fn">print</span>(<span class="tok-str">"开始运行"</span>)</code></pre>
+</div>
+</div>
+    <div class="tip">
+      三引号还有一个隐藏用法：把它写在函数的第一行，就变成了这个函数的“说明书”，别人用 <code>help(函数名)</code> 就能看到。后面学到函数时会经常见到，现在有个印象就好。
+    </div>
+
+    <h3>写注释的两个好习惯</h3>
+    <table>
+      <thead>
+        <tr><th>该怎么做</th><th>例子</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>✅ 说清“为什么这么做”</td><td><code>score = score * 0.6    # 期末成绩占六成</code></td></tr>
+        <tr><td>❌ 只是复述代码本身</td><td><code>a = 1    # 给 a 赋值 1</code>（这是废话）</td></tr>
+        <tr><td>✅ 代码改了，注释跟着改</td><td>两处保持一致，别打架</td></tr>
+        <tr><td>❌ 注释和代码对不上</td><td>代码在算加法，注释却写着“求平均”</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">
+      判断一条注释该不该写，就问自己：<strong>光看代码，能不能看出来？</strong>看不出来的才值得写。
+    </div>
+
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜注释是「写给人的话」——好注释和坏注释差在哪，让 AI 用同一段代码摆出来最直观。</p>
+<p>打开任意 AI 对话工具（网页版或 App 都可以），试试这样问：<code>给同一段代码写两个版本的注释：一个只重复代码说什么的坏注释，一个解释为什么这么做的好注释，并说明差别在哪</code></p>
+</div>
+
+        <h2 id="sec4">四、变量：给数据起个名字</h2>
+
+    <p>变量，就是<strong>给数据起的名字</strong>。你可以把它想成一个贴了标签的盒子：盒子里装东西，标签上写着“这是什么”。</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+<pre><code>age <span class="tok-op">=</span> <span class="tok-num">18</span>          <span class="tok-cmt"># 盒子上写着 age，里面放 18</span>
+name <span class="tok-op">=</span> <span class="tok-str">"小明"</span>      <span class="tok-cmt"># 盒子上写着 name，里面放“小明”</span>
+price <span class="tok-op">=</span> <span class="tok-num">5.9</span>       <span class="tok-cmt"># 盒子上写着 price，里面放 5.9</span></code></pre>
+</div>
+</div>
+    <p>中间那个等号 <code>=</code>，不是数学里的“相等”。它的意思是：<strong>把右边的值，放进左边这个名字里</strong>。读作“把 18 赋给 age”。</p>
+
+    <h3>用了有什么好处</h3>
+    <p>看这两段代码，都在算圆的面积：</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code><span class="tok-cmt"># 不用变量：同一个数要写好几遍</span>
+<span class="tok-fn">print</span>(<span class="tok-num">3.14159</span> <span class="tok-op">*</span> <span class="tok-num">2</span> <span class="tok-op">*</span> <span class="tok-num">2</span>)
+
+<span class="tok-cmt"># 用变量：数据变了只改一行</span>
+pi <span class="tok-op">=</span> <span class="tok-num">3.14159</span>
+r <span class="tok-op">=</span> <span class="tok-num">2</span>
+<span class="tok-fn">print</span>(pi <span class="tok-op">*</span> r <span class="tok-op">*</span> r)</code></pre>
+</div>
+</div>
+    <p>如果半径从 2 变成 3，第二种写法只要改 <code>r = 2</code> 这一行。这就是变量最实在的用处：<strong>让数据有个名字，改起来方便，读起来也明白。</strong></p>
+
+    <h3>一、必须遵守的规则（违反会报错）</h3>
+    <table>
+      <thead>
+        <tr><th>规则</th><th>合法的</th><th>会报错的</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>只能用字母、数字、下划线</td><td><code>name</code>、<code>age18</code>、<code>user_name</code></td><td><code>user-name</code>（减号）、<code>my name</code>（空格）、<code>user@123</code>（@ 号）</td></tr>
+        <tr><td>不能用数字开头</td><td><code>n1</code>、<code>_n1</code></td><td><code>2age</code>、<code>18age</code></td></tr>
+        <tr><td>大小写算两个名字</td><td><code>age</code> 和 <code>Age</code> 是两个不同的盒子</td><td>定义了 <code>age</code> 却去用 <code>Age</code>，会报“名字没定义”</td></tr>
+        <tr><td>不能使用关键字</td><td><code>if_flag</code>（加个下划线绕开）</td><td><code>if</code>、<code>for</code>、<code>class</code>（下一节细讲）</td></tr>
+      </tbody>
+    </table>
+
+    <h3>二、约定俗成的规矩（不报错，但该守）</h3>
+    <p>这些不是硬性规定，违反了程序照样跑，但代码会显得乱，别人读起来费劲。</p>
+    <table>
+      <thead>
+        <tr><th>用在哪儿</th><th>推荐写法</th><th>例子</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>普通变量</td><td>全小写，单词之间用下划线（蛇形命名法）</td><td><code>user_name</code>、<code>student_age</code>、<code>total_score</code></td></tr>
+        <tr><td>常量（不打算改的数）</td><td>全部大写</td><td><code>PI = 3.14159</code>、<code>MAX_SCORE = 100</code></td></tr>
+        <tr><td>类名</td><td>每个单词首字母大写（大驼峰）</td><td><code>class StudentInfo:</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      最重要的一条规矩：<strong>见名知意</strong>。<code>apple_price = 5.9</code> 比 <code>a = 5.9</code> 好一百倍。三个月后的你，会感谢现在多敲的那几个字母。
+    </div>
+    <div class="tip">
+      小提醒：<code>i</code>、<code>j</code>、<code>k</code> 这种单字母名字，只在“数到第几个”的临时场景里用（比如 <code>for i in range(5):</code>），平时别拿它当变量的名字。
+    </div>
+
+    <h2 id="sec5">五、关键字：Python 的自留词</h2>
+
+    <p>关键字（也叫保留字），是 Python 提前占下的词。它们都有专门的用途，<strong>不能拿来当变量名</strong>。</p>
+    <p>打个比方：就像班里的“班长”“课代表”——这些称呼有专门的意思，你不能再给同学起这个外号，否则一喊就乱套。</p>
+
+    <p><code>Python 3</code> 一共预留了 <strong>35 个</strong>关键字。想自己看一眼，运行这两行：</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span></div>
+<pre><code><span class="tok-kw2">import</span> keyword
+<span class="tok-fn">print</span>(keyword.kwlist)     <span class="tok-cmt"># 一次打印出全部 35 个关键字</span></code></pre>
+</div>
+</div>
+
+    <h3>按用途归类，其实不难记</h3>
+    <table>
+      <thead>
+        <tr><th>分类</th><th>关键字</th><th>干什么用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>逻辑运算</td><td><code>and</code>、<code>or</code>、<code>not</code></td><td>把几个条件连起来一起判断</td></tr>
+        <tr><td>条件分支</td><td><code>if</code>、<code>elif</code>、<code>else</code></td><td>满足条件才做某件事</td></tr>
+        <tr><td>循环</td><td><code>for</code>、<code>while</code>、<code>break</code>、<code>continue</code></td><td>重复做，或中途跳出、跳过</td></tr>
+        <tr><td>定义</td><td><code>def</code>、<code>class</code>、<code>return</code>、<code>lambda</code></td><td>自己造函数、造类</td></tr>
+        <tr><td>导入工具</td><td><code>import</code>、<code>from</code>、<code>as</code></td><td>借用别人写好的功能</td></tr>
+        <tr><td>真真假假</td><td><code>True</code>、<code>False</code>、<code>None</code></td><td>表示“对”“不对”“还没有值”</td></tr>
+        <tr><td>判断关系</td><td><code>in</code>、<code>is</code></td><td>在不在里面、是不是同一个</td></tr>
+        <tr><td>异常处理</td><td><code>try</code>、<code>except</code>、<code>finally</code>、<code>raise</code>、<code>assert</code></td><td>出错时不让程序直接崩掉</td></tr>
+        <tr><td>其他</td><td><code>with</code>、<code>pass</code>、<code>global</code>、<code>nonlocal</code>、<code>del</code>、<code>async</code>、<code>await</code>、<code>yield</code></td><td>文件管理、占位、跨函数改变量等</td></tr>
+      </tbody>
+    </table>
+    <p>不用一次背完。下面这几个，是你最初几周就会用到的：</p>
+    <table>
+      <thead>
+        <tr><th>关键字</th><th>一句话用途</th><th>短例子</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>if</code></td><td>如果……就……</td><td><code>if score &gt;= 60: print("及格")</code></td></tr>
+        <tr><td><code>else</code></td><td>否则……</td><td><code>else: print("再努力")</code></td></tr>
+        <tr><td><code>for</code></td><td>挨个处理一遍</td><td><code>for i in range(3): print(i)</code></td></tr>
+        <tr><td><code>while</code></td><td>只要……就一直做</td><td><code>while n &lt; 5: n = n + 1</code></td></tr>
+        <tr><td><code>def</code></td><td>把一段代码做成工具</td><td><code>def add(a, b): return a + b</code></td></tr>
+        <tr><td><code>import</code></td><td>借别人的工具来用</td><td><code>import math</code></td></tr>
+        <tr><td><code>True</code> / <code>False</code></td><td>对 / 不对</td><td><code>is_pass = True</code></td></tr>
+        <tr><td><code>None</code></td><td>暂时还没有值</td><td><code>result = None</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      分清一个小细节：<code>print</code>、<code>input</code>、<code>len</code> 这些<strong>不是</strong>关键字。它们叫内置函数，相当于 Python 送你的现成工具。技术上它们可以被当变量名用，但<strong>千万别这么干</strong>——一旦盖掉，后面就调不动了。
+    </div>
+    <div class="tip">
+      看到 <code>SyntaxError</code>（语法错误）时，先检查两件事：是不是把关键字当变量名了？是不是少了个冒号或引号？新手绝大多数语法错误都出在这两处。
+    </div>
+
+    <h2 id="sec6">六、四个概念一起用：BMI 小计算器</h2>
+
+    <p>把四个概念合起来，写一个完整的小程序：算 BMI（身体质量指数）。</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">Python</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span></div>
+<pre><code><span class="tok-cmt"># BMI 小计算器（注释：说明这段程序是干什么的）</span>
+<span class="tok-fn">print</span>(<span class="tok-str">"=== BMI 计算器 ==="</span>)
+
+height <span class="tok-op">=</span> <span class="tok-fn">float</span>(<span class="tok-fn">input</span>(<span class="tok-str">"请输入身高（米）："</span>))     <span class="tok-cmt"># 变量：存身高</span>
+weight <span class="tok-op">=</span> <span class="tok-fn">float</span>(<span class="tok-fn">input</span>(<span class="tok-str">"请输入体重（公斤）："</span>))    <span class="tok-cmt"># 变量：存体重</span>
+bmi <span class="tok-op">=</span> weight <span class="tok-op">/</span> (height <span class="tok-op">*</span> height)               <span class="tok-cmt"># 变量：存算出来的结果</span>
+
+<span class="tok-fn">print</span>(<span class="tok-str">f"</span><span class="tok-str">你的 BMI 是 </span>{bmi:<span class="tok-str">.1f</span>}<span class="tok-str">"</span>)                 <span class="tok-cmt"># f"..." 能把变量填进文字里</span>
+
+<span class="tok-kw">if</span> bmi <span class="tok-op">&lt;</span> <span class="tok-num">18.5</span>:            <span class="tok-cmt"># 关键字 if：开始判断</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"偏瘦"</span>)           <span class="tok-cmt"># 缩进 → 属于 if</span>
+<span class="tok-kw">elif</span> bmi <span class="tok-op">&lt;</span> <span class="tok-num">24</span>:            <span class="tok-cmt"># 关键字 elif：接着判断</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"正常"</span>)           <span class="tok-cmt"># 缩进 → 属于 elif</span>
+<span class="tok-kw">else</span>:                      <span class="tok-cmt"># 关键字 else：剩下的情况</span>
+    <span class="tok-fn">print</span>(<span class="tok-str">"偏胖"</span>)           <span class="tok-cmt"># 缩进 → 属于 else</span>
+
+<span class="tok-fn">print</span>(<span class="tok-str">"计算结束"</span>)           <span class="tok-cmt"># 没缩进 → 不管怎样都会执行</span></code></pre>
+</div>
+</div>
+
+    <p>运行一次，输入身高 1.70、体重 65：</p>
+    <div class="cb">
+<div class="cb-bar"><span class="cb-lang">输出</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+<pre><code>=== BMI 计算器 ===
+请输入身高（米）：1.70
+请输入体重（公斤）：65
+你的 BMI 是 22.5
+正常
+计算结束</code></pre>
+</div>
+</div>
+
+    <p>回头看看，四个概念各自在哪儿：</p>
+    <table>
+      <thead>
+        <tr><th>概念</th><th>在这段代码里的位置</th><th>少了它会怎样</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>变量</td><td><code>height</code>、<code>weight</code>、<code>bmi</code></td><td>数据没名字，后面用不了</td></tr>
+        <tr><td>注释</td><td><code>#</code> 开头的那些话</td><td>程序照样跑，但没人看得懂</td></tr>
+        <tr><td>关键字</td><td><code>if</code>、<code>elif</code>、<code>else</code>、<code>print</code></td><td>不知道该判断什么、输出什么</td></tr>
+        <tr><td>缩进</td><td>三个 <code>print</code> 前面的 4 个空格</td><td>直接报错，程序根本跑不起来</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">
+      建议亲自动手：把这段代码抄进 IDLE，改成自己的身高体重跑一遍。亲手敲过一次，比看十遍记得都牢。
+    </div>
+
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜规范意识靠「找茬」练出来最快。</p>
+<p>打开任意 AI 对话工具（网页版或 App 都可以），试试这样问：<code>给我出 5 道找茬题：每题一段有命名或缩进问题的短代码，让我先指出问题，再对答案</code></p>
+</div>
+
+        <h2 id="sec7">七、新手最容易踩的坑</h2>
+
+    <p>下面这几条，几乎每个人都中过招。看一眼，能省你不少时间。</p>
+    <ul>
+      <li><strong>忘了缩进，报 <code>IndentationError</code>。</strong>冒号下面的代码一定要缩进。删掉行首空白，重新用 4 个空格对齐即可。</li>
+      <li><strong>空格和 Tab 混用，报 <code>TabError</code>。</strong>看着一样宽，电脑认得不一样。要么统一用 Tab 键，要么统一敲 4 个空格，别两种都来。</li>
+      <li><strong>写了中文标点。</strong>把 <code>if age &gt;= 18：</code> 里那个中文冒号当成英文冒号用，会报 <code>SyntaxError</code>。写代码时把输入法切回英文。</li>
+      <li><strong>把关键字当变量名。</strong>写 <code>if = 1</code> 会直接报 <code>SyntaxError</code>。改法：加个下划线，写成 <code>if_flag = 1</code>。</li>
+      <li><strong>变量名大小写写错。</strong>定义了 <code>age</code>，却用 <code>Age</code>，会报 <code>NameError: name 'Age' is not defined</code>。Python 里这两个名字互不相干。</li>
+      <li><strong>用三引号临时屏蔽代码时打架。</strong>如果被屏蔽的代码里本来就有三引号，会乱掉。想屏蔽多行代码，优先用 <code>#</code> 一行一行加，最保险。</li>
+    </ul>
+    <div class="tip">
+      一句话收尾：<strong>变量给数据起名，关键字是 Python 的自留词，注释写给人看，缩进决定谁归谁管。</strong>把这四句记住，Python 的基础语法就过关了。
+    </div>
+
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜代码「能跑」和「好读」是两回事。让 AI 当代码风格检查员，逐条指出不规范的地方，比自己翻规范文档快得多。</p>
+<p>打开任意 AI 对话工具（网页版或 App 都可以），试试这样问：<code>请检查下面这段 Python 代码哪些地方不符合规范（命名、缩进、空格、注释），逐条指出并给出修改后的完整代码：<粘贴代码></code></p>
+</div>
+
+    <h2 id="quiz">八、随堂自测（10 题）</h2>
+    <p>点击选项即可判分，答错的题会立刻显示解析。全部答完后会给出正确率和错题清单。</p>
+    <div class="quiz" id="quizBox">
+      <div class="quiz-bar">
+        <span id="quizProgress">已答 0 / 10 · 正确 0</span>
+        <span class="quiz-score" id="quizScore">—</span>
+        <button class="quiz-reset" id="quizReset" type="button">重新答题</button>
+      </div>
+      <div class="q" data-no="1" data-answer="1">
+        <p class="q-title"><span class="q-no">1</span>在 Python 里，缩进最主要的作用是什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 让代码看起来整齐好看</li>
+          <li class="opt" data-i="1">B. 决定一行代码属于哪个代码块</li>
+          <li class="opt" data-i="2">C. 影响程序的运行速度</li>
+          <li class="opt" data-i="3">D. 表示这一行是注释</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>缩进在 Python 里是语法的一部分，用来划分代码块的归属，不只是好看。A 是别的语言的习惯，C、D 与缩进无关。</div>
+      </div>
+      <div class="q" data-no="2" data-answer="0">
+        <p class="q-title"><span class="q-no">2</span>下面哪个 <code>if</code> 的写法是正确的？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>if age &gt;= 18:</code> 换行后空 4 格写 <code>print("成年")</code></li>
+          <li class="opt" data-i="1">B. <code>if age &gt;= 18:</code> 换行后直接顶格写 <code>print("成年")</code></li>
+          <li class="opt" data-i="2">C. <code>if age &gt;= 18</code>（末尾没有冒号），换行后空 4 格写</li>
+          <li class="opt" data-i="3">D. <code>if age &gt;= 18:</code> 换行后第一行空 4 格、第二行空 8 格</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>冒号后换行必须缩进（B 漏了缩进）；条件行末尾必须有冒号（C 漏了冒号）；同一个块里缩进要一致（D 自己乱了）。</div>
+      </div>
+      <div class="q" data-no="3" data-answer="3">
+        <p class="q-title"><span class="q-no">3</span>程序一运行就报 <code>IndentationError</code>，最可能的原因是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 变量名里用了中文</li>
+          <li class="opt" data-i="1">B. 某个字符串忘了加引号</li>
+          <li class="opt" data-i="2">C. 少写了一个 <code>print</code></li>
+          <li class="opt" data-i="3">D. 行首的空格数量不一致</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>IndentationError 专指缩进问题：行首空格数不一致，或者空格和 Tab 混用。忘加引号会报 SyntaxError，跟缩进无关。</div>
+      </div>
+      <div class="q" data-no="4" data-answer="1">
+        <p class="q-title"><span class="q-no">4</span>想给一行代码加说明，又不影响程序运行，正确做法是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 把说明用一对圆括号包起来</li>
+          <li class="opt" data-i="1">B. 把说明写在 <code>#</code> 后面</li>
+          <li class="opt" data-i="2">C. 直接把说明写成没有引号的文字</li>
+          <li class="opt" data-i="3">D. 在说明的前后各加一个分号</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong><code>#</code> 后面的内容会被 Python 忽略，这是最常用的单行注释。A、C、D 都不是合法写法，程序会直接报语法错误。</div>
+      </div>
+      <div class="q" data-no="5" data-answer="2">
+        <p class="q-title"><span class="q-no">5</span>用三个双引号 <code>"""</code> 把一段说明括起来，这段内容会怎样？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 会被打印到屏幕上</li>
+          <li class="opt" data-i="1">B. 会导致程序报错</li>
+          <li class="opt" data-i="2">C. 会被当成一个字符串，但不会显示出来</li>
+          <li class="opt" data-i="3">D. 会自动变成注释，用 <code>print</code> 也打印不出来</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>三引号括起来的本质是一个字符串，只是既没赋给变量、也没被打印，所以看不到。它并不是真正意义的注释，D 的说法不准确。</div>
+      </div>
+      <div class="q" data-no="6" data-answer="2">
+        <p class="q-title"><span class="q-no">6</span>下面哪个变量名是合法的？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>2name</code></li>
+          <li class="opt" data-i="1">B. <code>user-name</code></li>
+          <li class="opt" data-i="2">C. <code>user_name</code></li>
+          <li class="opt" data-i="3">D. <code>user name</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>变量名只能用字母、数字、下划线，且不能用数字开头。2name 数字开头，user-name 含减号，user name 含空格，都会报错。</div>
+      </div>
+      <div class="q" data-no="7" data-answer="1">
+        <p class="q-title"><span class="q-no">7</span>代码 <code>age = 18</code> 里的等号，正确的理解是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 判断左右两边是否相等</li>
+          <li class="opt" data-i="1">B. 把右边的 18 存进名为 <code>age</code> 的变量</li>
+          <li class="opt" data-i="2">C. 让 <code>age</code> 永远等于 18，以后不能改</li>
+          <li class="opt" data-i="3">D. 把 18 打印出来</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>单独的 <code>=</code> 是赋值：把右边放进左边。判断相等要用两个等号 <code>==</code>（A 错）；变量随时能改（C 错）；输出要用 <code>print</code>（D 错）。</div>
+      </div>
+      <div class="q" data-no="8" data-answer="2">
+        <p class="q-title"><span class="q-no">8</span>按 Python 的命名习惯，普通变量最推荐下面哪种写法？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>UserName</code></li>
+          <li class="opt" data-i="1">B. <code>userName</code></li>
+          <li class="opt" data-i="2">C. <code>user_name</code></li>
+          <li class="opt" data-i="3">D. <code>USERNAME</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>普通变量推荐蛇形命名法：全小写加下划线。UserName 是大驼峰（留给类名），userName 是小驼峰（少用），全大写留给常量。</div>
+      </div>
+      <div class="q" data-no="9" data-answer="0">
+        <p class="q-title"><span class="q-no">9</span>下面哪个词不能用来当变量名？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. <code>class</code></li>
+          <li class="opt" data-i="1">B. <code>score</code></li>
+          <li class="opt" data-i="2">C. <code>total_score</code></li>
+          <li class="opt" data-i="3">D. <code>score1</code></li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong><code>class</code> 是 Python 关键字，写 <code>class = 1</code> 会直接报 SyntaxError。想用就加下划线，写成 <code>class_name</code>。</div>
+      </div>
+      <div class="q" data-no="10" data-answer="3">
+        <p class="q-title"><span class="q-no">10</span>关于 <code>print</code>，下面哪种说法是正确的？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 它是 Python 的关键字</li>
+          <li class="opt" data-i="1">B. 它既是关键字，也是合法的变量名</li>
+          <li class="opt" data-i="2">C. 它是注释的另一种写法</li>
+          <li class="opt" data-i="3">D. 它是内置函数，不是关键字，但也不该拿来当变量名</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong><code>print</code> 属于内置函数，不在 35 个关键字里。它虽然能被覆盖，但千万别这么干，否则打印功能就废了。</div>
+      </div>
+      <div class="q-result" id="quizResult"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = '☀️ 浅色';
+  }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+<script>
+  /* ===== 随堂自测逻辑 ===== */
+  (function () {
+    const box = document.getElementById('quizBox');
+    if (!box) return;
+
+    const qs = Array.from(box.querySelectorAll('.q'));
+    const total = qs.length;
+    const bar = document.getElementById('quizProgress');
+    const scoreEl = document.getElementById('quizScore');
+    const resetBtn = document.getElementById('quizReset');
+    const resultEl = document.getElementById('quizResult');
+    let done = 0;
+    let right = 0;
+    const wrongList = [];
+
+    function update() {
+      bar.textContent = '已答 ' + done + ' / ' + total + ' · 正确 ' + right;
+      if (done === 0) {
+        scoreEl.textContent = '—';
+      } else if (done < total) {
+        scoreEl.textContent = Math.round(right / done * 100) + '%';
+      } else {
+        scoreEl.textContent = '正确率 ' + Math.round(right / total * 100) + '%（' + right + '/' + total + '）';
+      }
+      if (done === total) {
+        let msg;
+        if (wrongList.length === 0) {
+          msg = '🎉 全部答对，这一节你掌握得很扎实，可以进入下一个教程了。';
+        } else {
+          msg = '错题：第 ' + wrongList.join('、') + ' 题。建议回到对应小节再看一遍，' +
+                '然后点右上角「重新答题」检验一次。';
+        }
+        resultEl.textContent = msg;
+        resultEl.classList.add('show');
+      } else {
+        resultEl.classList.remove('show');
+      }
+    }
+
+    function pick(q, li) {
+      if (q.classList.contains('answered')) return;
+      q.classList.add('answered');
+      const ans = Number(q.dataset.answer);
+      const picked = Number(li.dataset.i);
+
+      q.querySelectorAll('.opt').forEach(function (o) {
+        const i = Number(o.dataset.i);
+        if (i === ans) o.classList.add('correct');
+        else if (i === picked) o.classList.add('wrong');
+        else o.classList.add('dim');
+      });
+
+      if (picked === ans) {
+        right++;
+        q.classList.add('passed');
+      } else {
+        q.classList.add('failed');
+        wrongList.push(q.dataset.no || (qs.indexOf(q) + 1));
+      }
+      done++;
+      update();
+    }
+
+    box.addEventListener('click', function (e) {
+      const li = e.target.closest('.opt');
+      if (!li) return;
+      const q = li.closest('.q');
+      if (q) pick(q, li);
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        qs.forEach(function (q) {
+          q.classList.remove('answered', 'passed', 'failed');
+          q.querySelectorAll('.opt').forEach(function (o) {
+            o.classList.remove('correct', 'wrong', 'dim');
+          });
+        });
+        done = 0;
+        right = 0;
+        wrongList.length = 0;
+        update();
+        document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    update();
+  })();
+</script>
+
+<script>
+// === 增强：代码块复制 ===
+(function () {
+  function clipboardWrite(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-2000px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('copy failed'));
+    });
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+  document.querySelectorAll('.cb-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.cb');
+      var code = box ? box.querySelector('code') : null;
+      if (!code) { return; }
+      var text = code.innerText.replace(/\u00a0/g, ' ').replace(/\n+$/, '');
+      clipboardWrite(text).then(
+        function () { flash(btn, '已复制'); },
+        function () { flash(btn, '复制失败'); }
+      );
+    });
+  });
+})();
+</script>
+
+<script>
+// === 增强：侧边目录可折叠 ===
+(function () {
+  /* 侧边目录：默认收起成左侧竖排书签，随页面滚动常驻；点它展开/收起 */
+  var sb = document.querySelector('.sidebar');
+  if (!sb || sb.querySelector('.sb-tab')) { return; }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var D_MENU  = 'M3 5h14M3 10h14M3 15h14';      /* ☰：内联 SVG 画，避免 ☰ 字符渲染成豆腐块 */
+  var D_CLOSE = 'M5.5 5.5l9 9M14.5 5.5l-9 9';
+  var D_RIGHT = 'M7.5 4.5l5 5.5-5 5.5';         /* › */
+  var D_LEFT  = 'M12.5 4.5l-5 5.5 5 5.5';       /* ‹ */
+
+  function setD(el, d) {
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    el.appendChild(p);
+  }
+  function mkIcon(cls, d) {
+    var el = document.createElementNS(NS, 'svg');
+    el.setAttribute('class', cls);
+    el.setAttribute('viewBox', '0 0 20 20');
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.9');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    setD(el, d);
+    return el;
+  }
+  function narrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+  }
+
+  /* 把 <h3>目录</h3> 与原有链接重新组织：书签 + 面板 */
+  var head = sb.querySelector('h3');
+  var label = head ? head.textContent.trim() : '目录';
+  if (head && head.parentNode) { head.parentNode.removeChild(head); }
+
+  var list = document.createElement('nav');
+  list.className = 'sb-list';
+  list.setAttribute('aria-label', label);
+  while (sb.firstChild) { list.appendChild(sb.firstChild); }
+
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'sb-tab';
+  tab.setAttribute('aria-controls', 'sbPanel');
+  var ico = mkIcon('sb-ico', D_MENU);
+  var vt = document.createElement('span');
+  vt.className = 'sb-vt';
+  vt.textContent = label;
+  var chev = mkIcon('sb-chev', D_RIGHT);
+  tab.appendChild(ico);
+  tab.appendChild(vt);
+  tab.appendChild(chev);
+
+  var panel = document.createElement('div');
+  panel.className = 'sb-panel';
+  panel.id = 'sbPanel';
+  var pTitle = document.createElement('div');
+  pTitle.className = 'sb-head';
+  pTitle.textContent = label;
+  panel.appendChild(pTitle);
+  panel.appendChild(list);
+
+  /* 深色/浅色切换：从右上角挪进书签内部的顶部图标区（挪节点不会丢它原有的点击事件） */
+  var theme = document.getElementById('themeBtn');
+
+  var col = document.createElement('div');
+  col.className = 'sb-col';
+  if (theme) {
+    theme.setAttribute('title', '切换深色 / 浅色主题');
+    theme.setAttribute('aria-label', '切换深色 / 浅色主题');
+    col.appendChild(theme);
+  }
+  col.appendChild(tab);
+
+  sb.appendChild(col);
+  sb.appendChild(panel);
+  sb.classList.add('sb-ready', 'sb-noanim');
+  document.body.classList.add('sb-on');
+
+  var mask = document.createElement('div');
+  mask.className = 'sb-mask';
+  mask.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(mask);
+
+  function isOpen() { return sb.classList.contains('sb-expanded'); }
+
+  /* 量出「目录里每个标题都不折行」需要的面板宽度，写进 --sb-panel-w，让展开态宽度自适应 */
+  function fitWidth() {
+    var keep = panel.getAttribute('style');
+    panel.style.cssText = 'display:block;position:absolute;left:-99999px;top:0;width:auto;' +
+                          'white-space:nowrap;overflow:visible;';
+    var need = Math.ceil(panel.getBoundingClientRect().width);
+    if (keep === null) { panel.removeAttribute('style'); } else { panel.setAttribute('style', keep); }
+    if (!need) { return; }
+    /* 上限：宽屏不超过视口 46%，窄屏（抽屉是浮层）可占到 90%，都只为防个别超长标题把正文挤没 */
+    var cap = narrow() ? window.innerWidth * 0.90 - 44 : window.innerWidth * 0.46;
+    sb.style.setProperty('--sb-panel-w', Math.min(need, Math.max(Math.round(cap), 196)) + 'px');
+  }
+
+  /* 让「垂直居中」落在布局盒上：把 sticky 的 top 设成 50vh - 自身高度的一半。
+     与 CSS 里的注释是同一件事；这里每次尺寸变化都重算一次（收起↔展开高度差很大：190 ↔ 面板高）。 */
+  var lastTop = '';
+  function centerTop() {
+    var h = sb.getBoundingClientRect().height;
+    if (!h) { return; }
+    var v = 'calc(50vh - ' + (h / 2).toFixed(1) + 'px)';
+    if (v === lastTop) { return; }
+    lastTop = v;
+    sb.style.setProperty('--sb-top', v);
+  }
+
+  function setOpen(open) {
+    sb.classList.toggle('sb-expanded', open);
+    document.body.classList.toggle('sb-open', open);
+    tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tab.setAttribute('aria-label', open ? '收起目录' : '展开目录');
+    tab.title = open ? '收起目录' : '展开目录';
+    vt.textContent = open ? '收起' : label;
+    setD(ico, open ? D_CLOSE : D_MENU);
+    setD(chev, open ? D_LEFT : D_RIGHT);
+    centerTop();   /* 收起/展开高度差很大，每次开合都重新居中 */
+  }
+  setOpen(false);   /* 默认收起 */
+  fitWidth();       /* 收起状态下面板是 display:none，正好用离屏副本量宽度，量完即恢复 */
+  centerTop();
+  /* 字体（含回退）落定后再量一次，避免首帧用错字体算出偏窄的宽度 */
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { fitWidth(); centerTop(); }, function () {});
+  }
+
+  tab.addEventListener('click', function () { setOpen(!isOpen()); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); }
+  });
+  /* 展开状态下，点「书签 / 面板」之外的任意空白处（正文、页眉、遮罩…）自动收起。
+     用 click 而不是 pointerdown：宽屏收起会让正文变宽重排，若在鼠标抬起前就重排，
+     这一下点击可能落空（点正文链接会「没反应」）。用 click 则原点击先正常派发完，再收起。 */
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) { return; }
+    var t = e.target;
+    if (t && sb.contains(t)) { return; }   /* 点在自己身上（书签、面板、主题按钮）不收起 */
+    setOpen(false);
+  });
+  /* 窄屏是抽屉，点目录项跳转后自动收起；宽屏是分栏，留着方便连着点 */
+  list.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && isOpen() && narrow()) { setOpen(false); }
+  });
+  mask.addEventListener('click', function () { setOpen(false); });
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!narrow() && isOpen()) { document.body.classList.remove('sb-open'); }
+    /* 视口宽度变化较大时重量一次（窄屏/宽屏的上限不同；字号是 px 固定的，无需每次都量） */
+    if (Math.abs(window.innerWidth - lastW) > 60) { lastW = window.innerWidth; fitWidth(); }
+    centerTop();   /* 视口高度变了（含手机地址栏收放）→ top 里的 50vh 跟着变，但重算一次更稳 */
+  });
+  /* 兜底：面板高度会随内容换行/字体加载而变，任何尺寸变化都重新居中一次（值没变时 centerTop 直接返回，
+     不会和 ResizeObserver 形成回环——改 top 不影响尺寸） */
+  if (window.ResizeObserver) { new ResizeObserver(centerTop).observe(sb); }
+  /* 初次布局落下后再放开过渡，之后的展开/收起才带宽度动画 */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { sb.classList.remove('sb-noanim'); });
+  });
+})();
+</script>
+
+<script>
+// === 增强：页眉北京时间 ===
+(function () {
+  var el = document.querySelector('.byline .bj-clock');
+  if (!el) { return; }
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function beijingNow() {
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+  }
+  function render() {
+    var d = beijingNow();
+    el.textContent = d.getFullYear() + '年' + pad(d.getMonth() + 1) + '月' + pad(d.getDate()) + '日 '
+      + WEEK[d.getDay()] + ' '
+      + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+
+</body>
+</html>
