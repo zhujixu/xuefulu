@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络数据采集 案例15 指数与板块资金流向采集</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+<script src="https://trtc.io/knocket-sdk/sdk.js?identifier=c2bc4bc2aa25d0e77f&v=1791349953716" async></script>
+<style>
+  :root {
+    --bg: #fafafa;
+    --text: #333;
+    --card: #fff;
+    --code-bg: #eef1f5;
+    --code-text: #c7254e;
+    --pre-bg: #282c34;
+    --pre-text: #abb2bf;
+    --border: #d0d7de;
+    --table-even: #f6f8fa;
+    --h1: #1a1a1a;
+    --h2: #3776ab;
+    --ai-bg: #edf2fe;
+    --ai-border: #4c6ef5;
+    --tip-bg: #fff8e1;
+    --tip-border: #ffd43b;
+    --sz-bg: #fdf3f1;
+    --sz-line: #f0d5d1;
+    --sz-border: #c0392b;
+    --sz-ink: #a03024;
+  }
+  body.dark {
+    --bg: #1e1e1e;
+    --text: #d4d4d4;
+    --card: #2a2a2a;
+    --code-bg: #3a3a3a;
+    --code-text: #ff9e9e;
+    --pre-bg: #111;
+    --pre-text: #ccc;
+    --border: #444;
+    --table-even: #2f2f2f;
+    --h1: #f0f0f0;
+    --h2: #6cb6ff;
+    --ai-bg: #232842;
+    --ai-border: #748ffc;
+    --tip-bg: #3a3320;
+    --tip-border: #ffd43b;
+    --sz-bg: #3a2422;
+    --sz-line: #5d3833;
+    --sz-border: #ef8674;
+    --sz-ink: #ffa898;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .3s, color .3s;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+  /* 侧边目录 */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    font-size: 14px;
+  }
+  .sidebar h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--h2);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s, color .2s;
+  }
+  .sidebar a:hover {
+    background: var(--code-bg);
+    color: var(--h2);
+  }
+  /* 主内容 */
+  .content { flex: 1; min-width: 0; }
+  /* 页首「标题行」（.title-row：正文大标题 = 链接，末尾跟一句「返回本教程导航页」提示，
+     整行统一成一块黄底黑字）的样式
+     **不在模板里**，由 enhance_tutorial.py 的 TITLE_ROW_CSS 注入——这样 31 篇老成品与新建的
+     篇目共用同一份实现。本模板直接输出**合并后**的形态（一个 h1 里嵌 a.page-title + 提示块），
+     enhance 认出来是目标形态就一个字节都不动。
+     a.page-title 的 class 是工具链锚点（包住整条标题），**别改名**；span.highlight 是剥除锚点，
+     也**别删**（快照靠它把提示语从 h1 文案里去掉）。
+     ⚠️ 注释里不要写带尖括号的「h1 + class」字样：enhance 的 `_H1_RE` 会把它当成真的正文标题。 */
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #3776ab;
+    padding-bottom: 10px;
+    color: var(--h1);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 32px;
+    color: var(--h2);
+    border-left: 5px solid #ffd43b;
+    padding-left: 10px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 17px;
+    margin-top: 22px;
+    color: var(--text);
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    color: var(--code-text);
+  }
+  pre {
+    background: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: #3776ab; color: #fff; }
+  tr:nth-child(even) { background: var(--table-even); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+
+  .ai-tip {
+    background: var(--ai-bg);
+    border-left: 5px solid var(--ai-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .ai-tip p { margin: 6px 0; }
+  .ai-tip p:first-child { margin-top: 0; }
+  .ai-tip p:last-child { margin-bottom: 0; }
+
+  /* 课程思政卡片：与提示（黄）/警告（红）/AI 小贴士（蓝）并列的第四种提示块。
+     左缘 5px 朱红竖条 + 一圈浅红描边，「课程思政｜主题 · 小标题」在首行加粗朱红显示。 */
+  .sizheng {
+    background: var(--sz-bg);
+    border: 1px solid var(--sz-line);
+    border-left: 5px solid var(--sz-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .sizheng .sz-head {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: var(--sz-ink);
+  }
+  .sizheng .sz-head i { margin-right: .45em; }
+  .sizheng p { margin: 6px 0; }
+  .sizheng p:last-child { margin-bottom: 0; }
+  .warn {
+    background: #ffe6e6;
+    border-left: 5px solid #e53935;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  body.dark .warn { background: #4a1f1f; color: #ffd4d4; }
+  /* 超链接样式 */
+  a.link {
+    color: #3776ab;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  a.link:hover { color: #e53935; }
+  body.dark a.link { color: #6cb6ff; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+
+  /* 深色切换按钮 */
+  #themeBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  #themeBtn:hover { background: #2a5d8a; }
+
+  /* 响应式 */
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; position: static; order: -1; }
+    #themeBtn { top: 10px; right: 10px; padding: 6px 12px; font-size: 13px; }
+  }
+
+  /* ===== 随堂自测（选择题模块） ===== */
+  .quiz {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .quiz-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .quiz-bar .quiz-score { font-weight: bold; color: var(--h2); }
+  .quiz-reset {
+    margin-left: auto;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .quiz-reset:hover { background: #2a5d8a; }
+  .q {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 4px;
+  }
+  .q:first-of-type { border-top: none; }
+  .q-title {
+    font-weight: bold;
+    margin: 0 0 10px;
+    line-height: 1.7;
+  }
+  .q-no {
+    display: inline-block;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: #3776ab;
+    color: #fff;
+    font-size: 13px;
+    font-weight: normal;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .q.passed .q-no { background: #2e9b52; }
+  .q.failed .q-no { background: #e53935; }
+  ul.q-opts {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  li.opt {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  li.opt:hover { border-color: var(--h2); }
+  .q.answered li.opt { cursor: default; }
+  .q.answered li.opt:hover { border-color: var(--border); }
+  li.opt.correct {
+    background: #e6f7ec;
+    border-color: #2e9b52;
+    color: #1b6b39;
+    font-weight: bold;
+  }
+  li.opt.wrong {
+    background: #ffe6e6;
+    border-color: #e53935;
+    color: #a01f1c;
+  }
+  li.opt.correct:hover, li.opt.wrong:hover { border-color: inherit; }
+  li.opt.dim { opacity: .5; }
+  body.dark li.opt.correct { background: #12351f; border-color: #3fbf6b; color: #9ff0bb; }
+  body.dark li.opt.wrong { background: #3a1a1a; border-color: #e53935; color: #ffb3b3; }
+  .q-explain {
+    display: none;
+    margin: 12px 0 4px;
+    padding: 10px 14px;
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .q.answered .q-explain { display: block; }
+  .q-result {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .q-result.show { display: block; }
+/* === 增强：代码块 / 署名 === */
+.cb { margin: 16px 0; border-radius: 8px; overflow: hidden; background: var(--pre-bg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.cb-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+          padding: 6px 12px; background: rgba(255,255,255,.07);
+          border-bottom: 1px solid rgba(255,255,255,.09); }
+.cb-lang { font-size: 12px; color: #9aa4b2; font-family: Consolas, Monaco, monospace; letter-spacing: .5px; }
+.cb-copy { background: transparent; border: 1px solid #4b5263; color: #c8cdd8; border-radius: 5px;
+           padding: 2px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+           transition: background .15s, border-color .15s, color .15s; }
+.cb-copy:hover { background: #3776ab; border-color: #3776ab; color: #fff; }
+.cb-copy.ok { background: #2ea043; border-color: #2ea043; color: #fff; }
+.cb-body { display: flex; align-items: stretch; }
+.cb-lines { flex: 0 0 auto; padding: 16px 10px 16px 14px; text-align: right; color: #636d83;
+            font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            border-right: 1px solid rgba(255,255,255,.08); }
+.cb-lines span { display: block; }
+.cb-body pre { flex: 1 1 auto; min-width: 0; margin: 0; padding: 16px 16px 16px 14px;
+               border-radius: 0; background: transparent; }
+.cb-body pre code { padding: 0; }
+/* 语法高亮：VS Code Dark+ 配色 */
+.tok-kw  { color: #c586c0; }
+.tok-kw2 { color: #569cd6; }
+.tok-str { color: #ce9178; }
+.tok-num { color: #b5cea8; }
+.tok-cmt { color: #6a9955; font-style: italic; }
+.tok-fn  { color: #dcdcaa; }
+.tok-cls { color: #4ec9b0; }
+.tok-op  { color: #d4d4d4; }
+/* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
+.warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
+.warn .warn-links a { word-break: break-all; }
+/* === 增强：标题行 === */
+/* 页首「标题行」：正文大标题（h1）与末尾的「返回教程导航」提示**合成一行、同一块黄底黑字**
+   —— 整条标题就是一个链接、整块可点。
+   现行形态（用户要求「整行统一成黄底黑字」）：标题文字不再是蓝色、左侧那根
+   4px 蓝色竖条取消、末尾提示也不再自成一块小黄标 —— 整条标题行统一成一块黄底（#fde047）、
+   黑字（#111827）、加粗的块；此前形态是「蓝色标题 + 左侧蓝竖条 + 末尾黄色小标」。 */
+.title-row { background-color: #fde047; color: #111827;
+             width: fit-content; max-width: 100%;
+             margin: 6px 0 18px; padding: 8px 16px; border-radius: 4px; }
+/* 悬停：整块黄底压深一档（整块可点，给个反馈） */
+.title-row:hover { background-color: #facc15; }
+/* h1 的默认装束（26px、3px 蓝色下边框、下边距）在标题行里要全部让位 */
+.title-row h1, .title-row .page-heading { margin: 0; padding: 0; border: 0;
+             font-size: 22px; font-weight: 700; line-height: 1.4;
+             letter-spacing: .5px; color: #111827; }
+/* 整条标题即链接（`display:block` 让整块黄底都能点）。⚠️ class **仍然是 `page-title`**：
+   `snapshot_page.py` / `check_nav.py` / `fix_page_title_home()` 都靠这个选择器定位「页首链接」，
+   改名会全线断掉。下面把历史蓝色牌匾规则（渐变底、白字、大内边距、圆角、阴影）
+   的属性**逐个复位**。 */
+.title-row .page-title { color: inherit; text-decoration: none; background: none;
+             display: block; margin: 0; padding: 0; border: 0; border-radius: 0;
+             box-shadow: none; transform: none; }
+.title-row .page-title:hover { text-decoration: none; }
+/* 末尾的提示块：整行已经是黄底黑字，所以它**不再自成一块**——底色/内边距/圆角全部去掉，
+   只留一小段间距（`.5em`）＋ 前面那颗小图标；字号字重随 h1（22px / 700）。
+   ⚠️ `span.highlight` 这个标签与 class **必须保留**：`enhance_tutorial._h1_text()` /
+   `snapshot_page.py` / `pages_sync.py` 都靠 `_HIGHLIGHT_SPAN_RE` 把它从 h1 文案里剥掉，
+   删了快照的 `page_title` 会拖上提示语。 */
+.title-row .highlight { background: none; color: inherit; padding: 0; border-radius: 0;
+             margin-left: .5em; white-space: normal; }
+/* 提示前面那颗小图标（Font Awesome）：随字号缩放（em），别写死 px，免得窄屏比例失衡 */
+.title-row .highlight i { margin-right: .3em; font-size: .9em; }
+@media (max-width: 640px) {
+  .title-row h1, .title-row .page-heading { font-size: 19px; }
+}
+/* === 增强：顶部品牌行 === */
+/* 顶部三行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
+   ⚠️ `.top-brand` 的**位置**在 `<body>` 直下（`.layout` 之前；历史形态曾在 `<main>` 内），
+   所以这里补上 `max-width:1200px; margin:… auto 0` —— 这两条合起来正好复刻 index 的
+   「`body{padding:clamp(10px,3vw,20px)}` + `.container{max-width:1200px;margin:0 auto}`」几何：
+   1280 视口下量到 x=40 / w=1200 / 中心 640，与 index 的 <header> 逐像素一致（此前在内容栏里
+   只有 w=1076、中心 678，用户反馈「看起来不一样」）。 */
+.top-brand { max-width: 1200px; margin: clamp(10px, 3vw, 20px) auto 0;
+  text-align: center; padding: clamp(20px, 5vw, 30px) 20px 10px; color: #1d1d1f;
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* 品牌行与**下方内容**的间距（用户要求「常用网址语句和上方的间距…可参考
+   index.html 中北京时间与下方间距」）：
+     index 里 `.time-display` 底边 → 下一个面板顶边 = 0px（时间行自带 6px 下内边距 ＋ header
+     的 10px 下内边距 = **视觉 16px**）；
+     讲义页/导航页里 `.top-brand` 底边 → `.warn` 顶边还额外压着 `.layout{padding:32px 24px}`
+     的上内边距，视觉 48px —— 明显偏大。
+   把紧跟在品牌行后面的那个 `.layout` 的**上内边距归零**，视觉间距即精确等于 index 的 16px。
+   窄屏分支里 `.layout{padding:16px}` 也会被这条（特指度更高）覆盖，同样对齐 index。 */
+.top-brand + .layout { padding-top: 0; }
+/* ① 学士帽 logo 行 */
+.top-brand .header-logo-link { display: block; text-decoration: none; color: inherit; }
+.top-brand .logo {
+  display: inline-flex; align-items: center; justify-content: center; gap: 15px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700;
+  text-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+.top-brand .logo i { color: #0071e3; filter: drop-shadow(0 0 8px rgba(0,113,227,.3));
+  animation: tp-pulse 2s ease-in-out infinite; }
+@keyframes tp-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.top-brand .brand-accent { color: #0071e3; text-shadow: 0 0 10px rgba(0,113,227,.3); }
+/* ② 「今天你 AI 赋能了吗?」下载提示行 */
+.top-brand .download-tip {
+  display: block; text-align: center; color: #86868b; font-size: .875rem;
+  padding: 8px 20px; text-decoration: none; transition: color .2s ease;
+}
+.top-brand .download-tip:hover { color: #0071e3; }
+.top-brand .download-tip i { margin-right: 6px; color: #86868b; }
+.top-brand .download-tip .highlight {
+  background-color: #fde047; color: #111827; font-weight: 700;
+  padding: .125rem .375rem; border-radius: .25rem;
+}
+/* ③ 实时北京时间行 */
+.top-brand .time-display { text-align: center; padding: 6px 0; color: #86868b;
+  position: relative; z-index: 1; }
+.top-brand .time-display .time-main { font-size: 1.05rem; font-weight: 400; letter-spacing: .5px; }
+.top-brand .time-display .time-sync-status { font-size: .7rem; opacity: .5;
+  margin-left: 6px; vertical-align: middle; }
+/* 深色主题（index 没有深色模式，这几条是按用户「深色下自动提亮」的要求新增的）：
+   正文色与灰字、品牌蓝各提亮一档；浅色下一律与 index.html 完全一致。 */
+body.dark .top-brand { color: #f0f0f0; }
+body.dark .top-brand .download-tip,
+body.dark .top-brand .download-tip i,
+body.dark .top-brand .time-display { color: #a1a1a6; }
+body.dark .top-brand .download-tip:hover { color: #4dabf7; }
+body.dark .top-brand .logo i,
+body.dark .top-brand .brand-accent { color: #4dabf7; }
+body.dark .top-brand .logo i { filter: drop-shadow(0 0 8px rgba(77,171,247,.45)); }
+@media (max-width: 480px) { .top-brand .logo { flex-direction: column; gap: 10px; } }
+/* === 增强：站点页脚 === */
+/* 页脚：`.footer / .footer-content / .footer-link / :hover / .separator / 窄屏分支` 逐条照抄
+   index.html（它的 CSS 变量在此展开成字面值：
+     --text-secondary #86868b ｜ --accent #0071e3 ｜ --text-primary #1d1d1f ｜ --transition-fast .2s ease）。
+   多出来的两条定位声明与一行字体栈见上方 Python 注释的 ①② 两条。 */
+.footer { max-width: 1200px; margin: 0 auto clamp(10px, 3vw, 20px);
+  text-align: center; color: #86868b; padding: 20px 0 20px; font-size: .9rem;
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.footer-content { display: flex; align-items: center; justify-content: center;
+  gap: 16px; flex-wrap: wrap; }
+.footer-link { color: #0071e3; text-decoration: none; transition: all .2s ease;
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+.footer-link:hover { color: #1d1d1f; text-decoration: underline; transform: translateY(-2px); }
+.separator { opacity: .4; }
+/* 「版式底边 → 页脚」这一段间距对齐 index（用户要求：
+   「每个页面底部信息与上方的间距保持和 index.html 中底部信息和上方的间距一致」）。
+   index 里页脚紧贴内容块，视觉间距就是页脚自身的 padding-top（20px）；
+   而本技能的内容区 `.layout` 自带下内边距（讲义 32px、导航 8px、窄屏 16px），
+   正文末元素又常带下外边距 —— 实测「正文末元素底边 → 页脚文字顶边」被撑到 52px（讲义）/ 34px（导航）。
+   把这两样归零后该间距＝20px，与 index 逐像素一致。用 `:has(+ .footer)` 只为自证
+   「只命中以页脚收尾的版式」（页脚恒为 `.layout` 的紧邻兄弟，由 inject_site_footer 保证）；
+   不支持 :has 的老浏览器会退回原来的偏大间距，不破版。 */
+.layout:has(+ .footer) { padding-bottom: 0; }
+.layout:has(+ .footer) .content > *:last-child { margin-bottom: 0; }
+/* 深色主题（index 没有深色模式，这几条是按顶部品牌行同样的口径新增的）：
+   灰字与品牌蓝各提亮一档，浅色下一律与 index.html 完全一致。 */
+body.dark .footer { color: #a1a1a6; }
+body.dark .footer-link { color: #4dabf7; }
+body.dark .footer-link:hover { color: #f0f0f0; }
+@media (max-width: 480px) {
+  .footer-content { flex-direction: column; gap: 8px; }
+  .separator { display: none; }
+}
+/* === 增强：搜索结果定位 === */
+/* 从教程导航页搜到知识点后，链接带 ?hl=词#secN：进来自动滚到那一段并高亮关键词
+   （脚本在同一 MARK 的 JS 块里）。点页面任意处 / 按 Esc 清除高亮。
+   配色比正文里普通的 <mark> 更醒目一档，浅色/深色各一套；代码块是深色底，共用同一套也够看清。 */
+.hl-hit { background: #ffe066; color: inherit; border-radius: 3px; padding: 0 1px; }
+.hl-hit.is-first { background: #ffc940; box-shadow: 0 0 0 2px rgba(255, 201, 64, .45); }
+body.dark .hl-hit { background: #6b5a17; color: #ffeaa0; }
+body.dark .hl-hit.is-first { background: #8a7418; color: #fff2c2; box-shadow: 0 0 0 2px rgba(255, 222, 128, .3); }
+/* === 增强：侧边目录可折叠 === */
+/* 侧边目录＝左侧竖排书签，默认收起。样式全部依附 .sb-ready（JS 加的），无 JS 时完全不影响原版式 */
+
+/* 外层：收 44px / 展 44+面板；sticky 钉在左侧，随页面滚动常驻，且任何状态都垂直居中 */
+.sidebar.sb-ready {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 44px;
+  /* 上限比「视口高 − 48」再紧 24px：保证 top = 50vh − H/2 恒 ≥ 32px（父容器上内边距）。
+     低于这个值时（矮窗口）书签的静态位置比粘住线还靠下，sticky 只能把元素往下推、不能往上提，
+     于是头几像素会跟着正文滚——留 24px 余量后永远是被推到线上，任何窗口高都不例外。 */
+  max-height: calc(100vh - 72px);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  position: sticky;
+  /* 居中必须落在**布局盒**上：top = 50vh - 自身高度的一半，高度由 JS 实测写进 --sb-top。
+     ⚠️ 不能用 transform: translateY(-50%) 做居中——transform 只挪画面、不挪盒子，而 sticky 判
+     「不越出父容器」时按**没挪过的盒子**算：滚到页底（父容器底边正好贴到视口底）整枚书签会被顶高。
+     导航页父容器只 3744px 高，实测展开态在页底偏了 130px（讲义父容器一万八，从没碰到这个上限）。
+     改成 top: calc(50vh - H/2) 后布局盒本身就居中，底部只占 50vh + H/2 ≤ 视口高（H ≤ 100vh-72px）。 */
+  top: var(--sb-top, 50vh);
+  /* 品牌行（index 首三行）在 `.layout` **之前**（＝页面最顶端），
+     于是书签的**静态位置**被整体推低了「品牌行高 + 外边距 + .layout 上内边距」那么多。
+     sticky 只能把元素往下推、不能往上提：展开态面板在页顶会被切掉（实测 1200×800 切掉一截）。
+     解法＝用等量**负上外边距**把静态位置提回版式顶端——`--sb-head` 由 JS 实测（＝文档顶到
+     `.layout` 上边的距离），于是书签的渲染位置**始终落在视口中线**。
+     没 JS 时 `--sb-head` 缺省 0：静态位置就停在品牌行下方，不重叠、不切屏，只是位置偏低。 */
+  margin-top: calc(-1 * var(--sb-head, 0px));
+  /* 还有第二处夹取要放开：sticky 要求元素**底部也不越出父容器底边**。
+     `.layout` 后面若还有页脚（导航页有 108px 页脚 + 30px 外边距），滚到最底时父容器底边升到视口里，
+     书签就被顶高——而且只在小窗口暴露：视口越高，页脚占比越小，越碰不到。实测导航页展开态
+     （H=590）页底偏移：视口 1113px 时 0，713px 时 −84px，533px 时 −122px，413px 时 −122px。
+     父容器底边之外本来就没有内容要避让，给一个足够大的负 margin-bottom 即可——负外边距只**放宽
+     允许范围**，不改元素在流里的位置（实测文档高、其余滚动位置逐像素不变）。−100vh 远超任何页脚高度。 */
+  margin-bottom: -100vh;
+  align-self: flex-start;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  z-index: 30;
+}
+/* 首次挂载时先禁用过渡，避免「原版 240px 宽 → 收起 44px」在加载瞬间抖一下（JS 两帧后移除本类） */
+.sidebar.sb-ready.sb-noanim { transition: none !important; }
+.sidebar.sb-ready.sb-expanded {
+  /* 面板宽度由 JS 量出「最长标题不折行」所需宽度，写进 --sb-panel-w（默认 196px） */
+  width: calc(44px + var(--sb-panel-w, 196px));
+}
+
+/* 工具条＝一枚 44px 宽的竖排书签：从上到下依次是「返回导航页 / 回到顶部 / 深色切换」三个 44×38
+   图标区 + 目录区，**共用同一块渐变底色与投影**，视觉上是一整枚按钮
+   （内部是四个各自可点的功能区——button 不能嵌套 button，所以用本列承载外观） */
+.sb-col {
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 0;              /* 不要圆角：与正文左边缘齐平的方角书签 */
+  background: linear-gradient(180deg, #5d9bd4 0%, #3776ab 58%, #2b5f8d 100%);
+  box-shadow: 0 6px 18px rgba(55,118,171,.32), inset 0 1px 0 rgba(255,255,255,.26);
+  transition: box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dark .sb-col { background: linear-gradient(180deg, #4a8bc2 0%, #30699b 58%, #245078 100%); }
+/* ⚠️ 悬停**只把投阴影压深一档，绝不动位置**（用户口径：「鼠标悬停到悬浮按钮上时它不要晃动，静止不动即可」）。
+   以前这里是 `transform: translateX(3px)`——鼠标一搭上去整枚书签就横向窜 3px，看起来就是「晃一下」；
+   现在连 transition 里的 transform 也去掉（见上面 `.sb-col`），从根上不给它动的机会。
+   判定：`.sb-col:hover` 里**不允许出现 transform / translate / scale**（探针会把这条规则的选择器改名后手动挂上，
+   再比对 `getBoundingClientRect()`，位置、宽高必须逐像素不变）。 */
+.sb-col:hover { box-shadow: 0 9px 26px rgba(55,118,171,.46), inset 0 1px 0 rgba(255,255,255,.26); }
+
+/* 竖排书签本体（目录区）：透明，底色与投影都由 .sb-col 提供，两块功能区共用一枚按钮的外观 */
+.sb-tab {
+  flex: 1 1 auto;                /* 在这一列里占满剩余高度：收起＝152px，展开＝随面板一起拉长 */
+  box-sizing: border-box;
+  width: 44px;
+  height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 15px 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-tab:hover { background-color: rgba(255,255,255,.1); }
+.sb-tab:active { background-color: rgba(255,255,255,.2); }
+.sb-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.sb-tab .sb-ico { display: block; width: 17px; height: 17px; flex: none; }
+.sb-tab .sb-vt {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  letter-spacing: .26em;
+  white-space: nowrap;
+}
+.sb-tab .sb-chev { display: block; width: 11px; height: 11px; flex: none; opacity: .72; }
+
+/* 「返回导航页 / 回到顶部」两枚微型按钮：与深色切换**完全同款**的图标区（44×38、透明底、只画图标、
+   底部一条极淡分隔线），叠在切换按钮上方；三块图标区 + 目录区共用 .sb-col 的同一枚渐变底色与投影，
+   所以收起态看过去仍是一整枚书签。图标同样走 background-image（与 #themeBtn 一致，不用子元素）。
+   ⚠️ 三格**统一是 <button>**（用户口径：「每页按钮都一样、返回导航页那枚不需要特殊效果」）：
+   写成 <a> 会撞上页面自身的 `.sidebar a` —— 样式上 `.sidebar a:hover` 用 `background` 简写把图标重置掉，
+   行为上模板脚本给 `.sidebar a` 挂了 preventDefault + scrollIntoView，跨页链接会被当成页内锚点劫持。
+   ⚠️ 选择器仍带 `.sb-col`（0,2,0）：比模板里的 `.sidebar a`（0,1,1）/ 通用 `a`（0,0,1）权重高，
+   也不怕将来谁把这格改回 <a>（改回就会踩上面那条坑）。
+   ⚠️ 这三枚元素只由 JS 创建（没 JS 就没有），所以不用挂 body.sb-on——省掉「挂载瞬间无样式」的一帧。 */
+.sb-col .sb-mini {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  display: block;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: transparent;
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  text-decoration: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-col .sb-mini:hover { background-color: rgba(255,255,255,.12); }
+.sb-col .sb-mini:active { background-color: rgba(255,255,255,.22); }
+.sb-col .sb-mini:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 返回导航页：小房子（导航页＝这一套材料的首页） */
+.sb-col .sb-mini.sb-home {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.3 10.4 12 3.5l8.7 6.9v9.2a1.2 1.2 0 0 1-1.2 1.2H4.5a1.2 1.2 0 0 1-1.2-1.2z'/%3E%3Cpath d='M9.2 20.8v-6.1h5.6v6.1'/%3E%3C/svg%3E");
+}
+/* 回到顶部：上行箭头 + 一条底线 */
+.sb-col .sb-mini.sb-top {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18.8V5.7'/%3E%3Cpath d='M5.9 11.8 12 5.7l6.1 6.1'/%3E%3Cpath d='M5.4 20.7h13.2'/%3E%3C/svg%3E");
+}
+
+/* 深色/浅色切换：不再单独占一格，而是并入书签内部——书签顶部一个 44×38 的图标区，
+   底部一条极淡的分隔线与目录区分开，共用 .sb-col 的渐变底色，看起来就是一整枚按钮。
+   图标一律用 background-image 画、不用文字：页面自身脚本每次切换都会改写它的 textContent，
+   塞子元素会被冲掉。整段挂在 body.sb-on 下：JS 没跑（没这个类）时按钮仍是原版右上角样式。 */
+body.sb-on #themeBtn {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;                  /* 隐掉「🌙 深色」文字，只留图标 */
+  line-height: 0;
+  text-indent: -9999px;
+  color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sb-on #themeBtn:hover { background-color: rgba(255,255,255,.12); }
+body.sb-on #themeBtn:active { background-color: rgba(255,255,255,.22); }
+body.sb-on #themeBtn:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 深色模式下换成太阳图标（底色仍由 .sb-col 提供，随 body.dark 自动加深） */
+body.dark.sb-on #themeBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4.4'/%3E%3Cpath d='M12 1.4v2.2M12 20.4v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.4 12h2.2M20.4 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6'/%3E%3C/svg%3E");
+}
+
+/* 展开出来的目录面板（沿用原版卡片观感，方角） */
+.sb-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: none;
+  padding: 16px 14px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 6px 22px rgba(0,0,0,.08);
+}
+.sidebar.sb-ready.sb-expanded .sb-panel { display: block; animation: sbIn .22s ease; }
+@keyframes sbIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.sb-head {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--h2);
+}
+
+/* 遮罩：只在窄屏（抽屉模式）用得上 */
+.sb-mask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+body.sb-open .sb-mask { opacity: 1; visibility: visible; }
+
+@media (max-width: 820px) {
+  /* 窄屏：书签脱离文档流钉在左边缘；展开则是整屏抽屉，正文不重排 */
+  .sidebar.sb-ready {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    max-height: none;
+    margin-top: 0;      /* ⚠️ 抽屉是 fixed：负外边距会把整枚书签顶出视口，必须显式归零（见 --sb-head） */
+    margin-bottom: 0;   /* 抽屉是 fixed，没有父容器可夹，负外边距在这里无意义 */
+    transition: none;
+  }
+  .sb-tab { height: 138px; }
+  .sidebar.sb-ready.sb-expanded {
+    top: 0;
+    transform: none;
+    width: min(92vw, calc(44px + var(--sb-panel-w, 196px)));
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+  }
+  .sb-mask { display: block; }
+  body.sb-on .layout { padding-left: 60px; }   /* 给固定的书签让出位置，避免压住正文 */
+}
+
+@media print {
+  .sb-mask, .sidebar.sb-ready { display: none !important; }
+}
+</style>
+
+<style>
+  .site-tbl { margin: 16px 0 8px; }
+  .site-tbl th:first-child { width: 108px; }
+  .site-tbl .demo-site { color: #16794a; font-weight: 700; }
+  body.dark .site-tbl .demo-site { color: #6ee7b7; }
+  .site-tbl .ext-site { color: #8a5a00; font-weight: 700; }
+  body.dark .site-tbl .ext-site { color: #fcd34d; }
+  .site-tbl .u { font-family: Consolas, Monaco, monospace; font-size: 13px;
+                 word-break: break-all; color: #3776ab; }
+  body.dark .site-tbl .u { color: #6cb6ff; }
+  .site-tbl .nt { color: #777; font-size: 13px; }
+  body.dark .site-tbl .nt { color: #a2a2a2; }
+  .site-tbl .pd { margin: 0; padding-left: 20px; }
+  .site-tbl .pd li { margin: 3px 0; }
+
+  /* 「工具与技能」面板（每篇第 3 节开头，由 toolbox.py 生成） */
+  .toolbox { border: 1px solid var(--border); border-left: 5px solid #3776ab; border-radius: 10px;
+             background: var(--card); padding: 12px 16px 4px; margin: 16px 0 18px; }
+  body.dark .toolbox { border-left-color: #6cb6ff; }
+  .toolbox .tb-h { font-weight: 700; font-size: 15.5px; color: #3776ab; margin: 0 0 6px; }
+  body.dark .toolbox .tb-h { color: #6cb6ff; }
+  .toolbox p { line-height: 1.9; }
+  .toolbox .tb-tbl { margin: 10px 0 12px; }
+  .toolbox .tb-tbl th:first-child { width: 96px; }
+  .toolbox .tb-tbl td:first-child { white-space: nowrap; font-weight: 600; }
+  .toolbox .tb-tbl td { vertical-align: top; }
+  .toolbox .tb-flow { margin: 6px 0 10px; padding-left: 22px; }
+  .toolbox .tb-flow li { margin: 6px 0; line-height: 1.9; }
+  .toolbox .tb-flow strong { color: #1d4ed8; }
+  body.dark .toolbox .tb-flow strong { color: #93b4ff; }
+</style>
+</head>
+<body>
+
+<button id="themeBtn">🌙 深色</button>
+
+    <!-- 增强：顶部品牌行（克隆自 index.html 页首三行，勿手改） -->
+    <div class="top-brand">
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+        <div class="logo">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          <span>学府路<span class="brand-accent">1</span>号 · <span class="brand-accent">xuefulu.ai</span></span>
+        </div>
+      </a>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
+        <i class="fas fa-external-link" aria-hidden="true"></i><span class="highlight">今天你 AI 赋能了吗?</span>打开浏览器,在地址栏输入
+        <span class="highlight">xuefulu.ai</span>
+        ,按下 <span class="highlight">Enter</span> 即可访问学府路1号!
+      </a>
+      <div class="time-display">
+        <span class="time-main"><span id="currentDateTime">2026年10月09日 星期五 23:43:06</span><span class="time-sync-status" id="timeSyncStatus"></span></span> <span class="time-author">广州城市理工学院 经济学院 朱继绪</span>
+      </div>
+    </div>
+    <!-- /增强：顶部品牌行 -->
+
+<div class="layout">
+
+  <!-- 侧边目录 -->
+  <aside class="sidebar">
+    <h3>目录</h3>
+    <a href="#sec1">一、案例背景与采集目标</a>
+    <a href="#sec2">二、数据源与字段设计</a>
+    <a href="#sec3">三、零代码操作步骤</a>
+    <a href="#sec4">四、提示词模板与追问技巧</a>
+    <a href="#sec5">五、结果核对、清洗与保存</a>
+    <a href="#sec6">六、常见问题与合规红线</a>
+    <a href="#quiz">七、随堂自测</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <div class="warn">
+      <span class="warn-links">常用网址：学府路1号 <a class="link" href="https://xuefulu.ai/" target="_blank">https://xuefulu.ai</a>　｜　下载 WorkBuddy <a class="link" href="https://xuefulu.ai/WorkBuddy.html" target="_blank">https://xuefulu.ai/WorkBuddy.html</a></span>
+    </div>
+
+    <!-- 增强：标题行（页首大标题 + 返回导航提示，勿手改） -->
+    <div class="title-row">
+      <h1 class="page-heading"><a class="page-title" href="案例导航.html">案例 15｜指数与板块资金流向采集（第 5 周）<span class="highlight"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>点击此处可返回《网络数据采集》案例导航页</span></a></h1>
+    </div>
+    <!-- /增强：标题行 -->
+
+    <h2 id="sec1">一、案例背景与采集目标</h2>
+<p>每天收盘后，财经新闻里总会说「今天资金流入最多的板块是……」。这句话背后是一条条可查的数据：各行业板块、概念板块的<strong>主力净流入</strong>、<strong>超大单净流入</strong>、<strong>大单净流入</strong>，以及对应的最新价与涨跌幅。把这些整理成一张表，就能一眼看出「钱今天流向了哪里」。</p>
+<p>示范站点选<strong>东方财富网行情中心</strong>，地址 <code>https://quote.eastmoney.com/center/gridlist.html</code>。页面用起来像一张表格，实际上是前端调用<strong>公开行情接口</strong>取回 JSON、再渲染成表格。本案例让 AI 直接读这些字段，并特别讲清三件事：<strong>涨跌用红绿怎么表示</strong>、<strong>万和亿怎么统一</strong>、<strong>盘中数据为什么一直在变</strong>。</p>
+<h3>1.1 这个案例要拿到什么</h3>
+<ul><li>指数与板块的行情：代码、名称、最新价、涨跌幅、涨跌额、成交额、换手率；</li><li>资金流向：主力净流入、超大单净流入、大单净流入；</li><li>板块的领涨股；</li><li>每条记录带上采集时间——行情是时点数据，不带时间就没有意义。</li></ul>
+<h3>1.2 三个绕不开的难点</h3>
+<table><thead><tr><th>难点</th><th>页面上的样子</th><th>解决思路</th></tr></thead><tbody><tr><td>单位是「万」「亿」</td><td>成交额写成「3.2亿」，资金写成「1.5亿」</td><td>统一换算成「元」，并在字段说明里写死单位</td></tr><tr><td>红涨绿跌和直觉相反</td><td>上涨显示红色，下跌显示绿色</td><td>记住这是中国大陆市场口径，做图时千万别弄反</td></tr><tr><td>盘中数据实时变</td><td>刷新一次数字就变一次</td><td>每条记录必须带采集时间，把它当作时点快照</td></tr><tr><td>主力净流入是加工指标</td><td>不是交易所原始数据</td><td>在字段说明里写清它的定义，避免当成官方原始值</td></tr></tbody></table>
+<div class="tip"><strong>本案例的重点是「单位」与「时点」。</strong>行情数字本身好取，难的是把万、亿统一成元，并且每次都老老实实记下采集时间。</div>
+<div class="warn"><strong>重要提醒：</strong>行情数据<strong>盘中实时变化</strong>，任何一次采集都只是某个瞬间的快照。本案例数据<strong>仅用于教学分析，不构成任何投资建议</strong>。</div>
+<div class="sizheng">
+<p class="sz-head"><i class="fa-solid fa-star" aria-hidden="true"></i>课程思政｜科技自立自强 · 把公开行情接口用起来</p>
+<p>金融数据的背后是一整套信息基础设施：交易撮合、行情分发、数据服务。能熟练地把公开接口接进来、把字段与单位理清楚，是数字化时代的基本功。掌握数据能力，就能把公开信息变成自己的判断力，而不是被动接受别人的结论。</p>
+</div>
+<h3>目标站点与交付产物</h3>
+<p>下表是本篇用到的<strong>真实站点</strong>。<span class="demo-site">绿色</span>是课堂可稳定复现的示范站点；<span class="ext-site">橙色</span>是延伸站点，多数有登录墙或风控，课堂上只讲结构、原理与合规边界，<strong>不教绕过</strong>。</p>
+<table class="site-tbl">
+<thead><tr><th>项目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>示范站点</td><td><span class="demo-site">东方财富 · 行情中心（资金流向）</span><br><span class="u">https://quote.eastmoney.com/center/gridlist.html</span><br><span class="nt">指数、个股、板块的资金流向同页可切；接口返回 JSON，字段规整；盘中数据实时变，报告必须写采集时刻</span></td></tr>
+<tr><td>延伸站点</td><td><ul class="pd"><li><span class="ext-site">同花顺 · 数据中心</span>　<span class="u">https://data.10jqka.com.cn/</span><span class="nt">（入口：首页左侧「资金流向 / 龙虎榜」，选板块或个股）</span></li><li><span class="ext-site">新浪财经 · 行情</span>　<span class="u">https://finance.sina.com.cn/stock/</span><span class="nt">（老牌公开行情接口）</span></li><li><span class="ext-site">雪球 · 行情中心</span>　<span class="u">https://xueqiu.com/hq</span><span class="nt">（社区 + 行情，部分数据需登录）</span></li></ul></td></tr>
+<tr><td>交付产物</td><td><ul class="pd"><li>数据明细.xlsx（金额统一成「元」，含采集时间与口径说明）</li><li>数据明细.html（涨红跌绿染色，可按净流入排序）</li><li>数据看板.html（板块净流入排行 + 指数涨跌幅对比）</li><li>技能压缩包（资金流向接口采集 + 单位统一与口径说明模板）</li></ul></td></tr>
+<tr><td>难度</td><td>★★☆ 中</td></tr>
+<tr><td>合规提示</td><td>行情与资金数据版权归交易所与数据商，教学仅限学习研究；必须声明「数据仅用于教学，不构成投资建议」；结合理性投资教育，不传播未经证实的消息、不参与炒作。</td></tr>
+</tbody>
+</table>
+
+    <h2 id="sec2">二、数据源与字段设计</h2>
+<p>数据源：<strong>东方财富网行情中心</strong>，地址 <code>https://quote.eastmoney.com/center/gridlist.html</code>。页面左侧能切换「沪深个股、行业板块、概念板块、指数」等类别，资金流向相关的列在板块视图中尤其完整。</p>
+<h3>2.1 站点信息</h3>
+<table><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>站点全称</td><td>东方财富网 · 行情中心（quote.eastmoney.com），国内访问量最大的财经门户之一</td></tr><tr><td>示范网址</td><td><a class="link" href="https://quote.eastmoney.com/center/gridlist.html" target="_blank">东方财富行情中心</a></td></tr><tr><td>页面形态</td><td>前端调用公开行情接口，返回 JSON；页面把 JSON 渲染成行情表</td></tr><tr><td>分类切换</td><td>沪深个股 / 行业板块 / 概念板块 / 指数 等多个视图，本案例看板块与指数视图</td></tr><tr><td>字段覆盖</td><td>代码、名称、最新价、涨跌幅、涨跌额、成交量、成交额、换手率、主力净流入等</td></tr><tr><td>访问约束</td><td>公开接口，无需登录；仍应低频访问（间隔 1 秒以上），不做高频轮询</td></tr></tbody></table>
+<h3>2.2 延伸站点（可作对照）</h3>
+<table><thead><tr><th>站点</th><th>网址</th><th>教学用途</th></tr></thead><tbody><tr><td>同花顺数据中心</td><td><a class="link" href="https://data.10jqka.com.cn/" target="_blank">https://data.10jqka.com.cn/</a></td><td>资金流向页丰富，可做对照</td></tr><tr><td>新浪财经</td><td><a class="link" href="https://finance.sina.com.cn/stock/" target="_blank">https://finance.sina.com.cn/stock/</a></td><td>老牌公开行情入口，字段命名不同</td></tr><tr><td>雪球</td><td><a class="link" href="https://xueqiu.com/" target="_blank">https://xueqiu.com/</a></td><td>社区属性强，可讨论「观点与数据要分开」</td></tr></tbody></table>
+<h3>2.3 完整字段表（13 个字段）</h3>
+<p>示例值取自行业板块<strong>半导体（BK1036）2026-10-09 收盘的真实行情</strong>；板块行情随时在动，你采集时以当天实际数据为准。</p>
+<table><thead><tr><th>字段名</th><th>字段含义</th><th>示例值</th><th>口径与备注</th></tr></thead><tbody><tr><td><code>代码</code></td><td>指数或板块代码</td><td>BK1036</td><td>板块代码常以 BK 开头；指数为六位数字</td></tr><tr><td><code>名称</code></td><td>指数或板块名称</td><td>半导体</td><td>以页面显示为准</td></tr><tr><td><code>类型</code></td><td>属于哪一类</td><td>行业板块</td><td>如「指数」「行业板块」「概念板块」</td></tr><tr><td><code>最新价</code></td><td>当前点位或价格</td><td>2497.48</td><td>板块用点位，保留两位小数</td></tr><tr><td><code>涨跌幅</code></td><td>相对昨收的涨跌百分比</td><td>-1.35</td><td>正为涨、负为跌，只写数字，单位 %</td></tr><tr><td><code>涨跌额</code></td><td>相对昨收的绝对变化</td><td>-34.13</td><td>保留两位小数，与涨跌幅可互相校验</td></tr><tr><td><code>成交额</code></td><td>当日成交金额</td><td>229400000000</td><td>统一换算成「元」（整数）；页面显示「2294亿」</td></tr><tr><td><code>换手率</code></td><td>成交量占流通股本比例</td><td>3.59</td><td>单位 %，反映交投活跃度</td></tr><tr><td><code>主力净流入</code></td><td>大单与超大单合计的净流入</td><td>-4129000000</td><td>单位元；正为净流入、负为净流出</td></tr><tr><td><code>超大单净流入</code></td><td>超大单（大额）净流入</td><td>-4398000000</td><td>单位元；是主力净流入的主要构成</td></tr><tr><td><code>大单净流入</code></td><td>大单净流入</td><td>268200000</td><td>单位元；与超大单合计约等于主力净流入</td></tr><tr><td><code>领涨股</code></td><td>板块内涨幅居前的股票</td><td>和林微纳</td><td>记录名称，可另附代码</td></tr><tr><td><code>采集时间</code></td><td>本次采集的时点</td><td>2026-10-09 15:39:30</td><td>盘中数据实时变，必须记时点</td></tr></tbody></table>
+<h3>2.4 单位统一：万与亿</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">单位口径</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+<pre><code>页面上的写法与目标结果（示例）：
+  成交额「3.2亿」    → 320000000 元
+  主力净流入「1.5亿」 → 1500000000 元
+  资金写成「8600万」  → 86000000 元
+
+换算关系：
+  1 万 = 10000 元
+  1 亿 = 100000000 元 = 10000 万元
+
+记账规则：
+  所有金额类字段统一成「元」存整数；
+  页面原始写法另存一列留档（可选），便于回溯。</code></pre>
+</div>
+</div>
+<h3>2.5 红涨绿跌，是 A 股的惯例</h3>
+<ul><li><strong>上涨</strong>对应的颜色是 <strong>红色</strong>；</li><li><strong>下跌</strong>对应的颜色是 <strong>绿色</strong>；</li><li>这与部分海外市场（如美股）「绿涨红跌」的习惯正好相反。</li></ul>
+<div class="warn"><strong>做图表时千万不要把涨跌颜色弄反。</strong>红色代表上涨是中国大陆市场的习惯用法，弄反会让所有人第一时间读错方向。</div>
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜接口返回的字段名常常是英文缩写（如 f2、f3、f62）。让 AI 先翻译成中文列名并标出单位，你核对一遍再采集，能避免张冠李戴。</p>
+<p>打开 WorkBuddy 或任意 AI 对话工具，试试这样问：<code>请把行情接口返回的字段名和它们对应的中文含义、单位列成一张对照表，尤其标出资金流向类字段，先不要开始采集。</code></p>
+</div>
+
+    <h2 id="sec3">三、零代码操作步骤</h2>
+<div class="toolbox">
+<p class="tb-h"><i class="fa-solid fa-toolbox" aria-hidden="true"></i>工具与技能｜先看清三个角色，再动手</p>
+<p>本篇全程<strong>零代码</strong>：你把要求说清楚，AI 去执行，你负责验收。三个角色分工如下——<strong>浏览器技能</strong>指的是腾讯开源的 <strong>BrowserSkill</strong>，它能让 AI 直接操作你电脑上真实的浏览器（可复用已经登录的状态），自己开一个独立窗口干活，不打扰你正在看的网页；遇到验证码、登录或确认弹窗，它会停下来交给你本人处理。</p>
+<table class="tb-tbl">
+<thead><tr><th>角色</th><th>负责什么</th><th>在本案例里具体做什么</th></tr></thead>
+<tbody>
+<tr><td>你</td><td>确认字段清单、验收结果、清洗与合规把关</td><td>盯字段清单、核对结果、处理异常（如验证码）</td></tr>
+<tr><td>WorkBuddy</td><td>接中文指令：探字段 → 批量采 → 清洗 → 导出交付物</td><td>拆解本篇的采集任务并跑完全量、产出交付物</td></tr>
+<tr><td>浏览器技能<br>BrowserSkill</td><td>以真实浏览器打开页面：跑脚本渲染、滚动 / 翻页 / 点开详情、截图留证；可复用本机浏览器已登录状态，遇到验证码或登录弹窗会停下来交给你处理</td><td>打开行情中心，确认板块列表与资金流向字段的位置</td></tr>
+</tbody>
+</table>
+<p><strong>五步操作主线</strong>（全课程统一，每一篇都按这个顺序推进）：</p>
+<ol class="tb-flow">
+<li><strong>定目标与字段</strong>：先看本篇<strong>第二节的字段表</strong>，把「要哪几列、每列什么口径、要多少条」说清楚——字段清单就是验收标准，说不清就会拿回一张字段乱七八糟的表。</li>
+<li><strong>现场踩点</strong>（浏览器技能 BrowserSkill）：打开 <code>https://quote.eastmoney.com/center/gridlist.html</code>，确认行业板块列表与「主力净流入」在哪一列。</li>
+<li><strong>小样试采</strong>（WorkBuddy）：先只取「半导体」<strong>一个板块</strong>，确认字段与数值合理。</li>
+<li><strong>核对与清洗</strong>：① 成交额、主力净流入有没有换算成统一的单位（并说明原文怎么写）；② 涨跌幅是否自洽；③ 有没有加采集时间列。</li>
+<li><strong>导出与归档</strong>：导出交付物（数据明细表 / 可筛选明细页 / 数据看板 / 可复用的技能包），<strong>文件名带上采集日期</strong>，并写清数据来源、采集时间与已知局限。</li>
+</ol>
+<div class="tip"><strong>起手一句话</strong>（可直接复制）：<code>用浏览器技能 BrowserSkill 打开 https://quote.eastmoney.com/center/gridlist.html（东方财富 · 行情中心（资金流向）），把这一页每条记录能采到的字段名和示例值列出来，先不要采集。</code></div>
+</div>
+<p>本案例全程在 WorkBuddy 里用中文对话完成，<strong>不写一行代码</strong>。</p>
+<ol><li><strong>新建对话，粘贴提示词</strong>（见下一节），把行情中心网址原样粘进去。</li><li><strong>先取一个板块试水。</strong>说「先只取「半导体」这一个板块」，确认字段都能取到、数值合理。</li><li><strong>核对单位。</strong>说「请把成交额、主力净流入都换算成元，并说明原文是怎么写的」。</li><li><strong>核对涨跌。</strong>用「(最新价 - 昨收) ÷ 昨收」的思路核对涨跌幅是否自洽（若页面提供昨收）。</li><li><strong>加时间戳。</strong>说「新增一列采集时间，格式 2026-10-08 14:32:05」。</li><li><strong>扩到一批板块。</strong>说「再取行业板块里涨幅前 10 的板块」并合并成一张表。</li><li><strong>导出并命名。</strong>导出为 <code>fundflow_sector_20261009_1432.xlsx</code>，文件名带上时间。</li></ol>
+<div class="tip">金融数据重在「可追溯」。<strong>每一次采集都带上时间戳并存成独立文件</strong>，日后才能回看某个时刻的资金流向。</div>
+
+    <h2 id="sec4">四、提示词模板与追问技巧</h2>
+<p>下面这段可以直接复制。注意三点：<strong>真实网址</strong>、<strong>字段编号带单位</strong>、<strong>时点写清楚</strong>。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">提示词</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span></div>
+<pre><code>请帮我完成一个指数与板块资金流向采集任务。
+【数据来源】东方财富网行情中心，网址：https://quote.eastmoney.com/center/gridlist.html
+【采集对象】行业板块中涨幅靠前的若干板块（先用「半导体」一个做样例）
+【需要字段】按这个顺序，金额类字段统一换算成「元」：
+  1. 代码（板块代码，按文本存）
+  2. 名称
+  3. 类型（指数 / 行业板块 / 概念板块）
+  4. 最新价（点位，保留两位小数）
+  5. 涨跌幅（正为涨、负为跌，只写数字，单位 %）
+  6. 涨跌额（保留两位小数）
+  7. 成交额（统一换算成元，整数）
+  8. 换手率（单位 %）
+  9. 主力净流入（单位元，正为净流入）
+  10. 超大单净流入（单位元）
+  11. 大单净流入（单位元）
+  12. 领涨股
+  13. 采集时间（格式 2026-10-08 14:32:05）
+
+【执行要求】
+  - 先只取「半导体」一个板块给我确认字段，再批量取其他板块
+  - 所有金额字段统一成「元」，并说明页面原文写法（如「1.5亿」）
+  - 每条记录都必须带采集时间；行情是时点数据，盘中会一直变
+  - 导出为 Excel，文件名 fundflow_sector_20261009_1432.xlsx
+  - 说明这批数据是延时行情还是实时行情</code></pre>
+</div>
+</div>
+<h3>4.1 追问与刷新指令</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">追问指令</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span></div>
+<pre><code>追问一（单位统一）：
+请把所有金额类字段统一换算成「元」，
+并在旁边注明页面原始写法，
+逐条说明你是怎么换算的（如「1.5亿」→ 150000000）。
+
+追问二（资金口径）：
+请说明「主力净流入」是怎么定义的，
+它和「超大单净流入」「大单净流入」是什么关系，
+三者能不能对得上。
+
+追问三（刷新为追加）：
+以后我每次说「刷新」，就重新取一次数据，
+写成新的一批追加到历史快照表里，不要覆盖旧数据，
+并保留每一批的采集时间。</code></pre>
+</div>
+</div>
+<div class="tip"><strong>刷新要「追加」不要「覆盖」。</strong>把每次结果都留着，才能拼出资金流向随时间变化的序列。</div>
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜如果是盘中采集，两次结果对不上是正常的。让 AI 把「采集时刻」写进每条记录，而不是反复重取直到数字一致——那是徒劳的。</p>
+<p>打开 WorkBuddy 或任意 AI 对话工具，试试这样问：<code>请告诉我这次采集的具体时刻，并说明盘中数据会实时变化；之后每次采集都把这个时刻写进记录，不要为了对齐数字而反复重取。</code></p>
+</div>
+
+    <h2 id="sec5">五、结果核对、清洗与保存</h2>
+<p>下面是 WorkBuddy 返回的结果样例（节选，2026-10-09 收盘真实行情）：</p>
+<table><thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>涨跌幅</th><th>成交额</th><th>主力净流入</th><th>超大单净流入</th><th>采集时间</th></tr></thead><tbody><tr><td>BK1036</td><td>半导体</td><td>2497.48</td><td>-1.35</td><td>229400000000</td><td>-4129000000</td><td>-4398000000</td><td>2026-10-09 15:39:30</td></tr><tr><td>BK0448</td><td>通信设备</td><td>22344.49</td><td>-0.59</td><td>120600000000</td><td>-3864000000</td><td>-1780000000</td><td>2026-10-09 15:39:30</td></tr><tr><td>BK0737</td><td>软件开发</td><td>1065.98</td><td>3.98</td><td>40750000000</td><td>1574000000</td><td>1013000000</td><td>2026-10-09 15:39:30</td></tr><tr><td>BK1029</td><td>汽车整车</td><td>1390.98</td><td>0.13</td><td>17540000000</td><td>-1534000000</td><td>-3409000000</td><td>2026-10-09 15:39:30</td></tr></tbody></table>
+<h3>5.1 四项必查</h3>
+<table><thead><tr><th>核对项</th><th>正常表现</th><th>发现问题怎么问</th></tr></thead><tbody><tr><td>单位</td><td>成交额与资金类字段全是「元」量级的整数，没有「万」「亿」残留</td><td>「第 2 条成交额还是 1.85亿 的写法，请统一换算成元」</td></tr><tr><td>涨跌方向</td><td>主力净流入为正的资金流入，为负的资金流出，与涨跌幅方向大致一致</td><td>「第 4 条跌了但主力净流入是正的，请复核取数是否正确」</td></tr><tr><td>资金自洽</td><td>超大单净流入 + 大单净流入 约等于 主力净流入</td><td>「第 1 条两个分项之和与主力净流入对不上，请说明口径」</td></tr><tr><td>采集时间</td><td>每条都有，且是同一批次时间</td><td>「请给所有记录补上同一采集时间，方便做快照」</td></tr></tbody></table>
+<h3>5.2 清洗与保存</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">清洗指令</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span></div>
+<pre><code>① 去空格与单位：
+   所有金额列去掉「万」「亿」并换算成元，统一为整数。
+   百分号列（涨跌幅、换手率）只保留数字。
+
+② 补类型列：
+   给每条记录标注「指数 / 行业板块 / 概念板块」。
+   按「代码」去重，重复的保留第一条。
+
+③ 追加快照：
+   每次采集的结果单独存一份，新增「采集时间」列；
+   多次采集后按 代码 + 采集时间 纵向合并，形成资金流向序列。</code></pre>
+</div>
+</div>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">文件命名</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code>fundflow_sector_20261009_1539.xlsx         ← 当天原始结果（原样保留）
+fundflow_sector_20261009_1539_clean.xlsx   ← 清洗后结果
+fundflow_history_sector.csv                ← 多次采集纵向合并的序列
+fundflow_sector_20261009_1539_log.txt      ← 日志：时刻、条数、异常</code></pre>
+</div>
+</div>
+<div class="tip">把<strong>采集时刻</strong>写进文件名与每一行，是金融数据采集的铁律。少了时间，这些数字就失去了意义。</div>
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜清洗前先另存副本。让 AI 直接改原始表，一旦换算口径改过头，页面原文就找不回来了。</p>
+<p>打开 WorkBuddy 或任意 AI 对话工具，试试这样问：<code>请保留原始文件不动，另存副本再清洗，最后告诉我清洗前后各有多少条、改了哪些列、做了哪些单位换算。</code></p>
+</div>
+<div class="sizheng">
+<p class="sz-head"><i class="fa-solid fa-star" aria-hidden="true"></i>课程思政｜工匠精神与严谨求实 · 单位错一位，结论差一万倍</p>
+<p>「1.5亿」如果只当成 15000，就跟真实值差了整整一万倍。金融数据里，万与亿的换算是高频错误点，小数点后面每一位都关系到结论。把单位写死在字段说明里、逐条复核换算过程，就是数据工作者的严谨。</p>
+</div>
+
+    <h2 id="sec6">六、常见问题与合规红线</h2>
+<h3>6.1 五个高频问题</h3>
+<table><thead><tr><th>现象</th><th>原因</th><th>怎么处理</th></tr></thead><tbody><tr><td>金额还是「亿」的写法</td><td>换算步骤漏了</td><td>要求把所有金额统一换算成元，并注明页面原文</td></tr><tr><td>两次采到的数字不一样</td><td>行情是时点数据，盘中一直在变</td><td>这是正常的；记录采集时刻，把它当作快照</td></tr><tr><td>主力净流入与分项对不上</td><td>分项口径或时间点不同</td><td>要求 AI 说明定义，核对 超大单 + 大单 是否约等于主力</td></tr><tr><td>涨跌颜色画反了</td><td>错用了欧美「绿涨红跌」的习惯</td><td>中国大陆市场是红涨绿跌，做图时务必按此设置</td></tr><tr><td>刷新后旧数据没了</td><td>被新的结果覆盖了</td><td>要求「追加不覆盖」，每批单独存并带采集时间</td></tr></tbody></table>
+<h3>6.2 合规红线</h3>
+<ol><li><strong>只用公开信息。</strong>行情与资金流向是公开数据，不采任何账户内的私有信息。</li><li><strong>控制频率。</strong>请求之间留足间隔（1 秒以上），不高频轮询，不并发轰炸。</li><li><strong>标注来源与时点。</strong>对外展示时注明数据来源与采集时刻，不冒用平台名义。</li><li><strong>不做投资建议。</strong>数据仅用于教学分析；不基于采集结果向他人推荐买卖、不传播未经证实的消息、不参与炒作。</li></ol>
+<div class="warn"><strong>「主力净流入」是加工指标，不是交易所的原始数据。</strong>它由成交单按金额分类计算得到，不同平台口径可能不同，引用时必须说明定义与来源。</div>
+<div class="sizheng">
+<p class="sz-head"><i class="fa-solid fa-star" aria-hidden="true"></i>课程思政｜诚信与职业操守 · 看数据，更要看住自己的嘴</p>
+<p>资金流向数据很容易被拿去包装成「稳赚信号」。作为学过数据采集的人，要清楚：数据不等于结论，更不等于投资建议。不传播未经证实的消息、不参与炒作、不把采集结果说成「内幕」——这是数据从业者的职业底线。</p>
+</div>
+
+    <h2 id="quiz">七、随堂自测（10 题）</h2>
+    <p>点击选项即可判分，答错的题会立刻显示解析。</p>
+    <div class="quiz" id="quizBox">
+      <div class="quiz-bar">
+        <span id="quizProgress">已答 0 / 10 · 正确 0</span>
+        <span class="quiz-score" id="quizScore">—</span>
+        <button class="quiz-reset" id="quizReset" type="button">重新答题</button>
+      </div>
+      <div class="q" data-no="1" data-answer="3">
+        <p class="q-title"><span class="q-no">1</span>「主力净流入」这个指标最准确的理解是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 就是所有人的净买入金额</li>
+          <li class="opt" data-i="1">B. 当日的成交总量</li>
+          <li class="opt" data-i="2">C. 板块的换手率</li>
+          <li class="opt" data-i="3">D. 大单与超大单合计的净流入额（买入减卖出）</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>主力净流入是按成交单金额分类后，大单与超大单合计的净额；它是加工指标，不是交易所原始数据。</div>
+      </div>
+      <div class="q" data-no="2" data-answer="0">
+        <p class="q-title"><span class="q-no">2</span>在中国大陆市场，上涨对应的颜色通常是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 红色</li>
+          <li class="opt" data-i="1">B. 绿色</li>
+          <li class="opt" data-i="2">C. 蓝色</li>
+          <li class="opt" data-i="3">D. 黄色</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>中国大陆市场是红涨绿跌，与部分海外市场「绿涨红跌」的习惯相反。</div>
+      </div>
+      <div class="q" data-no="3" data-answer="2">
+        <p class="q-title"><span class="q-no">3</span>页面上成交额写成「3.2亿」，换算成「元」是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 3200</li>
+          <li class="opt" data-i="1">B. 320000</li>
+          <li class="opt" data-i="2">C. 320000000</li>
+          <li class="opt" data-i="3">D. 3200000000</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>1 亿 = 100000000 元，3.2 亿即 320000000 元；单位换算是本案例最容易出错的地方。</div>
+      </div>
+      <div class="q" data-no="4" data-answer="1">
+        <p class="q-title"><span class="q-no">4</span>为什么每条行情记录都必须带上采集时间？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 让表格看起来更长</li>
+          <li class="opt" data-i="1">B. 行情是时点数据，盘中一直在变，时间决定数字的含义</li>
+          <li class="opt" data-i="2">C. 方便凑够字段数</li>
+          <li class="opt" data-i="3">D. 为了导出更快</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>行情是时点快照，同一板块上午和下午的数字可能完全不同，只有记住时间，数据才有意义。</div>
+      </div>
+      <div class="q" data-no="5" data-answer="1">
+        <p class="q-title"><span class="q-no">5</span>关于「主力净流入」，下面说法正确的是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 它是交易所直接发布的原始数据</li>
+          <li class="opt" data-i="1">B. 它是由成交单金额分类加工得到的指标</li>
+          <li class="opt" data-i="2">C. 它等于公司财报里的净利润</li>
+          <li class="opt" data-i="3">D. 它是随机生成的</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>主力净流入是加工指标，由大单、超大单按金额分类计算而来，不同平台口径可能不同。</div>
+      </div>
+      <div class="q" data-no="6" data-answer="2">
+        <p class="q-title"><span class="q-no">6</span>「红涨绿跌」这个说法在哪个市场成立？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 美国股市</li>
+          <li class="opt" data-i="1">B. 欧洲股市</li>
+          <li class="opt" data-i="2">C. 中国大陆市场</li>
+          <li class="opt" data-i="3">D. 所有市场都一样</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>红涨绿跌是中国大陆市场的惯例；做图时若照搬欧美习惯，会把涨跌看反。</div>
+      </div>
+      <div class="q" data-no="7" data-answer="0">
+        <p class="q-title"><span class="q-no">7</span>同一板块上午和下午采到的资金流向数值不同，最可能的原因是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 板块实时变动，数据是时点快照</li>
+          <li class="opt" data-i="1">B. 网站出错了</li>
+          <li class="opt" data-i="2">C. 采集软件坏了</li>
+          <li class="opt" data-i="3">D. 板块被改名了</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>盘中数据实时变化，两次采集对不上是正常现象，记录采集时刻即可。</div>
+      </div>
+      <div class="q" data-no="8" data-answer="3">
+        <p class="q-title"><span class="q-no">8</span>看到某板块「主力净流入 10 亿」，正确的态度是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 立刻买入该板块股票</li>
+          <li class="opt" data-i="1">B. 转发到群里让朋友一起买</li>
+          <li class="opt" data-i="2">C. 把它当作投资建议</li>
+          <li class="opt" data-i="3">D. 只当作公开的时点数据，理性看待，不参与炒作</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>资金流向只是公开的时点数据，不等于投资建议，更不应被拿去炒作。</div>
+      </div>
+      <div class="q" data-no="9" data-answer="1">
+        <p class="q-title"><span class="q-no">9</span>字段里的成交额统一成什么单位最合适？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 保留各页面原始单位混着存</li>
+          <li class="opt" data-i="1">B. 统一成「元」（整数），并在字段说明里写清</li>
+          <li class="opt" data-i="2">C. 统一成「万元」但四舍五入</li>
+          <li class="opt" data-i="3">D. 不写单位</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>金额类字段统一成「元」最不容易出错，单位写在字段说明里，避免同一列混入多种单位。</div>
+      </div>
+      <div class="q" data-no="10" data-answer="2">
+        <p class="q-title"><span class="q-no">10</span>把采集到的资金流向数据用在学习分析里，正确的是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 可以随便对外发布成投资建议</li>
+          <li class="opt" data-i="1">B. 可以卖给同学</li>
+          <li class="opt" data-i="2">C. 注明来源与采集时间，仅作教学分析，不构成投资建议</li>
+          <li class="opt" data-i="3">D. 可以隐去来源</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>数据仅用于教学分析，必须标注来源与采集时间，绝不作为投资建议对外发布。</div>
+      </div>
+      <div class="q-result" id="quizResult"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- 增强：站点页脚（克隆自 index.html 的 footer，勿手改） -->
+<footer class="footer">
+  <div class="footer-content">
+    <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span id="footerYear">2026</span> 学府路1号 xuefulu.ai</a></span>
+    <span class="separator" aria-hidden="true">|</span>
+    <a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>
+  </div>
+</footer>
+<!-- /增强：站点页脚 -->
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = '☀️ 浅色';
+  }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+<script>
+  /* ===== 随堂自测逻辑 ===== */
+  (function () {
+    const box = document.getElementById('quizBox');
+    if (!box) return;
+
+    const qs = Array.from(box.querySelectorAll('.q'));
+    const total = qs.length;
+    const bar = document.getElementById('quizProgress');
+    const scoreEl = document.getElementById('quizScore');
+    const resetBtn = document.getElementById('quizReset');
+    const resultEl = document.getElementById('quizResult');
+    let done = 0;
+    let right = 0;
+    const wrongList = [];
+
+    function update() {
+      bar.textContent = '已答 ' + done + ' / ' + total + ' · 正确 ' + right;
+      if (done === 0) {
+        scoreEl.textContent = '—';
+      } else if (done < total) {
+        scoreEl.textContent = Math.round(right / done * 100) + '%';
+      } else {
+        scoreEl.textContent = '正确率 ' + Math.round(right / total * 100) + '%（' + right + '/' + total + '）';
+      }
+      if (done === total) {
+        let msg;
+        if (wrongList.length === 0) {
+          msg = '🎉 全部答对，这一节你掌握得很扎实，可以进入下一个教程了。';
+        } else {
+          msg = '错题：第 ' + wrongList.join('、') + ' 题。建议回到对应小节再看一遍，' +
+                '然后点右上角「重新答题」检验一次。';
+        }
+        resultEl.textContent = msg;
+        resultEl.classList.add('show');
+      } else {
+        resultEl.classList.remove('show');
+      }
+    }
+
+    function pick(q, li) {
+      if (q.classList.contains('answered')) return;
+      q.classList.add('answered');
+      const ans = Number(q.dataset.answer);
+      const picked = Number(li.dataset.i);
+
+      q.querySelectorAll('.opt').forEach(function (o) {
+        const i = Number(o.dataset.i);
+        if (i === ans) o.classList.add('correct');
+        else if (i === picked) o.classList.add('wrong');
+        else o.classList.add('dim');
+      });
+
+      if (picked === ans) {
+        right++;
+        q.classList.add('passed');
+      } else {
+        q.classList.add('failed');
+        wrongList.push(q.dataset.no || (qs.indexOf(q) + 1));
+      }
+      done++;
+      update();
+    }
+
+    box.addEventListener('click', function (e) {
+      const li = e.target.closest('.opt');
+      if (!li) return;
+      const q = li.closest('.q');
+      if (q) pick(q, li);
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        qs.forEach(function (q) {
+          q.classList.remove('answered', 'passed', 'failed');
+          q.querySelectorAll('.opt').forEach(function (o) {
+            o.classList.remove('correct', 'wrong', 'dim');
+          });
+        });
+        done = 0;
+        right = 0;
+        wrongList.length = 0;
+        update();
+        document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    update();
+  })();
+</script>
+
+<script>
+// === 增强：代码块复制 ===
+(function () {
+  function clipboardWrite(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-2000px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('copy failed'));
+    });
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+  document.querySelectorAll('.cb-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.cb');
+      var code = box ? box.querySelector('code') : null;
+      if (!code) { return; }
+      var text = code.innerText.replace(/\u00a0/g, ' ').replace(/\n+$/, '');
+      clipboardWrite(text).then(
+        function () { flash(btn, '已复制'); },
+        function () { flash(btn, '复制失败'); }
+      );
+    });
+  });
+})();
+</script>
+
+<script>
+// === 增强：页眉北京时间 ===
+(function () {
+  var el = document.getElementById('currentDateTime');
+  if (!el) { return; }
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function beijingNow() {
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+  }
+  function render() {
+    var d = beijingNow();
+    el.textContent = d.getFullYear() + '年' + pad(d.getMonth() + 1) + '月' + pad(d.getDate()) + '日 '
+      + WEEK[d.getDay()] + ' '
+      + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    /* 页脚 © 后面的年份（`#footerYear`）：静态写死 2026 只是「没 JS 时的兜底」，这里按北京时间刷新，
+       免得跨年后页面上的年份停在过去（index.html 也是这么做的，见它的 updateFooterYear）。 */
+    var y = document.getElementById('footerYear');
+    if (y) { y.textContent = d.getFullYear(); }
+  }
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+
+<script>
+// === 增强：搜索结果定位 ===
+/* 从「教程导航页」搜到知识点后，链接形如 16-列表.html?hl=排序#sec8：
+     ① 优先在 #sec8 这一节里找第一个含「排序」的块，滚到它（这一节里找不到才退到全页第一个）；
+     ② 高亮该节里所有命中处（第一个额外加 .is-first）；这一节里一处都没命中时，才退成全页高亮（上限 120 处）；
+     ③ 点页面任意处 / 按 Esc 清除高亮（把 <mark> 换回纯文本、拼回原来的文本节点）。
+   没带 ?hl= 参数时，这段脚本什么都不做——页面与以前完全一样。
+   ⚠️ 索引是多词 AND，链接里的词也是「用户原样输入的词元」，所以这里按「任一词命中」处理：
+      多个词时先找最先出现的那一处，滚动落点由它决定。 */
+(function () {
+  var m = /[?&]hl=([^&]*)/.exec(location.search || '');
+  if (!m) { return; }
+  var raw = m[1];
+  try { raw = decodeURIComponent(raw.replace(/\+/g, ' ')); } catch (e) { }
+  var words = [];
+  raw.split(',').forEach(function (w) {
+    w = w.trim();
+    if (w && w.length <= 16 && words.indexOf(w) === -1) { words.push(w); }
+  });
+  if (!words.length) { return; }
+
+  var main = document.querySelector('main.content') || document.body;
+  var hid = (location.hash || '').replace(/^#/, '').replace(/:~:.*$/, '');
+  var target = hid ? document.getElementById(hid) : null;
+  var lows = words.map(function (w) { return w.toLowerCase(); });
+
+  /* 哪些文本节点可以动：跳过脚本/样式/按钮，跳过代码块的行号栏与角标栏、侧边目录（含它运行时
+     变成的书签/面板）、品牌行、页脚、标题行这些「非正文」区域；再跳过不可见的元素——
+     自测解析默认 display:none，滚过去会是一片空白。
+     ⚠️ 侧边目录必须排除：讲义运行时会把它改成书签面板（本脚本执行时还没改），
+     里面的小节标题和正文里的标题字面相同，不排除就会把目录树也点亮、首个落点还落在目录上。 */
+  var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, BUTTON: 1, MARK: 1, NOSCRIPT: 1, TEXTAREA: 1 };
+  var SKIP_AREA = '.cb-lines, .cb-bar, .sidebar, .sb-col, .sb-panel, .sb-mask, ' +
+                  '.top-brand, .footer, .title-row';
+  function usable(node) {
+    var el = node.parentNode;
+    if (!el || SKIP_TAGS[el.nodeName]) { return false; }
+    if (el.closest && el.closest(SKIP_AREA)) { return false; }
+    if (el.getClientRects && el.getClientRects().length === 0) { return false; }
+    return true;
+  }
+
+  /* 文本节点所属的小节 id：向前找最近的那个 <h2 id>。⚠️ h2 自己内部的文本节点
+     （标题里就带关键词）也算这一节——DOM 里包含关系返回 CONTAINED_BY|FOLLOWING，`& 4` 为真。 */
+  var Hs = [].slice.call(main.querySelectorAll('h2[id]'));
+  function secOf(node) {
+    var id = '';
+    for (var i = 0; i < Hs.length; i++) {
+      if (Hs[i].compareDocumentPosition(node) & 4) { id = Hs[i].id; } else { break; }
+    }
+    return id;
+  }
+
+  /* 扫一遍正文：记下每个文本节点的命中区间（文档顺序，TreeWalker 保证）。
+     ⚠️ 指定了 `#secN` 时**只认这一节里**的命中：这一节没有就什么都不做（页面停在原生锚点处），
+     绝不退到别的小节去——用户点的是「第八节里的排序」，把他甩到第二节最糟。 */
+  var found = [], anchorNode = null, walker = document.createTreeWalker(main, 4, null);
+  var node;
+  while ((node = walker.nextNode())) {
+    var text = node.nodeValue;
+    if (!text || !text.trim() || !usable(node)) { continue; }
+    if (target && secOf(node) !== hid) { continue; }
+    var lo = text.toLowerCase(), spans = [], idx = 0;
+    while (idx < text.length) {
+      var best = -1, blen = 0, i, p;
+      for (i = 0; i < lows.length; i++) {
+        p = lo.indexOf(lows[i], idx);
+        if (p !== -1 && (best === -1 || p < best || (p === best && words[i].length > blen))) {
+          best = p; blen = words[i].length;
+        }
+      }
+      if (best === -1) { break; }
+      spans.push([best, blen]);
+      idx = best + blen;
+    }
+    if (!spans.length) { continue; }
+    found.push([node, spans]);
+    if (!anchorNode) { anchorNode = node; }
+  }
+  if (!found.length) { return; }
+
+  /* 高亮范围：锚点所在的这一节（更聚焦）。整篇都没归到任何小节时，退成全页、上限 120 处。 */
+  var scope = secOf(anchorNode);
+  var pick = scope ? found.filter(function (f) { return secOf(f[0]) === scope; }) : found.slice(0, 120);
+
+  var marks = [], count = 0;
+  pick.forEach(function (f) {
+    var text = f[0].nodeValue, frag = document.createDocumentFragment(), pos = 0;
+    f[1].forEach(function (sp) {
+      if (sp[0] > pos) { frag.appendChild(document.createTextNode(text.slice(pos, sp[0]))); }
+      var mk = document.createElement('mark');
+      mk.className = 'hl-hit';
+      mk.textContent = text.substr(sp[0], sp[1]);
+      frag.appendChild(mk);
+      marks.push(mk);
+      count++;
+      pos = sp[0] + sp[1];
+    });
+    if (pos < text.length) { frag.appendChild(document.createTextNode(text.slice(pos))); }
+    f[0].parentNode.replaceChild(frag, f[0]);
+  });
+  if (marks.length && marks[0]) { marks[0].className = 'hl-hit is-first'; }
+
+  /* 命中所在的「块」——代码块要整块（.cb），表格整张，段落整段。只在拿不到 mark 时兜底用。 */
+  var BLOCKS = ['.cb', 'table', 'pre', 'li', 'p', 'h3', 'h2', 'blockquote'];
+  function blockOf(n) {
+    var el = n.parentNode;
+    while (el && el !== main) {
+      for (var i = 0; i < BLOCKS.length; i++) {
+        if (el.matches && el.matches(BLOCKS[i])) { return el; }
+      }
+      el = el.parentNode;
+    }
+    return n.parentNode;
+  }
+  var blk = blockOf(anchorNode);
+
+  /* 滚动落点：直接滚到**第一个高亮词**（它很小，居中即最佳视角），而不是它所在的整块——
+     命中的是代码块里的一行时，把整块几十行的 <pre> 居中反而看不到那一行。
+     ⚠️ 必须等 `load` 之后再滚：更早执行的话，浏览器在文档加载完成时会做一次滚动复位，
+     把我们滚好的位置抹回顶部（实测：只写 setTimeout(80) 时 scrollY 一直是 0）。
+     用即时滚动（`behavior: 'auto'`）而不是平滑滚动：平滑滚动是动画，无头浏览器里会被冻住，
+     验收时量不到真实落点；从链接进来时「直接落在那一处」也比看一段动画更符合预期。 */
+  function go() {
+    var el = marks.length ? marks[0] : (blk || anchorNode.parentNode);
+    try { el.scrollIntoView({ behavior: 'auto', block: 'center' }); }
+    catch (e) { el.scrollIntoView(); }
+  }
+  if (document.readyState === 'complete') { setTimeout(go, 60); }
+  else { window.addEventListener('load', function () { setTimeout(go, 60); }); }
+
+  /* 清除高亮：把每个 <mark class="hl-hit"> 换回文本节点并拼回邻居 */
+  function clear() {
+    var ms = main.querySelectorAll('mark.hl-hit');
+    if (!ms.length) { return; }
+    Array.prototype.forEach.call(ms, function (mk) {
+      var p = mk.parentNode;
+      if (!p) { return; }
+      p.replaceChild(document.createTextNode(mk.textContent), mk);
+      if (p.normalize) { p.normalize(); }
+    });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('mark.hl-hit')) { return; }
+    clear();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.keyCode === 27) { clear(); }
+  });
+})();
+</script>
+
+<script>
+// === 增强：侧边目录可折叠 ===
+(function () {
+  /* 侧边目录：默认收起成左侧竖排书签，随页面滚动常驻；点它展开/收起 */
+  var sb = document.querySelector('.sidebar');
+  if (!sb || sb.querySelector('.sb-tab')) { return; }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var D_MENU  = 'M3 5h14M3 10h14M3 15h14';      /* ☰：内联 SVG 画，避免 ☰ 字符渲染成豆腐块 */
+  var D_CLOSE = 'M5.5 5.5l9 9M14.5 5.5l-9 9';
+  var D_RIGHT = 'M7.5 4.5l5 5.5-5 5.5';         /* › */
+  var D_LEFT  = 'M12.5 4.5l-5 5.5 5 5.5';       /* ‹ */
+
+  function setD(el, d) {
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    el.appendChild(p);
+  }
+  function mkIcon(cls, d) {
+    var el = document.createElementNS(NS, 'svg');
+    el.setAttribute('class', cls);
+    el.setAttribute('viewBox', '0 0 20 20');
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.9');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    setD(el, d);
+    return el;
+  }
+  function narrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+  }
+
+  /* 把 <h3>目录</h3> 与原有链接重新组织：书签 + 面板 */
+  var head = sb.querySelector('h3');
+  var label = head ? head.textContent.trim() : '目录';
+  if (head && head.parentNode) { head.parentNode.removeChild(head); }
+
+  var list = document.createElement('nav');
+  list.className = 'sb-list';
+  list.setAttribute('aria-label', label);
+  while (sb.firstChild) { list.appendChild(sb.firstChild); }
+
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'sb-tab';
+  tab.setAttribute('aria-controls', 'sbPanel');
+  var ico = mkIcon('sb-ico', D_MENU);
+  var vt = document.createElement('span');
+  vt.className = 'sb-vt';
+  vt.textContent = label;
+  var chev = mkIcon('sb-chev', D_RIGHT);
+  tab.appendChild(ico);
+  tab.appendChild(vt);
+  tab.appendChild(chev);
+
+  var panel = document.createElement('div');
+  panel.className = 'sb-panel';
+  panel.id = 'sbPanel';
+  var pTitle = document.createElement('div');
+  pTitle.className = 'sb-head';
+  pTitle.textContent = label;
+  panel.appendChild(pTitle);
+  panel.appendChild(list);
+
+  /* 深色/浅色切换：从右上角挪进书签内部的顶部图标区（挪节点不会丢它原有的点击事件） */
+  var theme = document.getElementById('themeBtn');
+
+  /* 切换按钮**上方**再叠两枚同款微型按钮：① 返回教程导航页 ② 回到页面顶部。
+     外观与 #themeBtn 逐项一致（44×38 图标区、透明底、悬停亮一档、底部一条分隔线），
+     共用 .sb-col 的渐变底色与投影，所以收起态整枚书签看起来还是一体的。
+     ⚠️ 三格**统一是 <button>**，两枚都在**每一页**都照常显示（用户口径：「每个页面的按钮都一样，
+     返回导航页那枚不需要特殊效果、只要跟另外的按钮一致」）。之前「返回导航页」是 <a> 且在导航页上
+     隐藏（自己指向自己），现在取消：<a> 会同时踩两个坑——`.sidebar a:hover` 的 `background` 简写
+     把图标重置掉，模板脚本又给 `.sidebar a` 挂了 preventDefault + scrollIntoView，跨页链接会被
+     当成页内锚点劫持；写成 button 后与另两格共用同一套规则，逐像素一致。
+     目标地址仍沿用页首标题行的 a.page-title（由 enhance_tutorial.fix_page_title_home 统一维护成
+     1-教程导航.html），不在 JS 里另写一份路径；万一没有标题行就退回 1-教程导航.html。
+     · 回到顶部：**立即**跳顶（scrollTo(0,0)），不做平滑滚动动画（用户口径：「点击了就立刻返回顶部」）。 */
+  var titleA = document.querySelector('a.page-title');
+  var homeHref = (titleA && titleA.getAttribute('href')) || '1-教程导航.html';
+
+  var home = document.createElement('button');
+  home.type = 'button';
+  home.className = 'sb-mini sb-home';
+  home.title = '返回 Python 基础教程导航页';
+  home.setAttribute('aria-label', home.title);
+  home.addEventListener('click', function () { location.href = homeHref; });
+
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'sb-mini sb-top';
+  toTop.title = '回到页面顶部';
+  toTop.setAttribute('aria-label', toTop.title);
+  toTop.addEventListener('click', function () { window.scrollTo(0, 0); });
+
+  var col = document.createElement('div');
+  col.className = 'sb-col';
+  col.appendChild(home);
+  col.appendChild(toTop);
+  if (theme) {
+    theme.setAttribute('title', '切换深色 / 浅色主题');
+    theme.setAttribute('aria-label', '切换深色 / 浅色主题');
+    col.appendChild(theme);
+  }
+  col.appendChild(tab);
+
+  sb.appendChild(col);
+  sb.appendChild(panel);
+  sb.classList.add('sb-ready', 'sb-noanim');
+  document.body.classList.add('sb-on');
+
+  var mask = document.createElement('div');
+  mask.className = 'sb-mask';
+  mask.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(mask);
+
+  function isOpen() { return sb.classList.contains('sb-expanded'); }
+
+  /* 量出「目录里每个标题都不折行」需要的面板宽度，写进 --sb-panel-w，让展开态宽度自适应 */
+  function fitWidth() {
+    var keep = panel.getAttribute('style');
+    panel.style.cssText = 'display:block;position:absolute;left:-99999px;top:0;width:auto;' +
+                          'white-space:nowrap;overflow:visible;';
+    var need = Math.ceil(panel.getBoundingClientRect().width);
+    if (keep === null) { panel.removeAttribute('style'); } else { panel.setAttribute('style', keep); }
+    if (!need) { return; }
+    /* 上限：宽屏不超过视口 46%，窄屏（抽屉是浮层）可占到 90%，都只为防个别超长标题把正文挤没 */
+    var cap = narrow() ? window.innerWidth * 0.90 - 44 : window.innerWidth * 0.46;
+    sb.style.setProperty('--sb-panel-w', Math.min(need, Math.max(Math.round(cap), 196)) + 'px');
+  }
+
+  /* 让「垂直居中」落在布局盒上：把 sticky 的 top 设成 50vh - 自身高度的一半。
+     与 CSS 里的注释是同一件事；这里每次尺寸变化都重算一次（收起↔展开高度差很大：266 ↔ 面板高）。 */
+  var lastTop = '';
+  /* 「页头高度」＝文档顶到 `.layout` 上边的那一段（品牌行 + 它的外边距）。书签的 sticky 静态位置
+     被它推低，CSS 里用等量负外边距抵消（见 --sb-head 那段注释）。⚠️ 必须在量高度**之前**写进去，
+     否则先量到旧布局下的高度、算出的 --sb-top 会晚一帧才纠正。 */
+  var lastHead = '';
+  function pushHead() {
+    var lay = document.querySelector('.layout');
+    var v = (lay ? Math.max(0, Math.round(lay.getBoundingClientRect().top + window.scrollY)) : 0) + 'px';
+    if (v === lastHead) { return; }
+    lastHead = v;
+    sb.style.setProperty('--sb-head', v);
+  }
+  function centerTop() {
+    pushHead();
+    var h = sb.getBoundingClientRect().height;
+    if (!h) { return; }
+    var v = 'calc(50vh - ' + (h / 2).toFixed(1) + 'px)';
+    if (v === lastTop) { return; }
+    lastTop = v;
+    sb.style.setProperty('--sb-top', v);
+  }
+
+  function setOpen(open) {
+    sb.classList.toggle('sb-expanded', open);
+    document.body.classList.toggle('sb-open', open);
+    tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tab.setAttribute('aria-label', open ? '收起目录' : '展开目录');
+    tab.title = open ? '收起目录' : '展开目录';
+    vt.textContent = open ? '收起' : label;
+    setD(ico, open ? D_CLOSE : D_MENU);
+    setD(chev, open ? D_LEFT : D_RIGHT);
+    centerTop();   /* 收起/展开高度差很大，每次开合都重新居中 */
+  }
+  setOpen(false);   /* 默认收起 */
+  fitWidth();       /* 收起状态下面板是 display:none，正好用离屏副本量宽度，量完即恢复 */
+  centerTop();
+  /* 字体（含回退）落定后再量一次，避免首帧用错字体算出偏窄的宽度 */
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { fitWidth(); centerTop(); }, function () {});
+  }
+
+  tab.addEventListener('click', function () { setOpen(!isOpen()); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); }
+  });
+  /* 展开状态下，点「书签 / 面板」之外的任意空白处（正文、页眉、遮罩…）自动收起。
+     用 click 而不是 pointerdown：宽屏收起会让正文变宽重排，若在鼠标抬起前就重排，
+     这一下点击可能落空（点正文链接会「没反应」）。用 click 则原点击先正常派发完，再收起。 */
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) { return; }
+    var t = e.target;
+    if (t && sb.contains(t)) { return; }   /* 点在自己身上（书签、面板、主题按钮）不收起 */
+    setOpen(false);
+  });
+  /* 窄屏是抽屉，点目录项跳转后自动收起；宽屏是分栏，留着方便连着点 */
+  list.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && isOpen() && narrow()) { setOpen(false); }
+  });
+  mask.addEventListener('click', function () { setOpen(false); });
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!narrow() && isOpen()) { document.body.classList.remove('sb-open'); }
+    /* 视口宽度变化较大时重量一次（窄屏/宽屏的上限不同；字号是 px 固定的，无需每次都量） */
+    if (Math.abs(window.innerWidth - lastW) > 60) { lastW = window.innerWidth; fitWidth(); }
+    centerTop();   /* 视口高度变了（含手机地址栏收放）→ top 里的 50vh 跟着变，但重算一次更稳 */
+  });
+  /* 兜底：面板高度会随内容换行/字体加载而变，任何尺寸变化都重新居中一次（值没变时 centerTop 直接返回，
+     不会和 ResizeObserver 形成回环——改 top 不影响尺寸） */
+  if (window.ResizeObserver) { new ResizeObserver(centerTop).observe(sb); }
+  /* 初次布局落下后再放开过渡，之后的展开/收起才带宽度动画 */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { sb.classList.remove('sb-noanim'); });
+  });
+})();
+</script>
+
+</body>
+</html>
