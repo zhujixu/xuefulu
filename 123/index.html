@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="今天你 AI 赋能了吗?打开浏览器,在地址栏输入 xuefulu.ai ,按下 Enter 即可访问学府路1号!">
+  <title>加减乘除 学府路1号 xuefulu.ai</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+  <script src="https://trtc.io/knocket-sdk/sdk.js?identifier=c2bc4bc2aa25d0e77f&v=1791349953716" async></script>
+  <style>
+    /* ==================== CSS变量系统（暖灰极简主题） ==================== */
+    :root {
+      --page-bg: #f5f3ef;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-hover: rgba(255, 255, 255, 0.95);
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --accent-soft: rgba(0, 113, 227, 0.1);
+      --accent-glow: rgba(0, 113, 227, 0.3);
+      --accent-focus: rgba(0, 113, 227, 0.12);
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --bg-subtle: rgba(0, 0, 0, 0.05);
+      --bg-active: rgba(0, 0, 0, 0.1);
+      --glass-border: var(--border-subtle);
+      --btn-shadow: var(--accent-glow);
+      --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --radius-sm: 10px;
+      --radius-md: 15px;
+      --radius-lg: 20px;
+    }
+
+    /* ==================== 基础重置 ==================== */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+      background: var(--page-bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      padding: clamp(10px, 3vw, 20px);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* 背景装饰 */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .bg-orb-1 {
+      top: -10%;
+      right: -5%;
+      width: min(500px, 50vw);
+      height: min(500px, 50vw);
+      background: radial-gradient(circle, rgba(0,113,227,0.06) 0%, transparent 70%);
+    }
+
+    .bg-orb-2 {
+      bottom: -10%;
+      left: -5%;
+      width: min(400px, 40vw);
+      height: min(400px, 40vw);
+      background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
+      animation-delay: -2s;
+      animation-direction: reverse;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) translateX(0);
+      }
+
+      50% {
+        transform: translateY(-30px) translateX(20px);
+      }
+    }
+
+    /* ==================== 布局容器 ==================== */
+    .container {
+      max-width: none;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==================== 头部 ==================== */
+    header {
+      text-align: center;
+      /* 顶部间距保持响应式，底部固定 10px：与时间显示的 6px 底部内边距合计 16px */
+      padding: clamp(20px, 5vw, 30px) 20px 10px;
+      color: var(--text-primary);
+      margin-bottom: 0;
+    }
+
+    .logo {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo i {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .download-tip {
+      display: block;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      padding: 8px 20px;
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    .download-tip:hover { color: var(--accent); }
+    .download-tip i { margin-right: 6px; color: var(--text-secondary); }
+    .download-tip .highlight {
+      background-color: #fde047;
+      color: #111827;
+      font-weight: 700;
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+    }
+
+    /* ==================== 链接类 ==================== */
+    .header-logo-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    /* 品牌强调色（蓝色） */
+    .brand-accent {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    /* ==================== 主内容区 ==================== */
+    .main-content {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 30px;
+    }
+    /* ==================== 页脚 ==================== */
+    .footer {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 20px 0 20px;
+      font-size: 0.9rem;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+      transform: translateY(-2px);
+    }
+
+    .separator {
+      opacity: 0.4;
+    }
+
+    /* ==================== 时间显示 ==================== */
+    .time-display {
+      text-align: center;
+      padding: 6px 0;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+    .time-display .time-main {
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .time-display .time-sync-status {
+      font-size: 0.7rem;
+      opacity: 0.5;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ==================== 加减乘除余（移植自 123.html，样式重设计为本站主题） ==================== */
+    /* 通用隐藏工具类 */
+    .hidden {
+      display: none !important;
+    }
+
+    .math-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: clamp(20px, 4vw, 30px);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--glass-border);
+      width: var(--left-col-w, auto);
+    }
+
+    .math-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .math-header h2 {
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .math-header h2 i {
+      color: var(--accent);
+    }
+
+    .math-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* 运算类型切换（加减法 / 九九乘法 / 乘除余） */
+    .math-mode-switch {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .math-mode-btn {
+      padding: 10px 26px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .math-mode-btn:hover {
+      background: var(--bg-active);
+      color: var(--text-primary);
+    }
+
+    .math-mode-btn.active {
+      background: linear-gradient(135deg, #0071e3, #0066cc);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(0, 113, 227, 0.35);
+    }
+
+    .math-pill-btns {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .math-pill-btn {
+      padding: 8px 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .math-pill-btn:hover {
+      background: var(--bg-active);
+      color: var(--text-primary);
+    }
+
+    .math-pill-btn.active {
+      background: linear-gradient(135deg, #0071e3, #0066cc);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(0, 113, 227, 0.35);
+    }
+
+    /* 加减法题型选项（100以内 / 加减混合）：琥珀色系，与模式按钮区分 */
+    .math-pill-btn.range-opt {
+      border-color: rgba(255, 149, 0, 0.35);
+      background: rgba(255, 149, 0, 0.08);
+      color: #a05a00;
+    }
+
+    .math-pill-btn.range-opt:hover {
+      background: rgba(255, 149, 0, 0.18);
+      color: #7a4500;
+    }
+
+    .math-pill-btn.range-opt.active {
+      background: linear-gradient(135deg, #ff9500, #f08600);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(255, 149, 0, 0.35);
+    }
+
+    /* 九九乘法模式选项：绿色系，与模式按钮区分 */
+    .math-pill-btn.nine-mode-opt {
+      border-color: rgba(52, 199, 89, 0.35);
+      background: rgba(52, 199, 89, 0.08);
+      color: #1d7a3a;
+    }
+
+    .math-pill-btn.nine-mode-opt:hover {
+      background: rgba(52, 199, 89, 0.18);
+      color: #155c2b;
+    }
+
+    .math-pill-btn.nine-mode-opt.active {
+      background: linear-gradient(135deg, #34c759, #28a745);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(52, 199, 89, 0.35);
+    }
+
+    /* 乘除混合模式选项：紫色系，与模式按钮区分 */
+    .math-pill-btn.mult-mixed-opt {
+      border-color: rgba(175, 82, 222, 0.35);
+      background: rgba(175, 82, 222, 0.08);
+      color: #7a2ea8;
+    }
+
+    .math-pill-btn.mult-mixed-opt:hover {
+      background: rgba(175, 82, 222, 0.18);
+      color: #5c1f80;
+    }
+
+    .math-pill-btn.mult-mixed-opt.active {
+      background: linear-gradient(135deg, #af52de, #9a34c6);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(175, 82, 222, 0.35);
+    }
+
+    /* 成绩统计（右侧栏顶部）：卡片风格与错题记录项一致 */
+    .math-stat-summary {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .math-stat-item {
+      flex: 1;
+      min-width: 0;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .math-stat-head {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .math-stat-head i {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .math-stat-item.correct .math-stat-head i {
+      color: #34c759;
+    }
+
+    .math-stat-item.total .math-stat-head i {
+      color: var(--accent);
+    }
+
+    .math-stat-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .math-stat-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    /* 题目卡片 */
+    .math-question-card {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: clamp(24px, 4vw, 36px);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .math-question-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .math-question {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      transition: color 0.25s ease;
+    }
+
+    .math-question.correct {
+      color: #28a745;
+    }
+
+    .math-question.wrong {
+      color: #d6342a;
+    }
+
+    /* 行内反馈：与题目同区域显示，融为一体 */
+    .math-question-feedback {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      animation: fadeInUp 0.35s ease;
+    }
+
+    .math-question-feedback>i {
+      font-size: 1.4rem;
+    }
+
+    .math-question-feedback.success {
+      color: #28a745;
+    }
+
+    .math-question-feedback.danger {
+      color: #d6342a;
+    }
+
+    .math-options-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+      margin: 0 auto;
+    }
+
+    .math-answer-switch { text-align: center; margin-bottom: 20px; }
+    .math-fill-form { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .math-fill-form .math-fill-input,
+    .math-fill-form .math-next-btn {
+      width: 130px;
+      height: 40px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .math-fill-input {
+      width: 130px;
+      padding: 8px 18px;
+      border: 1px solid rgba(0, 113, 227, 0.3);
+      background: var(--accent-soft);
+      color: var(--accent);
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+    .math-fill-input::placeholder { color: var(--accent); opacity: 0.75; }
+    .math-fill-input:hover { border-color: var(--accent); }
+    .math-fill-form .math-next-btn { padding: 8px 24px; }
+    .math-fill-form .math-fill-input:focus,
+    .math-fill-form .math-next-btn:focus,
+    .math-fill-form .math-next-btn:focus-visible {
+      outline: none;
+      outline-offset: 0;
+      box-shadow: none;
+    }
+    .math-fill-input.correct { border-color: #28a745; color: #28a745; }
+    .math-fill-input.wrong { border-color: #d6342a; color: #d6342a; }
+
+    /* 答案选项：胶囊形，浅色背景，尺寸小巧 */
+    .math-option-btn {
+      padding: 8px 22px;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .math-option-btn:hover {
+      background: var(--bg-active);
+      transform: translateY(-1px);
+    }
+
+    .math-option-btn:active {
+      transform: scale(0.97);
+    }
+
+    .math-option-btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .math-option-btn.correct {
+      background: linear-gradient(135deg, #34c759, #28a745);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(52, 199, 89, 0.3);
+    }
+
+    .math-option-btn.wrong {
+      background: linear-gradient(135deg, #ff3b30, #d6342a);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(255, 59, 48, 0.3);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .math-fade-in {
+      animation: fadeInUp 0.4s ease;
+    }
+
+    /* 错题记录 */
+    .math-wrong-panel {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 20px;
+    }
+
+    .math-wrong-panel h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .math-wrong-panel h2 i {
+      color: var(--accent);
+    }
+
+    .math-wrong-list {
+      max-height: calc(100dvh - 320px);
+      min-height: 160px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .math-wrong-empty {
+      color: var(--text-secondary);
+      text-align: center;
+      font-style: italic;
+      padding: 12px 0;
+    }
+
+    .math-wrong-item {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      animation: fadeInUp 0.35s ease;
+    }
+
+    .math-wrong-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .math-wrong-question {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .math-wrong-count {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #d6342a;
+      background: rgba(255, 59, 48, 0.1);
+      padding: 2px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .math-wrong-detail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .math-wrong-user-answer {
+      color: #ff3b30;
+      font-weight: 600;
+    }
+
+    .math-wrong-arrow {
+      opacity: 0.5;
+    }
+
+    .math-wrong-correct {
+      color: #28a745;
+      font-weight: 600;
+    }
+
+    /* 答错后的"下一题"按钮 */
+    .math-next-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .math-next-btn {
+      background: linear-gradient(135deg, #0071e3, #0066cc);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: 0 2px 10px rgba(0, 113, 227, 0.35);
+    }
+
+    .math-next-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 113, 227, 0.35);
+    }
+
+    .math-next-btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* 九九乘法一轮完成横幅 */
+    .math-round-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(52, 199, 89, 0.12);
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      border-radius: var(--radius-md);
+      color: #1d7a3a;
+      font-weight: 600;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      text-align: center;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    /* 错题清空按钮（绝对定位于标题右侧，保证标题文字居中） */
+    .math-clear-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 59, 48, 0.1);
+      color: #d6342a;
+      border: 1px solid rgba(255, 59, 48, 0.25);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .math-clear-btn:hover {
+      background: rgba(255, 59, 48, 0.18);
+    }
+
+    /* ==================== 响应式优化 ==================== */
+    @media (max-width: 1080px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .math-card {
+        width: auto;
+      }
+
+      .math-wrong-panel {
+        position: static;
+      }
+
+      .math-wrong-list {
+        max-height: 260px;
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .separator {
+        display: none;
+      }
+    }
+
+    /* 减少动画偏好 */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* 打印样式 */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .bg-orb {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 背景装饰 -->
+  <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+  <div class="container">
+    <header>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+        <h1 class="logo">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          <span>学府路<span class="brand-accent">1</span>号 · <span
+              class="brand-accent">xuefulu.ai</span></span>
+        </h1>
+      </a>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
+        <i class="fas fa-external-link" aria-hidden="true"></i><span class="highlight">今天你 AI 赋能了吗?</span>打开浏览器,在地址栏输入
+        <span class="highlight">xuefulu.ai</span>
+        ,按下 <span class="highlight">Enter</span> 即可访问学府路1号!
+      </a>
+      <div class="time-display">
+        <span class="time-main">
+          <span id="currentDateTime">--</span>
+          <span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span>
+        </span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- 加减乘除余 -->
+      <section class="math-card" aria-labelledby="mathTitle">
+        <div class="math-header">
+          <h2 id="mathTitle"><i class="fas fa-calculator" aria-hidden="true"></i> 加减乘除</h2>
+        </div>
+
+        <!-- 运算类型选择（选项按钮内联显示在对应模式按钮右侧） -->
+        <div class="math-mode-switch">
+          <button id="arithmetic-btn" class="math-mode-btn" type="button">加减法</button>
+          <!-- 加减法题型选择（仅加减法模式下显示） -->
+          <span id="number-range-container" class="math-pill-btns hidden">
+            <button id="within100-btn" class="math-pill-btn range-opt" type="button" data-value="100">100以内</button>
+            <button id="arithmetic-mixed-btn" class="math-pill-btn range-opt" type="button">加减混合</button>
+          </span>
+          <button id="nine-nine-multiplication-btn" class="math-mode-btn" type="button">九九乘法</button>
+          <!-- 九九乘法模式选择 -->
+          <span id="nine-nine-mode-container" class="math-pill-btns hidden">
+            <button id="nine-nine-order-btn" class="math-pill-btn nine-mode-opt" type="button">顺序</button>
+            <button id="nine-nine-random-btn" class="math-pill-btn nine-mode-opt" type="button">随机</button>
+          </span>
+          <button id="multiplication-btn" class="math-mode-btn" type="button">乘除余</button>
+          <!-- 乘除余题型选择（仅乘除余模式下显示） -->
+          <span id="mult-mixed-container" class="math-pill-btns hidden">
+            <button id="mult-mixed-btn" class="math-pill-btn mult-mixed-opt" type="button">乘除混合</button>
+          </span>
+        </div>
+
+        <div class="math-answer-switch">
+          <button id="answer-mode-btn" class="math-pill-btn" type="button" aria-pressed="false">当前：选择题 · 切换为填空题</button>
+        </div>
+
+        <!-- 题目卡片 -->
+        <div id="question-card" class="math-question-card hidden">
+          <div class="math-question-row">
+            <div id="question" class="math-question" aria-live="polite">3 + 4 = ?</div>
+            <div id="question-feedback" class="math-question-feedback hidden">
+              <i id="feedback-icon" class="fas fa-check-circle" aria-hidden="true"></i>
+              <span id="feedback-text">答对了！</span>
+            </div>
+          </div>
+          <div id="options-container" class="math-options-grid"><!-- 选项由JS生成 --></div>
+
+          <form id="fill-answer-form" class="math-fill-form hidden">
+            <input id="fill-answer" class="math-fill-input" type="text" inputmode="numeric" pattern="[0-9]+" required aria-label="答案" placeholder="填写答案" autocomplete="off">
+            <span id="remainder-label" class="hidden">余</span>
+            <input id="fill-remainder" class="math-fill-input hidden" type="text" inputmode="numeric" pattern="[0-9]+" aria-label="余数" placeholder="填写余数" autocomplete="off">
+            <button id="submit-answer-btn" class="math-next-btn" type="submit">提交答案</button>
+          </form>
+
+          <!-- 下一题按钮 -->
+          <div id="feedback-container" class="math-next-wrap hidden">
+            <button id="next-question-btn" class="math-next-btn hidden" type="button">下一题</button>
+          </div>
+        </div>
+
+        <!-- 九九乘法一轮完成提示 -->
+        <div id="round-banner" class="math-round-banner hidden" role="status"></div>
+      </section>
+
+      <!-- 错题记录（右侧栏） -->
+      <aside class="math-wrong-panel" aria-label="错题记录">
+        <!-- 成绩统计：答对题数 / 答题总数 -->
+        <div class="math-stat-summary" role="status" aria-live="polite">
+          <div class="math-stat-item correct">
+            <div class="math-stat-head">
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span class="math-stat-label">答对题数</span>
+            </div>
+            <span class="math-stat-value" id="correct-count">0</span>
+          </div>
+          <div class="math-stat-item total">
+            <div class="math-stat-head">
+              <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+              <span class="math-stat-label">答题总数</span>
+            </div>
+            <span class="math-stat-value" id="total-count">0</span>
+          </div>
+        </div>
+
+        <h2><i class="fas fa-history" aria-hidden="true"></i> 错题记录
+          <button id="clear-wrong-btn" class="math-clear-btn hidden" type="button">清空错题</button></h2>
+        <div id="wrong-questions-container" class="math-wrong-list">
+          <p class="math-wrong-empty" id="no-errors-message">暂无错题记录</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span
+              id="footerYear">2026</span> 学府路1号
+            xuefulu.ai</a></span>
+        <span class="separator" aria-hidden="true">|</span>
+        <a href="mailto:ai@xuefulu.ai" class="footer-link">
+          <i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai
+        </a>
+      </div>
+    </footer>
+  </div>
+
+
+  <script>
+    /**
+     * 学府路1号 - 加减乘除余页面
+     */
+
+        // ==================== 时间同步与显示（原生 Intl 实现，无第三方依赖） ====================
+    const TIME = {
+      SYNC_INTERVAL_MS: 5 * 60 * 1000,
+      offset: 0,
+      syncTimer: null,
+      formatter: new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+      })
+    };
+
+    const timeEl = document.getElementById('currentDateTime');
+    const syncStatusEl = document.getElementById('timeSyncStatus');
+
+    function getBeijingParts() {
+      return TIME.formatter.formatToParts(new Date(Date.now() + TIME.offset));
+    }
+
+    function getBeijingPart(type) {
+      const part = getBeijingParts().find(p => p.type === type);
+      return part ? part.value : '';
+    }
+
+    function updateDisplay() {
+      if (!timeEl) return;
+      const parts = {};
+      for (const p of getBeijingParts()) parts[p.type] = p.value;
+      timeEl.textContent = `${parts.year}年${parts.month}月${parts.day}日 ${parts.weekday} ${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+
+    function updateFooterYear(useLocal) {
+      const yearEl = document.getElementById('footerYear');
+      if (!yearEl) return;
+      yearEl.textContent = useLocal ? new Date().getFullYear() : getBeijingPart('year');
+    }
+
+    async function syncTime() {
+      if (syncStatusEl) {
+        syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      }
+
+      let best = null;
+      let bestRtt = Infinity;
+
+      // 多轮探测（3次），取最低 RTT 的结果（网络抖动最小）
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const t0 = performance.now();
+        try {
+          const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
+          const data = await res.json();
+          const t1 = performance.now();
+          if (data.status === 1 && data.data && data.data.timestamp) {
+            const rtt = t1 - t0;
+            if (rtt < bestRtt) {
+              bestRtt = rtt;
+              // 估算网络时间：服务器时间 + 单向延迟（RTT/2）
+              best = data.data.timestamp + Math.round(rtt / 2);
+            }
+          }
+        } catch (e) { continue; }
+      }
+
+      if (best) {
+        TIME.offset = best - Date.now();
+        if (syncStatusEl) syncStatusEl.innerHTML = '';
+        updateFooterYear(false);
+      } else {
+        if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
+        updateFooterYear(true);
+      }
+
+      updateDisplay();
+    }
+
+    function startSync() {
+      syncTime();
+      if (TIME.syncTimer) clearInterval(TIME.syncTimer);
+      TIME.syncTimer = setInterval(syncTime, TIME.SYNC_INTERVAL_MS);
+      setInterval(updateDisplay, 1000);
+    }
+
+    // ==================== 加减乘除余（移植自 123.html，逻辑保持一致） ====================
+    (function () {
+      // 状态
+      let currentQuestion = null;
+      let lastArithmeticQuestion = null;
+      let lastMultiplicationQuestion = null;
+      let lastDivisionQuestion = null;
+      let lastModuloQuestion = null;
+      // 乘除余模式内部循环：0 乘法 → 1 除法 → 2 取余 → 3 求被除数
+      let subModeIndex = 0;
+      let isAddition = true;
+      let isArithmeticMode = false;
+      let isNineNineMultiplicationMode = false;
+      let isArithmeticMixed = false;
+      let isMultDivMixed = false;
+      let isNineNineOrderMode = true;
+      let currentNineNineIndex = 0;
+      // 九九乘法随机模式：81 个组合的洗牌题库池，取完一轮重新洗牌（保证覆盖）
+      let nineNinePool = null;
+      let nineNinePoolIndex = 0;
+      // 乘除余模式：乘法题洗牌题库池；除法两个方向交替出题（保证每轮全覆盖）
+      let multDivPool = null;
+      let multDivPoolIndex = 0;
+      let divDirectionUsed = new Map();
+      let correctCount = 0;
+      let totalCount = 0;
+      let wrongQuestions = [];
+      let autoNextTimeout = null;
+      // 当前题是否已作答过（答错后可重试，仅首次作答计入成绩）
+      let questionAttempted = false;
+      let isFillMode = false;
+      let questionSolved = false;
+      let selectedMaxNumber = null;
+      const AUTO_NEXT_DELAY = 1000;
+      // 九九乘法：单轮（81题）答题统计，用于一轮完成反馈
+      let nineRoundCorrect = 0;
+      let nineRoundTotal = 0;
+      let roundBannerTimer = null;
+
+      // DOM 元素
+      const $ = (id) => document.getElementById(id);
+      const arithmeticBtn = $('arithmetic-btn');
+      const multiplicationBtn = $('multiplication-btn');
+      const nineNineMultiplicationBtn = $('nine-nine-multiplication-btn');
+      const numberRangeContainer = $('number-range-container');
+      const nineNineModeContainer = $('nine-nine-mode-container');
+      const nineNineOrderBtn = $('nine-nine-order-btn');
+      const nineNineRandomBtn = $('nine-nine-random-btn');
+      const within100Btn = $('within100-btn');
+      const arithmeticMixedBtn = $('arithmetic-mixed-btn');
+      const multMixedContainer = $('mult-mixed-container');
+      const multMixedBtn = $('mult-mixed-btn');
+      const questionCard = $('question-card');
+      const questionEl = $('question');
+      const questionFeedback = $('question-feedback');
+      const feedbackIcon = $('feedback-icon');
+      const feedbackText = $('feedback-text');
+      const optionsContainer = $('options-container');
+      const answerModeBtn = $('answer-mode-btn');
+      const fillForm = $('fill-answer-form');
+      const fillAnswer = $('fill-answer');
+      const fillRemainder = $('fill-remainder');
+      const remainderLabel = $('remainder-label');
+      const submitAnswerBtn = $('submit-answer-btn');
+
+      function renderAnswerMode() {
+        optionsContainer.classList.toggle('hidden', isFillMode);
+        fillForm.classList.toggle('hidden', !isFillMode);
+        const isModulo = currentQuestion && currentQuestion.type === 'modulo';
+        fillRemainder.classList.toggle('hidden', !isModulo);
+        remainderLabel.classList.toggle('hidden', !isModulo);
+        fillRemainder.required = Boolean(isModulo);
+        [fillAnswer, fillRemainder, submitAnswerBtn].forEach(el => el.disabled = questionSolved);
+        if (isFillMode && !questionSolved && !questionCard.classList.contains('hidden')) fillAnswer.focus();
+      }
+
+      answerModeBtn.addEventListener('click', () => {
+        isFillMode = !isFillMode;
+        answerModeBtn.textContent = isFillMode ? '当前：填空题 · 切换为选择题' : '当前：选择题 · 切换为填空题';
+        answerModeBtn.setAttribute('aria-pressed', String(isFillMode));
+        renderAnswerMode();
+      });
+
+      fillForm.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!currentQuestion || questionSolved || !isFillMode || !fillForm.reportValidity()) return;
+        const value = Number(fillAnswer.value);
+        const remainder = Number(fillRemainder.value);
+        if (!Number.isSafeInteger(value) || (currentQuestion.type === 'modulo' && !Number.isSafeInteger(remainder))) return;
+        // 与选择题共用评分、音效、错题记录和重试逻辑。
+        const answer = {
+          dataset: { value: String(value), q: String(value), r: String(remainder) },
+          textContent: `${value} 余 ${remainder}`,
+          classList: fillAnswer.classList
+        };
+        checkAnswer({ target: answer });
+        [fillAnswer, fillRemainder].forEach(input => {
+          input.classList.toggle('correct', questionSolved);
+          input.classList.toggle('wrong', !questionSolved);
+          input.disabled = questionSolved;
+        });
+        submitAnswerBtn.disabled = questionSolved;
+        if (!questionSolved) { fillAnswer.focus(); fillAnswer.select(); }
+      });
+      const feedbackContainer = $('feedback-container');
+      const correctCountEl = $('correct-count');
+      const totalCountEl = $('total-count');
+      const wrongQuestionsContainer = $('wrong-questions-container');
+      const noErrorsMessage = $('no-errors-message');
+      const nextQuestionBtn = $('next-question-btn');
+      const roundBannerEl = $('round-banner');
+      const clearWrongBtn = $('clear-wrong-btn');
+
+      // 运算类型切换
+      function setModeButtonActive(btn) {
+        [arithmeticBtn, multiplicationBtn, nineNineMultiplicationBtn].forEach(b => b.classList.toggle('active', b === btn));
+      }
+
+      // 清除"自动出下一题"的计时器：切换模式时必须调用，防止旧计时器在新模式下触发出题
+      function clearAutoNext() {
+        if (autoNextTimeout) {
+          clearTimeout(autoNextTimeout);
+          autoNextTimeout = null;
+        }
+      }
+
+      // 锁定左栏宽度为"加减法状态"（全部按钮同一行）的宽度，
+      // 切换九九乘法/乘除余时按钮数量变化，但左栏宽度保持不变
+      function lockLeftColumnWidth() {
+        const card = document.querySelector('.math-card');
+        const switchEl = document.querySelector('.math-mode-switch');
+        if (!card || !switchEl) return;
+        // 临时强制单行，确保测出的是所有按钮在同一行的完整宽度
+        const prevWrap = switchEl.style.flexWrap;
+        switchEl.style.flexWrap = 'nowrap';
+        const pad = parseFloat(getComputedStyle(card).paddingLeft) * 2;
+        const border = parseFloat(getComputedStyle(card).borderLeftWidth) * 2;
+        const w = Math.ceil(switchEl.offsetWidth + pad + border + 2);
+        switchEl.style.flexWrap = prevWrap;
+        if (w > 0) {
+          document.documentElement.style.setProperty('--left-col-w', w + 'px');
+        }
+      }
+
+      arithmeticBtn.addEventListener('click', () => {
+        isArithmeticMode = true;
+        isNineNineMultiplicationMode = false;
+        isArithmeticMixed = false;
+        isMultDivMixed = false;
+        clearAutoNext();
+        setModeButtonActive(arithmeticBtn);
+        numberRangeContainer.classList.remove('hidden');
+        nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.add('hidden');
+        multMixedBtn.classList.remove('active');
+        questionCard.classList.add('hidden');
+        selectedMaxNumber = null;
+        resetRangeButtons();
+        lockLeftColumnWidth();
+      });
+
+      multiplicationBtn.addEventListener('click', () => {
+        isArithmeticMode = false;
+        isNineNineMultiplicationMode = false;
+        isMultDivMixed = false;
+        clearAutoNext();
+        setModeButtonActive(multiplicationBtn);
+        numberRangeContainer.classList.add('hidden');
+        nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.remove('hidden');
+        multMixedBtn.classList.remove('active');
+        questionCard.classList.remove('hidden');
+        // 重新进入时重置题库池与内部循环，从新一轮乘法开始
+        multDivPool = null;
+        multDivPoolIndex = 0;
+        subModeIndex = 0;
+        lastMultiplicationQuestion = null;
+        lastDivisionQuestion = null;
+        lastModuloQuestion = null;
+        generateQuestion();
+      });
+
+      nineNineMultiplicationBtn.addEventListener('click', () => {
+        isArithmeticMode = false;
+        isNineNineMultiplicationMode = true;
+        isMultDivMixed = false;
+        clearAutoNext();
+        setModeButtonActive(nineNineMultiplicationBtn);
+        numberRangeContainer.classList.add('hidden');
+        nineNineModeContainer.classList.remove('hidden');
+        multMixedContainer.classList.add('hidden');
+        multMixedBtn.classList.remove('active');
+        questionCard.classList.add('hidden');
+        currentNineNineIndex = 0;
+        nineRoundCorrect = 0;
+        nineRoundTotal = 0;
+        nineNinePool = null;
+        nineNinePoolIndex = 0;
+      });
+
+      // 重置加减法题型按钮状态
+      function resetRangeButtons() {
+        document.querySelectorAll('.math-pill-btn[data-value]').forEach(btn => btn.classList.remove('active'));
+        arithmeticMixedBtn.classList.remove('active');
+      }
+
+      // 选择"100以内"并立即开始出题（保持原有的加→对应减交替逻辑）
+      within100Btn.addEventListener('click', () => {
+        if (!isArithmeticMode) return;
+        isArithmeticMixed = false;
+        resetRangeButtons();
+        within100Btn.classList.add('active');
+        selectedMaxNumber = 100;
+        questionCard.classList.remove('hidden');
+        generateQuestion();
+      });
+
+      // 选择"加减混合"：生成 2 个运算符、含加减两种运算的连式题
+      arithmeticMixedBtn.addEventListener('click', () => {
+        if (!isArithmeticMode) return;
+        isArithmeticMixed = true;
+        resetRangeButtons();
+        arithmeticMixedBtn.classList.add('active');
+        selectedMaxNumber = null;
+        questionCard.classList.remove('hidden');
+        generateQuestion();
+      });
+
+      // 选择"乘除混合"：生成 2 个运算符、含乘除两种运算的连式题
+      multMixedBtn.addEventListener('click', () => {
+        isArithmeticMode = false;
+        isNineNineMultiplicationMode = false;
+        isMultDivMixed = true;
+        clearAutoNext();
+        setModeButtonActive(multiplicationBtn);
+        numberRangeContainer.classList.add('hidden');
+        nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.remove('hidden');
+        multMixedBtn.classList.add('active');
+        questionCard.classList.remove('hidden');
+        generateQuestion();
+      });
+
+      // 九九乘法模式选择
+      nineNineOrderBtn.addEventListener('click', () => {
+        isNineNineOrderMode = true;
+        nineNineOrderBtn.classList.add('active');
+        nineNineRandomBtn.classList.remove('active');
+        questionCard.classList.remove('hidden');
+        currentNineNineIndex = 0;
+        nineRoundCorrect = 0;
+        nineRoundTotal = 0;
+        generateQuestion();
+      });
+
+      nineNineRandomBtn.addEventListener('click', () => {
+        isNineNineOrderMode = false;
+        nineNineRandomBtn.classList.add('active');
+        nineNineOrderBtn.classList.remove('active');
+        questionCard.classList.remove('hidden');
+        // 重新洗牌并开始新一轮，保证本轮 81 题覆盖全部组合
+        nineNinePool = buildShuffledPairs();
+        nineNinePoolIndex = 0;
+        nineRoundCorrect = 0;
+        nineRoundTotal = 0;
+        generateQuestion();
+      });
+
+      // 生成 1×1 ~ 9×9 全部 81 个组合并洗牌（Fisher-Yates）
+      function buildShuffledPairs() {
+        const pairs = [];
+        for (let a = 1; a <= 9; a++) {
+          for (let b = 1; b <= 9; b++) {
+            pairs.push([a, b]);
+          }
+        }
+        for (let i = pairs.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+        }
+        return pairs;
+      }
+
+      // ==================== 混合题型出题器 ====================
+
+      // 数组洗牌（Fisher-Yates）
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      // 生成 count 个运算符的序列：加减混合题必须同时含 + 与 -
+      function buildMixedAddSubOps(count) {
+        const plusCount = 1 + Math.floor(Math.random() * (count - 1));
+        const ops = [];
+        for (let i = 0; i < plusCount; i++) ops.push('+');
+        for (let i = 0; i < count - plusCount; i++) ops.push('-');
+        return shuffleArray(ops);
+      }
+
+      // 生成 count 个运算符的序列：乘除混合题必须同时含 × 与 ÷
+      function buildMixedMulDivOps(count) {
+        const multCount = 1 + Math.floor(Math.random() * (count - 1));
+        const ops = [];
+        for (let i = 0; i < multCount; i++) ops.push('×');
+        for (let i = 0; i < count - multCount; i++) ops.push('÷');
+        return shuffleArray(ops);
+      }
+
+      // 加减混合：2 个 + / - 运算符（两种都要出现），
+      // 参与运算的每个数字、每一步中间结果和最终结果都控制在 0~100
+      function generateArithmeticMixedQuestion() {
+        for (let outer = 0; outer < 200; outer++) {
+          const opCount = 2; // 固定 2 个运算符
+          for (let attempt = 0; attempt < 2000; attempt++) {
+            const ops = buildMixedAddSubOps(opCount);
+            const nums = [1 + Math.floor(Math.random() * 100)];
+            let value = nums[0];
+            let valid = true;
+
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '+') {
+                const maxAdd = 100 - value;
+                if (maxAdd < 1) { valid = false; break; }
+                const add = 1 + Math.floor(Math.random() * maxAdd);
+                nums.push(add);
+                value += add;
+              } else {
+                if (value < 1) { valid = false; break; }
+                const sub = 1 + Math.floor(Math.random() * value);
+                nums.push(sub);
+                value -= sub;
+              }
+            }
+            if (!valid) continue;
+
+            let result = nums[0];
+            const parts = [String(nums[0])];
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '+') result += nums[i + 1];
+              else result -= nums[i + 1];
+              parts.push(` ${ops[i]} ${nums[i + 1]}`);
+            }
+
+            return {
+              type: 'mixed-arithmetic',
+              answer: result,
+              questionText: parts.join('') + ' = ?'
+            };
+          }
+        }
+        // 兜底：正常随机几乎不会走到这里
+        return {
+          type: 'mixed-arithmetic',
+          answer: 60,
+          questionText: '50 + 30 - 20 = ?'
+        };
+      }
+
+      // 乘除混合：2 个 × / ÷ 运算符（两种都要出现），
+      // 参与运算的每个数字都只用 2~9，
+      // 每一步中间结果和最终结果都控制在 1~100，
+      // 每一步除法都能整除，除数取当前值的真因数
+      function generateMixedMultDivQuestion() {
+        for (let outer = 0; outer < 200; outer++) {
+          const opCount = 2; // 固定 2 个运算符
+          for (let attempt = 0; attempt < 2000; attempt++) {
+            const ops = buildMixedMulDivOps(opCount);
+            const nums = [2 + Math.floor(Math.random() * 8)]; // 2~9
+            let value = nums[0];
+            let valid = true;
+
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '×') {
+                const maxFactor = Math.min(9, Math.floor(100 / value));
+                if (maxFactor < 2) { valid = false; break; }
+                const factor = 2 + Math.floor(Math.random() * (maxFactor - 1));
+                nums.push(factor);
+                value *= factor;
+              } else {
+                const divisors = [];
+                for (let d = 2; d <= 9 && d * 2 <= value; d++) {
+                  if (value % d === 0) divisors.push(d);
+                }
+                if (divisors.length === 0) { valid = false; break; }
+                const divisor = divisors[Math.floor(Math.random() * divisors.length)];
+                nums.push(divisor);
+                value = Math.floor(value / divisor);
+              }
+            }
+            if (!valid) continue;
+
+            let result = nums[0];
+            const parts = [String(nums[0])];
+            for (let i = 0; i < ops.length; i++) {
+              if (ops[i] === '×') result *= nums[i + 1];
+              else result = Math.floor(result / nums[i + 1]);
+              parts.push(` ${ops[i]} ${nums[i + 1]}`);
+            }
+
+            return {
+              type: 'mixed-mult-div',
+              answer: result,
+              questionText: parts.join('') + ' = ?'
+            };
+          }
+        }
+        // 兜底：正常随机几乎不会走到这里
+        return {
+          type: 'mixed-mult-div',
+          answer: 12,
+          questionText: '6 × 8 ÷ 4 = ?'
+        };
+      }
+
+      // 生成新问题
+      function generateQuestion() {
+        if (autoNextTimeout) {
+          clearTimeout(autoNextTimeout);
+          autoNextTimeout = null;
+        }
+
+        feedbackContainer.classList.add('hidden');
+        questionFeedback.classList.add('hidden');
+        questionEl.classList.remove('correct', 'wrong');
+        nextQuestionBtn.classList.add('hidden');
+        questionAttempted = false;
+        questionSolved = false;
+        fillForm.reset();
+        [fillAnswer, fillRemainder].forEach(input => input.classList.remove('correct', 'wrong'));
+
+        if (isArithmeticMode && isArithmeticMixed) {
+          currentQuestion = generateArithmeticMixedQuestion();
+        } else if (isArithmeticMode) {
+          if (selectedMaxNumber === null) {
+            alert('请先选择题型！');
+            return;
+          }
+
+          if (isAddition || !lastArithmeticQuestion) {
+            const num1 = Math.floor(Math.random() * selectedMaxNumber) + 1;
+            const maxNum2 = selectedMaxNumber - num1;
+            const num2 = maxNum2 > 0 ? Math.floor(Math.random() * (maxNum2 + 1)) : 0;
+
+            currentQuestion = {
+              type: 'addition',
+              num1: num1,
+              num2: num2,
+              answer: num1 + num2,
+              questionText: `${num1} + ${num2} = ?`
+            };
+
+            lastArithmeticQuestion = {
+              type: 'addition',
+              num1: num1,
+              num2: num2,
+              answer: num1 + num2
+            };
+
+            isAddition = false;
+          } else {
+            if (!lastArithmeticQuestion) {
+              generateQuestion();
+              isAddition = true;
+              return;
+            }
+
+            const useFirstNumAsSubtrahend = Math.random() > 0.5;
+
+            if (useFirstNumAsSubtrahend) {
+              currentQuestion = {
+                type: 'subtraction',
+                num1: lastArithmeticQuestion.answer,
+                num2: lastArithmeticQuestion.num1,
+                answer: lastArithmeticQuestion.num2,
+                questionText: `${lastArithmeticQuestion.answer} - ${lastArithmeticQuestion.num1} = ?`
+              };
+            } else {
+              currentQuestion = {
+                type: 'subtraction',
+                num1: lastArithmeticQuestion.answer,
+                num2: lastArithmeticQuestion.num2,
+                answer: lastArithmeticQuestion.num1,
+                questionText: `${lastArithmeticQuestion.answer} - ${lastArithmeticQuestion.num2} = ?`
+              };
+            }
+
+            isAddition = true;
+          }
+        } else if (isNineNineMultiplicationMode) {
+          let num1, num2;
+
+          if (isNineNineOrderMode) {
+            // 顺序模式
+            num1 = Math.floor(currentNineNineIndex / 9) + 1;
+            num2 = (currentNineNineIndex % 9) + 1;
+            currentNineNineIndex = (currentNineNineIndex + 1) % 81;
+
+            // 走完一轮（81题）后展示本轮成绩并重新开始
+            if (currentNineNineIndex === 0) {
+              showRoundComplete(nineRoundCorrect, nineRoundTotal);
+              nineRoundCorrect = 0;
+              nineRoundTotal = 0;
+            }
+          } else {
+            // 随机模式：洗牌题库池，每轮 81 题恰好覆盖全部组合
+            if (!nineNinePool || nineNinePoolIndex >= nineNinePool.length) {
+              // 走完一轮（81题）后展示本轮成绩并重新洗牌
+              if (nineNinePool && nineRoundTotal > 0) {
+                showRoundComplete(nineRoundCorrect, nineRoundTotal);
+                nineRoundCorrect = 0;
+                nineRoundTotal = 0;
+              }
+              nineNinePool = buildShuffledPairs();
+              nineNinePoolIndex = 0;
+            }
+            const pair = nineNinePool[nineNinePoolIndex++];
+            num1 = pair[0];
+            num2 = pair[1];
+          }
+
+          currentQuestion = {
+            type: 'nine-nine-multiplication',
+            num1: num1,
+            num2: num2,
+            answer: num1 * num2,
+            questionText: `${num1} × ${num2} = ?`
+          };
+        } else if (isMultDivMixed) {
+          currentQuestion = generateMixedMultDivQuestion();
+        } else {
+          // 乘除余模式：乘法 → 除法 → 取余 → 求被除数 循环出题
+          const subMode = subModeIndex;
+          subModeIndex = (subModeIndex + 1) % 4;
+
+          if (subMode === 0) {
+            // 洗牌题库池：每轮 81 道乘法题恰好覆盖全部组合
+            if (!multDivPool || multDivPoolIndex >= multDivPool.length) {
+              multDivPool = buildShuffledPairs();
+              multDivPoolIndex = 0;
+            }
+            const pair = multDivPool[multDivPoolIndex++];
+            const num1 = pair[0];
+            const num2 = pair[1];
+
+            currentQuestion = {
+              type: 'multiplication',
+              num1: num1,
+              num2: num2,
+              answer: num1 * num2,
+              questionText: `${num1} × ${num2} = ?`
+            };
+
+            lastMultiplicationQuestion = {
+              num1: num1,
+              num2: num2,
+              answer: num1 * num2
+            };
+          } else if (subMode === 1) {
+            // 除法：由上一个乘法题派生。同一组合的两个除法方向交替出题，
+            // 与对调组合 (b,a) 同步互补，保证每轮 81 道除法恰好覆盖全部除法口诀
+            if (!lastMultiplicationQuestion) {
+              subModeIndex = 0;
+              generateQuestion();
+              return;
+            }
+
+            const mulNum1 = lastMultiplicationQuestion.num1;
+            const mulNum2 = lastMultiplicationQuestion.num2;
+            const pairKey = `${mulNum1},${mulNum2}`;
+            // 方向交替：上次出过"除以第一个因数"，本次出"除以第二个因数"，反之亦然
+            const useFirstNumAsDivisor = divDirectionUsed.get(pairKey) !== 'second';
+            divDirectionUsed.set(pairKey, useFirstNumAsDivisor ? 'second' : 'first');
+
+            if (useFirstNumAsDivisor) {
+              currentQuestion = {
+                type: 'division',
+                num1: lastMultiplicationQuestion.answer,
+                num2: mulNum1,
+                answer: mulNum2,
+                questionText: `${lastMultiplicationQuestion.answer} ÷ ${mulNum1} = ?`
+              };
+            } else {
+              currentQuestion = {
+                type: 'division',
+                num1: lastMultiplicationQuestion.answer,
+                num2: mulNum2,
+                answer: mulNum1,
+                questionText: `${lastMultiplicationQuestion.answer} ÷ ${mulNum2} = ?`
+              };
+            }
+
+            // 记录除法题（被除数/除数/商），供下一道取余题派生
+            lastDivisionQuestion = {
+              dividend: currentQuestion.num1,
+              divisor: currentQuestion.num2,
+              quotient: currentQuestion.answer
+            };
+          } else if (subMode === 2) {
+            // 取余题：由上一个除法题派生。
+            // 除数随机取上一题的除数或商（各 50%）；
+            // 被除数 = 上题被除数 + 随机加数，加数上限与除数来源绑定（见下方）
+            if (!lastDivisionQuestion) {
+              subModeIndex = 0;
+              generateQuestion();
+              return;
+            }
+
+            const base = lastDivisionQuestion.dividend;
+            const prevQuotient = lastDivisionQuestion.quotient;
+            const divisor = Math.random() > 0.5 ? lastDivisionQuestion.divisor : prevQuotient;
+
+            // 除数为 1 时余数恒为 0，无练习价值，回退到乘法题重新开始
+            if (divisor < 2) {
+              subModeIndex = 0;
+              generateQuestion();
+              return;
+            }
+
+            // 加数上限与除数来源绑定（如上一题 42÷6=7）：
+            // 除数取上一题除数 → 被除数 = 42 + 0~(除数-1)，即 42 + 0~5；
+            // 除数取上一题商 → 被除数 = 42 + 0~(商-1)，即 42 + 0~6
+            const maxOffset = divisor === prevQuotient ? prevQuotient - 1 : divisor - 1;
+            const offset = Math.floor(Math.random() * (maxOffset + 1));
+            const num1 = base + offset;
+            const num2 = divisor;
+            const quotient = Math.floor(num1 / num2);
+            const remainder = num1 % num2;
+
+            currentQuestion = {
+              type: 'modulo',
+              num1: num1,
+              num2: num2,
+              quotient: quotient,
+              remainder: remainder,
+              answer: `${quotient} 余 ${remainder}`,
+              questionText: `${num1} ÷ ${num2} = ?`
+            };
+
+            // 记录取余题（被除数/除数/商/余数），供下一道求被除数题派生
+            lastModuloQuestion = {
+              dividend: num1,
+              divisor: num2,
+              quotient: quotient,
+              remainder: remainder
+            };
+          } else {
+            // 求被除数题：由上一个取余题派生。
+            // 给出商、余数、除数，求被除数（被除数 = 商 × 除数 + 余数）
+            if (!lastModuloQuestion) {
+              subModeIndex = 0;
+              generateQuestion();
+              return;
+            }
+
+            const { quotient: mq, remainder: mr, divisor: md } = lastModuloQuestion;
+            const dividend = mq * md + mr;
+
+            currentQuestion = {
+              type: 'find-dividend',
+              quotient: mq,
+              remainder: mr,
+              divisor: md,
+              answer: dividend,
+              questionText: `? ÷ ${md} = ${mq} 余 ${mr}`
+            };
+          }
+        }
+
+        questionEl.textContent = currentQuestion.questionText;
+        generateOptions(currentQuestion.answer);
+        setupQuestionUI();
+        renderAnswerMode();
+      }
+
+      // 设置问题UI
+      function setupQuestionUI() {
+        optionsContainer.querySelectorAll('button').forEach(button => {
+          button.addEventListener('click', checkAnswer);
+        });
+
+        // 重新触发题目淡入动画
+        questionEl.classList.remove('math-fade-in');
+        void questionEl.offsetWidth;
+        questionEl.classList.add('math-fade-in');
+      }
+
+      // 生成选项
+      function generateOptions(correctAnswer) {
+        optionsContainer.innerHTML = '';
+
+        // 合并题（商和余数）：3 个选项都是"x 余 y"格式，其中一个是正确组合
+        if (currentQuestion.type === 'modulo') {
+          const { quotient, remainder, num2 } = currentQuestion;
+
+          // 干扰组合：同商异余、商±1 同余、商±1 异余；正确组合本身不在池内
+          const candidates = new Set();
+          for (let i = 0; i < num2; i++) {
+            if (i !== remainder) candidates.add(`${quotient},${i}`);
+          }
+          for (const dq of [quotient + 1, quotient - 1]) {
+            if (dq < 0) continue;
+            candidates.add(`${dq},${remainder}`);
+            for (let i = 0; i < num2; i++) {
+              if (i !== remainder) candidates.add(`${dq},${i}`);
+            }
+          }
+
+          const pool = [...candidates].map(s => {
+            const parts = s.split(',');
+            return { q: parseInt(parts[0]), r: parseInt(parts[1]) };
+          });
+
+          // 洗牌取 2 个干扰组合
+          for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+          }
+          const allAnswers = [{ q: quotient, r: remainder }, ...pool.slice(0, 2)];
+
+          // 洗牌混入正确组合
+          for (let i = allAnswers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+          }
+
+          allAnswers.forEach(ans => {
+            const button = document.createElement('button');
+            button.className = 'math-option-btn';
+            button.type = 'button';
+            button.dataset.q = ans.q;
+            button.dataset.r = ans.r;
+            button.textContent = `${ans.q} 余 ${ans.r}`;
+            optionsContainer.appendChild(button);
+          });
+          return;
+        }
+
+        const wrongAnswers = [];
+        const answerRange = isArithmeticMode ? correctAnswer < 100 ? 10 : 50 : 50;
+
+        while (wrongAnswers.length < 2) {
+          let wrongAnswer;
+
+          if (isArithmeticMode) {
+            const deviation = Math.floor(Math.random() * 5) + 1;
+            wrongAnswer = correctAnswer + (Math.random() > 0.5 ? deviation : -deviation);
+
+            if (wrongAnswer < 0) {
+              wrongAnswer = correctAnswer + deviation;
+            } else if (wrongAnswer > 100) {
+              wrongAnswer = correctAnswer - deviation;
+            }
+          } else if (currentQuestion.type === 'mixed-mult-div') {
+            const deviation = Math.floor(Math.random() * 5) + 1;
+            wrongAnswer = correctAnswer + (Math.random() > 0.5 ? deviation : -deviation);
+
+            if (wrongAnswer < 1) {
+              wrongAnswer = correctAnswer + deviation;
+            } else if (wrongAnswer > 100) {
+              wrongAnswer = correctAnswer - deviation;
+            }
+          } else if (isNineNineMultiplicationMode) {
+            wrongAnswer = Math.floor(Math.random() * 81) + 1;
+          } else if (currentQuestion.type === 'division') {
+            wrongAnswer = Math.floor(Math.random() * 10) + 1;
+          } else if (currentQuestion.type === 'find-dividend') {
+            const deviation = Math.floor(Math.random() * 5) + 1;
+            wrongAnswer = correctAnswer + (Math.random() > 0.5 ? deviation : -deviation);
+            if (wrongAnswer < 0) wrongAnswer = correctAnswer + deviation;
+          } else {
+            wrongAnswer = Math.floor(Math.random() * answerRange) + 2;
+          }
+
+          if (wrongAnswer !== undefined && wrongAnswer !== correctAnswer && !wrongAnswers.includes(wrongAnswer)) {
+            wrongAnswers.push(wrongAnswer);
+          }
+        }
+
+        const allAnswers = [correctAnswer, ...wrongAnswers];
+        for (let i = allAnswers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+        }
+
+        allAnswers.forEach(answer => {
+          const button = document.createElement('button');
+          button.className = 'math-option-btn';
+          button.type = 'button';
+          button.dataset.value = answer;
+          button.textContent = answer;
+          optionsContainer.appendChild(button);
+        });
+      }
+
+      // 答题音效：使用与页面同目录下的音频文件
+      const correctAudio = new Audio('./yes.wav');
+      const wrongAudio = new Audio('./no.wav');
+
+      function playFeedbackSound(isCorrect) {
+        const audio = isCorrect ? correctAudio : wrongAudio;
+        audio.currentTime = 0;
+        const playPromise = audio.play();
+        if (playPromise) {
+          playPromise.catch(() => {});
+        }
+      }
+
+      // 检查答案
+      function checkAnswer(e) {
+        if (questionSolved) return;
+        const btn = e.target;
+        const isModulo = currentQuestion.type === 'modulo';
+
+        // 合并题按"商+余数"组合判断；其他模式按数值判断
+        let isCorrect, userAnswer;
+        if (isModulo) {
+          userAnswer = btn.textContent;
+          isCorrect = parseInt(btn.dataset.q) === currentQuestion.quotient && parseInt(btn.dataset.r) === currentQuestion.remainder;
+        } else {
+          userAnswer = parseInt(btn.dataset.value);
+          isCorrect = userAnswer === currentQuestion.answer;
+        }
+
+        // 答题音效：答对播放 yes.wav，答错播放 no.wav（重试点击同样触发）
+        playFeedbackSound(isCorrect);
+
+        // 仅首次作答计入成绩；答错后可再次点击选择答案，重试答对不再重复计分
+        const isFirstAttempt = !questionAttempted;
+        if (isFirstAttempt) {
+          questionAttempted = true;
+          totalCount++;
+          if (isCorrect) {
+            correctCount++;
+          } else {
+            addToWrongQuestions(currentQuestion, userAnswer);
+            updateWrongQuestionsDisplay();
+          }
+
+          // 九九乘法（顺序/随机）：单轮成绩只统计首次作答
+          if (isNineNineMultiplicationMode) {
+            nineRoundTotal++;
+            if (isCorrect) nineRoundCorrect++;
+          }
+        }
+
+        correctCountEl.textContent = correctCount;
+        totalCountEl.textContent = totalCount;
+
+        // 反馈与题目融为一体：题目文字变色，行内显示反馈
+        if (isCorrect) {
+          questionSolved = true;
+          // 答对：锁定全部选项、高亮正确项，自动进入下一题（重试答对同样处理）
+          optionsContainer.querySelectorAll('button').forEach(button => {
+            button.removeEventListener('click', checkAnswer);
+            const hit = isModulo
+              ? parseInt(button.dataset.q) === currentQuestion.quotient && parseInt(button.dataset.r) === currentQuestion.remainder
+              : parseInt(button.dataset.value) === currentQuestion.answer;
+            if (hit) button.classList.add('correct');
+            else button.classList.remove('wrong');
+          });
+          questionEl.classList.remove('wrong');
+          questionEl.classList.add('correct');
+          questionFeedback.classList.remove('danger');
+          questionFeedback.classList.add('success');
+          feedbackIcon.className = 'fas fa-check-circle';
+          feedbackText.textContent = '答对了！';
+          questionFeedback.classList.remove('hidden');
+          nextQuestionBtn.classList.add('hidden');
+          feedbackContainer.classList.add('hidden');
+          autoNextTimeout = setTimeout(generateQuestion, AUTO_NEXT_DELAY);
+        } else {
+          // 答错：不提前揭示正确答案，保留所有选项可重试，仅标记点错的选项；
+          // "下一题"按钮作为备选（跳过此题）
+          optionsContainer.querySelectorAll('button').forEach(button => {
+            const hit = isModulo
+              ? parseInt(button.dataset.q) === currentQuestion.quotient && parseInt(button.dataset.r) === currentQuestion.remainder
+              : parseInt(button.dataset.value) === currentQuestion.answer;
+            if (hit) button.classList.remove('correct');
+            else if (button !== btn) button.classList.remove('wrong');
+          });
+          btn.classList.add('wrong');
+          questionEl.classList.remove('correct');
+          questionEl.classList.add('wrong');
+          questionFeedback.classList.remove('success');
+          questionFeedback.classList.add('danger');
+          feedbackIcon.className = 'fas fa-times-circle';
+          feedbackText.textContent = '再试一次，你一定能答对！';
+          questionFeedback.classList.remove('hidden');
+          nextQuestionBtn.classList.remove('hidden');
+          feedbackContainer.classList.remove('hidden');
+        }
+      }
+
+      // 添加到错题记录
+      function addToWrongQuestions(question, userAnswer) {
+        const existingQuestionIndex = wrongQuestions.findIndex(q => q.question === question.questionText);
+
+        if (existingQuestionIndex !== -1) {
+          wrongQuestions[existingQuestionIndex].wrongCount++;
+          wrongQuestions[existingQuestionIndex].lastSeen = Date.now();
+          wrongQuestions[existingQuestionIndex].userAnswer = userAnswer;
+        } else {
+          wrongQuestions.push({
+            question: question.questionText,
+            userAnswer: userAnswer,
+            correctAnswer: question.answer,
+            type: isArithmeticMode ? 'arithmetic' : (isNineNineMultiplicationMode ? 'nine-nine-multiplication' : (question.type || 'multiplication')),
+            wrongCount: 1,
+            correctStreak: 0,
+            lastSeen: Date.now(),
+            firstSeen: Date.now()
+          });
+        }
+      }
+
+      // 更新错题显示
+      function updateWrongQuestionsDisplay() {
+        noErrorsMessage.classList.toggle('hidden', wrongQuestions.length > 0);
+        clearWrongBtn.classList.toggle('hidden', wrongQuestions.length === 0);
+        wrongQuestionsContainer.innerHTML = '';
+        if (wrongQuestions.length === 0) return;
+
+        const sortedWrongQuestions = [...wrongQuestions].sort((a, b) => {
+          if (a.wrongCount !== b.wrongCount) return b.wrongCount - a.wrongCount;
+          return b.lastSeen - a.lastSeen;
+        });
+
+        const fragment = document.createDocumentFragment();
+        sortedWrongQuestions.forEach(wrongQuestion => {
+          const item = document.createElement('div');
+          item.className = 'math-wrong-item';
+          item.innerHTML = `
+            <div class="math-wrong-item-top">
+              <span class="math-wrong-question">${wrongQuestion.question}</span>
+              <span class="math-wrong-count">错误 ${wrongQuestion.wrongCount} 次</span>
+            </div>
+            <div class="math-wrong-detail">
+              <span>你的答案:</span>
+              <span class="math-wrong-user-answer">${wrongQuestion.userAnswer}</span>
+              <span class="math-wrong-arrow">→</span>
+              <span class="math-wrong-correct">正确答案: ${wrongQuestion.correctAnswer}</span>
+            </div>`;
+          fragment.appendChild(item);
+        });
+        wrongQuestionsContainer.appendChild(fragment);
+      }
+
+      // 九九乘法一轮（81题）完成提示
+      function showRoundComplete(correct, total) {
+        if (roundBannerTimer) clearTimeout(roundBannerTimer);
+        const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
+        roundBannerEl.textContent = `🎉 一轮完成！答对 ${correct} / ${total} 题（正确率 ${rate}%），开始新一轮`;
+        roundBannerEl.classList.remove('hidden');
+        roundBannerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        roundBannerTimer = setTimeout(() => roundBannerEl.classList.add('hidden'), 5000);
+      }
+
+      // 下一题按钮（答错后手动继续）
+      nextQuestionBtn.addEventListener('click', () => {
+        if (autoNextTimeout) {
+          clearTimeout(autoNextTimeout);
+          autoNextTimeout = null;
+        }
+        generateQuestion();
+      });
+
+      // 清空错题记录
+      clearWrongBtn.addEventListener('click', () => {
+        wrongQuestions = [];
+        updateWrongQuestionsDisplay();
+      });
+
+      // 键盘支持（在输入框内不触发，避免影响链接表单输入）
+      document.addEventListener('keydown', (e) => {
+        if (e.target.closest('input, textarea, select')) return;
+        if (questionCard.classList.contains('hidden')) return;
+
+        if (!isFillMode && e.key >= '1' && e.key <= '3') {
+          const optionButtons = optionsContainer.querySelectorAll('button');
+          const index = parseInt(e.key) - 1;
+          if (optionButtons[index]) optionButtons[index].click();
+        }
+
+        if ((e.key === ' ' || e.key === 'Enter') && !feedbackContainer.classList.contains('hidden')) {
+          if (autoNextTimeout) {
+            clearTimeout(autoNextTimeout);
+            autoNextTimeout = null;
+          }
+          generateQuestion();
+        }
+      });
+
+      // 页面加载即锁定左栏宽度（加减法题型展开状态），避免切换模式时宽度变化
+      (function lockWidthOnLoad() {
+        const wasHidden = numberRangeContainer.classList.contains('hidden');
+        if (wasHidden) numberRangeContainer.classList.remove('hidden');
+        lockLeftColumnWidth();
+        if (wasHidden) numberRangeContainer.classList.add('hidden');
+      })();
+    })();
+
+    // 统一启动入口
+    function start() {
+      updateFooterYear(true);
+      startSync();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  </script>
+</body>
+
+</html>
