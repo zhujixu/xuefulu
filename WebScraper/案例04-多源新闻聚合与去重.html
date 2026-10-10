@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络数据采集 案例04 多源新闻聚合与去重（RSS订阅）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+<script src="https://trtc.io/knocket-sdk/sdk.js?identifier=c2bc4bc2aa25d0e77f&v=1791349953716" async></script>
+<style>
+  :root {
+    --bg: #fafafa;
+    --text: #333;
+    --card: #fff;
+    --code-bg: #eef1f5;
+    --code-text: #c7254e;
+    --pre-bg: #282c34;
+    --pre-text: #abb2bf;
+    --border: #d0d7de;
+    --table-even: #f6f8fa;
+    --h1: #1a1a1a;
+    --h2: #3776ab;
+    --ai-bg: #edf2fe;
+    --ai-border: #4c6ef5;
+    --tip-bg: #fff8e1;
+    --tip-border: #ffd43b;
+    --sz-bg: #fdf3f1;
+    --sz-line: #f0d5d1;
+    --sz-border: #c0392b;
+    --sz-ink: #a03024;
+  }
+  body.dark {
+    --bg: #1e1e1e;
+    --text: #d4d4d4;
+    --card: #2a2a2a;
+    --code-bg: #3a3a3a;
+    --code-text: #ff9e9e;
+    --pre-bg: #111;
+    --pre-text: #ccc;
+    --border: #444;
+    --table-even: #2f2f2f;
+    --h1: #f0f0f0;
+    --h2: #6cb6ff;
+    --ai-bg: #232842;
+    --ai-border: #748ffc;
+    --tip-bg: #3a3320;
+    --tip-border: #ffd43b;
+    --sz-bg: #3a2422;
+    --sz-line: #5d3833;
+    --sz-border: #ef8674;
+    --sz-ink: #ffa898;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .3s, color .3s;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+  /* 侧边目录 */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    font-size: 14px;
+  }
+  .sidebar h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--h2);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s, color .2s;
+  }
+  .sidebar a:hover {
+    background: var(--code-bg);
+    color: var(--h2);
+  }
+  /* 主内容 */
+  .content { flex: 1; min-width: 0; }
+  /* 页首「标题行」（.title-row：正文大标题 = 链接，末尾跟一句「返回本教程导航页」提示，
+     整行统一成一块黄底黑字）的样式
+     **不在模板里**，由 enhance_tutorial.py 的 TITLE_ROW_CSS 注入——这样 31 篇老成品与新建的
+     篇目共用同一份实现。本模板直接输出**合并后**的形态（一个 h1 里嵌 a.page-title + 提示块），
+     enhance 认出来是目标形态就一个字节都不动。
+     a.page-title 的 class 是工具链锚点（包住整条标题），**别改名**；span.highlight 是剥除锚点，
+     也**别删**（快照靠它把提示语从 h1 文案里去掉）。
+     ⚠️ 注释里不要写带尖括号的「h1 + class」字样：enhance 的 `_H1_RE` 会把它当成真的正文标题。 */
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #3776ab;
+    padding-bottom: 10px;
+    color: var(--h1);
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 32px;
+    color: var(--h2);
+    border-left: 5px solid #ffd43b;
+    padding-left: 10px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 17px;
+    margin-top: 22px;
+    color: var(--text);
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, Monaco, monospace;
+    color: var(--code-text);
+  }
+  pre {
+    background: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: #3776ab; color: #fff; }
+  tr:nth-child(even) { background: var(--table-even); }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+
+  .ai-tip {
+    background: var(--ai-bg);
+    border-left: 5px solid var(--ai-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .ai-tip p { margin: 6px 0; }
+  .ai-tip p:first-child { margin-top: 0; }
+  .ai-tip p:last-child { margin-bottom: 0; }
+
+  /* 课程思政卡片：与提示（黄）/警告（红）/AI 小贴士（蓝）并列的第四种提示块。
+     左缘 5px 朱红竖条 + 一圈浅红描边，「课程思政｜主题 · 小标题」在首行加粗朱红显示。 */
+  .sizheng {
+    background: var(--sz-bg);
+    border: 1px solid var(--sz-line);
+    border-left: 5px solid var(--sz-border);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .sizheng .sz-head {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: var(--sz-ink);
+  }
+  .sizheng .sz-head i { margin-right: .45em; }
+  .sizheng p { margin: 6px 0; }
+  .sizheng p:last-child { margin-bottom: 0; }
+  .warn {
+    background: #ffe6e6;
+    border-left: 5px solid #e53935;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  body.dark .warn { background: #4a1f1f; color: #ffd4d4; }
+  /* 超链接样式 */
+  a.link {
+    color: #3776ab;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  a.link:hover { color: #e53935; }
+  body.dark a.link { color: #6cb6ff; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+
+  /* 深色切换按钮 */
+  #themeBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  #themeBtn:hover { background: #2a5d8a; }
+
+  /* 响应式 */
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; padding: 16px; }
+    .sidebar { width: 100%; position: static; order: -1; }
+    #themeBtn { top: 10px; right: 10px; padding: 6px 12px; font-size: 13px; }
+  }
+
+  /* ===== 随堂自测（选择题模块） ===== */
+  .quiz {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .quiz-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .quiz-bar .quiz-score { font-weight: bold; color: var(--h2); }
+  .quiz-reset {
+    margin-left: auto;
+    background: #3776ab;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .quiz-reset:hover { background: #2a5d8a; }
+  .q {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 4px;
+  }
+  .q:first-of-type { border-top: none; }
+  .q-title {
+    font-weight: bold;
+    margin: 0 0 10px;
+    line-height: 1.7;
+  }
+  .q-no {
+    display: inline-block;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: #3776ab;
+    color: #fff;
+    font-size: 13px;
+    font-weight: normal;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .q.passed .q-no { background: #2e9b52; }
+  .q.failed .q-no { background: #e53935; }
+  ul.q-opts {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  li.opt {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  li.opt:hover { border-color: var(--h2); }
+  .q.answered li.opt { cursor: default; }
+  .q.answered li.opt:hover { border-color: var(--border); }
+  li.opt.correct {
+    background: #e6f7ec;
+    border-color: #2e9b52;
+    color: #1b6b39;
+    font-weight: bold;
+  }
+  li.opt.wrong {
+    background: #ffe6e6;
+    border-color: #e53935;
+    color: #a01f1c;
+  }
+  li.opt.correct:hover, li.opt.wrong:hover { border-color: inherit; }
+  li.opt.dim { opacity: .5; }
+  body.dark li.opt.correct { background: #12351f; border-color: #3fbf6b; color: #9ff0bb; }
+  body.dark li.opt.wrong { background: #3a1a1a; border-color: #e53935; color: #ffb3b3; }
+  .q-explain {
+    display: none;
+    margin: 12px 0 4px;
+    padding: 10px 14px;
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .q.answered .q-explain { display: block; }
+  .q-result {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--tip-bg);
+    border-left: 5px solid var(--tip-border);
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .q-result.show { display: block; }
+/* === 增强：代码块 / 署名 === */
+.cb { margin: 16px 0; border-radius: 8px; overflow: hidden; background: var(--pre-bg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.cb-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+          padding: 6px 12px; background: rgba(255,255,255,.07);
+          border-bottom: 1px solid rgba(255,255,255,.09); }
+.cb-lang { font-size: 12px; color: #9aa4b2; font-family: Consolas, Monaco, monospace; letter-spacing: .5px; }
+.cb-copy { background: transparent; border: 1px solid #4b5263; color: #c8cdd8; border-radius: 5px;
+           padding: 2px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+           transition: background .15s, border-color .15s, color .15s; }
+.cb-copy:hover { background: #3776ab; border-color: #3776ab; color: #fff; }
+.cb-copy.ok { background: #2ea043; border-color: #2ea043; color: #fff; }
+.cb-body { display: flex; align-items: stretch; }
+.cb-lines { flex: 0 0 auto; padding: 16px 10px 16px 14px; text-align: right; color: #636d83;
+            font-family: Consolas, Monaco, monospace; font-size: 14px; line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            border-right: 1px solid rgba(255,255,255,.08); }
+.cb-lines span { display: block; }
+.cb-body pre { flex: 1 1 auto; min-width: 0; margin: 0; padding: 16px 16px 16px 14px;
+               border-radius: 0; background: transparent; }
+.cb-body pre code { padding: 0; }
+/* 语法高亮：VS Code Dark+ 配色 */
+.tok-kw  { color: #c586c0; }
+.tok-kw2 { color: #569cd6; }
+.tok-str { color: #ce9178; }
+.tok-num { color: #b5cea8; }
+.tok-cmt { color: #6a9955; font-style: italic; }
+.tok-fn  { color: #dcdcaa; }
+.tok-cls { color: #4ec9b0; }
+.tok-op  { color: #d4d4d4; }
+/* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
+.warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
+.warn .warn-links a { word-break: break-all; }
+/* === 增强：标题行 === */
+/* 页首「标题行」：正文大标题（h1）与末尾的「返回教程导航」提示**合成一行、同一块黄底黑字**
+   —— 整条标题就是一个链接、整块可点。
+   现行形态（用户要求「整行统一成黄底黑字」）：标题文字不再是蓝色、左侧那根
+   4px 蓝色竖条取消、末尾提示也不再自成一块小黄标 —— 整条标题行统一成一块黄底（#fde047）、
+   黑字（#111827）、加粗的块；此前形态是「蓝色标题 + 左侧蓝竖条 + 末尾黄色小标」。 */
+.title-row { background-color: #fde047; color: #111827;
+             width: fit-content; max-width: 100%;
+             margin: 6px 0 18px; padding: 8px 16px; border-radius: 4px; }
+/* 悬停：整块黄底压深一档（整块可点，给个反馈） */
+.title-row:hover { background-color: #facc15; }
+/* h1 的默认装束（26px、3px 蓝色下边框、下边距）在标题行里要全部让位 */
+.title-row h1, .title-row .page-heading { margin: 0; padding: 0; border: 0;
+             font-size: 22px; font-weight: 700; line-height: 1.4;
+             letter-spacing: .5px; color: #111827; }
+/* 整条标题即链接（`display:block` 让整块黄底都能点）。⚠️ class **仍然是 `page-title`**：
+   `snapshot_page.py` / `check_nav.py` / `fix_page_title_home()` 都靠这个选择器定位「页首链接」，
+   改名会全线断掉。下面把历史蓝色牌匾规则（渐变底、白字、大内边距、圆角、阴影）
+   的属性**逐个复位**。 */
+.title-row .page-title { color: inherit; text-decoration: none; background: none;
+             display: block; margin: 0; padding: 0; border: 0; border-radius: 0;
+             box-shadow: none; transform: none; }
+.title-row .page-title:hover { text-decoration: none; }
+/* 末尾的提示块：整行已经是黄底黑字，所以它**不再自成一块**——底色/内边距/圆角全部去掉，
+   只留一小段间距（`.5em`）＋ 前面那颗小图标；字号字重随 h1（22px / 700）。
+   ⚠️ `span.highlight` 这个标签与 class **必须保留**：`enhance_tutorial._h1_text()` /
+   `snapshot_page.py` / `pages_sync.py` 都靠 `_HIGHLIGHT_SPAN_RE` 把它从 h1 文案里剥掉，
+   删了快照的 `page_title` 会拖上提示语。 */
+.title-row .highlight { background: none; color: inherit; padding: 0; border-radius: 0;
+             margin-left: .5em; white-space: normal; }
+/* 提示前面那颗小图标（Font Awesome）：随字号缩放（em），别写死 px，免得窄屏比例失衡 */
+.title-row .highlight i { margin-right: .3em; font-size: .9em; }
+@media (max-width: 640px) {
+  .title-row h1, .title-row .page-heading { font-size: 19px; }
+}
+/* === 增强：顶部品牌行 === */
+/* 顶部三行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
+   ⚠️ `.top-brand` 的**位置**在 `<body>` 直下（`.layout` 之前；历史形态曾在 `<main>` 内），
+   所以这里补上 `max-width:1200px; margin:… auto 0` —— 这两条合起来正好复刻 index 的
+   「`body{padding:clamp(10px,3vw,20px)}` + `.container{max-width:1200px;margin:0 auto}`」几何：
+   1280 视口下量到 x=40 / w=1200 / 中心 640，与 index 的 <header> 逐像素一致（此前在内容栏里
+   只有 w=1076、中心 678，用户反馈「看起来不一样」）。 */
+.top-brand { max-width: 1200px; margin: clamp(10px, 3vw, 20px) auto 0;
+  text-align: center; padding: clamp(20px, 5vw, 30px) 20px 10px; color: #1d1d1f;
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* 品牌行与**下方内容**的间距（用户要求「常用网址语句和上方的间距…可参考
+   index.html 中北京时间与下方间距」）：
+     index 里 `.time-display` 底边 → 下一个面板顶边 = 0px（时间行自带 6px 下内边距 ＋ header
+     的 10px 下内边距 = **视觉 16px**）；
+     讲义页/导航页里 `.top-brand` 底边 → `.warn` 顶边还额外压着 `.layout{padding:32px 24px}`
+     的上内边距，视觉 48px —— 明显偏大。
+   把紧跟在品牌行后面的那个 `.layout` 的**上内边距归零**，视觉间距即精确等于 index 的 16px。
+   窄屏分支里 `.layout{padding:16px}` 也会被这条（特指度更高）覆盖，同样对齐 index。 */
+.top-brand + .layout { padding-top: 0; }
+/* ① 学士帽 logo 行 */
+.top-brand .header-logo-link { display: block; text-decoration: none; color: inherit; }
+.top-brand .logo {
+  display: inline-flex; align-items: center; justify-content: center; gap: 15px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700;
+  text-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+.top-brand .logo i { color: #0071e3; filter: drop-shadow(0 0 8px rgba(0,113,227,.3));
+  animation: tp-pulse 2s ease-in-out infinite; }
+@keyframes tp-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.top-brand .brand-accent { color: #0071e3; text-shadow: 0 0 10px rgba(0,113,227,.3); }
+/* ② 「今天你 AI 赋能了吗?」下载提示行 */
+.top-brand .download-tip {
+  display: block; text-align: center; color: #86868b; font-size: .875rem;
+  padding: 8px 20px; text-decoration: none; transition: color .2s ease;
+}
+.top-brand .download-tip:hover { color: #0071e3; }
+.top-brand .download-tip i { margin-right: 6px; color: #86868b; }
+.top-brand .download-tip .highlight {
+  background-color: #fde047; color: #111827; font-weight: 700;
+  padding: .125rem .375rem; border-radius: .25rem;
+}
+/* ③ 实时北京时间行 */
+.top-brand .time-display { text-align: center; padding: 6px 0; color: #86868b;
+  position: relative; z-index: 1; }
+.top-brand .time-display .time-main { font-size: 1.05rem; font-weight: 400; letter-spacing: .5px; }
+.top-brand .time-display .time-sync-status { font-size: .7rem; opacity: .5;
+  margin-left: 6px; vertical-align: middle; }
+/* 深色主题（index 没有深色模式，这几条是按用户「深色下自动提亮」的要求新增的）：
+   正文色与灰字、品牌蓝各提亮一档；浅色下一律与 index.html 完全一致。 */
+body.dark .top-brand { color: #f0f0f0; }
+body.dark .top-brand .download-tip,
+body.dark .top-brand .download-tip i,
+body.dark .top-brand .time-display { color: #a1a1a6; }
+body.dark .top-brand .download-tip:hover { color: #4dabf7; }
+body.dark .top-brand .logo i,
+body.dark .top-brand .brand-accent { color: #4dabf7; }
+body.dark .top-brand .logo i { filter: drop-shadow(0 0 8px rgba(77,171,247,.45)); }
+@media (max-width: 480px) { .top-brand .logo { flex-direction: column; gap: 10px; } }
+/* === 增强：站点页脚 === */
+/* 页脚：`.footer / .footer-content / .footer-link / :hover / .separator / 窄屏分支` 逐条照抄
+   index.html（它的 CSS 变量在此展开成字面值：
+     --text-secondary #86868b ｜ --accent #0071e3 ｜ --text-primary #1d1d1f ｜ --transition-fast .2s ease）。
+   多出来的两条定位声明与一行字体栈见上方 Python 注释的 ①② 两条。 */
+.footer { max-width: 1200px; margin: 0 auto clamp(10px, 3vw, 20px);
+  text-align: center; color: #86868b; padding: 20px 0 20px; font-size: .9rem;
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.footer-content { display: flex; align-items: center; justify-content: center;
+  gap: 16px; flex-wrap: wrap; }
+.footer-link { color: #0071e3; text-decoration: none; transition: all .2s ease;
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+.footer-link:hover { color: #1d1d1f; text-decoration: underline; transform: translateY(-2px); }
+.separator { opacity: .4; }
+/* 「版式底边 → 页脚」这一段间距对齐 index（用户要求：
+   「每个页面底部信息与上方的间距保持和 index.html 中底部信息和上方的间距一致」）。
+   index 里页脚紧贴内容块，视觉间距就是页脚自身的 padding-top（20px）；
+   而本技能的内容区 `.layout` 自带下内边距（讲义 32px、导航 8px、窄屏 16px），
+   正文末元素又常带下外边距 —— 实测「正文末元素底边 → 页脚文字顶边」被撑到 52px（讲义）/ 34px（导航）。
+   把这两样归零后该间距＝20px，与 index 逐像素一致。用 `:has(+ .footer)` 只为自证
+   「只命中以页脚收尾的版式」（页脚恒为 `.layout` 的紧邻兄弟，由 inject_site_footer 保证）；
+   不支持 :has 的老浏览器会退回原来的偏大间距，不破版。 */
+.layout:has(+ .footer) { padding-bottom: 0; }
+.layout:has(+ .footer) .content > *:last-child { margin-bottom: 0; }
+/* 深色主题（index 没有深色模式，这几条是按顶部品牌行同样的口径新增的）：
+   灰字与品牌蓝各提亮一档，浅色下一律与 index.html 完全一致。 */
+body.dark .footer { color: #a1a1a6; }
+body.dark .footer-link { color: #4dabf7; }
+body.dark .footer-link:hover { color: #f0f0f0; }
+@media (max-width: 480px) {
+  .footer-content { flex-direction: column; gap: 8px; }
+  .separator { display: none; }
+}
+/* === 增强：搜索结果定位 === */
+/* 从教程导航页搜到知识点后，链接带 ?hl=词#secN：进来自动滚到那一段并高亮关键词
+   （脚本在同一 MARK 的 JS 块里）。点页面任意处 / 按 Esc 清除高亮。
+   配色比正文里普通的 <mark> 更醒目一档，浅色/深色各一套；代码块是深色底，共用同一套也够看清。 */
+.hl-hit { background: #ffe066; color: inherit; border-radius: 3px; padding: 0 1px; }
+.hl-hit.is-first { background: #ffc940; box-shadow: 0 0 0 2px rgba(255, 201, 64, .45); }
+body.dark .hl-hit { background: #6b5a17; color: #ffeaa0; }
+body.dark .hl-hit.is-first { background: #8a7418; color: #fff2c2; box-shadow: 0 0 0 2px rgba(255, 222, 128, .3); }
+/* === 增强：侧边目录可折叠 === */
+/* 侧边目录＝左侧竖排书签，默认收起。样式全部依附 .sb-ready（JS 加的），无 JS 时完全不影响原版式 */
+
+/* 外层：收 44px / 展 44+面板；sticky 钉在左侧，随页面滚动常驻，且任何状态都垂直居中 */
+.sidebar.sb-ready {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 44px;
+  /* 上限比「视口高 − 48」再紧 24px：保证 top = 50vh − H/2 恒 ≥ 32px（父容器上内边距）。
+     低于这个值时（矮窗口）书签的静态位置比粘住线还靠下，sticky 只能把元素往下推、不能往上提，
+     于是头几像素会跟着正文滚——留 24px 余量后永远是被推到线上，任何窗口高都不例外。 */
+  max-height: calc(100vh - 72px);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  position: sticky;
+  /* 居中必须落在**布局盒**上：top = 50vh - 自身高度的一半，高度由 JS 实测写进 --sb-top。
+     ⚠️ 不能用 transform: translateY(-50%) 做居中——transform 只挪画面、不挪盒子，而 sticky 判
+     「不越出父容器」时按**没挪过的盒子**算：滚到页底（父容器底边正好贴到视口底）整枚书签会被顶高。
+     导航页父容器只 3744px 高，实测展开态在页底偏了 130px（讲义父容器一万八，从没碰到这个上限）。
+     改成 top: calc(50vh - H/2) 后布局盒本身就居中，底部只占 50vh + H/2 ≤ 视口高（H ≤ 100vh-72px）。 */
+  top: var(--sb-top, 50vh);
+  /* 品牌行（index 首三行）在 `.layout` **之前**（＝页面最顶端），
+     于是书签的**静态位置**被整体推低了「品牌行高 + 外边距 + .layout 上内边距」那么多。
+     sticky 只能把元素往下推、不能往上提：展开态面板在页顶会被切掉（实测 1200×800 切掉一截）。
+     解法＝用等量**负上外边距**把静态位置提回版式顶端——`--sb-head` 由 JS 实测（＝文档顶到
+     `.layout` 上边的距离），于是书签的渲染位置**始终落在视口中线**。
+     没 JS 时 `--sb-head` 缺省 0：静态位置就停在品牌行下方，不重叠、不切屏，只是位置偏低。 */
+  margin-top: calc(-1 * var(--sb-head, 0px));
+  /* 还有第二处夹取要放开：sticky 要求元素**底部也不越出父容器底边**。
+     `.layout` 后面若还有页脚（导航页有 108px 页脚 + 30px 外边距），滚到最底时父容器底边升到视口里，
+     书签就被顶高——而且只在小窗口暴露：视口越高，页脚占比越小，越碰不到。实测导航页展开态
+     （H=590）页底偏移：视口 1113px 时 0，713px 时 −84px，533px 时 −122px，413px 时 −122px。
+     父容器底边之外本来就没有内容要避让，给一个足够大的负 margin-bottom 即可——负外边距只**放宽
+     允许范围**，不改元素在流里的位置（实测文档高、其余滚动位置逐像素不变）。−100vh 远超任何页脚高度。 */
+  margin-bottom: -100vh;
+  align-self: flex-start;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  z-index: 30;
+}
+/* 首次挂载时先禁用过渡，避免「原版 240px 宽 → 收起 44px」在加载瞬间抖一下（JS 两帧后移除本类） */
+.sidebar.sb-ready.sb-noanim { transition: none !important; }
+.sidebar.sb-ready.sb-expanded {
+  /* 面板宽度由 JS 量出「最长标题不折行」所需宽度，写进 --sb-panel-w（默认 196px） */
+  width: calc(44px + var(--sb-panel-w, 196px));
+}
+
+/* 工具条＝一枚 44px 宽的竖排书签：从上到下依次是「返回导航页 / 回到顶部 / 深色切换」三个 44×38
+   图标区 + 目录区，**共用同一块渐变底色与投影**，视觉上是一整枚按钮
+   （内部是四个各自可点的功能区——button 不能嵌套 button，所以用本列承载外观） */
+.sb-col {
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 0;              /* 不要圆角：与正文左边缘齐平的方角书签 */
+  background: linear-gradient(180deg, #5d9bd4 0%, #3776ab 58%, #2b5f8d 100%);
+  box-shadow: 0 6px 18px rgba(55,118,171,.32), inset 0 1px 0 rgba(255,255,255,.26);
+  transition: box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.dark .sb-col { background: linear-gradient(180deg, #4a8bc2 0%, #30699b 58%, #245078 100%); }
+/* ⚠️ 悬停**只把投阴影压深一档，绝不动位置**（用户口径：「鼠标悬停到悬浮按钮上时它不要晃动，静止不动即可」）。
+   以前这里是 `transform: translateX(3px)`——鼠标一搭上去整枚书签就横向窜 3px，看起来就是「晃一下」；
+   现在连 transition 里的 transform 也去掉（见上面 `.sb-col`），从根上不给它动的机会。
+   判定：`.sb-col:hover` 里**不允许出现 transform / translate / scale**（探针会把这条规则的选择器改名后手动挂上，
+   再比对 `getBoundingClientRect()`，位置、宽高必须逐像素不变）。 */
+.sb-col:hover { box-shadow: 0 9px 26px rgba(55,118,171,.46), inset 0 1px 0 rgba(255,255,255,.26); }
+
+/* 竖排书签本体（目录区）：透明，底色与投影都由 .sb-col 提供，两块功能区共用一枚按钮的外观 */
+.sb-tab {
+  flex: 1 1 auto;                /* 在这一列里占满剩余高度：收起＝152px，展开＝随面板一起拉长 */
+  box-sizing: border-box;
+  width: 44px;
+  height: 152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 15px 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-tab:hover { background-color: rgba(255,255,255,.1); }
+.sb-tab:active { background-color: rgba(255,255,255,.2); }
+.sb-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.sb-tab .sb-ico { display: block; width: 17px; height: 17px; flex: none; }
+.sb-tab .sb-vt {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  letter-spacing: .26em;
+  white-space: nowrap;
+}
+.sb-tab .sb-chev { display: block; width: 11px; height: 11px; flex: none; opacity: .72; }
+
+/* 「返回导航页 / 回到顶部」两枚微型按钮：与深色切换**完全同款**的图标区（44×38、透明底、只画图标、
+   底部一条极淡分隔线），叠在切换按钮上方；三块图标区 + 目录区共用 .sb-col 的同一枚渐变底色与投影，
+   所以收起态看过去仍是一整枚书签。图标同样走 background-image（与 #themeBtn 一致，不用子元素）。
+   ⚠️ 三格**统一是 <button>**（用户口径：「每页按钮都一样、返回导航页那枚不需要特殊效果」）：
+   写成 <a> 会撞上页面自身的 `.sidebar a` —— 样式上 `.sidebar a:hover` 用 `background` 简写把图标重置掉，
+   行为上模板脚本给 `.sidebar a` 挂了 preventDefault + scrollIntoView，跨页链接会被当成页内锚点劫持。
+   ⚠️ 选择器仍带 `.sb-col`（0,2,0）：比模板里的 `.sidebar a`（0,1,1）/ 通用 `a`（0,0,1）权重高，
+   也不怕将来谁把这格改回 <a>（改回就会踩上面那条坑）。
+   ⚠️ 这三枚元素只由 JS 创建（没 JS 就没有），所以不用挂 body.sb-on——省掉「挂载瞬间无样式」的一帧。 */
+.sb-col .sb-mini {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  display: block;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: transparent;
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  text-decoration: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sb-col .sb-mini:hover { background-color: rgba(255,255,255,.12); }
+.sb-col .sb-mini:active { background-color: rgba(255,255,255,.22); }
+.sb-col .sb-mini:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 返回导航页：小房子（导航页＝这一套材料的首页） */
+.sb-col .sb-mini.sb-home {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.3 10.4 12 3.5l8.7 6.9v9.2a1.2 1.2 0 0 1-1.2 1.2H4.5a1.2 1.2 0 0 1-1.2-1.2z'/%3E%3Cpath d='M9.2 20.8v-6.1h5.6v6.1'/%3E%3C/svg%3E");
+}
+/* 回到顶部：上行箭头 + 一条底线 */
+.sb-col .sb-mini.sb-top {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18.8V5.7'/%3E%3Cpath d='M5.9 11.8 12 5.7l6.1 6.1'/%3E%3Cpath d='M5.4 20.7h13.2'/%3E%3C/svg%3E");
+}
+
+/* 深色/浅色切换：不再单独占一格，而是并入书签内部——书签顶部一个 44×38 的图标区，
+   底部一条极淡的分隔线与目录区分开，共用 .sb-col 的渐变底色，看起来就是一整枚按钮。
+   图标一律用 background-image 画、不用文字：页面自身脚本每次切换都会改写它的 textContent，
+   塞子元素会被冲掉。整段挂在 body.sb-on 下：JS 没跑（没这个类）时按钮仍是原版右上角样式。 */
+body.sb-on #themeBtn {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;                  /* 隐掉「🌙 深色」文字，只留图标 */
+  line-height: 0;
+  text-indent: -9999px;
+  color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  transition: background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sb-on #themeBtn:hover { background-color: rgba(255,255,255,.12); }
+body.sb-on #themeBtn:active { background-color: rgba(255,255,255,.22); }
+body.sb-on #themeBtn:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+/* 深色模式下换成太阳图标（底色仍由 .sb-col 提供，随 body.dark 自动加深） */
+body.dark.sb-on #themeBtn {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4.4'/%3E%3Cpath d='M12 1.4v2.2M12 20.4v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M1.4 12h2.2M20.4 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6'/%3E%3C/svg%3E");
+}
+
+/* 展开出来的目录面板（沿用原版卡片观感，方角） */
+.sb-panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: none;
+  padding: 16px 14px 20px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 6px 22px rgba(0,0,0,.08);
+}
+.sidebar.sb-ready.sb-expanded .sb-panel { display: block; animation: sbIn .22s ease; }
+@keyframes sbIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.sb-head {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--h2);
+}
+
+/* 遮罩：只在窄屏（抽屉模式）用得上 */
+.sb-mask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+body.sb-open .sb-mask { opacity: 1; visibility: visible; }
+
+@media (max-width: 820px) {
+  /* 窄屏：书签脱离文档流钉在左边缘；展开则是整屏抽屉，正文不重排 */
+  .sidebar.sb-ready {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    max-height: none;
+    margin-top: 0;      /* ⚠️ 抽屉是 fixed：负外边距会把整枚书签顶出视口，必须显式归零（见 --sb-head） */
+    margin-bottom: 0;   /* 抽屉是 fixed，没有父容器可夹，负外边距在这里无意义 */
+    transition: none;
+  }
+  .sb-tab { height: 138px; }
+  .sidebar.sb-ready.sb-expanded {
+    top: 0;
+    transform: none;
+    width: min(92vw, calc(44px + var(--sb-panel-w, 196px)));
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+  }
+  .sb-mask { display: block; }
+  body.sb-on .layout { padding-left: 60px; }   /* 给固定的书签让出位置，避免压住正文 */
+}
+
+@media print {
+  .sb-mask, .sidebar.sb-ready { display: none !important; }
+}
+</style>
+
+<style>
+  .site-tbl { margin: 16px 0 8px; }
+  .site-tbl th:first-child { width: 108px; }
+  .site-tbl .demo-site { color: #16794a; font-weight: 700; }
+  body.dark .site-tbl .demo-site { color: #6ee7b7; }
+  .site-tbl .ext-site { color: #8a5a00; font-weight: 700; }
+  body.dark .site-tbl .ext-site { color: #fcd34d; }
+  .site-tbl .u { font-family: Consolas, Monaco, monospace; font-size: 13px;
+                 word-break: break-all; color: #3776ab; }
+  body.dark .site-tbl .u { color: #6cb6ff; }
+  .site-tbl .nt { color: #777; font-size: 13px; }
+  body.dark .site-tbl .nt { color: #a2a2a2; }
+  .site-tbl .pd { margin: 0; padding-left: 20px; }
+  .site-tbl .pd li { margin: 3px 0; }
+
+  /* 「工具与技能」面板（每篇第 3 节开头，由 toolbox.py 生成） */
+  .toolbox { border: 1px solid var(--border); border-left: 5px solid #3776ab; border-radius: 10px;
+             background: var(--card); padding: 12px 16px 4px; margin: 16px 0 18px; }
+  body.dark .toolbox { border-left-color: #6cb6ff; }
+  .toolbox .tb-h { font-weight: 700; font-size: 15.5px; color: #3776ab; margin: 0 0 6px; }
+  body.dark .toolbox .tb-h { color: #6cb6ff; }
+  .toolbox p { line-height: 1.9; }
+  .toolbox .tb-tbl { margin: 10px 0 12px; }
+  .toolbox .tb-tbl th:first-child { width: 96px; }
+  .toolbox .tb-tbl td:first-child { white-space: nowrap; font-weight: 600; }
+  .toolbox .tb-tbl td { vertical-align: top; }
+  .toolbox .tb-flow { margin: 6px 0 10px; padding-left: 22px; }
+  .toolbox .tb-flow li { margin: 6px 0; line-height: 1.9; }
+  .toolbox .tb-flow strong { color: #1d4ed8; }
+  body.dark .toolbox .tb-flow strong { color: #93b4ff; }
+</style>
+</head>
+<body>
+
+<button id="themeBtn">🌙 深色</button>
+
+    <!-- 增强：顶部品牌行（克隆自 index.html 页首三行，勿手改） -->
+    <div class="top-brand">
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+        <div class="logo">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          <span>学府路<span class="brand-accent">1</span>号 · <span class="brand-accent">xuefulu.ai</span></span>
+        </div>
+      </a>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
+        <i class="fas fa-external-link" aria-hidden="true"></i><span class="highlight">今天你 AI 赋能了吗?</span>打开浏览器,在地址栏输入
+        <span class="highlight">xuefulu.ai</span>
+        ,按下 <span class="highlight">Enter</span> 即可访问学府路1号!
+      </a>
+      <div class="time-display">
+        <span class="time-main"><span id="currentDateTime">2026年10月10日 星期六 08:41:44</span><span class="time-sync-status" id="timeSyncStatus"></span></span> <span class="time-author">广州城市理工学院 经济学院 朱继绪</span>
+      </div>
+    </div>
+    <!-- /增强：顶部品牌行 -->
+
+<div class="layout">
+
+  <!-- 侧边目录 -->
+  <aside class="sidebar">
+    <h3>目录</h3>
+    <a href="#sec1">一、案例背景与采集目标</a>
+    <a href="#sec2">二、数据源与字段设计</a>
+    <a href="#sec3">三、零代码操作步骤</a>
+    <a href="#sec4">四、提示词模板与追问技巧</a>
+    <a href="#sec5">五、结果核对、清洗与保存</a>
+    <a href="#sec6">六、常见问题与合规红线</a>
+    <a href="#quiz">七、随堂自测</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <div class="warn">
+      <span class="warn-links">常用网址：<a class="highlight" href="案例设计总表.html" style="background-color:#fde047;color:#111827;font-weight:700;padding:.125rem .375rem;border-radius:.25rem;text-decoration:none;">案例设计总表</a>　｜　学府路1号 <a class="link" href="https://xuefulu.ai/" target="_blank">https://xuefulu.ai</a>　｜　下载 WorkBuddy <a class="link" href="https://xuefulu.ai/WorkBuddy.html" target="_blank">https://xuefulu.ai/WorkBuddy.html</a></span>
+    </div>
+
+    <!-- 增强：标题行（页首大标题 + 返回导航提示，勿手改） -->
+    <div class="title-row">
+      <h1 class="page-heading"><a class="page-title" href="案例导航.html">案例 04｜多源新闻聚合与去重（RSS订阅）（第 2 周）<span class="highlight"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>点击此处可返回《网络数据采集》案例导航页</span></a></h1>
+    </div>
+    <!-- /增强：标题行 -->
+
+    <h2 id="sec1">一、案例背景与采集目标</h2>
+<p>前两个案例，我们一条一条地翻某一个新闻网站的列表页和详情页。可现实里的资讯需求往往不是「盯一家」，而是「盯一件事」——同一个政策、同一场发布会、同一份数据，十几家媒体都在报。只采一家，视野太窄；一家一家地采，字段对不齐、重复一大堆，最后还要花大量时间做合并。</p>
+<p>这一案例换个思路：<strong>用订阅源（RSS / Atom）把多家媒体的更新一次性取回</strong>。订阅源是网站主动对外发布的一份标准化资讯清单，本质是一份 XML 文件，字段固定、结构统一，天然绕开了「各家页面长得都不一样」这个最大的麻烦。</p>
+<h3>1.1 这一篇用哪些真实站点</h3>
+<p>示范站点是<strong>中国新闻网（简称中新网）的 RSS 订阅中心</strong>，地址 <a class="link" href="https://www.chinanews.com.cn/rss/" target="_blank">https://www.chinanews.com.cn/rss/</a>。打开这个页面你会看到，它把时政、财经、社会、国际、文化等多个频道各自做成一个独立的订阅地址（形如 <code>https://www.chinanews.com.cn/rss/china.xml</code> 这样的 .xml 文件），每个源里放着该频道最近的一批稿件。这是一个<strong>公开提供、无需登录、也没有反爬</strong>的站点，非常适合作为聚合练习的第一站。</p>
+<p>延伸站点再配两家：<strong>36氪</strong> <a class="link" href="https://36kr.com/feed" target="_blank">https://36kr.com/feed</a>（商业科技媒体，Atom 格式）、<strong>少数派</strong> <a class="link" href="https://sspai.com/feed" target="_blank">https://sspai.com/feed</a>（效率工具媒体，RSS 格式）。三家格式未必一致，正好用来练后面那张「字段映射表」。</p>
+<h3>1.2 这个案例要拿到什么</h3>
+<ul><li>从 3~5 个订阅地址，各取最近的一批条目；</li><li>把各家的字段<strong>映射成同一套</strong>：标题、链接、发布时间、摘要、来源媒体；</li><li>把发布时间<strong>统一成同一个格式</strong>，方便排序与跨天比较；</li><li>把同一件事的多家报道<strong>合并、去重</strong>，一条内容只留一次；</li><li>只保留「上次采集之后」的新条目，实现<strong>增量更新</strong>。</li></ul>
+<h3>1.3 为什么订阅源比直接采页面省事</h3>
+<table><thead><tr><th>对比项</th><th>直接采页面</th><th>用订阅源</th></tr></thead><tbody><tr><td>页面结构</td><td>每家模板不同，要分别适配</td><td>XML 结构固定，一视同仁</td></tr><tr><td>字段位置</td><td>页面改版就采空，维护成本高</td><td>title / link / pubDate 是标准标签</td></tr><tr><td>更新判断</td><td>要自己比对哪些是新的</td><td>源里只放近期条目，天然增量</td></tr><tr><td>合规风险</td><td>容易踩到反爬与授权边界</td><td>网站主动公开，属于鼓励使用</td></tr></tbody></table>
+<p>可以打个比方：订阅源就像媒体给你留了一个「取件窗口」，你不用翻它的整个院子，只要按时去窗口取就行。这也解释了为什么做资讯聚合的人，第一步总是先找有没有订阅源，找不到才退回去采页面。</p>
+<h3>1.4 这个案例真正的难点在哪</h3>
+<p>采到数据不难，难在<strong>把三家的数据拼成一张干净的表</strong>。具体有三关：第一关是<strong>字段映射</strong>，RSS 和 Atom 的标签名不一样，比如发布时间一个叫 <code>pubDate</code>、一个叫 <code>updated</code>；第二关是<strong>时间对齐</strong>，中新网用的是 <code>Tue, 08 Oct 2026 07:30:00 +0800</code> 这种 RFC822 格式，不换算成 <code>2026-10-08 07:30</code> 就没法排序；第三关是<strong>跨源判重</strong>，不同媒体的链接肯定不同，但讲的可能是同一件事。这三关解决了，聚合才算真正做成。</p>
+<h3>1.5 聚合出来的表能回答什么问题</h3>
+<p>对齐、去重做完之后，这张表就不只是「一堆标题」了，它能回答很多实打实的问题：</p>
+<ul><li><strong>覆盖度</strong>：同一件事到底有几家媒体在报，谁报得最早；</li><li><strong>口径差异</strong>：同一份数据，财经媒体和科技媒体各挑了哪个角度；</li><li><strong>更新节奏</strong>：某个频道一天更新多少条，什么时段更新最密；</li><li><strong>线索发现</strong>：哪条资讯被多家同时选用，往往就是当天真正重要的信息。</li></ul>
+<p>这些问题用单家媒体都答不全，只有把多家<strong>对齐到一张表</strong>之后才看得清楚——这正是聚合的价值所在。</p>
+<div class="tip"><strong>聚合类任务的核心不是「采」，而是「对齐」。</strong>字段对齐、时间对齐、口径对齐，三件事做完，多家数据才是一张表；做不完，就是三张表堆在一起。</div>
+<h3>目标站点与交付产物</h3>
+<p>下表是本篇用到的<strong>真实站点</strong>。<span class="demo-site">绿色</span>是课堂可稳定复现的示范站点；<span class="ext-site">橙色</span>是延伸站点，多数有登录墙或风控，课堂上只讲结构、原理与合规边界，<strong>不教绕过</strong>。</p>
+<table class="site-tbl">
+<thead><tr><th>项目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>示范站点</td><td><span class="demo-site">中国新闻网 RSS / 澎湃新闻 RSS</span><br><span class="u">https://www.chinanews.com.cn/rss/</span><br><span class="nt">RSS/Atom 是标准 XML 订阅格式，字段统一，天然绕开页面结构差异</span></td></tr>
+<tr><td>延伸站点</td><td><ul class="pd"><li><span class="ext-site">36氪</span>　<span class="u">https://36kr.com/feed</span><span class="nt">（商业媒体 RSS）</span></li><li><span class="ext-site">少数派</span>　<span class="u">https://sspai.com/feed</span><span class="nt">（科技媒体 RSS）</span></li><li><span class="ext-site">人民网 各频道 RSS</span>　<span class="u">http://www.people.com.cn/rss/politics.xml</span><span class="nt">（按频道分源）</span></li><li><span class="ext-site">今日头条</span>　<span class="u">https://www.toutiao.com/</span><span class="nt">（首页顶栏切换「热点」等频道；聚合推荐流（非 RSS），可对照「订阅源 vs 推荐流」的差别）</span></li></ul></td></tr>
+<tr><td>交付产物</td><td><ul class="pd"><li>数据明细.xlsx（含 fingerprint 与是否重复列）</li><li>数据明细.html（按来源筛选、按时间去重视图）</li><li>数据看板.html（各源条数占比 + 去重前后对比）</li><li>技能压缩包（RSS 多源聚合器，改一行配置即可换源）</li></ul></td></tr>
+<tr><td>难度</td><td>★☆☆ 低</td></tr>
+<tr><td>合规提示</td><td>RSS 是站方主动提供的订阅接口，合规性最好；但仍应遵守频率约定，不要把它当高并发下载通道。</td></tr>
+</tbody>
+</table>
+
+    <h2 id="sec2">二、数据源与字段设计</h2>
+<p>数据源是几家媒体公开的订阅地址。我们先看示范站点——中新网 RSS 订阅中心的结构，再把各家字段对齐到同一套。</p>
+<h3>2.1 站点信息表</h3>
+<table><thead><tr><th>站点全称</th><th>网址</th><th>页面形态与接口</th><th>规模说明</th></tr></thead><tbody><tr><td>中国新闻网（中新网）· RSS 订阅中心</td><td><a class="link" href="https://www.chinanews.com.cn/rss/" target="_blank">https://www.chinanews.com.cn/rss/</a></td><td>订阅源索引页，下挂各频道的 .xml 订阅文件，根标签为 rss</td><td>覆盖时政 / 财经 / 社会 / 国际 / 文化等 20 余个频道，每源保留最近数十条</td></tr><tr><td>36氪 · 资讯订阅源</td><td><a class="link" href="https://36kr.com/feed" target="_blank">https://36kr.com/feed</a></td><td>Atom 格式订阅源，根标签为 feed</td><td>创业与商业资讯，条目含作者与分类</td></tr><tr><td>少数派 · 订阅源</td><td><a class="link" href="https://sspai.com/feed" target="_blank">https://sspai.com/feed</a></td><td>RSS / Atom 订阅源</td><td>科技与效率类文章，更新频率中等</td></tr><tr><td>人民网 · 时政频道 RSS</td><td><a class="link" href="http://www.people.com.cn/rss/politics.xml" target="_blank">http://www.people.com.cn/rss/politics.xml</a></td><td>按频道分源的 .xml 文件</td><td>官方媒体，条目更新稳定，适合作为第三家</td></tr></tbody></table>
+<h3>2.2 统一字段表（三家都要对齐到这套）</h3>
+<table><thead><tr><th>字段名</th><th>字段含义</th><th>示例值</th><th>口径与备注</th></tr></thead><tbody><tr><td><code>来源媒体</code></td><td>发布这条资讯的媒体名称</td><td>中国新闻网</td><td>从订阅源头部 channel / feed 的 title 取，整源取一次</td></tr><tr><td><code>栏目</code></td><td>资讯所属频道或分类标签</td><td>时政</td><td>对应 RSS 的 category；一处可能有多个，用分号连接</td></tr><tr><td><code>标题</code></td><td>资讯标题原文</td><td>前三季度外贸数据发布</td><td>对应 title；不改写、不截断</td></tr><tr><td><code>链接</code></td><td>原文绝对地址</td><td>https://www.chinanews.com.cn/cj/2026/10-08/10412345.shtml</td><td>对应 link；Atom 的地址写在 link 标签的 href 属性里，容易漏</td></tr><tr><td><code>条目编号</code></td><td>源自己给的条目唯一标识</td><td>https://www.chinanews.com.cn/cj/2026/10-08/10412345.shtml</td><td>对应 RSS 的 guid 或 Atom 的 id；判重时先看它是否重复</td></tr><tr><td><code>发布时间原文</code></td><td>源里写的时间，原封不动</td><td>Tue, 08 Oct 2026 07:30:00 +0800</td><td>对应 pubDate（RSS）或 updated（Atom），是 RFC822 格式</td></tr><tr><td><code>发布时间</code></td><td>换算后的标准时间</td><td>2026-10-08 07:30</td><td>由上一列换算，精确到分，便于排序与跨天比较</td></tr><tr><td><code>摘要</code></td><td>源里给的简介文字</td><td>海关总署今日发布数据，前三季度我国货物贸易进出口总值同比增长…</td><td>对应 description / summary；常含 HTML 标签，清洗时去掉</td></tr><tr><td><code>作者</code></td><td>源给出的署名</td><td>中国新闻网</td><td>对应 author 或 dc:creator；很多源为空，允许留空</td></tr><tr><td><code>源格式</code></td><td>这个源是 RSS 还是 Atom</td><td>RSS 2.0</td><td>由根标签判定，决定用哪套映射规则</td></tr><tr><td><code>内容指纹</code></td><td>标题去标点后取的哈希值</td><td>fp_3f9a2c（示例）</td><td>用于发现「同稿多源」：标题写法不同但指纹相同即为疑似重复</td></tr><tr><td><code>采集时间</code></td><td>本次采集的时刻</td><td>2026-10-08 09:00</td><td>增量更新靠它判断「哪些是上次之后新增的」</td></tr><tr><td><code>数据批次</code></td><td>本次采集的批次编号</td><td>20261008_09</td><td>与采集时间一一对应，多次采集对齐用</td></tr></tbody></table>
+<h3>2.3 字段映射表：把各家的叫法归到一处</h3>
+<p>同一件事，不同的源叫法不一样。先把映射关系写成一张表，再交给 AI，它就不会把 Atom 的链接采成空值。</p>
+<table><thead><tr><th>RSS 里的字段</th><th>Atom 里的字段</th><th>统一成的字段</th><th>处理说明</th></tr></thead><tbody><tr><td><code>title</code></td><td><code>title</code></td><td><code>标题</code></td><td>直接对应</td></tr><tr><td><code>link</code></td><td><code>link 的 href 属性</code></td><td><code>链接</code></td><td>Atom 的地址写在属性里，不取属性就会是空的</td></tr><tr><td><code>guid</code></td><td><code>id</code></td><td><code>条目编号</code></td><td>格式不同，都是唯一标识；去重时优先比对它</td></tr><tr><td><code>pubDate</code></td><td><code>updated / published</code></td><td><code>发布时间原文</code></td><td>RFC822 与 ISO8601 两种写法，必须统一</td></tr><tr><td><code>description</code></td><td><code>summary</code></td><td><code>摘要</code></td><td>常带 HTML 标签，清洗时去掉</td></tr><tr><td><code>category</code></td><td><code>category</code></td><td><code>栏目</code></td><td>可能没有，允许为空</td></tr><tr><td><code>channel 下的 title</code></td><td><code>feed 下的 title</code></td><td><code>来源媒体</code></td><td>整份源取一次即可</td></tr><tr><td><code>author</code></td><td><code>author &gt; name</code></td><td><code>作者</code></td><td>Atom 的作者名字嵌在子标签里</td></tr></tbody></table>
+<h3>2.4 中新网 RSS 的频道结构</h3>
+<p>回到示范站点 <a class="link" href="https://www.chinanews.com.cn/rss/" target="_blank">https://www.chinanews.com.cn/rss/</a>，它的订阅入口是按频道拆开的，常用的几个是：</p>
+<ul><li><code>https://www.chinanews.com.cn/rss/china.xml</code> 时政、<code>finance.xml</code> 财经、<code>world.xml</code> 国际、<code>society.xml</code> 社会、<code>scroll-news.xml</code> 即时新闻，以及文化、体育等频道；</li><li>每个频道是一份独立的 XML，头部 <code>channel</code> 里写着频道名与简介，下面挂着该频道最近的一批 <code>item</code>；</li><li>同一家媒体的多个频道，头部信息可以只取一次，item 逐条映射到统一字段——「一源多频道」正是订阅源最省事的地方。</li></ul>
+<div class="tip"><strong>映射表是聚合类任务的命根子。</strong>三家的字段名不一样，但映射到统一字段后，后面所有处理都只认统一字段，口径就稳了，换一个源也不用重写规则。</div>
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜RSS 与 Atom 的字段名有差别（pubDate 对 updated、link 写在属性里、作者嵌在子标签里）。让 AI 先把格式判清楚，再按映射表取字段，能少踩很多空值的坑。</p>
+<p>打开 WorkBuddy 或任意 AI 对话工具，试试这样问：<code>我给你的这个订阅地址可能是 RSS 也可能是 Atom。请先告诉我它属于哪一种、每条里有哪些字段（包括 guid / id、category、author），再按我给的映射表取数。</code></p>
+</div>
+<div class="sizheng">
+<p class="sz-head"><i class="fa-solid fa-star" aria-hidden="true"></i>课程思政｜工匠精神与严谨求实 · 先对齐，再汇总</p>
+<p>三份数据摆在面前，谁都能拼在一起；难的是拼完之后仍然「同一件事用同一把尺子量」。字段叫法、时间格式、空值口径，这些不起眼的细节如果不对齐，汇总出来的表看着热闹，其实一算就错。把标准写在前面，是严谨，也是效率。</p>
+</div>
+
+    <h2 id="sec3">三、零代码操作步骤</h2>
+<div class="toolbox">
+<p class="tb-h"><i class="fa-solid fa-toolbox" aria-hidden="true"></i>工具与技能｜先看清三个角色，再动手</p>
+<p>本篇全程<strong>零代码</strong>：你把要求说清楚，AI 去执行，你负责验收。三个角色分工如下——<strong>浏览器技能</strong>指的是腾讯开源的 <strong>BrowserSkill</strong>，它能让 AI 直接操作你电脑上真实的浏览器（可复用已经登录的状态），自己开一个独立窗口干活，不打扰你正在看的网页；遇到验证码、登录或确认弹窗，它会停下来交给你本人处理。</p>
+<table class="tb-tbl">
+<thead><tr><th>角色</th><th>负责什么</th><th>在本案例里具体做什么</th></tr></thead>
+<tbody>
+<tr><td>你</td><td>确认字段清单、验收结果、清洗与合规把关</td><td>盯字段清单、核对结果、处理异常（如验证码）</td></tr>
+<tr><td>WorkBuddy</td><td>接中文指令：探字段 → 批量采 → 清洗 → 导出交付物</td><td>拆解本篇的采集任务并跑完全量、产出交付物</td></tr>
+<tr><td>浏览器技能<br>BrowserSkill</td><td>以真实浏览器打开页面：跑脚本渲染、滚动 / 翻页 / 点开详情、截图留证；可复用本机浏览器已登录状态，遇到验证码或登录弹窗会停下来交给你处理</td><td>分别打开几个订阅源，确认格式是 RSS 还是 Atom、根标签是什么</td></tr>
+</tbody>
+</table>
+<p><strong>五步操作主线</strong>（全课程统一，每一篇都按这个顺序推进）：</p>
+<ol class="tb-flow">
+<li><strong>定目标与字段</strong>：先看本篇<strong>第二节的字段表</strong>，把「要哪几列、每列什么口径、要多少条」说清楚——字段清单就是验收标准，说不清就会拿回一张字段乱七八糟的表。</li>
+<li><strong>现场踩点</strong>（浏览器技能 BrowserSkill）：打开 <code>https://www.chinanews.com.cn/rss/</code> 挑两个频道，再把 <code>https://36kr.com/feed</code> 一起给 WorkBuddy，说明「这是三个订阅源，格式可能不一样」。</li>
+<li><strong>小样试采</strong>（WorkBuddy）：<strong>先探格式不采数</strong>：让它逐个报告每个源的格式、根标签、字段清单与条数。</li>
+<li><strong>核对与清洗</strong>：① 三家源的字段是不是都映射到同一张表；② 每条链接能不能点开；③ 去重是按标题还是按链接（口径要写死）。</li>
+<li><strong>导出与归档</strong>：导出交付物（数据明细表 / 可筛选明细页 / 数据看板 / 可复用的技能包），<strong>文件名带上采集日期</strong>，并写清数据来源、采集时间与已知局限。</li>
+</ol>
+<div class="tip"><strong>起手一句话</strong>（可直接复制）：<code>用浏览器技能 BrowserSkill 打开 https://www.chinanews.com.cn/rss/（中国新闻网 RSS / 澎湃新闻 RSS），把这一页每条记录能采到的字段名和示例值列出来，先不要采集。</code></div>
+</div>
+<p>下面是在 WorkBuddy 里完成本案例的完整流程。你依然<strong>不写一行代码</strong>，但要负责说清标准、核对结果。</p>
+<ol><li><strong>先把订阅地址收集好。</strong>打开中新网 RSS 中心 <a class="link" href="https://www.chinanews.com.cn/rss/" target="_blank">https://www.chinanews.com.cn/rss/</a>，挑「国内新闻」「财经新闻」两个频道，再把 36氪的 <code>https://36kr.com/feed</code> 一并贴进对话，说明「这是三家媒体的订阅源，格式可能是 RSS 也可能是 Atom」。</li><li><strong>要求先探格式。</strong>让它先分别打开三个源，告诉你每个源属于哪种格式、根标签是什么、里面有哪些字段、最近有多少条，先不要采数。</li><li><strong>给出统一字段表与映射表。</strong>直接把本篇 sec2 的两张表贴进对话，让它按这张表把三家数据取成同一套字段。</li><li><strong>先试一条源。</strong>让它只处理中新网，看看标题、链接、条目编号、时间、摘要是不是都取到了，再放开其余两家。</li><li><strong>处理时间格式。</strong>明确要求「发布时间统一成 2026-10-08 07:30 格式，能排序，能比较早晚」。</li><li><strong>做跨源去重。</strong>说「请先用条目编号去重，再按标题指纹找出不同来源但内容相同的条目，只保留最早发布的那一条，并在备注里写明还有哪几家也报了」。</li><li><strong>做增量更新。</strong>把上一次的结果文件发给它，说「只新增这次比上次多出来的条目，已有的不要重复」。</li><li><strong>导出并归档。</strong>导出成 Excel，文件名按「数据类型_日期」的约定，原始版和清洗版各留一份。</li></ol>
+<div class="tip">聚合任务容易「一上来就全量跑」，结果三家的时间格式乱成一团，回头排查很麻烦。<strong>先探格式、先试一条、再全量</strong>，是这里最省时间的顺序。</div>
+
+    <h2 id="sec4">四、提示词模板与追问技巧</h2>
+<p>下面这段可以直接复制。它的关键是把<strong>三个源地址、统一字段、映射关系、去重口径</strong>一次说清。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">提示词</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span>32</span><span>33</span><span>34</span><span>35</span><span>36</span><span>37</span><span>38</span></div>
+<pre><code>请帮我做一个多源新闻聚合任务。
+
+【订阅源】3 个订阅地址（可能混有 RSS 与 Atom）：
+  源1（中国新闻网·时政新闻）：https://www.chinanews.com.cn/rss/china.xml
+  源2（中国新闻网·财经新闻）：https://www.chinanews.com.cn/rss/finance.xml
+  源3（36氪）：https://36kr.com/feed
+  源索引页：https://www.chinanews.com.cn/rss/
+
+【第一步：先探格式】
+  先分别打开三个源，告诉我每个源的根标签是 rss 还是 feed（即 RSS 还是 Atom），
+  最近有多少条，各有哪些字段（重点看有没有 guid / id、category、author）。
+  先不要采集。
+
+【第二步：按统一字段取数】
+  统一字段按这个顺序：
+  1. 来源媒体   2. 栏目   3. 标题   4. 链接（绝对地址）
+  5. 条目编号（guid 或 Atom 的 id）
+  6. 发布时间原文（原样保留）
+  7. 发布时间（统一成 2026-10-08 07:30）
+  8. 摘要（去掉 HTML 标签）   9. 作者（没有就留空）
+  10. 源格式（RSS 2.0 / Atom）  11. 内容指纹（标题去标点后取哈希）
+  12. 采集时间   13. 数据批次
+
+  字段映射规则：
+  - 标题 ← title
+  - 链接 ← link（Atom 的地址在 link 标签的 href 属性里，别采空）
+  - 条目编号 ← guid（RSS）或 id（Atom）
+  - 发布时间原文 ← pubDate（RSS）或 updated（Atom）
+  - 摘要 ← description（RSS）或 summary（Atom）
+  - 作者 ← author（Atom 里嵌在 author 的 name 子标签）
+  - 来源媒体 ← channel 或 feed 下的 title
+
+【第三步：合并去重】
+  - 三家结果合并成一张表
+  - 先按「条目编号」去重，再按「内容指纹」找同稿多源
+  - 重复的只留最早发布的一条，备注列写明「还有哪几家也报了」
+
+【执行要求】每个请求之间间隔 1 秒以上，不要并发；先只处理源1给我确认，通过后再处理全部三个。</code></pre>
+</div>
+</div>
+<h3>4.1 三条常用追问指令</h3>
+<p>第一版结果多半还会在细节上打折扣，下面三句随时准备追加。</p>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">追问指令</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span></div>
+<pre><code>追问一（修时间格式）：
+源1的发布时间是 «Tue, 08 Oct 2026 07:30:00 +0800» 这种 RFC822 格式，
+请全部转成 2026-10-08 07:30，统一后再按时间倒序排列。
+
+追问二（加强判重）：
+现在只按条目编号去重，漏掉了「同一事件、不同链接」的情况。
+请改成按「标题指纹 + 相邻发布时间」来判重，
+相似的只保留最早的一条，并在备注里列出重复来源。
+
+追问三（做增量）：
+这是我上次采的结果文件，请对比这次的新数据，
+只把「上次之后新增的条目」追加进来，已有的不要重复，
+最后告诉我新增了几条。</code></pre>
+</div>
+</div>
+<div class="tip"><strong>去重口径要提前商量，不要事后争论。</strong>是按条目编号去重，还是按标题指纹加时间邻近去重，两者的结果差别很大。把口径写进提示词，结果才可复现。</div>
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜「同一件事被多家报道」没有唯一答案，判重本质上是规则问题。让 AI 把它的判重规则先讲给你听，你认可了再执行。</p>
+<p>打开 WorkBuddy 或任意 AI 对话工具，试试这样问：<code>请先告诉我你打算用什么规则判断两条资讯是同一个事件（条目编号？标题指纹？时间邻近度？），规则写清楚后再去重，先不要直接改数据。</code></p>
+</div>
+
+    <h2 id="sec5">五、结果核对、清洗与保存</h2>
+<p>三家合并之后，先看下面这张结果样例（节选，示例数据）：</p>
+<table><thead><tr><th>来源媒体</th><th>栏目</th><th>标题</th><th>链接</th><th>发布时间</th><th>采集时间</th></tr></thead><tbody><tr><td>中国新闻网</td><td>时政</td><td>前三季度外贸数据发布</td><td>https://…/cj/2026/10-08/10412345.shtml</td><td>2026-10-08 07:30</td><td>2026-10-08 09:00</td></tr><tr><td>中国新闻网</td><td>社会</td><td>多地推出消费补贴新政</td><td>https://…/sh/2026/10-08/10412388.shtml</td><td>2026-10-08 08:05</td><td>2026-10-08 09:00</td></tr><tr><td>36氪</td><td>商业</td><td>消费补贴新政落地，商家如何接招</td><td>https://…/p/5219873</td><td>2026-10-08 06:40</td><td>2026-10-08 09:00</td></tr><tr><td>少数派</td><td>科技</td><td>新一代量子计算原型机亮相</td><td>https://…/post/884210</td><td>2026-10-07 21:30</td><td>2026-10-08 09:00</td></tr></tbody></table>
+<h3>5.1 五项核对，一样一样过</h3>
+<ul><li><strong>条数</strong>：三家加起来是不是接近预期，有没有整源采空；</li><li><strong>字段</strong>：链接能不能点开，条目编号有没有缺失，摘要有没有残留 HTML 标签；</li><li><strong>时间</strong>：格式是否统一，有没有漏网的 RFC822 原文没换算；</li><li><strong>重复</strong>：有没有同一件事出现好几行，条目编号去重与指纹判重各生效了没有；</li><li><strong>来源</strong>：来源媒体列是不是每一条都有值，三家有没有混在一起。</li></ul>
+<h3>5.2 一段清洗指令，直接复制</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">清洗指令</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+<pre><code>请对合并后的结果做以下清洗：
+① 去掉每列的首尾空格与换行符；
+② 发布时间统一成 YYYY-MM-DD HH:MM，并新增一列「发布日」只保留日期；
+③ 摘要列去掉所有 HTML 标签与多余空白；
+④ 先按条目编号去重，再按「标题指纹 + 发布时间相差不超过 6 小时」判重，
+   重复的只保留最早一条，备注列写明重复来源；
+⑤ 增加一列「数据批次」，统一填 20261008_09，方便以后多次采集对齐。</code></pre>
+</div>
+</div>
+<h3>5.3 保存与增量约定</h3>
+<div class="cb">
+<div class="cb-bar"><span class="cb-lang">文件命名</span><button class="cb-copy" type="button">复制</button></div>
+<div class="cb-body">
+<div class="cb-lines" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<pre><code>news_agg_20261008_09.xlsx        ← 本次原始汇总（保留）
+news_agg_20261008_09_clean.xlsx  ← 清洗并去重后的版本
+news_agg_all.xlsx                ← 累积总表：每次新增的都追加进来
+news_agg_log.txt                 ← 日志：时间、各源条数、去重条数、新增条数</code></pre>
+</div>
+</div>
+<h3>5.4 去重前后要留个账</h3>
+<p>去重做了多少、删了哪些，最好在日志里记一笔，方便回头核对：</p>
+<table><thead><tr><th>指标</th><th>去重前</th><th>去重后</th><th>说明</th></tr></thead><tbody><tr><td>总条数</td><td>186</td><td>164</td><td>按条目编号去重去掉 22 条</td></tr><tr><td>疑似同稿多源</td><td>—</td><td>7</td><td>按标题指纹发现的跨源重复，只留最早一条</td></tr><tr><td>涉及来源</td><td>3 家</td><td>3 家</td><td>去重不减少来源数量，只减少重复条目</td></tr></tbody></table>
+<div class="tip">增量更新靠的是稳定的「唯一标识」。建议把<strong>条目编号</strong>当作主键、把<strong>链接</strong>作为备用，再补一个「数据批次」，下次只要比对编号集合，就知道哪些是新条目。</div>
+<div class="ai-tip">
+<p><strong>AI 助手小贴士</strong>｜增量采集不要每次都重采全量再手工删。让 AI 维护一张「累积总表」，每次只追加新条目，既省时间又不容易错。</p>
+<p>打开 WorkBuddy 或任意 AI 对话工具，试试这样问：<code>请读取我发给你的累积总表，和这次的新数据按条目编号比对，只追加新编号的条目，并告诉我这次新增了多少条。</code></p>
+</div>
+<div class="sizheng">
+<p class="sz-head"><i class="fa-solid fa-star" aria-hidden="true"></i>课程思政｜数据安全与法治素养 · 汇聚信息，更要守住边界</p>
+<p>把多家媒体的公开资讯汇聚到一起，本身就是一种信息汇聚能力。能力越大，越要记得：只聚公开内容、不猜不传未经证实的说法、发布结论时注明来源。聚合是为了更快看清事实，而不是把噪音放大。</p>
+</div>
+
+    <h2 id="sec6">六、常见问题与合规红线</h2>
+<h3>6.1 五个高频问题</h3>
+<table><thead><tr><th>现象</th><th>原因</th><th>怎么处理</th></tr></thead><tbody><tr><td>中新网某些频道的链接列全是空的</td><td>少部分频道给的是 Atom 格式，地址写在 link 的 href 属性里</td><td>要求「读取 Atom link 标签的 href 属性作为链接」</td></tr><tr><td>时间排序乱掉</td><td>有一家的时间是 RFC822（Tue, 08 Oct 2026 07:30:00 +0800）</td><td>统一转成 YYYY-MM-DD HH:MM 后再排序</td></tr><tr><td>摘要里出现尖括号标签</td><td>description 里带了 HTML</td><td>清洗时去掉所有标签，只留纯文字</td></tr><tr><td>同一件事出现好几行</td><td>不同媒体链接不同，只按编号去重不够</td><td>加一层按标题指纹加时间邻近度判重</td></tr><tr><td>每次都把旧数据又采一遍</td><td>没有建立累积总表与唯一标识</td><td>用条目编号当主键，只追加新编号的条目</td></tr></tbody></table>
+<h3>6.2 三条合规要点</h3>
+<ol><li><strong>订阅源是网站公开提供给人订阅的</strong>，正常读取属于作者期待的使用方式，但仍要控制频率、不要高频轮询。</li><li><strong>只摘要与标题用于课程分析</strong>，不要把多家正文整篇搬走再发布；确需引用时注明来源与链接。</li><li><strong>聚合不改变著作权归属。</strong>表里集齐了十家的标题，也不代表这些内容归你所有。</li></ol>
+<p>再补一条实操经验：合并之后，<strong>「来源媒体」这一列要一直留着</strong>。它是后面所有「哪家报得多、哪家报得早」类分析的分组依据；一旦为了让表「看起来整齐」把它删掉，这张聚合表就退化成了普通清单，也就失去了多源的意义。</p>
+<div class="warn"><strong>遇到某个源没有订阅入口，不要转而去「硬啃」它的页面绕过限制。</strong>正确做法是换一家有公开订阅的源，或者只做原理讲解。本课的底线始终是：能公开取到的才取，取不到的不强求。</div>
+<div class="sizheng">
+<p class="sz-head"><i class="fa-solid fa-star" aria-hidden="true"></i>课程思政｜科技自立自强 · 把标准握在自己手里</p>
+<p>订阅源这件事最能说明问题：谁定义了标准，谁就掌握了主动权。今天我们用别人定义好的格式取数，明天如果由我们来定义数据的字段、口径与共享方式，就能少受制于人。学会理解格式、尊重格式、乃至设计格式，正是数字时代要练的基本功。</p>
+</div>
+
+    <h2 id="quiz">七、随堂自测（10 题）</h2>
+    <p>点击选项即可判分，答错的题会立刻显示解析。</p>
+    <div class="quiz" id="quizBox">
+      <div class="quiz-bar">
+        <span id="quizProgress">已答 0 / 10 · 正确 0</span>
+        <span class="quiz-score" id="quizScore">—</span>
+        <button class="quiz-reset" id="quizReset" type="button">重新答题</button>
+      </div>
+      <div class="q" data-no="1" data-answer="0">
+        <p class="q-title"><span class="q-no">1</span>RSS / Atom 订阅源的本质是什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 一份网站主动对外发布的标准化资讯清单</li>
+          <li class="opt" data-i="1">B. 一种需要登录才能访问的数据库</li>
+          <li class="opt" data-i="2">C. 一段必须手动下载的网页截图</li>
+          <li class="opt" data-i="3">D. 一种加密的付费订阅服务</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>订阅源就是网站主动发布的 XML 清单，字段固定、结构统一，是聚合资讯最省事的入口。</div>
+      </div>
+      <div class="q" data-no="2" data-answer="1">
+        <p class="q-title"><span class="q-no">2</span>聚合三家数据时，字段映射表的作用是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 把三家的界面配色统一</li>
+          <li class="opt" data-i="1">B. 把各家的不同字段名对应到同一套统一字段</li>
+          <li class="opt" data-i="2">C. 把三家的服务器地址合并</li>
+          <li class="opt" data-i="3">D. 把三家的账号密码存下来</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>各家叫法不同（如 pubDate 与 updated），映射表把它们归到统一字段，后续处理才只认一套口径。</div>
+      </div>
+      <div class="q" data-no="3" data-answer="2">
+        <p class="q-title"><span class="q-no">3</span>RSS 里的发布时间字段通常叫什么？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. updated</li>
+          <li class="opt" data-i="1">B. created</li>
+          <li class="opt" data-i="2">C. pubDate</li>
+          <li class="opt" data-i="3">D. timestamp</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>RSS 用 pubDate，Atom 用 updated / published，这也是必须统一格式的原因之一。</div>
+      </div>
+      <div class="q" data-no="4" data-answer="3">
+        <p class="q-title"><span class="q-no">4</span>采到的链接是空的，而这个源其实是 Atom 格式，最可能的原因是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 对方禁止访问</li>
+          <li class="opt" data-i="1">B. 该条资讯已被删除</li>
+          <li class="opt" data-i="2">C. 需要先登录</li>
+          <li class="opt" data-i="3">D. Atom 的地址写在 link 标签的 href 属性里，没取到属性</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>Atom 的链接不是标签文本而是属性值，取字段时要明确读 href 属性。</div>
+      </div>
+      <div class="q" data-no="5" data-answer="0">
+        <p class="q-title"><span class="q-no">5</span>「同一件事被多家媒体报道」的判重，比较可靠的思路是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 按标题相似度加上发布时间邻近度综合判断</li>
+          <li class="opt" data-i="1">B. 只看发布时间是否完全相同</li>
+          <li class="opt" data-i="2">C. 只看标题字数是否相同</li>
+          <li class="opt" data-i="3">D. 按采集时间是否相同</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>不同媒体的标题往往改写，链接也一定不同，必须结合标题相似度与时间邻近度来判重。</div>
+      </div>
+      <div class="q" data-no="6" data-answer="1">
+        <p class="q-title"><span class="q-no">6</span>实现增量更新时，最该确定的是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 用哪个浏览器打开</li>
+          <li class="opt" data-i="1">B. 一个稳定的唯一标识（如条目编号）用来比对新旧数据</li>
+          <li class="opt" data-i="2">C. 文件的保存格式是 Excel 还是 PDF</li>
+          <li class="opt" data-i="3">D. 导出的列宽是多少</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>有唯一标识才能判断哪些是新条目；条目编号相对稳定，是最常用的主键。</div>
+      </div>
+      <div class="q" data-no="7" data-answer="2">
+        <p class="q-title"><span class="q-no">7</span>摘要列里出现了成对的尖括号标签，恰当的处理是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 原样保留，看起来更专业</li>
+          <li class="opt" data-i="1">B. 把这一列整体删掉</li>
+          <li class="opt" data-i="2">C. 清洗时去掉标签，只保留纯文字</li>
+          <li class="opt" data-i="3">D. 把标签改成大写</li>
+        </ul>
+        <div class="q-explain"><strong>答案：C。</strong>description 里常带 HTML，入库前应去标签，只留可读文字。</div>
+      </div>
+      <div class="q" data-no="8" data-answer="3">
+        <p class="q-title"><span class="q-no">8</span>下面哪一条超出了本案例的合规边界？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 把多家标题汇总做话题分析</li>
+          <li class="opt" data-i="1">B. 引用标题并注明来源链接</li>
+          <li class="opt" data-i="2">C. 统计各媒体对某事件的报道数量</li>
+          <li class="opt" data-i="3">D. 把多家正文整篇搬去自己的公众号发布</li>
+        </ul>
+        <div class="q-explain"><strong>答案：D。</strong>聚合不改变著作权归属，整篇公开转载需授权；课堂分析、引用标题属于合理使用。</div>
+      </div>
+      <div class="q" data-no="9" data-answer="0">
+        <p class="q-title"><span class="q-no">9</span>「先探格式、先试一条源、再全量」的做法的好处是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 能提前发现格式差异与空值问题，减少返工</li>
+          <li class="opt" data-i="1">B. 能让采集速度更快</li>
+          <li class="opt" data-i="2">C. 可以少写几行代码</li>
+          <li class="opt" data-i="3">D. 能让文件更小</li>
+        </ul>
+        <div class="q-explain"><strong>答案：A。</strong>先用小样本暴露问题，是控制返工成本最有效的习惯，这也是多个案例反复强调的。</div>
+      </div>
+      <div class="q" data-no="10" data-answer="1">
+        <p class="q-title"><span class="q-no">10</span>保存聚合结果时，比较专业的做法是？</p>
+        <ul class="q-opts">
+          <li class="opt" data-i="0">A. 只留最后一份清洗后的表</li>
+          <li class="opt" data-i="1">B. 原始汇总、清洗去重版、累积总表与日志各留一份</li>
+          <li class="opt" data-i="2">C. 每次直接覆盖上一天的文件</li>
+          <li class="opt" data-i="3">D. 把所有源的文件混在一个目录不命名</li>
+        </ul>
+        <div class="q-explain"><strong>答案：B。</strong>原始版是事实来源，清洗版用于分析，累积总表支撑增量，日志用于追溯，四者各有各的用。</div>
+      </div>
+      <div class="q-result" id="quizResult"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- 增强：站点页脚（克隆自 index.html 的 footer，勿手改） -->
+<footer class="footer">
+  <div class="footer-content">
+    <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span id="footerYear">2026</span> 学府路1号 xuefulu.ai</a></span>
+    <span class="separator" aria-hidden="true">|</span>
+    <a href="mailto:ai@xuefulu.ai" class="footer-link"><i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai</a>
+  </div>
+</footer>
+<!-- /增强：站点页脚 -->
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = '☀️ 浅色';
+  }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+<script>
+  /* ===== 随堂自测逻辑 ===== */
+  (function () {
+    const box = document.getElementById('quizBox');
+    if (!box) return;
+
+    const qs = Array.from(box.querySelectorAll('.q'));
+    const total = qs.length;
+    const bar = document.getElementById('quizProgress');
+    const scoreEl = document.getElementById('quizScore');
+    const resetBtn = document.getElementById('quizReset');
+    const resultEl = document.getElementById('quizResult');
+    let done = 0;
+    let right = 0;
+    const wrongList = [];
+
+    function update() {
+      bar.textContent = '已答 ' + done + ' / ' + total + ' · 正确 ' + right;
+      if (done === 0) {
+        scoreEl.textContent = '—';
+      } else if (done < total) {
+        scoreEl.textContent = Math.round(right / done * 100) + '%';
+      } else {
+        scoreEl.textContent = '正确率 ' + Math.round(right / total * 100) + '%（' + right + '/' + total + '）';
+      }
+      if (done === total) {
+        let msg;
+        if (wrongList.length === 0) {
+          msg = '🎉 全部答对，这一节你掌握得很扎实，可以进入下一个教程了。';
+        } else {
+          msg = '错题：第 ' + wrongList.join('、') + ' 题。建议回到对应小节再看一遍，' +
+                '然后点右上角「重新答题」检验一次。';
+        }
+        resultEl.textContent = msg;
+        resultEl.classList.add('show');
+      } else {
+        resultEl.classList.remove('show');
+      }
+    }
+
+    function pick(q, li) {
+      if (q.classList.contains('answered')) return;
+      q.classList.add('answered');
+      const ans = Number(q.dataset.answer);
+      const picked = Number(li.dataset.i);
+
+      q.querySelectorAll('.opt').forEach(function (o) {
+        const i = Number(o.dataset.i);
+        if (i === ans) o.classList.add('correct');
+        else if (i === picked) o.classList.add('wrong');
+        else o.classList.add('dim');
+      });
+
+      if (picked === ans) {
+        right++;
+        q.classList.add('passed');
+      } else {
+        q.classList.add('failed');
+        wrongList.push(q.dataset.no || (qs.indexOf(q) + 1));
+      }
+      done++;
+      update();
+    }
+
+    box.addEventListener('click', function (e) {
+      const li = e.target.closest('.opt');
+      if (!li) return;
+      const q = li.closest('.q');
+      if (q) pick(q, li);
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        qs.forEach(function (q) {
+          q.classList.remove('answered', 'passed', 'failed');
+          q.querySelectorAll('.opt').forEach(function (o) {
+            o.classList.remove('correct', 'wrong', 'dim');
+          });
+        });
+        done = 0;
+        right = 0;
+        wrongList.length = 0;
+        update();
+        document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    update();
+  })();
+</script>
+
+<script>
+// === 增强：代码块复制 ===
+(function () {
+  function clipboardWrite(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-2000px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('copy failed'));
+    });
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = '复制';
+      btn.classList.remove('ok');
+    }, 1400);
+  }
+  document.querySelectorAll('.cb-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.cb');
+      var code = box ? box.querySelector('code') : null;
+      if (!code) { return; }
+      var text = code.innerText.replace(/\u00a0/g, ' ').replace(/\n+$/, '');
+      clipboardWrite(text).then(
+        function () { flash(btn, '已复制'); },
+        function () { flash(btn, '复制失败'); }
+      );
+    });
+  });
+})();
+</script>
+
+<script>
+// === 增强：页眉北京时间 ===
+(function () {
+  var el = document.getElementById('currentDateTime');
+  if (!el) { return; }
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function beijingNow() {
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+  }
+  function render() {
+    var d = beijingNow();
+    el.textContent = d.getFullYear() + '年' + pad(d.getMonth() + 1) + '月' + pad(d.getDate()) + '日 '
+      + WEEK[d.getDay()] + ' '
+      + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    /* 页脚 © 后面的年份（`#footerYear`）：静态写死 2026 只是「没 JS 时的兜底」，这里按北京时间刷新，
+       免得跨年后页面上的年份停在过去（index.html 也是这么做的，见它的 updateFooterYear）。 */
+    var y = document.getElementById('footerYear');
+    if (y) { y.textContent = d.getFullYear(); }
+  }
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+
+<script>
+// === 增强：搜索结果定位 ===
+/* 从「教程导航页」搜到知识点后，链接形如 16-列表.html?hl=排序#sec8：
+     ① 优先在 #sec8 这一节里找第一个含「排序」的块，滚到它（这一节里找不到才退到全页第一个）；
+     ② 高亮该节里所有命中处（第一个额外加 .is-first）；这一节里一处都没命中时，才退成全页高亮（上限 120 处）；
+     ③ 点页面任意处 / 按 Esc 清除高亮（把 <mark> 换回纯文本、拼回原来的文本节点）。
+   没带 ?hl= 参数时，这段脚本什么都不做——页面与以前完全一样。
+   ⚠️ 索引是多词 AND，链接里的词也是「用户原样输入的词元」，所以这里按「任一词命中」处理：
+      多个词时先找最先出现的那一处，滚动落点由它决定。 */
+(function () {
+  var m = /[?&]hl=([^&]*)/.exec(location.search || '');
+  if (!m) { return; }
+  var raw = m[1];
+  try { raw = decodeURIComponent(raw.replace(/\+/g, ' ')); } catch (e) { }
+  var words = [];
+  raw.split(',').forEach(function (w) {
+    w = w.trim();
+    if (w && w.length <= 16 && words.indexOf(w) === -1) { words.push(w); }
+  });
+  if (!words.length) { return; }
+
+  var main = document.querySelector('main.content') || document.body;
+  var hid = (location.hash || '').replace(/^#/, '').replace(/:~:.*$/, '');
+  var target = hid ? document.getElementById(hid) : null;
+  var lows = words.map(function (w) { return w.toLowerCase(); });
+
+  /* 哪些文本节点可以动：跳过脚本/样式/按钮，跳过代码块的行号栏与角标栏、侧边目录（含它运行时
+     变成的书签/面板）、品牌行、页脚、标题行这些「非正文」区域；再跳过不可见的元素——
+     自测解析默认 display:none，滚过去会是一片空白。
+     ⚠️ 侧边目录必须排除：讲义运行时会把它改成书签面板（本脚本执行时还没改），
+     里面的小节标题和正文里的标题字面相同，不排除就会把目录树也点亮、首个落点还落在目录上。 */
+  var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, BUTTON: 1, MARK: 1, NOSCRIPT: 1, TEXTAREA: 1 };
+  var SKIP_AREA = '.cb-lines, .cb-bar, .sidebar, .sb-col, .sb-panel, .sb-mask, ' +
+                  '.top-brand, .footer, .title-row';
+  function usable(node) {
+    var el = node.parentNode;
+    if (!el || SKIP_TAGS[el.nodeName]) { return false; }
+    if (el.closest && el.closest(SKIP_AREA)) { return false; }
+    if (el.getClientRects && el.getClientRects().length === 0) { return false; }
+    return true;
+  }
+
+  /* 文本节点所属的小节 id：向前找最近的那个 <h2 id>。⚠️ h2 自己内部的文本节点
+     （标题里就带关键词）也算这一节——DOM 里包含关系返回 CONTAINED_BY|FOLLOWING，`& 4` 为真。 */
+  var Hs = [].slice.call(main.querySelectorAll('h2[id]'));
+  function secOf(node) {
+    var id = '';
+    for (var i = 0; i < Hs.length; i++) {
+      if (Hs[i].compareDocumentPosition(node) & 4) { id = Hs[i].id; } else { break; }
+    }
+    return id;
+  }
+
+  /* 扫一遍正文：记下每个文本节点的命中区间（文档顺序，TreeWalker 保证）。
+     ⚠️ 指定了 `#secN` 时**只认这一节里**的命中：这一节没有就什么都不做（页面停在原生锚点处），
+     绝不退到别的小节去——用户点的是「第八节里的排序」，把他甩到第二节最糟。 */
+  var found = [], anchorNode = null, walker = document.createTreeWalker(main, 4, null);
+  var node;
+  while ((node = walker.nextNode())) {
+    var text = node.nodeValue;
+    if (!text || !text.trim() || !usable(node)) { continue; }
+    if (target && secOf(node) !== hid) { continue; }
+    var lo = text.toLowerCase(), spans = [], idx = 0;
+    while (idx < text.length) {
+      var best = -1, blen = 0, i, p;
+      for (i = 0; i < lows.length; i++) {
+        p = lo.indexOf(lows[i], idx);
+        if (p !== -1 && (best === -1 || p < best || (p === best && words[i].length > blen))) {
+          best = p; blen = words[i].length;
+        }
+      }
+      if (best === -1) { break; }
+      spans.push([best, blen]);
+      idx = best + blen;
+    }
+    if (!spans.length) { continue; }
+    found.push([node, spans]);
+    if (!anchorNode) { anchorNode = node; }
+  }
+  if (!found.length) { return; }
+
+  /* 高亮范围：锚点所在的这一节（更聚焦）。整篇都没归到任何小节时，退成全页、上限 120 处。 */
+  var scope = secOf(anchorNode);
+  var pick = scope ? found.filter(function (f) { return secOf(f[0]) === scope; }) : found.slice(0, 120);
+
+  var marks = [], count = 0;
+  pick.forEach(function (f) {
+    var text = f[0].nodeValue, frag = document.createDocumentFragment(), pos = 0;
+    f[1].forEach(function (sp) {
+      if (sp[0] > pos) { frag.appendChild(document.createTextNode(text.slice(pos, sp[0]))); }
+      var mk = document.createElement('mark');
+      mk.className = 'hl-hit';
+      mk.textContent = text.substr(sp[0], sp[1]);
+      frag.appendChild(mk);
+      marks.push(mk);
+      count++;
+      pos = sp[0] + sp[1];
+    });
+    if (pos < text.length) { frag.appendChild(document.createTextNode(text.slice(pos))); }
+    f[0].parentNode.replaceChild(frag, f[0]);
+  });
+  if (marks.length && marks[0]) { marks[0].className = 'hl-hit is-first'; }
+
+  /* 命中所在的「块」——代码块要整块（.cb），表格整张，段落整段。只在拿不到 mark 时兜底用。 */
+  var BLOCKS = ['.cb', 'table', 'pre', 'li', 'p', 'h3', 'h2', 'blockquote'];
+  function blockOf(n) {
+    var el = n.parentNode;
+    while (el && el !== main) {
+      for (var i = 0; i < BLOCKS.length; i++) {
+        if (el.matches && el.matches(BLOCKS[i])) { return el; }
+      }
+      el = el.parentNode;
+    }
+    return n.parentNode;
+  }
+  var blk = blockOf(anchorNode);
+
+  /* 滚动落点：直接滚到**第一个高亮词**（它很小，居中即最佳视角），而不是它所在的整块——
+     命中的是代码块里的一行时，把整块几十行的 <pre> 居中反而看不到那一行。
+     ⚠️ 必须等 `load` 之后再滚：更早执行的话，浏览器在文档加载完成时会做一次滚动复位，
+     把我们滚好的位置抹回顶部（实测：只写 setTimeout(80) 时 scrollY 一直是 0）。
+     用即时滚动（`behavior: 'auto'`）而不是平滑滚动：平滑滚动是动画，无头浏览器里会被冻住，
+     验收时量不到真实落点；从链接进来时「直接落在那一处」也比看一段动画更符合预期。 */
+  function go() {
+    var el = marks.length ? marks[0] : (blk || anchorNode.parentNode);
+    try { el.scrollIntoView({ behavior: 'auto', block: 'center' }); }
+    catch (e) { el.scrollIntoView(); }
+  }
+  if (document.readyState === 'complete') { setTimeout(go, 60); }
+  else { window.addEventListener('load', function () { setTimeout(go, 60); }); }
+
+  /* 清除高亮：把每个 <mark class="hl-hit"> 换回文本节点并拼回邻居 */
+  function clear() {
+    var ms = main.querySelectorAll('mark.hl-hit');
+    if (!ms.length) { return; }
+    Array.prototype.forEach.call(ms, function (mk) {
+      var p = mk.parentNode;
+      if (!p) { return; }
+      p.replaceChild(document.createTextNode(mk.textContent), mk);
+      if (p.normalize) { p.normalize(); }
+    });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('mark.hl-hit')) { return; }
+    clear();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.keyCode === 27) { clear(); }
+  });
+})();
+</script>
+
+<script>
+// === 增强：侧边目录可折叠 ===
+(function () {
+  /* 侧边目录：默认收起成左侧竖排书签，随页面滚动常驻；点它展开/收起 */
+  var sb = document.querySelector('.sidebar');
+  if (!sb || sb.querySelector('.sb-tab')) { return; }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var D_MENU  = 'M3 5h14M3 10h14M3 15h14';      /* ☰：内联 SVG 画，避免 ☰ 字符渲染成豆腐块 */
+  var D_CLOSE = 'M5.5 5.5l9 9M14.5 5.5l-9 9';
+  var D_RIGHT = 'M7.5 4.5l5 5.5-5 5.5';         /* › */
+  var D_LEFT  = 'M12.5 4.5l-5 5.5 5 5.5';       /* ‹ */
+
+  function setD(el, d) {
+    while (el.firstChild) { el.removeChild(el.firstChild); }
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    el.appendChild(p);
+  }
+  function mkIcon(cls, d) {
+    var el = document.createElementNS(NS, 'svg');
+    el.setAttribute('class', cls);
+    el.setAttribute('viewBox', '0 0 20 20');
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.9');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    setD(el, d);
+    return el;
+  }
+  function narrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
+  }
+
+  /* 把 <h3>目录</h3> 与原有链接重新组织：书签 + 面板 */
+  var head = sb.querySelector('h3');
+  var label = head ? head.textContent.trim() : '目录';
+  if (head && head.parentNode) { head.parentNode.removeChild(head); }
+
+  var list = document.createElement('nav');
+  list.className = 'sb-list';
+  list.setAttribute('aria-label', label);
+  while (sb.firstChild) { list.appendChild(sb.firstChild); }
+
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'sb-tab';
+  tab.setAttribute('aria-controls', 'sbPanel');
+  var ico = mkIcon('sb-ico', D_MENU);
+  var vt = document.createElement('span');
+  vt.className = 'sb-vt';
+  vt.textContent = label;
+  var chev = mkIcon('sb-chev', D_RIGHT);
+  tab.appendChild(ico);
+  tab.appendChild(vt);
+  tab.appendChild(chev);
+
+  var panel = document.createElement('div');
+  panel.className = 'sb-panel';
+  panel.id = 'sbPanel';
+  var pTitle = document.createElement('div');
+  pTitle.className = 'sb-head';
+  pTitle.textContent = label;
+  panel.appendChild(pTitle);
+  panel.appendChild(list);
+
+  /* 深色/浅色切换：从右上角挪进书签内部的顶部图标区（挪节点不会丢它原有的点击事件） */
+  var theme = document.getElementById('themeBtn');
+
+  /* 切换按钮**上方**再叠两枚同款微型按钮：① 返回教程导航页 ② 回到页面顶部。
+     外观与 #themeBtn 逐项一致（44×38 图标区、透明底、悬停亮一档、底部一条分隔线），
+     共用 .sb-col 的渐变底色与投影，所以收起态整枚书签看起来还是一体的。
+     ⚠️ 三格**统一是 <button>**，两枚都在**每一页**都照常显示（用户口径：「每个页面的按钮都一样，
+     返回导航页那枚不需要特殊效果、只要跟另外的按钮一致」）。之前「返回导航页」是 <a> 且在导航页上
+     隐藏（自己指向自己），现在取消：<a> 会同时踩两个坑——`.sidebar a:hover` 的 `background` 简写
+     把图标重置掉，模板脚本又给 `.sidebar a` 挂了 preventDefault + scrollIntoView，跨页链接会被
+     当成页内锚点劫持；写成 button 后与另两格共用同一套规则，逐像素一致。
+     目标地址仍沿用页首标题行的 a.page-title（由 enhance_tutorial.fix_page_title_home 统一维护成
+     1-教程导航.html），不在 JS 里另写一份路径；万一没有标题行就退回 1-教程导航.html。
+     · 回到顶部：**立即**跳顶（scrollTo(0,0)），不做平滑滚动动画（用户口径：「点击了就立刻返回顶部」）。 */
+  var titleA = document.querySelector('a.page-title');
+  var homeHref = (titleA && titleA.getAttribute('href')) || '1-教程导航.html';
+
+  var home = document.createElement('button');
+  home.type = 'button';
+  home.className = 'sb-mini sb-home';
+  home.title = '返回 Python 基础教程导航页';
+  home.setAttribute('aria-label', home.title);
+  home.addEventListener('click', function () { location.href = homeHref; });
+
+  var toTop = document.createElement('button');
+  toTop.type = 'button';
+  toTop.className = 'sb-mini sb-top';
+  toTop.title = '回到页面顶部';
+  toTop.setAttribute('aria-label', toTop.title);
+  toTop.addEventListener('click', function () { window.scrollTo(0, 0); });
+
+  var col = document.createElement('div');
+  col.className = 'sb-col';
+  col.appendChild(home);
+  col.appendChild(toTop);
+  if (theme) {
+    theme.setAttribute('title', '切换深色 / 浅色主题');
+    theme.setAttribute('aria-label', '切换深色 / 浅色主题');
+    col.appendChild(theme);
+  }
+  col.appendChild(tab);
+
+  sb.appendChild(col);
+  sb.appendChild(panel);
+  sb.classList.add('sb-ready', 'sb-noanim');
+  document.body.classList.add('sb-on');
+
+  var mask = document.createElement('div');
+  mask.className = 'sb-mask';
+  mask.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(mask);
+
+  function isOpen() { return sb.classList.contains('sb-expanded'); }
+
+  /* 量出「目录里每个标题都不折行」需要的面板宽度，写进 --sb-panel-w，让展开态宽度自适应 */
+  function fitWidth() {
+    var keep = panel.getAttribute('style');
+    panel.style.cssText = 'display:block;position:absolute;left:-99999px;top:0;width:auto;' +
+                          'white-space:nowrap;overflow:visible;';
+    var need = Math.ceil(panel.getBoundingClientRect().width);
+    if (keep === null) { panel.removeAttribute('style'); } else { panel.setAttribute('style', keep); }
+    if (!need) { return; }
+    /* 上限：宽屏不超过视口 46%，窄屏（抽屉是浮层）可占到 90%，都只为防个别超长标题把正文挤没 */
+    var cap = narrow() ? window.innerWidth * 0.90 - 44 : window.innerWidth * 0.46;
+    sb.style.setProperty('--sb-panel-w', Math.min(need, Math.max(Math.round(cap), 196)) + 'px');
+  }
+
+  /* 让「垂直居中」落在布局盒上：把 sticky 的 top 设成 50vh - 自身高度的一半。
+     与 CSS 里的注释是同一件事；这里每次尺寸变化都重算一次（收起↔展开高度差很大：266 ↔ 面板高）。 */
+  var lastTop = '';
+  /* 「页头高度」＝文档顶到 `.layout` 上边的那一段（品牌行 + 它的外边距）。书签的 sticky 静态位置
+     被它推低，CSS 里用等量负外边距抵消（见 --sb-head 那段注释）。⚠️ 必须在量高度**之前**写进去，
+     否则先量到旧布局下的高度、算出的 --sb-top 会晚一帧才纠正。 */
+  var lastHead = '';
+  function pushHead() {
+    var lay = document.querySelector('.layout');
+    var v = (lay ? Math.max(0, Math.round(lay.getBoundingClientRect().top + window.scrollY)) : 0) + 'px';
+    if (v === lastHead) { return; }
+    lastHead = v;
+    sb.style.setProperty('--sb-head', v);
+  }
+  function centerTop() {
+    pushHead();
+    var h = sb.getBoundingClientRect().height;
+    if (!h) { return; }
+    var v = 'calc(50vh - ' + (h / 2).toFixed(1) + 'px)';
+    if (v === lastTop) { return; }
+    lastTop = v;
+    sb.style.setProperty('--sb-top', v);
+  }
+
+  function setOpen(open) {
+    sb.classList.toggle('sb-expanded', open);
+    document.body.classList.toggle('sb-open', open);
+    tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tab.setAttribute('aria-label', open ? '收起目录' : '展开目录');
+    tab.title = open ? '收起目录' : '展开目录';
+    vt.textContent = open ? '收起' : label;
+    setD(ico, open ? D_CLOSE : D_MENU);
+    setD(chev, open ? D_LEFT : D_RIGHT);
+    centerTop();   /* 收起/展开高度差很大，每次开合都重新居中 */
+  }
+  setOpen(false);   /* 默认收起 */
+  fitWidth();       /* 收起状态下面板是 display:none，正好用离屏副本量宽度，量完即恢复 */
+  centerTop();
+  /* 字体（含回退）落定后再量一次，避免首帧用错字体算出偏窄的宽度 */
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { fitWidth(); centerTop(); }, function () {});
+  }
+
+  tab.addEventListener('click', function () { setOpen(!isOpen()); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) { setOpen(false); }
+  });
+  /* 展开状态下，点「书签 / 面板」之外的任意空白处（正文、页眉、遮罩…）自动收起。
+     用 click 而不是 pointerdown：宽屏收起会让正文变宽重排，若在鼠标抬起前就重排，
+     这一下点击可能落空（点正文链接会「没反应」）。用 click 则原点击先正常派发完，再收起。 */
+  document.addEventListener('click', function (e) {
+    if (!isOpen()) { return; }
+    var t = e.target;
+    if (t && sb.contains(t)) { return; }   /* 点在自己身上（书签、面板、主题按钮）不收起 */
+    setOpen(false);
+  });
+  /* 窄屏是抽屉，点目录项跳转后自动收起；宽屏是分栏，留着方便连着点 */
+  list.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && isOpen() && narrow()) { setOpen(false); }
+  });
+  mask.addEventListener('click', function () { setOpen(false); });
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!narrow() && isOpen()) { document.body.classList.remove('sb-open'); }
+    /* 视口宽度变化较大时重量一次（窄屏/宽屏的上限不同；字号是 px 固定的，无需每次都量） */
+    if (Math.abs(window.innerWidth - lastW) > 60) { lastW = window.innerWidth; fitWidth(); }
+    centerTop();   /* 视口高度变了（含手机地址栏收放）→ top 里的 50vh 跟着变，但重算一次更稳 */
+  });
+  /* 兜底：面板高度会随内容换行/字体加载而变，任何尺寸变化都重新居中一次（值没变时 centerTop 直接返回，
+     不会和 ResizeObserver 形成回环——改 top 不影响尺寸） */
+  if (window.ResizeObserver) { new ResizeObserver(centerTop).observe(sb); }
+  /* 初次布局落下后再放开过渡，之后的展开/收起才带宽度动画 */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { sb.classList.remove('sb-noanim'); });
+  });
+})();
+</script>
+
+</body>
+</html>
