@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="eQZMyU6UzbqJYuAJkrQ5BP">
+<head data-page-node-id="Tf6hdUMUuWhLRbPCz31pSs">
+<meta charset="UTF-8" data-page-node-id="ixFGYuhwBIIM8A9Fw8l2hf">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="EZ9aiVMH20Q3tzBx74CmKH">
+<title>每日任务清单 · 周计划</title>
+<style>
+  :root {
+    --bg-page: #FAFAF8;
+    --bg-card: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #555;
+    --text-tertiary: #999;
+    --border-soft: rgba(0,0,0,0.08);
+    --border-mid: rgba(0,0,0,0.20);
+    --accent: #3B6D11;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC",
+                 "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 24px 56px;
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .toolbar .hint { font-size: 12px; color: var(--text-tertiary); }
+  .print-btn {
+    background: var(--text-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .print-btn:hover { opacity: 0.85; }
+
+  header h1 {
+    font-size: 19px;
+    font-weight: 500;
+    margin: 0 0 10px 0;
+  }
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+  }
+  .meta-row input[type="date"] {
+    font-family: inherit;
+    font-size: 12px;
+    padding: 4px 8px;
+    border: 0.5px solid var(--border-mid);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    color: var(--text-primary);
+  }
+  .line {
+    display: inline-block;
+    min-width: 120px;
+    border-bottom: 0.5px solid var(--border-mid);
+    height: 1em;
+  }
+  .name-input {
+    border: none;
+    border-bottom: 0.5px solid var(--border-mid);
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 2px 8px;
+    min-width: 140px;
+    text-align: center;
+    outline: none;
+  }
+  .name-input:focus {
+    border-bottom-color: var(--text-primary);
+    border-bottom-width: 1px;
+  }
+
+  .grid {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background: white;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .grid th, .grid td {
+    border: 1px solid var(--border-soft);
+    text-align: center;
+    padding: 10px 4px;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+  .grid tbody tr:nth-child(even) td { background: rgba(0,0,0,0.018); }
+
+  .col-task { width: 22%; text-align: left; padding-left: 16px; }
+  .col-day  { width: 4.5%; }
+  .col-points { width: 15%; }
+
+  .grid thead th {
+    background: var(--bg-page);
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .day-name { font-size: 11px; margin-bottom: 1px; }
+  .day-date { font-size: 10px; color: var(--text-tertiary); font-weight: 400; }
+  .col-day.today .day-date { color: var(--accent); font-weight: 500; }
+  .col-points th { font-size: 12px; }
+
+  .task-name {
+    text-align: left;
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+
+  .box {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--text-tertiary);
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    vertical-align: middle;
+    position: relative;
+  }
+  .box:hover { border-color: var(--text-primary); }
+  .box.done {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .box.done::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 11px;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(45deg);
+  }
+
+  .totals-row td {
+    background: var(--bg-page) !important;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .totals-cell {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 500;
+  }
+  .totals-cell.full { color: var(--accent); }
+
+  .points-cell {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .points-cell.big {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .points-total {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  .points-total.full { color: var(--accent); }
+
+  .actions-row {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reset-btn {
+    background: transparent;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reset-btn:hover { border-color: var(--text-primary); color: var(--text-primary); }
+  .tip { font-size: 11px; color: var(--text-tertiary); }
+
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 10mm 12mm;
+    }
+    body { background: white !important; font-size: 11px; }
+    main { max-width: 100% !important; padding: 0 !important; }
+    .no-print { display: none !important; }
+
+    header h1 { font-size: 17px; color: #000; }
+    .meta-row,
+    .meta-row .line,
+    .meta-row .name-input { color: #000; }
+    .meta-row .name-input { border-bottom-color: #000; }
+
+    .grid { border: 1.5px solid #000; border-radius: 0; }
+    .grid th, .grid td {
+      border: 1px solid #000;
+      padding: 6px 2px;
+      font-size: 10px;
+      color: #000;
+    }
+    .col-task, .task-name { padding-left: 12px !important; }
+    .grid thead th { background: white !important; color: #000; font-weight: 500; }
+    .day-name { font-size: 10px; color: #000; line-height: 1.2; }
+    .day-date { font-size: 9px; color: #000 !important; }
+
+    .box {
+      border: 1.5px solid #000 !important;
+      background: white !important;
+      cursor: default;
+      width: 14px;
+      height: 14px;
+    }
+    .box.done { background: white !important; border-color: #000 !important; }
+    .box.done::after { display: none !important; }
+
+    .grid tbody tr:nth-child(even) td { background: white !important; }
+    .totals-row td { background: white !important; color: #000; }
+    .totals-cell.full { color: #000 !important; }
+    .points-cell { color: #000 !important; }
+    .points-cell.big { color: #000 !important; font-weight: 500; }
+    .points-total { color: #000 !important; }
+    .points-total.full { color: #000 !important; }
+  }
+
+  @media (max-width: 900px) {
+    main { padding: 20px 14px 40px; overflow-x: auto; }
+    .grid { min-width: 900px; }
+  }
+</style>
+</head>
+<body data-page-node-id="uyL32ErNXAkrR6FogOHalU">
+<main data-page-node-id="nTRzPZVUXyRYvLENrEdpjb">
+  <div class="toolbar no-print" data-page-node-id="txMw6glujfoOObOOCwAePC">
+    <span class="hint" data-page-node-id="aMBDMYICnpQa0H3liSH2ac">两周计划 · 一张纸 14 天 · 改起始日期切换周期</span>
+    <button class="print-btn" onclick="window.print()" data-page-node-id="oWR8rFHJMdTI7bAQbSuzDV">打印</button>
+  </div>
+
+  <header data-page-node-id="nKJHsV3TgF6N0IW6CavDud">
+    <h1 data-page-node-id="gih9JV46FEphDQhtJyiv2f">每日任务清单 · 两周计划</h1>
+    <div class="meta-row" data-page-node-id="nJI4CLqZYLMhtGde2PM88t">
+      <div data-page-node-id="uRmGCfq2gZJJvDifv92dut">姓名
+        <input type="text" class="name-input" id="name-input" value="朱伯睿" maxlength="20" spellcheck="false">
+      </div>
+      <div class="no-print" data-page-node-id="cN9POwFcwtDlw7tk5liAh8">起始日期
+        <input type="date" id="start-date" data-page-node-id="C17nusngHHpiMPE69DG101">
+      </div>
+    </div>
+  </header>
+
+  <table class="grid" data-page-node-id="nVmrpWYGUWuE0V9L4aAxah">
+    <colgroup data-page-node-id="bvCXGIHEURuc71QHX0YHeP">
+      <col class="col-task" data-page-node-id="iPmfI5W57GXrvttosbOrIg">
+      <col class="col-day" data-page-node-id="LCvS3ClMOSl0FX8kbuzLR4"><col class="col-day" data-page-node-id="IXzfgCylEoeCNECrOE464c"><col class="col-day" data-page-node-id="MmbSFGfFeDTvC85TzrjvIG">
+      <col class="col-day" data-page-node-id="xBipsXm3tXP741Bj6ua1Cz"><col class="col-day" data-page-node-id="PPbC8BQJf3qLUKTgDxisjF"><col class="col-day" data-page-node-id="pTas4ELNOdjEyrAE627LOO"><col class="col-day" data-page-node-id="U8GxPAYT4RhrY1Hfqarm3n"><col class="col-day" data-page-node-id="abcd5678d7"><col class="col-day" data-page-node-id="abcd5678d8"><col class="col-day" data-page-node-id="abcd5678d9"><col class="col-day" data-page-node-id="abcd5678d10"><col class="col-day" data-page-node-id="abcd5678d11"><col class="col-day" data-page-node-id="abcd5678d12"><col class="col-day" data-page-node-id="abcd5678d13">
+      <col class="col-points" data-page-node-id="abcd1234points">
+    </colgroup>
+    <thead data-page-node-id="oqBZnnPAcVyAJoukwCyRJB">
+      <tr data-page-node-id="srM4Bd1FDRgMcDLRQ9PeZg">
+        <th data-page-node-id="HdvyZWIPmjA2g9AD5Ecw3T">任务</th>
+        <th class="col-day" data-d="0" data-page-node-id="FQQawUidMxCXCdXtAClCPq"><div class="day-name" data-page-node-id="rGXMwT9OpxpyAr1vW3MHOE"></div><div class="day-date" data-page-node-id="XnN1xQ19ZknqHhlxWn0J3S"></div></th>
+        <th class="col-day" data-d="1" data-page-node-id="CbQv7K7SYgVRdAiDAklcth"><div class="day-name" data-page-node-id="8RUfujCKegXVNSfl1qi5FZ"></div><div class="day-date" data-page-node-id="jANmHLmQ1o6hZjDCtraG8o"></div></th>
+        <th class="col-day" data-d="2" data-page-node-id="OG7TGih6YGuq27lAGt2m7v"><div class="day-name" data-page-node-id="yunwZZv8oOcjXZjg0Iu1kR"></div><div class="day-date" data-page-node-id="VPeecmDvc7nhayw1zTUROB"></div></th>
+        <th class="col-day" data-d="3" data-page-node-id="B7GeTnk15o63Lht0Q5iiDc"><div class="day-name" data-page-node-id="94ZYRcMdrtqWcIxqem7Dkz"></div><div class="day-date" data-page-node-id="5X0VUCfBKpG54oJodIBf8C"></div></th>
+        <th class="col-day" data-d="4" data-page-node-id="Eg7jtNrScEgmF4Hp2QJoy2"><div class="day-name" data-page-node-id="SZAvPrUUsNBUhI3pGRU7Wf"></div><div class="day-date" data-page-node-id="NxuoQJ7qG7QmVyalCROspl"></div></th>
+        <th class="col-day" data-d="5" data-page-node-id="g6c99ITFVqgFP4GiCtoOKF"><div class="day-name" data-page-node-id="WC1BIPyq03GQQvFYG0z7Wv"></div><div class="day-date" data-page-node-id="WSdW7lWxDX7y3JKdThFsJJ"></div></th>
+        <th class="col-day" data-d="6" data-page-node-id="8XDjtUf8WOPZhBEHVU4Zv6"><div class="day-name" data-page-node-id="N9ey4c1gUESXRreMglbvqK"></div><div class="day-date" data-page-node-id="zeN7smrFBUoTyTR54OZWu7"></div></th>
+        <th class="col-day" data-d="7" data-page-node-id="abcd5678h7"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-day" data-d="8" data-page-node-id="abcd5678h8"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-day" data-d="9" data-page-node-id="abcd5678h9"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-day" data-d="10" data-page-node-id="abcd5678h10"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-day" data-d="11" data-page-node-id="abcd5678h11"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-day" data-d="12" data-page-node-id="abcd5678h12"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-day" data-d="13" data-page-node-id="abcd5678h13"><div class="day-name"></div><div class="day-date"></div></th>
+        <th class="col-points" data-page-node-id="abcd1234pointsth">分值</th>
+      </tr>
+    </thead>
+    <tbody data-page-node-id="fkAsb8rOg2QidTMc9WSb6N">
+      <tr data-page-node-id="AqPXpaY53jqPV8POkHFkbO"><td class="task-name" data-page-node-id="AtxpOGhuHtamAx4rLjWl8d">ABC Reading</td>
+        <td data-page-node-id="epqBo8t4as3mRvlLVBbc9N"><span class="box" data-t="0" data-d="0" data-page-node-id="7HY0lxHHFyEGWFELiRxdj2"></span></td>
+        <td data-page-node-id="yXgs4R3LQaes79avQ00BGi"><span class="box" data-t="0" data-d="1" data-page-node-id="leMabxcKGDeCtyjtdE74X6"></span></td>
+        <td data-page-node-id="9OQ3982S09A9uvMAiaiF5s"><span class="box" data-t="0" data-d="2" data-page-node-id="VqbXtg819RMFd4riKqfLrx"></span></td>
+        <td data-page-node-id="FjxptCol4rHVakk24BSdKy"><span class="box" data-t="0" data-d="3" data-page-node-id="zprwFYcR0k2yqigPuUiPUs"></span></td>
+        <td data-page-node-id="7Zbq3HyDpTKc7czPebaCdk"><span class="box" data-t="0" data-d="4" data-page-node-id="wjp44D6NHbzj0a6COIwODp"></span></td>
+        <td data-page-node-id="JQ7Z7lixHh8GSI0iXybCoT"><span class="box" data-t="0" data-d="5" data-page-node-id="VLN14ByObMLgRCEERmQNw1"></span></td>
+        <td data-page-node-id="DHD3bEHWKEY2xNZFK7WhD4"><span class="box" data-t="0" data-d="6" data-page-node-id="WZqF3xq3GTKRAftiJBk2Ed"></span></td><td><span class="box" data-t="0" data-d="7"></span></td><td><span class="box" data-t="0" data-d="8"></span></td><td><span class="box" data-t="0" data-d="9"></span></td><td><span class="box" data-t="0" data-d="10"></span></td><td><span class="box" data-t="0" data-d="11"></span></td><td><span class="box" data-t="0" data-d="12"></span></td><td><span class="box" data-t="0" data-d="13"></span></td><td class="points-cell" data-t="0">100</td></tr>
+      <tr data-page-node-id="VtbBkEDAlN9XYjRYDz9sSR"><td class="task-name" data-page-node-id="4TdKEpknduMflNwvs9rMJN">数学拓展</td>
+        <td data-page-node-id="k4rLAksb9rOKfMgV96I4m5"><span class="box" data-t="1" data-d="0" data-page-node-id="3DTotkw3HTAbE4cEDwVgxZ"></span></td>
+        <td data-page-node-id="8UsWJM1E4AtNsgvrFqsYVc"><span class="box" data-t="1" data-d="1" data-page-node-id="iXHzUQcYeWOQ4ZNoL3hYST"></span></td>
+        <td data-page-node-id="bikpt80pgmDRBFfGKWsscl"><span class="box" data-t="1" data-d="2" data-page-node-id="DLEPmVk1lFqxl3HFY2oxUM"></span></td>
+        <td data-page-node-id="VBvZ0NJTDtB35xTzuxdlbD"><span class="box" data-t="1" data-d="3" data-page-node-id="aTuJnS7LqXACrYM3e1B1Rk"></span></td>
+        <td data-page-node-id="QergSIZcebewU9ZgPZbGkI"><span class="box" data-t="1" data-d="4" data-page-node-id="ATeKWHFJwoKWJ7XNrIA0CZ"></span></td>
+        <td data-page-node-id="3CtBgd5MzlMBB5C96NVBst"><span class="box" data-t="1" data-d="5" data-page-node-id="0a4fIww1BczcWbGKrc5ZUL"></span></td>
+        <td data-page-node-id="fpPf4QWD0hcVcib2Dky0ZZ"><span class="box" data-t="1" data-d="6" data-page-node-id="6HzflVHF3xH37PiHJgf58O"></span></td><td><span class="box" data-t="1" data-d="7"></span></td><td><span class="box" data-t="1" data-d="8"></span></td><td><span class="box" data-t="1" data-d="9"></span></td><td><span class="box" data-t="1" data-d="10"></span></td><td><span class="box" data-t="1" data-d="11"></span></td><td><span class="box" data-t="1" data-d="12"></span></td><td><span class="box" data-t="1" data-d="13"></span></td><td class="points-cell" data-t="1">50</td></tr>
+      <tr data-page-node-id="fMxT9iZzoB6CxginIRCpMn"><td class="task-name" data-page-node-id="iQiaPAwTJpzmMJuJHtCg0p">中文阅读</td>
+        <td data-page-node-id="2QIrxDnR51BFgTDILM03gx"><span class="box" data-t="2" data-d="0" data-page-node-id="JMdYuVvC3kOTOvqU5VN7Nj"></span></td>
+        <td data-page-node-id="cFMFNSrJsCEBuoDsd5hHmR"><span class="box" data-t="2" data-d="1" data-page-node-id="70DVIXSa2p6CkLl0IauJXS"></span></td>
+        <td data-page-node-id="rFkNielDUGzz4THo27oqBN"><span class="box" data-t="2" data-d="2" data-page-node-id="zwQYoulbLehMBvFXxzGQza"></span></td>
+        <td data-page-node-id="Rl1OFnKeJSPgzxi1RiddL5"><span class="box" data-t="2" data-d="3" data-page-node-id="Gb0sAZhPCOJkLr8erLK0vl"></span></td>
+        <td data-page-node-id="KLzjg3JImMDRA1yrDKXgNP"><span class="box" data-t="2" data-d="4" data-page-node-id="nXUjna2vHl4CHJWPNyckik"></span></td>
+        <td data-page-node-id="Z2T5s7okAUu6fDpEah4qkv"><span class="box" data-t="2" data-d="5" data-page-node-id="BHsi3Q4ksCxQNdD0Zy2hDN"></span></td>
+        <td data-page-node-id="RO6UtRIz0P8ESwheSDk6x5"><span class="box" data-t="2" data-d="6" data-page-node-id="HU5XEMrUYGDjVWCdrd5Imd"></span></td><td><span class="box" data-t="2" data-d="7"></span></td><td><span class="box" data-t="2" data-d="8"></span></td><td><span class="box" data-t="2" data-d="9"></span></td><td><span class="box" data-t="2" data-d="10"></span></td><td><span class="box" data-t="2" data-d="11"></span></td><td><span class="box" data-t="2" data-d="12"></span></td><td><span class="box" data-t="2" data-d="13"></span></td><td class="points-cell" data-t="2">50</td></tr>
+      <tr data-page-node-id="hoD3EUPrOtSTuQESK9tqWm"><td class="task-name" data-page-node-id="vAKCwZvPNzJUGVNTZSUd9c">游泳长训/线上英语</td>
+        <td data-page-node-id="hhi5QDQ62LCgba2kFTSGBJ"><span class="box" data-t="3" data-d="0" data-page-node-id="TJRHZiYiWEeslM0OdJOBdH"></span></td>
+        <td data-page-node-id="2MO5u4aydC79K7NsemqCSA"><span class="box" data-t="3" data-d="1" data-page-node-id="qoV7SAPngJ36d4HA10RZ6Y"></span></td>
+        <td data-page-node-id="0oHZyLP1BaPmeCK841FZzD"><span class="box" data-t="3" data-d="2" data-page-node-id="6smLjasBDNAmwDR6hIm2u3"></span></td>
+        <td data-page-node-id="5nhwq3RUcwbAH1lcTAfMvG"><span class="box" data-t="3" data-d="3" data-page-node-id="ww0gAggfw4rNszkRzn55Pn"></span></td>
+        <td data-page-node-id="lQ9zy2Q4cCyOtZrEEh9oyH"><span class="box" data-t="3" data-d="4" data-page-node-id="Kw0KYhu2WuUsB7haP5jygf"></span></td>
+        <td data-page-node-id="G0qDUbTSFdIGm0BdRedr32"><span class="box" data-t="3" data-d="5" data-page-node-id="QBh2gX2rJHI5n3fvz6CE0y"></span></td>
+        <td data-page-node-id="J5ZAtPQAw1TCpNrJvdgyMM"><span class="box" data-t="3" data-d="6" data-page-node-id="VayHurNDXmL5xrJfG3oesq"></span></td><td><span class="box" data-t="3" data-d="7"></span></td><td><span class="box" data-t="3" data-d="8"></span></td><td><span class="box" data-t="3" data-d="9"></span></td><td><span class="box" data-t="3" data-d="10"></span></td><td><span class="box" data-t="3" data-d="11"></span></td><td><span class="box" data-t="3" data-d="12"></span></td><td><span class="box" data-t="3" data-d="13"></span></td><td class="points-cell" data-t="3">100</td></tr>
+      <tr data-page-node-id="Dl7CjSlxO8YqchKJEdBYEf"><td class="task-name" data-page-node-id="3riAwBk3Lb3IWxnQWaBKM5">数学计算</td>
+        <td data-page-node-id="pCWtCntwFKPHIFsTtpCcFT"><span class="box" data-t="4" data-d="0" data-page-node-id="LlBjsz2NQSC1Em2uQCSpse"></span></td>
+        <td data-page-node-id="i6OREm9geArolA3D2FHsFh"><span class="box" data-t="4" data-d="1" data-page-node-id="R99zPFmnJhSe5IA8tfYLjG"></span></td>
+        <td data-page-node-id="0uZTJVjG4f7BEEiMwfVWG8"><span class="box" data-t="4" data-d="2" data-page-node-id="UBxkvBHoHRpGPGtCmFU2zJ"></span></td>
+        <td data-page-node-id="AcbR0GtGWVuyjztjtGsWbm"><span class="box" data-t="4" data-d="3" data-page-node-id="mR0A6fZrtgYbvlEzFHsGgL"></span></td>
+        <td data-page-node-id="FJ2Zb2PnTB64t54rHpKA5V"><span class="box" data-t="4" data-d="4" data-page-node-id="zQjjRPsMrIR54WrN6jThnK"></span></td>
+        <td data-page-node-id="UuEXPUcnU5I2MrkjMThstg"><span class="box" data-t="4" data-d="5" data-page-node-id="dLVdD6yBf2GZArtmrrfjGF"></span></td>
+        <td data-page-node-id="DnF5EuFEBOn9aQFPP6xf5Y"><span class="box" data-t="4" data-d="6" data-page-node-id="qiOK7zzgGNyCXUnEBik1xQ"></span></td><td><span class="box" data-t="4" data-d="7"></span></td><td><span class="box" data-t="4" data-d="8"></span></td><td><span class="box" data-t="4" data-d="9"></span></td><td><span class="box" data-t="4" data-d="10"></span></td><td><span class="box" data-t="4" data-d="11"></span></td><td><span class="box" data-t="4" data-d="12"></span></td><td><span class="box" data-t="4" data-d="13"></span></td><td class="points-cell" data-t="4">100</td></tr>
+      <tr data-page-node-id="xQJJq73Uppm8rRN5h7t1rJ"><td class="task-name" data-page-node-id="HuUMiSewIe7E5w3D0vs7hn">10 个英语单词</td>
+        <td data-page-node-id="fFO9MiSACveU0HBgbzuwKx"><span class="box" data-t="5" data-d="0" data-page-node-id="UeMyoYfQB1W1nIbsZX34go"></span></td>
+        <td data-page-node-id="mR8ol6NUVB0iIHLNf7Oq1j"><span class="box" data-t="5" data-d="1" data-page-node-id="eZqH4XvEcrtPTpLtioGtHb"></span></td>
+        <td data-page-node-id="alis7d1PVt9nUoLITlsc43"><span class="box" data-t="5" data-d="2" data-page-node-id="2fnpHCxdkQ4PIdfb80QoHw"></span></td>
+        <td data-page-node-id="BFrcEu8bPeLjtZy7Gi7llJ"><span class="box" data-t="5" data-d="3" data-page-node-id="1EVBwgxyT9sGXgFSGwXq1h"></span></td>
+        <td data-page-node-id="ziA2KKppMxbAQG4wjM73zP"><span class="box" data-t="5" data-d="4" data-page-node-id="Ju9ko6kcm5f0INCiYM11kL"></span></td>
+        <td data-page-node-id="SBGkPMGjzEidvMmHMQO5aG"><span class="box" data-t="5" data-d="5" data-page-node-id="n9GyB7FdYCpmeZDcZ60GGH"></span></td>
+        <td data-page-node-id="MpTJTibGT1HhiHj8QcWVOr"><span class="box" data-t="5" data-d="6" data-page-node-id="gvbHIFu6nyJGl7P2QajIzZ"></span></td><td><span class="box" data-t="5" data-d="7"></span></td><td><span class="box" data-t="5" data-d="8"></span></td><td><span class="box" data-t="5" data-d="9"></span></td><td><span class="box" data-t="5" data-d="10"></span></td><td><span class="box" data-t="5" data-d="11"></span></td><td><span class="box" data-t="5" data-d="12"></span></td><td><span class="box" data-t="5" data-d="13"></span></td><td class="points-cell" data-t="5">50</td></tr>
+      <tr data-page-node-id="qHvS7DxDDkS8HpYAtdEDl2"><td class="task-name" data-page-node-id="NFUbXRkm116qi1CB8Ainth">家务劳动</td>
+        <td data-page-node-id="EJhIZ5cgMbh4UnS71FRUz5"><span class="box" data-t="6" data-d="0" data-page-node-id="v1vykqjDYjHs6jRQ7PSe7q"></span></td>
+        <td data-page-node-id="hXd4nfeNKdLDpE9CCwIKJy"><span class="box" data-t="6" data-d="1" data-page-node-id="cAsYz4ftM3YcgMx0SeZl8T"></span></td>
+        <td data-page-node-id="TPgGXUgHxCzRQNRFhLnit7"><span class="box" data-t="6" data-d="2" data-page-node-id="hqZ9qBrCDOHoZx4HMhKJNk"></span></td>
+        <td data-page-node-id="IYK1AvHgmGJ1Z7bPcHpLcy"><span class="box" data-t="6" data-d="3" data-page-node-id="NqzgYTScVSEFdxOTPVpA0L"></span></td>
+        <td data-page-node-id="WxfRHCjz32HRz0GZ1KxtSW"><span class="box" data-t="6" data-d="4" data-page-node-id="eNzeCheLut9z9orfNIGLas"></span></td>
+        <td data-page-node-id="Wd5rhhKVZCwqO1tDDE22wU"><span class="box" data-t="6" data-d="5" data-page-node-id="XXezx0eXpoeMSdLwZyJeMx"></span></td>
+        <td data-page-node-id="074FGD9xroGQBWqup9DMJK"><span class="box" data-t="6" data-d="6" data-page-node-id="taPm2XRPB4Gn6fhKBdtxQm"></span></td><td><span class="box" data-t="6" data-d="7"></span></td><td><span class="box" data-t="6" data-d="8"></span></td><td><span class="box" data-t="6" data-d="9"></span></td><td><span class="box" data-t="6" data-d="10"></span></td><td><span class="box" data-t="6" data-d="11"></span></td><td><span class="box" data-t="6" data-d="12"></span></td><td><span class="box" data-t="6" data-d="13"></span></td><td class="points-cell" data-t="6">50</td></tr>    </tbody>
+    <tfoot data-page-node-id="AX2wYcCN1UbFLOoVFzwWfs">
+      <tr class="totals-row" data-page-node-id="Hd9FizkGikUydWbE6ZXF7b">
+        <td data-page-node-id="bRBYKqT3bbUT04eojknxfF">每日完成</td>
+        <td class="totals-cell" data-d="0" data-page-node-id="5mKD7DVgyrwVboxv5FIsa4"></td>
+        <td class="totals-cell" data-d="1" data-page-node-id="XMXdTz7gukfkSFndsHAwdQ"></td>
+        <td class="totals-cell" data-d="2" data-page-node-id="sm49kSGzOtpkRnUySfS9B8"></td>
+        <td class="totals-cell" data-d="3" data-page-node-id="4dzhkH1yky9a4qCuW42RY1"></td>
+        <td class="totals-cell" data-d="4" data-page-node-id="3ITnJA0Wxm22VLPlIAQ7j0"></td>
+        <td class="totals-cell" data-d="5" data-page-node-id="XFUrNNCfJrMZGDt0kAcqWB"></td>
+        <td class="totals-cell" data-d="6" data-page-node-id="nAcjAx3KUsQSEoePNM6Bgu"></td>
+        <td class="totals-cell" data-d="7"></td>
+        <td class="totals-cell" data-d="8"></td>
+        <td class="totals-cell" data-d="9"></td>
+        <td class="totals-cell" data-d="10"></td>
+        <td class="totals-cell" data-d="11"></td>
+        <td class="totals-cell" data-d="12"></td>
+        <td class="totals-cell" data-d="13"></td>
+        <td class="points-total" data-page-node-id="abcd1234pttotal"></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="actions-row no-print" data-page-node-id="6GrrS8GFzf2PLxr682Z2al">
+    <button class="reset-btn" id="reset" data-page-node-id="8FFVYqR00uysPDjaVirxlt">清空本周</button>
+    <span class="tip" data-page-node-id="htRVpGOl63IRmR4gOOCfMR">点格子打勾 · 当天的"项数和分值"自动汇总 · Cmd + P 打印</span>
+  </div>
+</main>
+
+<script>
+  const DAY_NAMES = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+  const POINT = [100, 50, 50, 100, 100, 50, 50];
+  const TOTAL_POINTS = POINT.reduce((a, b) => a + b, 0);
+  const STORAGE_KEY = "weekly-checklist-v1";
+
+  function startKey(d) {
+    return d.getFullYear() + "-" +
+           String(d.getMonth() + 1).padStart(2, "0") + "-" +
+           String(d.getDate()).padStart(2, "0");
+  }
+
+  function getStartDate() {
+    const v = document.getElementById("start-date").value;
+    if (!v) return new Date();
+    const d = new Date(v + "T00:00:00");
+    return isNaN(d) ? new Date() : d;
+  }
+
+  function renderHeaders(start) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    document.querySelectorAll("th.col-day").forEach(th => {
+      const i = parseInt(th.dataset.d, 10);
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const wd = (d.getDay() + 6) % 7;
+      th.classList.toggle("today", d.getTime() === today.getTime());
+      th.querySelector(".day-name").textContent = DAY_NAMES[wd];
+      th.querySelector(".day-date").textContent = (d.getMonth() + 1) + "/" + d.getDate();
+    });
+  }
+
+  function refreshTotals() {
+    let weekTotal = 0;
+    document.querySelectorAll(".totals-cell").forEach(cell => {
+      const d = parseInt(cell.dataset.d, 10);
+      let n = 0, pts = 0;
+      document.querySelectorAll('.box[data-d="' + d + '"]').forEach(box => {
+        const t = parseInt(box.dataset.t, 10);
+        if (box.classList.contains("done")) {
+          n++;
+          pts += POINT[t];
+        }
+      });
+      cell.textContent = n ? (n + " 项 · " + pts + " 分") : "";
+      cell.classList.toggle("full", n === POINT.length);
+      if (pts === TOTAL_POINTS && n === POINT.length) weekTotal++;
+    });
+    const pt = document.querySelector(".points-total");
+    if (pt) {
+      pt.textContent = TOTAL_POINTS + " 分";
+      pt.classList.toggle("full", weekTotal > 0);
+    }
+  }
+
+  function currentKey() { return startKey(getStartDate()); }
+
+  function applyState(state) {
+    document.querySelectorAll(".box").forEach(box => {
+      const key = box.dataset.t + "-" + box.dataset.d;
+      box.classList.toggle("done", !!state[key]);
+    });
+  }
+
+  function loadState(key) {
+    try {
+      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      return all[key] || {};
+    } catch (e) { return {}; }
+  }
+  function saveState(key, state) {
+    try {
+      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      all[key] = state;
+      const keys = Object.keys(all).sort().slice(-30);
+      const trimmed = {};
+      keys.forEach(k => trimmed[k] = all[k]);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+    } catch (e) {}
+  }
+
+  function rebuild() {
+    const start = getStartDate();
+    renderHeaders(start);
+    applyState(loadState(currentKey()));
+    refreshTotals();
+  }
+
+  document.addEventListener("click", e => {
+    const box = e.target.closest(".box");
+    if (!box) return;
+    const key = box.dataset.t + "-" + box.dataset.d;
+    const state = loadState(currentKey());
+    if (state[key]) delete state[key]; else state[key] = true;
+    saveState(currentKey(), state);
+    box.classList.toggle("done", !!state[key]);
+    refreshTotals();
+  });
+
+  document.getElementById("start-date").addEventListener("change", rebuild);
+
+  document.getElementById("reset").addEventListener("click", () => {
+    if (!confirm("确认清空本周所有勾选？")) return;
+    const key = currentKey();
+    saveState(key, {});
+    document.querySelectorAll(".box.done").forEach(b => b.classList.remove("done"));
+    refreshTotals();
+  });
+
+  const NAME_KEY = "weekly-checklist-name";
+  const DEFAULT_NAME = "朱伯睿";
+
+  const nameInput = document.getElementById("name-input");
+  try {
+    const savedName = localStorage.getItem(NAME_KEY);
+    if (savedName) nameInput.value = savedName;
+  } catch (e) {}
+  nameInput.addEventListener("input", () => {
+    try { localStorage.setItem(NAME_KEY, nameInput.value); } catch (e) {}
+  });
+
+  const dateInput = document.getElementById("start-date");
+  dateInput.value = startKey(new Date());
+  rebuild();
+</script>
+</body>
+</html>
