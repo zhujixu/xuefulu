@@ -929,16 +929,55 @@
 
         // 获取某状态的考勤记录（"出勤"合并正常出勤、迟到、早退，与"出勤次数"统计口径一致）
         function getStatusHistory(name, status) {
-            if (status === '出勤') {
-                const result = [];
-                ['正常出勤', '迟到', '早退'].forEach(s => {
-                    (attendanceHistory[s]?.[name] || []).forEach(t => {
-                        result.push(s === '正常出勤' ? t : `${t}（${s}）`);
-                    });
-                });
-                return result;
+            const statuses = status === '出勤' ? ['正常出勤', '迟到', '早退'] : [status];
+            return statuses.flatMap(sourceStatus =>
+                (attendanceHistory[sourceStatus]?.[name] || []).map((time, index) => ({
+                    time, sourceStatus, index
+                }))
+            );
+        }
+
+        // 使用原状态和数组位置定位记录，重复时间与无时间记录也可逐条修改。
+        function editHistoryRecord(name, entry, newStatus) {
+            const statuses = ['迟到', '早退', '缺勤', '正常出勤'];
+            if (!statuses.includes(newStatus) || newStatus === entry.sourceStatus) return;
+            const source = attendanceHistory[entry.sourceStatus]?.[name];
+            if (!source || source[entry.index] !== entry.time) return;
+
+            // 只有明确对应今天的最后一条记录，才同步今日状态。
+            const allRecords = statuses.flatMap(status =>
+                (attendanceHistory[status]?.[name] || []).map((time, index) => ({ time, status, index })));
+            const datedRecords = allRecords.filter(record => /^\d{4}-\d{2}-\d{2}/.test(record.time));
+            datedRecords.sort((a, b) => a.time.localeCompare(b.time));
+            const latest = datedRecords[datedRecords.length - 1];
+            const isTodayRecord = entry.time.startsWith(getBeijingNow().format('YYYY-MM-DD')) &&
+                latest?.status === entry.sourceStatus && latest.index === entry.index &&
+                getCurrentStatus(name, todayAttendance) === entry.sourceStatus;
+
+            source.splice(entry.index, 1);
+            const target = attendanceHistory[newStatus][name] || (attendanceHistory[newStatus][name] = []);
+            // 保持时间顺序，避免随后更新今日状态时误移除较早的历史记录。
+            const insertion = target.findIndex(time => /^\d{4}-\d{2}-\d{2}/.test(time) &&
+                (!/^\d{4}-\d{2}-\d{2}/.test(entry.time) || time > entry.time));
+            target.splice(insertion === -1 ? target.length : insertion, 0, entry.time);
+            updateHistoricalAttendance(name, newStatus, entry.sourceStatus);
+            if (isTodayRecord) {
+                const today = todayAttendance[name];
+                today[entry.sourceStatus] -= 1;
+                today[newStatus] = (today[newStatus] || 0) + 1;
+                today.总出勤 += (newStatus !== '缺勤' ? 1 : 0) - (entry.sourceStatus !== '缺勤' ? 1 : 0);
             }
-            return attendanceHistory[status]?.[name] || [];
+            lastUpdatedCells[name] = newStatus;
+            saveToLocalStorage();
+            updateAttendanceTable();
+            updateTodayAttendanceTable();
+            updateTodaySummary();
+            updateProgressBar();
+            if (!visualizeModal.classList.contains('hidden')) {
+                renderAbsenceChart();
+                renderLateChart();
+                renderEarlyChart();
+            }
         }
 
         // 创建考勤次数单元格（含历史记录下拉）
@@ -986,7 +1025,31 @@
                 history.forEach((entry, i) => {
                     const item = document.createElement('div');
                     item.className = 'status-dropdown-item';
-                    item.textContent = `${i + 1}. ${entry}`;
+                    const recordText = document.createElement('div');
+                    const statusLabel = entry.sourceStatus === '正常出勤' ? '出勤' : entry.sourceStatus;
+                    recordText.textContent = `${i + 1}. ${entry.time}（${statusLabel}）`;
+                    item.appendChild(recordText);
+                    const actions = document.createElement('div');
+                    actions.className = 'flex flex-wrap gap-1 mt-1';
+                    [
+                        ['迟到', '迟到', 'late'], ['早退', '早退', 'early'],
+                        ['缺勤', '缺勤', 'absent'], ['出勤', '正常出勤', 'present']
+                    ].forEach(([label, value, color]) => {
+                        const action = document.createElement('button');
+                        action.type = 'button';
+                        action.className = `update-btn bg-attendance-${color} text-white`;
+                        action.textContent = label;
+                        action.disabled = entry.sourceStatus === value;
+                        action.style.opacity = action.disabled ? '0.5' : '1';
+                        action.title = action.disabled ? `当前为${label}` : `将这条记录改为${label}`;
+                        action.setAttribute('aria-label', `${name} ${entry.time}：${action.title}`);
+                        action.addEventListener('click', e => {
+                            e.stopPropagation();
+                            editHistoryRecord(name, entry, value);
+                        });
+                        actions.appendChild(action);
+                    });
+                    item.appendChild(actions);
                     list.appendChild(item);
                 });
             }
@@ -1701,7 +1764,7 @@
             }
 
             // 添加新状态
-            attendanceStats[name][newStatus] += 1;
+            attendanceStats[name][newStatus] = (attendanceStats[name][newStatus] || 0) + 1;
             // 如果新状态是出勤相关的，增加总出勤
             if (newStatus !== '缺勤') {
                 attendanceStats[name].总出勤 += 1;
