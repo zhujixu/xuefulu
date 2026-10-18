@@ -1866,7 +1866,7 @@
             updateTodayNameLists();
         }
 
-        // 更新今日异常人员名单（迟到/早退/缺勤，名字前带序号）
+        // 更新今日异常人员名单（名字前带序号，名字后显示对应状态的累计次数）
         function updateTodayNameLists() {
             // 每个名单标题带上当前北京时间日期（与页面顶部一致）
             const dateText = `（${getBeijingNow().format('YYYY年MM月DD日')}）`;
@@ -1882,7 +1882,8 @@
                 const names = [];
                 nameData.forEach((name, index) => {
                     if ((todayAttendance[name]?.[item.status] || 0) > 0) {
-                        names.push(`${index + 1}. ${name}`);
+                        const count = attendanceStats[name]?.[item.status] || 0;
+                        names.push(`${index + 1}. ${name}[${count}]`);
                     }
                 });
                 if (names.length === 0) {
