@@ -547,16 +547,16 @@
                 </div>
 
                 <!-- 步骤卡片 - 导入Excel文件 -->
-                <div class="step-card">
+                <div id="fileImportArea" class="step-card">
                     <div class="step-number">2</div>
                     <h3 class="text-xl font-semibold mb-4">导入学生名单</h3>
                     <input type="file" id="excelFile" accept=".xlsx,.xls" class="hidden">
                     <label for="excelFile"
                         class="block w-full cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2 transition-all duration-300 ease-in-out">
                         <i class="fa fa-file-excel-o text-xl"></i>
-                        <span class="font-medium">选择Excel文件</span>
+                        <span class="font-medium">选择或拖入Excel文件到此处</span>
                     </label>
-                    <p id="fileInfo" class="mt-4 text-gray-500">请选择Excel文件导入学生名单(需包含"姓名"列)</p>
+                    <p id="fileInfo" class="mt-4 text-gray-500 text-sm">请选择或拖入Excel文件导入学生名单<br>(需包含"姓名"列)</p>
                 </div>
             </div>
         </header>
@@ -1279,6 +1279,7 @@
 
             // 事件监听器
             excelFileInput.addEventListener('change', handleFileUpload);
+            setupFileDropImport();
             lateBtn.addEventListener('click', () => updateAttendanceStatus('迟到'));
             earlyLeaveBtn.addEventListener('click', () => updateAttendanceStatus('早退'));
             absentBtn.addEventListener('click', () => updateAttendanceStatus('缺勤'));
@@ -1343,9 +1344,56 @@
             nameDisplay.textContent = nameText;
         }
 
+        // 拖入文件与点击选择共用同一套导入逻辑
+        function setupFileDropImport() {
+            const area = document.getElementById('fileImportArea');
+            let dragDepth = 0;
+            const isFileDrag = e => Array.from(e.dataTransfer?.types || []).includes('Files');
+            const resetHighlight = () => {
+                dragDepth = 0;
+                area.style.outline = '';
+                area.style.outlineOffset = '';
+            };
+            area.addEventListener('dragenter', e => {
+                if (!isFileDrag(e)) return;
+                e.preventDefault();
+                dragDepth++;
+                area.style.outline = '2px dashed #7C3AED';
+                area.style.outlineOffset = '4px';
+            });
+            area.addEventListener('dragover', e => {
+                if (!isFileDrag(e)) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+            });
+            area.addEventListener('dragleave', e => {
+                if (!isFileDrag(e)) return;
+                e.preventDefault();
+                if (--dragDepth <= 0) resetHighlight();
+            });
+            area.addEventListener('drop', e => {
+                e.preventDefault();
+                resetHighlight();
+                const files = e.dataTransfer?.files;
+                if (!files || files.length === 0) return;
+                if (files.length !== 1) {
+                    fileInfo.textContent = '请每次拖入一个Excel文件';
+                    return;
+                }
+                if (!/\.xlsx?$/i.test(files[0].name)) {
+                    fileInfo.textContent = '请拖入Excel文件（.xlsx或.xls）';
+                    return;
+                }
+                importExcelFile(files[0]);
+            });
+        }
+
         // 处理文件上传
         function handleFileUpload(e) {
-            const file = e.target.files[0];
+            importExcelFile(e.target.files[0]);
+        }
+
+        function importExcelFile(file) {
             if (!file) return;
 
             fileInfo.textContent = `正在处理: ${file.name}`;
