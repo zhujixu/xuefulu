@@ -1157,6 +1157,32 @@
             }
         }
 
+        // 导入和重新打开页面共用按钮状态，避免缓存恢复后功能仍被禁用。
+        function syncDataControls() {
+            const disabled = !Array.isArray(nameData) || nameData.length === 0;
+            [nameBtn, lateBtn, earlyLeaveBtn, absentBtn, presentBtn,
+                historyToggleBtn, visualizeBtn, exportStatsBtn, mainScreenshotBtn]
+                .forEach(button => { button.disabled = disabled; });
+        }
+
+        // 挂载下载链接，并延迟释放 Blob URL，兼容本地文件与重新打开的页面。
+        async function downloadScreenshot(canvas, fileName) {
+            const blob = await new Promise((resolve, reject) => {
+                canvas.toBlob(value => value ? resolve(value) : reject(new Error('无法生成图片')), 'image/png');
+            });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            try {
+                link.click();
+            } finally {
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+            }
+        }
+
         // 保存当前统计截图
         async function saveScreenshot() {
             if (typeof html2canvas === 'undefined') {
@@ -1210,10 +1236,7 @@
                 });
                 const now = new Date();
                 const pad = n => String(n).padStart(2, '0');
-                const link = document.createElement('a');
-                link.download = `考勤统计截图_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                await downloadScreenshot(canvas, `考勤统计截图_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.png`);
             } catch (err) {
                 alert('截图保存失败，请重试');
             } finally {
@@ -1260,10 +1283,7 @@
 
                 const now = new Date();
                 const pad = n => String(n).padStart(2, '0');
-                const link = document.createElement('a');
-                link.download = `考勤汇总截图_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                await downloadScreenshot(canvas, `考勤汇总截图_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.png`);
             } catch (err) {
                 alert('截图保存失败，请重试');
             } finally {
@@ -1276,6 +1296,7 @@
         function init() {
             // 加载本地存储数据
             loadFromLocalStorage();
+            syncDataControls();
 
             // 事件监听器
             excelFileInput.addEventListener('change', handleFileUpload);
@@ -1524,16 +1545,8 @@
                     // 初始化剩余学生数组
                     resetRemainingStudents();
 
-                    // 启用按钮
-                    nameBtn.disabled = false;
-                    lateBtn.disabled = false;
-                    earlyLeaveBtn.disabled = false;
-                    absentBtn.disabled = false;
-                    presentBtn.disabled = false;
-                    historyToggleBtn.disabled = false;
-                    visualizeBtn.disabled = false;
-                    exportStatsBtn.disabled = false;
-                    mainScreenshotBtn.disabled = false;
+                    // 导入和缓存恢复使用相同的按钮状态逻辑
+                    syncDataControls();
 
                     // 更新进度条
                     updateProgressBar();
@@ -1998,6 +2011,11 @@
                     return;
                 }
 
+                if (typeof XLSX === 'undefined') {
+                    alert('Excel 组件加载失败，请连接网络后刷新页面再导出；已保存的考勤数据仍保留在本机。');
+                    return;
+                }
+
                 // 创建导出数据
                 const exportData = [
                     ['序号', '姓名', '迟到次数', '早退次数', '缺勤次数', '出勤次数']
@@ -2048,7 +2066,7 @@
                 // 导出文件
                 XLSX.writeFile(wb, fileName);
 
-                alert('历史考勤数据已成功导出');
+                // 浏览器接管下载，无法在此确认用户是否已保存文件。
             } catch (error) {
                 console.error('导出错误:', error);
                 alert('导出历史考勤数据时出错');
