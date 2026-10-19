@@ -953,7 +953,19 @@
                 (attendanceHistory[sourceStatus]?.[name] || []).map((time, index) => ({
                     time, sourceStatus, index
                 }))
-            );
+            ).sort((a, b) => {
+                // 固定格式的北京时间可直接比较；无具体时间的导入记录置底。
+                const hasTime = entry => /^\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2}:\d{2})?$/.test(entry.time);
+                const aDated = hasTime(a);
+                const bDated = hasTime(b);
+                if (aDated !== bDated) return aDated ? -1 : 1;
+                if (aDated) {
+                    const byTime = b.time.localeCompare(a.time);
+                    if (byTime) return byTime;
+                }
+                // 相同时间保留稳定顺序，同类记录以较后录入者优先。
+                return statuses.indexOf(a.sourceStatus) - statuses.indexOf(b.sourceStatus) || b.index - a.index;
+            });
         }
 
         // 使用原状态和数组位置定位记录，重复时间与无时间记录也可逐条修改。
