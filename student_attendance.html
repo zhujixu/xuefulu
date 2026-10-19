@@ -694,7 +694,7 @@
                                 <th>早退次数</th>
                                 <th>缺勤次数</th>
                                 <th>出勤次数</th>
-                                <th>状态更新</th>
+                                <th>状态更新<br><span class="text-xs font-normal">迟到、早退可同时选择；出勤清除异常，缺勤清除全部出勤状态</span></th>
                             </tr>
                         </thead>
                         <tbody id="todayAttendanceTableBody">
@@ -795,7 +795,7 @@
         let attendanceToggle = {}; // 记录按钮状态
         let lastUpdatedCells = {}; // 记录最后更新的单元格
         let attendanceHistory = {}; // 考勤历史记录：{ 状态: { 姓名: [时间...] } }
-        ['迟到', '早退', '缺勤', '正常出勤'].forEach(s => { attendanceHistory[s] = {}; });
+        ['迟到', '早退', '缺勤', '正常出勤', '迟到早退'].forEach(s => { attendanceHistory[s] = {}; });
         let totalStudents = 0;
         let remainingStudents = []; // 剩余未抽取的学生索引
         let currentStudentIndex = -1; // 当前学生索引
@@ -876,7 +876,7 @@
 
         // 根据状态变化同步各状态的历史记录（进入某状态时新增，离开时移除）
         function updateStatusHistory(name, newStatus, previousStatus) {
-            const statuses = ['迟到', '早退', '缺勤', '正常出勤'];
+            const statuses = ['迟到', '早退', '缺勤', '正常出勤', '迟到早退'];
             statuses.forEach(s => {
                 if (newStatus === s && previousStatus !== s) {
                     recordStatusHistory(name, s, 'add');
@@ -929,7 +929,8 @@
 
         // 获取某状态的考勤记录（"出勤"合并正常出勤、迟到、早退，与"出勤次数"统计口径一致）
         function getStatusHistory(name, status) {
-            const statuses = status === '出勤' ? ['正常出勤', '迟到', '早退'] : [status];
+            const statuses = status === '出勤' ? ['正常出勤', '迟到', '早退', '迟到早退'] :
+                (status === '迟到' || status === '早退' ? [status, '迟到早退'] : [status]);
             return statuses.flatMap(sourceStatus =>
                 (attendanceHistory[sourceStatus]?.[name] || []).map((time, index) => ({
                     time, sourceStatus, index
@@ -939,7 +940,7 @@
 
         // 使用原状态和数组位置定位记录，重复时间与无时间记录也可逐条修改。
         function editHistoryRecord(name, entry, newStatus) {
-            const statuses = ['迟到', '早退', '缺勤', '正常出勤'];
+            const statuses = ['迟到', '早退', '缺勤', '正常出勤', '迟到早退'];
             if (!statuses.includes(newStatus) || newStatus === entry.sourceStatus) return;
             const source = attendanceHistory[entry.sourceStatus]?.[name];
             if (!source || source[entry.index] !== entry.time) return;
@@ -962,10 +963,7 @@
             target.splice(insertion === -1 ? target.length : insertion, 0, entry.time);
             updateHistoricalAttendance(name, newStatus, entry.sourceStatus);
             if (isTodayRecord) {
-                const today = todayAttendance[name];
-                today[entry.sourceStatus] -= 1;
-                today[newStatus] = (today[newStatus] || 0) + 1;
-                today.总出勤 += (newStatus !== '缺勤' ? 1 : 0) - (entry.sourceStatus !== '缺勤' ? 1 : 0);
+                todayAttendance[name] = statusCounts(newStatus);
             }
             lastUpdatedCells[name] = newStatus;
             saveToLocalStorage();
@@ -1033,6 +1031,7 @@
                     actions.className = 'flex flex-wrap gap-1 mt-1';
                     [
                         ['迟到', '迟到', 'late'], ['早退', '早退', 'early'],
+                        ['迟到且早退', '迟到早退', 'early'],
                         ['缺勤', '缺勤', 'absent'], ['出勤', '正常出勤', 'present']
                     ].forEach(([label, value, color]) => {
                         const action = document.createElement('button');
@@ -1496,7 +1495,8 @@
                         ['迟到记录', '迟到'],
                         ['早退记录', '早退'],
                         ['缺勤记录', '缺勤'],
-                        ['出勤记录', '正常出勤']
+                        ['出勤记录', '正常出勤'],
+                        ['双异常记录', '迟到早退']
                     ];
                     const historyTimesByStudent = {};
                     historySheetSpecs.forEach(([sheetKeyword, status]) => {
@@ -1544,7 +1544,7 @@
                     nameData = [];
                     attendanceStats = {};
                     attendanceHistory = {};
-                    ['迟到', '早退', '缺勤', '正常出勤'].forEach(s => { attendanceHistory[s] = {}; });
+                    ['迟到', '早退', '缺勤', '正常出勤', '迟到早退'].forEach(s => { attendanceHistory[s] = {}; });
 
                     jsonData.slice(1).forEach(row => {
                         const name = row[nameColumnIndex];
@@ -1568,10 +1568,12 @@
                                 : normalPresent + late + early // 计算总出勤次数
                         };
 
+                        attendanceHistory['迟到早退'][name] = (historyTimesByStudent['迟到早退'][name] || []).slice();
+                        const combinedCount = attendanceHistory['迟到早退'][name].length;
                         // 初始化各状态考勤历史记录：优先使用对应记录表中的时间，不足部分用占位项补齐
                         const statusCounts = {
-                            迟到: attendanceStats[name].迟到,
-                            早退: attendanceStats[name].早退,
+                            迟到: Math.max(0, attendanceStats[name].迟到 - combinedCount),
+                            早退: Math.max(0, attendanceStats[name].早退 - combinedCount),
                             缺勤: attendanceStats[name].缺勤
                         };
                         Object.entries(statusCounts).forEach(([status, count]) => {
@@ -1587,12 +1589,13 @@
                         const normalHistory = normalImported.slice();
                         const normalNeeded = Math.max(
                             attendanceStats[name].正常出勤,
-                            attendanceStats[name].总出勤 - attendanceStats[name].迟到 - attendanceStats[name].早退
+                            attendanceStats[name].总出勤 - attendanceStats[name].迟到 - attendanceStats[name].早退 + combinedCount
                         );
                         for (let i = normalHistory.length; i < normalNeeded; i++) {
                             normalHistory.push('导入数据（无具体时间）');
                         }
                         attendanceHistory['正常出勤'][name] = normalHistory;
+                        attendanceStats[name].正常出勤 = normalHistory.length;
                     });
 
                     if (nameData.length === 0) {
@@ -1707,46 +1710,7 @@
             // 转换状态名称以匹配数据结构
             const normalizedStatus = status === '出勤' ? '正常出勤' : status;
 
-            // 先将今日考勤之前的状态计数减1
-            const previousStatus = getCurrentStatus(name, todayAttendance);
-            if (previousStatus) {
-                todayAttendance[name][previousStatus] -= 1;
-                // 如果之前状态是出勤相关的，也要减少总出勤
-                if (previousStatus !== '缺勤') {
-                    todayAttendance[name].总出勤 -= 1;
-                }
-                todayAttendance[name].总计 -= 1;
-            }
-
-            // 再将今日考勤当前状态计数加1
-            todayAttendance[name][normalizedStatus] += 1;
-            // 如果当前状态是出勤相关的，增加总出勤
-            if (normalizedStatus !== '缺勤') {
-                todayAttendance[name].总出勤 += 1;
-            }
-            todayAttendance[name].总计 += 1;
-
-            // 记录考勤历史（北京时间）：进入某状态时新增，离开时移除
-            updateStatusHistory(name, normalizedStatus, previousStatus);
-
-            // 更新历史考勤数据
-            updateHistoricalAttendance(name, normalizedStatus, previousStatus);
-
-            // 记录最后更新的单元格
-            lastUpdatedCells[name] = normalizedStatus;
-
-            // 更新表格
-            updateAttendanceTable();
-            updateTodayAttendanceTable();
-
-            // 更新汇总数据
-            updateTodaySummary();
-
-            // 更新进度条
-            updateProgressBar();
-
-            // 保存到本地存储
-            saveToLocalStorage();
+            applyTodayStatus(name, normalizedStatus);
 
             // 显示下一个随机姓名
             showNextRandomName();
@@ -1754,32 +1718,54 @@
 
         // 更新历史考勤数据
         function updateHistoricalAttendance(name, newStatus, previousStatus) {
-            // 如果之前有状态，先减去
-            if (previousStatus) {
-                attendanceStats[name][previousStatus] -= 1;
-                // 如果之前状态是出勤相关的，也要减少总出勤
-                if (previousStatus !== '缺勤') {
-                    attendanceStats[name].总出勤 -= 1;
-                }
-            }
-
-            // 添加新状态
-            attendanceStats[name][newStatus] = (attendanceStats[name][newStatus] || 0) + 1;
-            // 如果新状态是出勤相关的，增加总出勤
-            if (newStatus !== '缺勤') {
-                attendanceStats[name].总出勤 += 1;
-            }
+            const stats = attendanceStats[name] || (attendanceStats[name] = {});
+            const before = statusCounts(previousStatus);
+            const after = statusCounts(newStatus);
+            Object.keys(after).forEach(key => {
+                stats[key] = (stats[key] || 0) + after[key] - before[key];
+            });
         }
 
-        // 获取当前学生的状态
+        // 一个点名记录可以同时迟到、早退，但出勤和总计始终最多为 1。
+        function statusCounts(status) {
+            return {
+                迟到: Number(status === '迟到' || status === '迟到早退'),
+                早退: Number(status === '早退' || status === '迟到早退'),
+                缺勤: Number(status === '缺勤'),
+                正常出勤: Number(status === '正常出勤'),
+                总出勤: Number(Boolean(status) && status !== '缺勤'),
+                总计: Number(Boolean(status))
+            };
+        }
+
         function getCurrentStatus(name, attendanceData) {
-            const statuses = ['迟到', '早退', '缺勤', '正常出勤'];
-            for (const status of statuses) {
-                if (attendanceData[name] && attendanceData[name][status] > 0) {
-                    return status;
-                }
+            const data = attendanceData[name];
+            if (!data) return null;
+            if (data.迟到 > 0 && data.早退 > 0) return '迟到早退';
+            return ['迟到', '早退', '正常出勤', '缺勤'].find(status => data[status] > 0) || null;
+        }
+
+        function applyTodayStatus(name, status) {
+            if (!name || !['迟到', '早退', '缺勤', '正常出勤', '迟到早退'].includes(status)) return;
+            const previousStatus = getCurrentStatus(name, todayAttendance);
+            // 迟到、早退独立切换；取消最后一个异常标记后保留正常出勤。
+            let nextStatus = status;
+            if (status === '迟到' || status === '早退') {
+                const before = statusCounts(previousStatus);
+                before[status] = before[status] ? 0 : 1;
+                nextStatus = before.迟到 && before.早退 ? '迟到早退' :
+                    before.迟到 ? '迟到' : before.早退 ? '早退' : '正常出勤';
             }
-            return null;
+            if (nextStatus === previousStatus) return;
+            updateStatusHistory(name, nextStatus, previousStatus);
+            updateHistoricalAttendance(name, nextStatus, previousStatus);
+            todayAttendance[name] = statusCounts(nextStatus);
+            lastUpdatedCells[name] = nextStatus;
+            updateAttendanceTable();
+            updateTodayAttendanceTable();
+            updateTodaySummary();
+            updateProgressBar();
+            saveToLocalStorage();
         }
 
         // 更新考勤表格（历史考勤区域）
@@ -1856,14 +1842,16 @@
                 // 迟到按钮
                 const lateBtn = document.createElement('button');
                 lateBtn.className = 'update-btn bg-attendance-late text-white';
-                lateBtn.textContent = '迟到';
+                lateBtn.textContent = lateCount ? '取消迟到' : '迟到';
+                lateBtn.setAttribute('aria-pressed', String(lateCount > 0));
                 lateBtn.addEventListener('click', () => updateStatusFromTable(index, '迟到'));
                 actionCell.appendChild(lateBtn);
 
                 // 早退按钮
                 const earlyBtn = document.createElement('button');
                 earlyBtn.className = 'update-btn bg-attendance-early text-white';
-                earlyBtn.textContent = '早退';
+                earlyBtn.textContent = earlyCount ? '取消早退' : '早退';
+                earlyBtn.setAttribute('aria-pressed', String(earlyCount > 0));
                 earlyBtn.addEventListener('click', () => updateStatusFromTable(index, '早退'));
                 actionCell.appendChild(earlyBtn);
 
@@ -1889,48 +1877,7 @@
 
         // 从表格更新状态
         function updateStatusFromTable(index, status) {
-            const name = nameData[index];
-
-            // 先将今日考勤之前的状态计数减1
-            const previousStatus = getCurrentStatus(name, todayAttendance);
-            if (previousStatus) {
-                todayAttendance[name][previousStatus] -= 1;
-                // 如果之前状态是出勤相关的，也要减少总出勤
-                if (previousStatus !== '缺勤') {
-                    todayAttendance[name].总出勤 -= 1;
-                }
-                todayAttendance[name].总计 -= 1;
-            }
-
-            // 再将今日考勤当前状态计数加1
-            todayAttendance[name][status] += 1;
-            // 如果当前状态是出勤相关的，增加总出勤
-            if (status !== '缺勤') {
-                todayAttendance[name].总出勤 += 1;
-            }
-            todayAttendance[name].总计 += 1;
-
-            // 记录考勤历史（北京时间）：进入某状态时新增，离开时移除
-            updateStatusHistory(name, status, previousStatus);
-
-            // 更新历史考勤数据
-            updateHistoricalAttendance(name, status, previousStatus);
-
-            // 记录最后更新的单元格
-            lastUpdatedCells[name] = status;
-
-            // 更新表格
-            updateAttendanceTable();
-            updateTodayAttendanceTable();
-
-            // 更新汇总数据
-            updateTodaySummary();
-
-            // 更新进度条
-            updateProgressBar();
-
-            // 保存到本地存储
-            saveToLocalStorage();
+            applyTodayStatus(nameData[index], status);
         }
 
         // 更新今日考勤汇总数据
@@ -2106,7 +2053,8 @@
                     ['迟到记录', '迟到时间', '迟到'],
                     ['早退记录', '早退时间', '早退'],
                     ['缺勤记录', '缺勤时间', '缺勤'],
-                    ['出勤记录', '出勤时间', '正常出勤']
+                    ['出勤记录', '出勤时间', '正常出勤'],
+                    ['双异常记录', '迟到早退时间', '迟到早退']
                 ];
                 historySheetSpecs.forEach(([sheetName, timeHeader, status]) => {
                     const rows = [['姓名', timeHeader]];
@@ -2192,7 +2140,7 @@
             }
 
             // 兼容旧缓存数据：为已有各状态次数补齐历史记录占位项，保证下拉记录数与统计一致
-            ['迟到', '早退', '缺勤', '正常出勤'].forEach(status => {
+            ['迟到', '早退', '缺勤', '正常出勤', '迟到早退'].forEach(status => {
                 if (!attendanceHistory[status]) attendanceHistory[status] = {};
             });
             Object.keys(attendanceStats).forEach(name => {
@@ -2209,11 +2157,13 @@
                     }
                 };
 
-                padHistory('迟到', late);
-                padHistory('早退', early);
+                const combinedCount = attendanceHistory['迟到早退'][name]?.length || 0;
+                padHistory('迟到', Math.max(0, late - combinedCount));
+                padHistory('早退', Math.max(0, early - combinedCount));
                 padHistory('缺勤', absent);
-                // 出勤记录数 = 总出勤 - 迟到 - 早退（不足时补齐，保证下拉与"出勤次数"一致）
-                padHistory('正常出勤', Math.max(normal, total - late - early));
+                // 正常出勤 = 总出勤 - 迟到 - 早退 + 同次迟到早退，避免重复扣除
+                padHistory('正常出勤', Math.max(normal, total - late - early + combinedCount));
+                attendanceStats[name].正常出勤 = attendanceHistory['正常出勤'][name].length;
             });
 
             if (savedTodayAttendance) {
