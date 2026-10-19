@@ -309,8 +309,10 @@
             .status-dropdown-menu {
                 display: none;
                 z-index: 50;
-                min-width: 260px;
-                max-width: 320px;
+                box-sizing: border-box;
+                width: 360px;
+                max-width: calc(100vw - 16px);
+                min-width: 0;
                 background: #ffffff;
                 border: 1px solid #e5e7eb;
                 border-radius: 10px;
@@ -352,6 +354,21 @@
 
             .status-dropdown-item:hover {
                 background: #eef2ff;
+            }
+
+            .status-dropdown-actions {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 4px;
+                margin-top: 4px;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+            }
+
+            .status-dropdown-actions .update-btn {
+                flex: 0 0 auto;
+                white-space: nowrap;
+                margin: 0;
             }
 
             .status-dropdown-empty {
@@ -904,7 +921,7 @@
 
                 wrapper.classList.add('open');
                 menu.style.position = 'fixed';
-                const menuWidth = menu.offsetWidth || 260;
+                const menuWidth = menu.offsetWidth || Math.min(360, window.innerWidth - 16);
                 const menuHeight = menu.offsetHeight || 240;
 
                 // 垂直方向：优先显示在按钮下方，下方空间不足时显示在上方，始终贴近按钮
@@ -1029,7 +1046,7 @@
                     recordText.textContent = `${i + 1}. ${entry.time}（${statusLabel}）`;
                     item.appendChild(recordText);
                     const actions = document.createElement('div');
-                    actions.className = 'flex flex-wrap gap-1 mt-1';
+                    actions.className = 'status-dropdown-actions';
                     [
                         ['迟到', '迟到', 'late'], ['早退', '早退', 'early'],
                         ['迟到且早退', '迟到早退', 'early'],
