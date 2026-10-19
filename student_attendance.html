@@ -310,7 +310,7 @@
                 display: none;
                 z-index: 50;
                 box-sizing: border-box;
-                width: 360px;
+                width: 300px;
                 max-width: calc(100vw - 16px);
                 min-width: 0;
                 background: #ffffff;
@@ -921,7 +921,7 @@
 
                 wrapper.classList.add('open');
                 menu.style.position = 'fixed';
-                const menuWidth = menu.offsetWidth || Math.min(360, window.innerWidth - 16);
+                const menuWidth = menu.offsetWidth || Math.min(300, window.innerWidth - 16);
                 const menuHeight = menu.offsetHeight || 240;
 
                 // 垂直方向：优先显示在按钮下方，下方空间不足时显示在上方，始终贴近按钮
