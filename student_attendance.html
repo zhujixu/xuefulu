@@ -335,6 +335,7 @@
             .status-dropdown-list {
                 max-height: 220px;
                 overflow-y: auto;
+                overscroll-behavior: contain;
             }
 
             .status-dropdown-item {
@@ -1389,7 +1390,9 @@
             document.addEventListener('click', (e) => {
                 // 考勤未开始或已结束时忽略
                 if (nameBtn.textContent === '已完成考勤' || !nameData[currentStudentIndex]) return;
-                // 有考勤记录下拉打开时，本次点击用于收起下拉，不触发缺勤
+                // 弹窗内部交互（含拖动滚动条）不关闭下拉，也不触发缺勤
+                if (e.target.closest('.status-dropdown')) return;
+                // 有考勤记录下拉打开时，本次外部点击用于收起下拉，不触发缺勤
                 if (document.querySelector('.status-dropdown.open')) {
                     closeAllStatusDropdowns();
                     return;
@@ -1399,7 +1402,7 @@
                 updateAttendanceStatus('缺勤');
             });
 
-            // 全局点击/Esc/滚动时关闭考勤记录下拉
+            // 外部点击、Esc 或外部滚动时关闭考勤记录下拉
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.status-dropdown')) {
                     closeAllStatusDropdowns();
@@ -1412,7 +1415,11 @@
                 }
             });
             window.addEventListener('resize', closeAllStatusDropdowns);
-            window.addEventListener('scroll', closeAllStatusDropdowns, true);
+            window.addEventListener('scroll', (e) => {
+                // 捕获阶段也会收到弹窗内部的滚动事件；仅外部滚动需要收起。
+                if (e.target instanceof Element && e.target.closest('.status-dropdown-menu')) return;
+                closeAllStatusDropdowns();
+            }, true);
 
             // 更新UI
             updateAttendanceTable();
