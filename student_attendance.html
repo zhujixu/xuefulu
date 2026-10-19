@@ -154,7 +154,7 @@
                 @apply px-2 py-1 rounded text-xs font-medium transition-all duration-200 ease-in-out mx-0.5;
             }
 
-            /* 今日考勤表格的特殊样式 */
+            /* 当次考勤表格的特殊样式 */
             .today-attendance-late {
                 background-color: rgba(251, 191, 36, 0.2);
                 color: #92400E;
@@ -185,7 +185,7 @@
                 @apply text-sm font-medium whitespace-nowrap;
             }
 
-            /* 今日异常人员名单 */
+            /* 当次异常人员名单 */
             .name-list-card {
                 @apply rounded-xl p-4 border shadow-sm;
             }
@@ -654,9 +654,10 @@
                 </div>
             </div>
 
-            <!-- 今日考勤区域 -->
+            <!-- 当次考勤区域 -->
             <div id="todayAttendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-4">
-                <!-- 今日考勤汇总数据 -->
+                <h2 class="text-lg font-bold mb-3">当次考勤</h2>
+                <!-- 当次考勤汇总数据 -->
                 <div id="todaySummary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                     <div class="summary-card border-attendance-present/30 bg-attendance-present/5">
                         <div class="label text-attendance-present">出勤人数</div>
@@ -680,7 +681,7 @@
                     </div>
                 </div>
 
-                <!-- 今日异常人员名单 -->
+                <!-- 当次异常人员名单 -->
                 <div id="todayNameLists" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="name-list-card border-attendance-absent/30 bg-attendance-absent/5">
                         <div class="name-list-title text-attendance-absent">
@@ -809,7 +810,7 @@
         // 全局变量
         let nameData = [];
         let attendanceStats = {}; // 历史统计数据
-        let todayAttendance = {}; // 今日考勤数据
+        let todayAttendance = {}; // 当次考勤数据
         let attendanceToggle = {}; // 记录按钮状态
         let lastUpdatedCells = {}; // 记录最后更新的单元格
         let attendanceHistory = {}; // 考勤历史记录：{ 状态: { 姓名: [时间...] } }
@@ -817,6 +818,7 @@
         let totalStudents = 0;
         let remainingStudents = []; // 剩余未抽取的学生索引
         let currentStudentIndex = -1; // 当前学生索引
+        let attendancePeriod = null;
 
         // DOM 元素
         const excelFileInput = document.getElementById('excelFile');
@@ -970,24 +972,25 @@
 
         // 使用原状态和数组位置定位记录，重复时间与无时间记录也可逐条修改。
         function editHistoryRecord(name, entry, newStatus) {
+            ensureAttendancePeriod();
             const statuses = ['迟到', '早退', '缺勤', '正常出勤', '迟到早退'];
             if (!statuses.includes(newStatus) || newStatus === entry.sourceStatus) return;
             const source = attendanceHistory[entry.sourceStatus]?.[name];
             if (!source || source[entry.index] !== entry.time) return;
 
-            // 只有明确对应今天的最后一条记录，才同步今日状态。
+            // 只有明确属于当前时段的最后一条记录，才同步当次状态。
             const allRecords = statuses.flatMap(status =>
                 (attendanceHistory[status]?.[name] || []).map((time, index) => ({ time, status, index })));
             const datedRecords = allRecords.filter(record => /^\d{4}-\d{2}-\d{2}/.test(record.time));
             datedRecords.sort((a, b) => a.time.localeCompare(b.time));
             const latest = datedRecords[datedRecords.length - 1];
-            const isTodayRecord = entry.time.startsWith(getBeijingNow().format('YYYY-MM-DD')) &&
+            const isTodayRecord = getAttendancePeriod(entry.time) === attendancePeriod &&
                 latest?.status === entry.sourceStatus && latest.index === entry.index &&
                 getCurrentStatus(name, todayAttendance) === entry.sourceStatus;
 
             source.splice(entry.index, 1);
             const target = attendanceHistory[newStatus][name] || (attendanceHistory[newStatus][name] = []);
-            // 保持时间顺序，避免随后更新今日状态时误移除较早的历史记录。
+            // 保持时间顺序，避免随后更新当次状态时误移除较早的历史记录。
             const insertion = target.findIndex(time => /^\d{4}-\d{2}-\d{2}/.test(time) &&
                 (!/^\d{4}-\d{2}-\d{2}/.test(entry.time) || time > entry.time));
             target.splice(insertion === -1 ? target.length : insertion, 0, entry.time);
@@ -1338,7 +1341,7 @@
             }
         }
 
-        // 保存今日考勤汇总区域截图（4 张统计卡片 + 3 张名单卡片）
+        // 保存当次考勤汇总区域截图（4 张统计卡片 + 3 张名单卡片）
         async function saveMainScreenshot() {
             if (typeof htmlToImage === 'undefined') {
                 alert('截图组件加载失败，请检查网络后重试');
@@ -1455,11 +1458,17 @@
             updateTodayAttendanceTable();
             updateTodaySummary();
             updateNameDisplay();
+            scheduleAttendanceReset();
+            window.addEventListener('focus', ensureAttendancePeriod);
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) ensureAttendancePeriod();
+            });
         }
 
         // 更新姓名显示
         function updateNameDisplay() {
-            const nameText = nameBtn.textContent.split('. ')[1] || '暂无考勤';
+            const nameText = nameBtn.textContent === '已完成考勤' ? '已完成考勤' :
+                nameBtn.textContent.split('. ')[1] || '暂无考勤';
             nameDisplay.textContent = nameText;
         }
 
@@ -1641,7 +1650,7 @@
 
                     totalStudents = nameData.length;
 
-                    // 初始化今日考勤数据
+                    // 初始化当次考勤数据
                     initTodayAttendanceData();
 
                     // 初始化剩余学生数组
@@ -1689,8 +1698,11 @@
             );
         }
 
-        // 初始化今日考勤数据
+        // 初始化当次考勤数据
         function initTodayAttendanceData() {
+            attendancePeriod = getAttendancePeriod();
+            todayAttendance = {};
+            attendanceToggle = {};
             nameData.forEach(name => {
                 todayAttendance[name] = {
                     迟到: 0,
@@ -1717,7 +1729,9 @@
         // 显示下一个随机姓名（不重复）
         function showNextRandomName() {
             if (remainingStudents.length === 0) {
+                currentStudentIndex = -1;
                 nameBtn.textContent = '已完成考勤';
+                updateNameDisplay();
                 return;
             }
 
@@ -1740,7 +1754,8 @@
 
         // 更新考勤状态
         function updateAttendanceStatus(status) {
-            if (currentStudentIndex === -1 || !nameData[currentStudentIndex]) return;
+            ensureAttendancePeriod();
+            if (nameBtn.textContent === '已完成考勤' || currentStudentIndex === -1 || !nameData[currentStudentIndex]) return;
 
             const name = nameData[currentStudentIndex];
             // 转换状态名称以匹配数据结构
@@ -1750,6 +1765,7 @@
 
             // 显示下一个随机姓名
             showNextRandomName();
+            saveToLocalStorage();
         }
 
         // 更新历史考勤数据
@@ -1782,6 +1798,7 @@
         }
 
         function applyTodayStatus(name, status) {
+            ensureAttendancePeriod();
             if (!name || !['迟到', '早退', '缺勤', '正常出勤', '迟到早退'].includes(status)) return;
             const previousStatus = getCurrentStatus(name, todayAttendance);
             // 迟到、早退独立切换；取消最后一个异常标记后保留正常出勤。
@@ -1838,7 +1855,7 @@
             });
         }
 
-        // 更新今日考勤表格
+        // 更新当次考勤表格
         function updateTodayAttendanceTable() {
             todayAttendanceTableBody.innerHTML = '';
 
@@ -1916,7 +1933,7 @@
             applyTodayStatus(nameData[index], status);
         }
 
-        // 更新今日考勤汇总数据
+        // 更新当次考勤汇总数据
         function updateTodaySummary() {
             if (totalStudents === 0) {
                 summaryPresent.textContent = '0';
@@ -1973,17 +1990,19 @@
             updateTodayNameLists();
         }
 
-        // 更新今日异常人员名单（名字前带序号，名字后显示对应状态的累计次数）
+        // 更新当次异常人员名单（名字前带序号，名字后显示对应状态的累计次数）
         function updateTodayNameLists() {
             // 每个名单标题带上当前北京时间日期（与页面顶部一致）
-            const dateText = `（${getBeijingNow().format('YYYY年MM月DD日')}）`;
+            const period = getAttendancePeriod();
+            const startHour = Number(period.slice(11, 13));
+            const dateText = `（${period.slice(0, 10)} ${String(startHour).padStart(2, '0')}:00–${String(startHour + 6).padStart(2, '0')}:00）`;
             document.querySelectorAll('.name-list-date').forEach(el => {
                 el.textContent = dateText;
             });
             const lists = [
-                { status: '迟到', el: lateNameList, emptyText: '今日无迟到' },
-                { status: '早退', el: earlyNameList, emptyText: '今日无早退' },
-                { status: '缺勤', el: absentNameList, emptyText: '今日无缺勤' }
+                { status: '迟到', el: lateNameList, emptyText: '当次无迟到' },
+                { status: '早退', el: earlyNameList, emptyText: '当次无早退' },
+                { status: '缺勤', el: absentNameList, emptyText: '当次无缺勤' }
             ];
             lists.forEach(item => {
                 const names = [];
@@ -2003,9 +2022,13 @@
 
         // 更新进度条
         function updateProgressBar() {
-            if (totalStudents === 0) return;
+            if (totalStudents === 0) {
+                progressBar.style.width = '0%';
+                progressText.textContent = '0 / 0';
+                return;
+            }
 
-            // 计算已考勤的学生数（今日考勤至少有一项记录的学生）
+            // 计算已考勤的学生数（当次考勤至少有一项记录的学生）
             let checkedStudents = 0;
             nameData.forEach(name => {
                 if (todayAttendance[name] && todayAttendance[name].总计 > 0) {
@@ -2135,6 +2158,7 @@
 
         // 保存到本地存储
         function saveToLocalStorage() {
+            localStorage.setItem('attendancePeriod', attendancePeriod || getAttendancePeriod());
             localStorage.setItem('nameData', JSON.stringify(nameData));
             localStorage.setItem('attendanceStats', JSON.stringify(attendanceStats));
             localStorage.setItem('attendanceHistory', JSON.stringify(attendanceHistory));
@@ -2143,6 +2167,38 @@
             localStorage.setItem('totalStudents', totalStudents);
             localStorage.setItem('remainingStudents', JSON.stringify(remainingStudents));
             localStorage.setItem('currentStudentIndex', currentStudentIndex);
+        }
+
+        // 时段键取北京时间最近一次 00、06、12、18 点边界。
+        function getAttendancePeriod(time = getBeijingNow().format('YYYY-MM-DD HH:mm:ss')) {
+            if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(time)) return null;
+            const hour = Math.floor(Number(time.slice(11, 13)) / 6) * 6;
+            return `${time.slice(0, 10)} ${String(hour).padStart(2, '0')}:00:00`;
+        }
+
+        function scheduleAttendanceReset() {
+            const now = getBeijingNow();
+            const nextBoundary = now.startOf('day').add((Math.floor(now.hour() / 6) + 1) * 6, 'hour');
+            setTimeout(() => {
+                ensureAttendancePeriod();
+                scheduleAttendanceReset();
+            }, Math.max(1, nextBoundary.valueOf() - now.valueOf()));
+        }
+
+        // 每个北京时间六小时考勤时段独立记录，保留累计统计与历史记录。
+        function ensureAttendancePeriod() {
+            if (attendancePeriod === getAttendancePeriod()) return false;
+            initTodayAttendanceData();
+            resetRemainingStudents();
+            currentStudentIndex = -1;
+            nameBtn.textContent = '暂无考勤';
+            if (nameData.length) showNextRandomName();
+            updateTodayAttendanceTable();
+            updateTodaySummary();
+            updateProgressBar();
+            updateNameDisplay();
+            saveToLocalStorage();
+            return true;
         }
 
         // 从本地存储加载
@@ -2205,7 +2261,7 @@
             if (savedTodayAttendance) {
                 todayAttendance = JSON.parse(savedTodayAttendance);
             } else {
-                // 如果没有今日考勤数据，初始化它
+                // 如果没有当次考勤数据，初始化它
                 initTodayAttendanceData();
             }
 
@@ -2223,6 +2279,13 @@
 
             if (savedCurrentStudentIndex) {
                 currentStudentIndex = parseInt(savedCurrentStudentIndex);
+            }
+
+            attendancePeriod = localStorage.getItem('attendancePeriod');
+            if (!ensureAttendancePeriod()) {
+                nameBtn.textContent = nameData[currentStudentIndex] ?
+                    `${currentStudentIndex + 1}. ${nameData[currentStudentIndex]}` :
+                    (nameData.length && remainingStudents.length === 0 ? '已完成考勤' : '暂无考勤');
             }
 
             // 更新进度条
