@@ -622,9 +622,11 @@
           <div class="wk">
             <div class="n">WEEK 02</div>
             <h5>读文献 · 收范围</h5>
+            <p>文献检索、阅读与整理范围：<strong data-literature-period></strong>；按发表年份计算，随页面打开年份自动更新。</p>
             <ul>
-              <li>按“对象 + 问题 + 方法”组合检索 15—30 篇</li>
-              <li>精读 8—10 篇，填文献整理表</li>
+              <li>按“对象 + 问题 + 方法”组合检索<span data-literature-period></span>中文相关文献 15 篇以上、外文文献 3 篇以上</li>
+              <li>精读中文文献 8—10 篇，填文献整理表</li>
+              <li>从外文文献中选一篇用于外文翻译</li>
               <li>找出已有研究的不足与空白</li>
             </ul>
             <div class="outp">产出：<b>文献表 + 2—3 个候选方案</b></div>
@@ -717,6 +719,10 @@
 (function(){
   "use strict";
 
+  var literatureYear = new Date().getFullYear();
+  var literaturePeriod = "最近5个年度（" + (literatureYear - 4) + "—" + literatureYear + "年）";
+  document.querySelectorAll("[data-literature-period]").forEach(function(el){ el.textContent = literaturePeriod; });
+
   /* ---------------- 数据 ---------------- */
   var GROUPS = [
     { id:'A', no:'A', name:'研究问题', tip:'先把“要回答什么”说清楚', items:[
@@ -731,11 +737,11 @@
       {id:'A5', w:2, t:'我能说出论文最后会产出什么',
        d:'一张测度表、一组回归结果、一条预测曲线、一份差异分解。产不出具体东西的题目通常是空的。'}
     ]},
-    { id:'B', no:'B', name:'文献基础', tip:'知道别人做到哪一步', items:[
-      {id:'B1', w:2, t:'已检索并列出 15 篇以上相关文献，精读 8—10 篇',
+    { id:'B', no:'B', name:'文献基础', tip:literaturePeriod + '：知道别人做到哪一步', items:[
+      {id:'B1', w:2, t:'已检索并列出' + literaturePeriod + '中文相关文献 15 篇以上，精读 8—10 篇；外文文献 3 篇以上，其中一篇用于外文翻译',
        d:'知网、万方、维普、PubScholar 均可。按“研究对象 + 核心问题 + 方法/数据”组合检索。'},
       {id:'B2', w:2, t:'做过一张文献整理表',
-       d:'字段：研究问题、数据与样本、主要方法、主要结论、不足与可拓展处。写文献综述时可直接复用。'},
+       d:'整理范围：' + literaturePeriod + '（按文献发表年份）。字段：研究问题、数据与样本、主要方法、主要结论、不足与可拓展处。写文献综述时可直接复用。'},
       {id:'B3', w:3, t:'我能说清自己的切入点，而不只是换了地区或年份',
        d:'新数据、新样本、新口径、新视角、新方法、新时期的政策变化——至少要占一条，并说明为什么有意义。'},
       {id:'B4', w:2, t:'确认过没有高度雷同的已有研究，或有把握说明区别',
