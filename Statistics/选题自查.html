@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>经济统计学本科毕业论文 · 选题自查清单</title>
+<style>
+  :root{
+    --paper:#f6f4ee;
+    --card:#fffefb;
+    --ink:#1b2a25;
+    --ink2:#4b5c55;
+    --ink3:#7f8c86;
+    --line:#e4dfd2;
+    --accent:#0e5c4a;
+    --accent2:#177a62;
+    --soft:#e8f1ed;
+    --gold:#a9782f;
+    --bad:#b23a2c;
+    --warn:#bf7a17;
+    --good:#1c7a58;
+    --serif:"Songti SC","Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:96px}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.72;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 8% -8%, #edf3ef 0%, rgba(237,243,239,0) 62%),
+      radial-gradient(900px 460px at 100% 0%, #f7f1e6 0%, rgba(247,241,230,0) 55%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:#cfe6dc}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:60;
+    background:rgba(246,244,238,.88);
+    backdrop-filter:saturate(150%) blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .hbar{max-width:1180px;margin:0 auto;padding:11px 24px;display:flex;align-items:center;gap:14px}
+  .logo{
+    width:34px;height:34px;border-radius:9px;flex:0 0 auto;
+    background:linear-gradient(160deg,#146b56,#0b4b3d);
+    color:#fff;display:grid;place-items:center;
+    font-family:var(--serif);font-size:17px;letter-spacing:1px;
+    box-shadow:0 2px 8px rgba(14,92,74,.25);
+  }
+  .brand{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+  .brand b{font-size:14.5px;letter-spacing:.3px;font-weight:600}
+  .brand span{font-size:11.5px;color:var(--ink3);letter-spacing:.6px}
+  .hspacer{flex:1}
+  .hmini{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink2)}
+  .hbar .track{width:112px;height:6px;border-radius:99px;background:#e6e2d7;overflow:hidden}
+  .hbar .track i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1c8a68,#0e5c4a);transition:width .45s cubic-bezier(.3,.9,.3,1)}
+  .btn{
+    font-family:inherit;font-size:12.5px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:7px 13px;border-radius:8px;transition:.18s;letter-spacing:.2px;
+  }
+  .btn:hover{border-color:#c9c1ad;background:#fbfaf5}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:#0b4b3d}
+  .btn.ghost{background:transparent}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .hero{padding:52px 0 8px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:11.5px;letter-spacing:1.6px;color:var(--accent);
+    text-transform:uppercase;font-weight:600;
+  }
+  .kicker::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.55}
+  h1{
+    font-family:var(--serif);font-size:42px;line-height:1.22;font-weight:600;
+    margin:14px 0 14px;letter-spacing:-.5px;
+  }
+  h1 em{
+    font-style:normal;color:var(--accent);padding:0 2px;margin:0 -2px;
+    background:linear-gradient(transparent 64%,#cfe4da 64%,#cfe4da 94%,transparent 94%);
+  }
+  .lede{max-width:660px;color:var(--ink2);font-size:15.5px;line-height:1.85}
+  .lede b{color:var(--ink);font-weight:600}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 6px}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:15px 18px 14px;position:relative;overflow:hidden;
+  }
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.25}
+  .stat .k{font-size:11.5px;letter-spacing:.8px;color:var(--ink3)}
+  .stat .v{font-family:var(--serif);font-size:26px;line-height:1.3;margin-top:3px;letter-spacing:.5px}
+  .stat .v small{font-size:13px;color:var(--ink3);font-family:var(--sans);margin-left:3px;letter-spacing:0}
+  .stat .s{font-size:12px;color:var(--ink2);margin-top:1px}
+  .stat.ok::before{background:var(--good);opacity:.7}
+  .stat.warn::before{background:var(--warn);opacity:.7}
+  .stat.bad::before{background:var(--bad);opacity:.7}
+
+  .layout{display:grid;grid-template-columns:206px minmax(0,1fr);gap:44px;margin-top:42px;padding-bottom:60px}
+  .toc{position:sticky;top:88px;align-self:start;font-size:13px}
+  .toc .th{font-size:11px;letter-spacing:1.4px;color:var(--ink3);margin-bottom:12px;font-weight:600}
+  .toc a{
+    display:block;color:var(--ink2);text-decoration:none;padding:6px 0 6px 12px;
+    border-left:2px solid transparent;transition:.18s;line-height:1.5;
+  }
+  .toc a:hover{color:var(--accent);border-left-color:#cfe0d8}
+  .toc a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .toc a i{font-style:normal;color:var(--ink3);font-size:11px;margin-right:6px;letter-spacing:.5px}
+  .toc .tip{
+    margin-top:20px;padding:12px 13px;border:1px dashed var(--line);border-radius:10px;
+    font-size:12px;color:var(--ink3);line-height:1.7;background:rgba(255,255,255,.5);
+  }
+
+  section{margin-bottom:54px;scroll-margin-top:96px}
+  .sec-head{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .sec-no{
+    font-family:var(--serif);font-size:13px;color:var(--accent);
+    border:1px solid #cfe0d8;background:var(--soft);border-radius:6px;
+    padding:2px 7px;letter-spacing:1px;
+  }
+  h2{font-family:var(--serif);font-size:24px;margin:0;font-weight:600;letter-spacing:.3px}
+  .sec-sub{font-size:12.5px;color:var(--ink3);margin-left:auto;padding-bottom:3px}
+  .sec-desc{color:var(--ink2);font-size:14px;margin:-4px 0 18px;max-width:720px}
+
+  /* ---------- verdict ---------- */
+  .verdict{
+    display:flex;gap:16px;align-items:flex-start;
+    border:1px solid var(--line);border-left:4px solid var(--ink3);
+    background:var(--card);border-radius:0 12px 12px 0;padding:16px 18px;margin-bottom:18px;
+  }
+  .verdict .vb{
+    font-size:12px;font-weight:600;letter-spacing:.6px;padding:3px 10px;border-radius:99px;
+    background:#eeece4;color:var(--ink2);white-space:nowrap;margin-top:2px;
+  }
+  .verdict h3{font-size:15.5px;margin:0 0 3px;font-weight:600}
+  .verdict p{margin:0;font-size:13px;color:var(--ink2);line-height:1.7}
+  .verdict.ready{border-left-color:var(--good);background:#f3faf6}
+  .verdict.ready .vb{background:#d9efe5;color:#12654a}
+  .verdict.almost{border-left-color:var(--accent)}
+  .verdict.almost .vb{background:#dcece6;color:var(--accent)}
+  .verdict.blocked{border-left-color:var(--bad);background:#fdf5f3}
+  .verdict.blocked .vb{background:#f7dfda;color:var(--bad)}
+  .gates{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .gates span{font-size:11.5px;background:#f7e4e0;color:#8f2d21;border-radius:5px;padding:2px 7px}
+
+  /* ---------- checklist ---------- */
+  .group{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+  .ghead{
+    display:flex;align-items:center;gap:11px;padding:13px 17px;
+    border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fcfbf6,#f9f8f2);
+  }
+  .gno{
+    width:24px;height:24px;border-radius:7px;background:#eef3f0;color:var(--accent);
+    display:grid;place-items:center;font-family:var(--serif);font-size:13px;flex:0 0 auto;
+  }
+  .ghead h4{margin:0;font-size:14.5px;font-weight:600;letter-spacing:.3px}
+  .ghead .gt{font-size:12px;color:var(--ink3);margin-left:2px}
+  .gp{margin-left:auto;font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:8px}
+  .gp .track{width:70px;height:5px;background:#eae6dc;border-radius:99px;overflow:hidden}
+  .gp .track i{display:block;height:100%;width:0;background:var(--accent2);transition:width .35s}
+  .gbody{padding:6px 8px 10px}
+  .item{display:flex;gap:11px;padding:11px 12px;border-radius:9px;transition:.18s;border:1px solid transparent}
+  .item:hover{background:#faf9f3}
+  .item.done{background:#f2f8f5;border-color:#dcebe4}
+  .item input{
+    appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:0 0 auto;margin:3px 0 0;
+    border:1.5px solid #c6cdc7;border-radius:6px;background:#fff;cursor:pointer;position:relative;transition:.15s;
+  }
+  .item input:hover{border-color:var(--accent2)}
+  .item input:checked{background:var(--accent);border-color:var(--accent)}
+  .item input:checked::after{
+    content:"";position:absolute;left:6px;top:2.5px;width:5px;height:9px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
+  }
+  .item label{flex:1;cursor:pointer;min-width:0}
+  .item .t{font-size:14px;line-height:1.6}
+  .item .t b{font-weight:600}
+  .item .d{font-size:12.5px;color:var(--ink3);margin-top:2px;line-height:1.62}
+  .gate{
+    display:inline-block;font-size:10.5px;letter-spacing:.4px;vertical-align:1px;
+    background:#f8e9e5;color:#a13325;border:1px solid #f0d4ce;border-radius:4px;
+    padding:0 5px;margin-left:6px;line-height:1.6;white-space:nowrap;
+  }
+  .item.done .gate{background:#dff0e8;color:#12654a;border-color:#c8e4d8}
+
+  /* ---------- diagnose ---------- */
+  .diag{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;overflow:hidden}
+  .panel h4{margin:0 0 4px;font-size:13.5px;letter-spacing:.3px}
+  .panel .ph{font-size:12px;color:var(--ink3);margin-bottom:12px}
+  textarea,input[type=text],select{
+    width:100%;font-family:inherit;font-size:14px;color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:#fdfcf8;
+    transition:.16s;line-height:1.65;
+  }
+  textarea:focus,input[type=text]:focus,select:focus{outline:none;border-color:#a9c9bb;background:#fff;box-shadow:0 0 0 3px rgba(23,122,98,.08)}
+  textarea{resize:vertical;min-height:96px}
+  .cnt{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11.5px;color:var(--ink3)}
+  .cnt b{color:var(--ink2);font-weight:600}
+  .score{
+    display:flex;align-items:center;gap:16px;margin-bottom:14px;
+    padding-bottom:14px;border-bottom:1px dashed var(--line);
+  }
+  .ring{
+    width:66px;height:66px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+    background:conic-gradient(var(--accent) 0deg, var(--accent) 0deg, #eae7dd 0deg);
+    transition:.4s;position:relative;
+  }
+  .ring::before{content:"";position:absolute;inset:5px;background:var(--card);border-radius:50%}
+  .ring span{position:relative;font-family:var(--serif);font-size:20px;letter-spacing:-.5px}
+  .ring span i{font-size:11px;font-style:normal;color:var(--ink3);margin-left:1px}
+  .score .sx b{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
+  .score .sx span{font-size:12.5px;color:var(--ink2);line-height:1.6}
+  .findings{list-style:none;margin:0;padding:0 6px 0 0;max-height:268px;overflow-y:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:#ddd8cb transparent}
+  .findings::-webkit-scrollbar{width:5px}
+  .findings::-webkit-scrollbar-thumb{background:#ddd8cb;border-radius:9px}
+  .findings::-webkit-scrollbar-track{background:transparent}
+  .findings.fade{-webkit-mask-image:linear-gradient(#000 calc(100% - 18px),transparent);mask-image:linear-gradient(#000 calc(100% - 18px),transparent)}
+  .findings li{
+    display:flex;gap:9px;padding:8px 0;border-bottom:1px dotted #eeeae0;font-size:13px;line-height:1.65;
+  }
+  .findings li:last-child{border-bottom:0}
+  .findings .dot{width:6px;height:6px;border-radius:50%;flex:0 0 auto;margin-top:8px}
+  .f-bad .dot{background:var(--bad)}
+  .f-warn .dot{background:var(--warn)}
+  .f-good .dot{background:var(--good)}
+  .f-info .dot{background:#9aa8a2}
+  .findings .lab{font-size:10.5px;letter-spacing:.4px;padding:0 5px;border-radius:4px;height:17px;line-height:17px;flex:0 0 auto;margin-top:2px}
+  .f-bad .lab{background:#f8e6e2;color:#a13325}
+  .f-warn .lab{background:#fbf0dc;color:#8f5c0e}
+  .f-good .lab{background:#e2f1ea;color:#12654a}
+  .f-info .lab{background:#eceee9;color:#5c6b64}
+  .empty{color:var(--ink3);font-size:13px;padding:14px 0}
+
+  .structs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+  .struct{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fbfaf5}
+  .struct b{display:block;font-size:12px;color:var(--accent);letter-spacing:.5px;margin-bottom:3px}
+  .struct code{font-family:var(--serif);font-size:12.5px;color:var(--ink);line-height:1.75;display:block}
+
+  /* ---------- table ---------- */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:13px;table-layout:fixed}
+  th,td{padding:9px 5px;text-align:left;border-bottom:1px solid #f0ece2;vertical-align:middle}
+  thead th{background:#f9f8f2;font-size:11px;letter-spacing:.4px;color:var(--ink2);font-weight:600;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  td.c-title{padding-right:8px}
+  td.c-title input[type=text]{font-size:12.5px;padding:6px 8px;background:#fff;width:100%}
+  .scale{display:flex;gap:0}
+  .scale button{
+    width:17px;height:20px;border-radius:0;border:1px solid #e0dbcf;border-right-width:0;background:#fff;
+    font-size:10px;color:var(--ink3);cursor:pointer;padding:0;font-family:inherit;transition:.14s;
+  }
+  .scale button:first-child{border-radius:5px 0 0 5px}
+  .scale button:last-child{border-radius:0 5px 5px 0;border-right-width:1px}
+  .scale button:hover{border-color:#a9c9bb;background:#f4faf7}
+  .scale button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .totbox{display:flex;align-items:center;gap:6px}
+  .tot{font-family:var(--serif);font-size:16px}
+  .rank{font-size:10.5px;padding:1px 6px;border-radius:99px;background:#eceee9;color:var(--ink2);white-space:nowrap}
+  .rank.top{background:#d9efe5;color:#12654a;font-weight:600}
+  .hintline{font-size:12px;color:var(--ink3);margin-top:9px}
+
+  /* ---------- builder ---------- */
+  .builder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:16px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:11.5px;color:var(--ink2);letter-spacing:.3px}
+  .field input,.field select{font-size:13px;padding:8px 10px}
+  .out{background:linear-gradient(170deg,#0f5f4d,#0a4438);color:#eef6f2;border-radius:14px;padding:20px;position:relative;overflow:hidden}
+  .out::after{
+    content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);
+  }
+  .out .oh{font-size:11px;letter-spacing:1.4px;opacity:.72;margin-bottom:12px}
+  .out .draft{
+    font-family:var(--serif);font-size:16.5px;line-height:1.7;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.16);
+    letter-spacing:.4px;
+  }
+  .out .draft:last-of-type{border-bottom:0}
+  .out .meta{font-size:11.5px;opacity:.66;margin-top:4px;letter-spacing:.4px}
+  .out .btn{margin-top:14px;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
+  .out .btn:hover{background:rgba(255,255,255,.22)}
+  .out .ph{font-size:12.5px;opacity:.6;line-height:1.7}
+
+  /* ---------- plan ---------- */
+  .plan{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .wk{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px;position:relative;display:flex;flex-direction:column}
+  .wk::before{content:"";position:absolute;left:15px;right:15px;top:0;height:2px;background:var(--accent);opacity:.3;border-radius:2px}
+  .wk .n{font-family:var(--serif);font-size:11.5px;color:var(--accent);letter-spacing:1px}
+  .wk h5{margin:5px 0 8px;font-size:13.5px;font-weight:600;line-height:1.5}
+  .wk ul{margin:0;padding-left:15px;font-size:12px;color:var(--ink2);line-height:1.75}
+  .wk .outp{margin-top:auto;padding-top:9px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--ink3)}
+  .wk .outp b{color:var(--accent);font-weight:600}
+
+  /* ---------- brief ---------- */
+  .brief{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .brief ol{margin:0;padding:0;list-style:none;counter-reset:b}
+  .brief li{
+    counter-increment:b;display:flex;gap:10px;padding:9px 0;border-bottom:1px dotted #efebe1;font-size:13.5px;
+  }
+  .brief li:last-child{border-bottom:0}
+  .brief li::before{
+    content:counter(b,decimal-leading-zero);font-family:var(--serif);color:var(--accent);
+    font-size:12px;flex:0 0 22px;padding-top:2px;
+  }
+  .brief li span{flex:1}
+  .brief li b{font-weight:600}
+  .brief li em{font-style:normal;color:var(--ink3);font-size:12.5px;display:block}
+
+  /* ---------- pitfalls ---------- */
+  .pits{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .pit{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .pit b{display:block;font-size:13.5px;margin-bottom:4px}
+  .pit b::before{content:"⚠";color:var(--warn);font-size:11px;margin-right:6px;opacity:.8}
+  .pit p{margin:0;font-size:12.5px;color:var(--ink2);line-height:1.7}
+  .pit i{font-style:normal;color:var(--accent);font-weight:600}
+
+  footer{border-top:1px solid var(--line);padding:26px 0 46px;font-size:12px;color:var(--ink3)}
+  footer .wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+  footer b{color:var(--ink2);font-weight:600}
+
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translate(-50%,20px);
+    background:#1b2a25;color:#f4f8f5;font-size:13px;padding:9px 18px;border-radius:8px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:99;
+  }
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:1000px){
+    .layout{grid-template-columns:1fr;gap:0}
+    .toc{display:none}
+    .diag,.builder{grid-template-columns:1fr}
+    .pits{grid-template-columns:1fr 1fr}
+    .plan{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:680px){
+    h1{font-size:31px}
+    .stats{grid-template-columns:1fr;gap:9px}
+    .hero{padding:34px 0 4px}
+    .pits,.structs,.fields{grid-template-columns:1fr}
+    .plan{grid-template-columns:1fr}
+    .hbar .track{display:none}
+    .brand span{display:none}
+    .hmini #hcount{display:none}
+    .hmini .btn.ghost{display:none}
+    .brand b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .btn{font-size:12px;padding:6px 10px}
+    .hbar{padding:10px 16px;gap:10px}
+    .logo{width:30px;height:30px;font-size:15px}
+    .item{padding:10px 6px}
+  }
+
+  @media print{
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    header,.toc,.no-print,.toast{display:none!important}
+    body{background:#fff;font-size:11.5pt}
+    .wrap{max-width:none;padding:0 12mm}
+    .hero{padding-top:0}
+    .layout{display:block;margin:0;padding:0}
+    section{break-inside:auto;margin-bottom:26px}
+    .group,.panel,.pit,.wk,.brief,.tblwrap{break-inside:avoid;box-shadow:none}
+    .item{padding:6px 8px}
+    .findings{max-height:none;overflow:visible}
+    .out{background:#fff!important;color:#000!important;border:1px solid #bbb}
+    .out .oh,.out .meta{color:#444;opacity:1}
+    .out .draft{border-color:#ccc}
+    .out::after{display:none}
+    a{color:#000;text-decoration:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <div class="logo">统</div>
+    <div class="brand">
+      <b>经济统计学 · 毕业论文选题自查</b>
+      <span>TOPIC READINESS CHECKLIST</span>
+    </div>
+    <div class="hspacer"></div>
+    <div class="hmini">
+      <span id="hcount">0 / 33</span>
+      <div class="track"><i id="hbar"></i></div>
+      <button class="btn ghost no-print" onclick="resetAll()">重置</button>
+      <button class="btn primary no-print" onclick="window.print()">导出 PDF</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="kicker">本科毕业论文 · 选题阶段</div>
+    <h1>把“想写什么”，<br>变成<em>能写完什么</em></h1>
+    <p class="lede">
+      经济统计学的题目必须同时成立三件事：<b>一个说得清的经济问题、一份真拿得到的数据、一套用得住的方法</b>。
+      这份清单把选题拆成 33 个可以逐条核对的动作 —— 勾完，你就知道自己该定题、该补课，还是该换方向。
+    </p>
+    <div class="stats">
+      <div class="stat" id="stProg">
+        <div class="k">自查完成度</div>
+        <div class="v"><span id="pct">0</span><small>%</small></div>
+        <div class="s" id="progSub">33 项待核对</div>
+      </div>
+      <div class="stat" id="stGate">
+        <div class="k">关键卡口</div>
+        <div class="v"><span id="gateDone">0</span><small>/ 7</small></div>
+        <div class="s" id="gateSub">未通过的卡口会让题目无法落地</div>
+      </div>
+      <div class="stat" id="stState">
+        <div class="k">当前状态</div>
+        <div class="v" id="stateText" style="font-size:20px">准备中</div>
+        <div class="s" id="stateSub">建议先完成数据核实</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside class="toc">
+      <div class="th">目录</div>
+      <a href="#s1" class="active"><i>01</i>定题自查清单</a>
+      <a href="#s2"><i>02</i>题目诊断器</a>
+      <a href="#s3"><i>03</i>候选题目对比</a>
+      <a href="#s4"><i>04</i>一句话收敛器</a>
+      <a href="#s5"><i>05</i>四周准备安排</a>
+      <a href="#s6"><i>06</i>选题说明模板</a>
+      <a href="#s7"><i>07</i>九个高频误区</a>
+      <div class="tip">勾选状态与填写内容会自动保存在本机浏览器，关闭页面后重新打开仍在。</div>
+    </aside>
+
+    <div class="content">
+
+      <!-- 01 -->
+      <section id="s1">
+        <div class="sec-head">
+          <span class="sec-no">01</span>
+          <h2>定题自查清单</h2>
+          <span class="sec-sub">33 项 / 7 个卡口</span>
+        </div>
+        <p class="sec-desc">
+          按顺序勾选。带 <span class="gate">卡口</span> 标记的项目是“一票否决项”：只要有一项没做到，题目再漂亮也建议暂缓确定，先解决它。
+        </p>
+
+        <div class="verdict blocked" id="verdict">
+          <div class="vb" id="vBadge">准备中</div>
+          <div style="flex:1">
+            <h3 id="vTitle">先从“数据能不能拿到”开始</h3>
+            <p id="vText">清单还是空的。建议先跳到 C 组，确认核心变量和数据来源，再回头看题目怎么措辞。</p>
+            <div class="gates" id="vGates"></div>
+          </div>
+        </div>
+
+        <div id="checklist"></div>
+      </section>
+
+      <!-- 02 -->
+      <section id="s2">
+        <div class="sec-head">
+          <span class="sec-no">02</span>
+          <h2>题目诊断器</h2>
+          <span class="sec-sub">实时检查表述是否规范</span>
+        </div>
+        <p class="sec-desc">
+          把拟定的题目粘进来，系统会按“长度、空泛词、问句、因果表述、支撑内容”几个维度检查，并给出修改方向。
+          它只判断表述，不判断你的数据和方法是否成立 —— 那部分靠上面的清单。
+        </p>
+        <div class="diag">
+          <div class="panel">
+            <h4>你的题目</h4>
+            <div class="ph">建议含副标题，格式：主标题 —— 基于〇〇的实证分析</div>
+            <textarea id="titleInput" placeholder="例：数字普惠金融对城乡居民消费差距的影响研究——基于省级面板数据的实证分析"></textarea>
+            <div class="cnt">
+              <span>主标题 <b id="mainLen">0</b> 字 / 建议 25 字以内</span>
+              <button class="btn no-print" onclick="fillSample()">填入示例</button>
+            </div>
+            <div class="structs">
+              <div class="struct"><b>对象 + 关系 + 研究</b><code>数字普惠金融对居民消费的影响研究</code></div>
+              <div class="struct"><b>主标题 + 副标题</b><code>……的影响研究——基于省级面板数据</code></div>
+              <div class="struct"><b>范围 + 对象 + 测度</b><code>长三角城市群高质量发展水平测度与评价</code></div>
+              <div class="struct"><b>方法 + 应用</b><code>基于 GARCH 族的沪深300波动率分析</code></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="score">
+              <div class="ring" id="ring"><span id="ringNum">0<i>分</i></span></div>
+              <div class="sx"><b id="scoreTitle">等待输入</b><span id="scoreDesc">输入题目后自动给出表述规范度评分。</span></div>
+            </div>
+            <ul class="findings" id="findings">
+              <li class="empty">还没有内容。可以先点“填入示例”看看诊断结果长什么样。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section id="s3">
+        <div class="sec-head">
+          <span class="sec-no">03</span>
+          <h2>候选题目对比</h2>
+          <span class="sec-sub">1 = 差　5 = 好</span>
+        </div>
+        <p class="sec-desc">
+          别只留一个想法。三个候选放在同一张表里打分，可行性差的那个通常会自己浮出来。困难度是反向计分（5 = 困难很大）。
+        </p>
+        <div class="tblwrap">
+          <table>
+            <colgroup>
+              <col style="width:26%">
+              <col span="5" style="width:12.2%">
+              <col style="width:13%">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>候选题目</th>
+                <th>明确性</th>
+                <th>数据核实</th>
+                <th>方法适用</th>
+                <th>工作量</th>
+                <th>困难度</th>
+                <th>综合</th>
+              </tr>
+            </thead>
+            <tbody id="candBody"></tbody>
+          </table>
+        </div>
+        <div class="hintline">综合分＝明确性×25% ＋ 数据×25% ＋ 方法×20% ＋ 工作量×15% ＋ (6−困难)×15%，满分为 5.0。数据项权重最高，因为它最难在后期补救。</div>
+      </section>
+
+      <!-- 04 -->
+      <section id="s4">
+        <div class="sec-head">
+          <span class="sec-no">04</span>
+          <h2>一句话收敛器</h2>
+          <span class="sec-sub">从方向到题目</span>
+        </div>
+        <p class="sec-desc">
+          选题的本质是把“数字经济”这类方向，收敛成一句能执行的话：
+          <b>用什么数据、研究哪些对象、回答什么具体问题</b>。填完这些空，题目会自动生成。
+        </p>
+        <div class="builder">
+          <div class="panel">
+            <div class="fields">
+              <div class="field full">
+                <label>研究方向（大词，先别当题目）</label>
+                <input type="text" id="bDir" placeholder="例：数字经济 / 居民消费 / 人口老龄化">
+              </div>
+              <div class="field full">
+                <label>具体研究任务</label>
+                <select id="bTask">
+                  <option value="impact">A 对 B 的影响 / 关联</option>
+                  <option value="measure">某对象的水平测度与评价</option>
+                  <option value="diff">不同对象之间的差异与变化</option>
+                  <option value="forecast">某指标的未来预测</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>核心解释变量 A（或现象 A）</label>
+                <input type="text" id="bX" placeholder="例：数字普惠金融">
+              </div>
+              <div class="field">
+                <label>被解释变量 B</label>
+                <input type="text" id="bY" placeholder="例：居民消费水平">
+              </div>
+              <div class="field">
+                <label>研究对象</label>
+                <input type="text" id="bObj" placeholder="例：我国 31 个省份城镇居民">
+              </div>
+              <div class="field">
+                <label>时间范围</label>
+                <input type="text" id="bTime" placeholder="例：2013—2023 年">
+              </div>
+              <div class="field">
+                <label>数据来源</label>
+                <input type="text" id="bData" placeholder="例：省级面板数据">
+              </div>
+              <div class="field">
+                <label>拟用方法</label>
+                <input type="text" id="bMethod" placeholder="例：双向固定效应模型">
+              </div>
+            </div>
+          </div>
+          <div class="out">
+            <div class="oh">自动生成的题目草案</div>
+            <div id="drafts">
+              <div class="ph">左侧填三项以上，这里会实时生成两版题目草案。<br><br>生成结果只是骨架，最终题目要和导师一起打磨。</div>
+            </div>
+            <button class="btn no-print" onclick="copyDrafts()">复制草案</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section id="s5">
+        <div class="sec-head">
+          <span class="sec-no">05</span>
+          <h2>四周准备安排</h2>
+          <span class="sec-sub">可压缩，但顺序别反</span>
+        </div>
+        <p class="sec-desc">
+          选题不是“想一个名字”，而是一段有产出的准备期。每周结束都该留下一个能拿给导师看的东西。
+        </p>
+        <div class="plan">
+          <div class="wk">
+            <div class="n">WEEK 01</div>
+            <h5>读要求 · 找方向</h5>
+            <ul>
+              <li>读学院论文管理办法、开题要求、评分标准</li>
+              <li>梳理学过的课程、方法与软件</li>
+              <li>从课程、实习、社会观察中提问题</li>
+            </ul>
+            <div class="outp">产出：<b>3—5 个候选问题 + 选择理由</b></div>
+          </div>
+          <div class="wk">
+            <div class="n">WEEK 02</div>
+            <h5>读文献 · 收范围</h5>
+            <ul>
+              <li>按“对象 + 问题 + 方法”组合检索 15—30 篇</li>
+              <li>精读 8—10 篇，填文献整理表</li>
+              <li>找出已有研究的不足与空白</li>
+            </ul>
+            <div class="outp">产出：<b>文献表 + 2—3 个候选方案</b></div>
+          </div>
+          <div class="wk">
+            <div class="n">WEEK 03</div>
+            <h5>摸数据 · 试方法</h5>
+            <ul>
+              <li>真正下载一份样本，检查变量与缺失</li>
+              <li>画几张描述图，跑一次初步回归</li>
+              <li>问卷类：完成草案与小样本预测试</li>
+            </ul>
+            <div class="outp">产出：<b>数据说明 + 基础图表 + 可行性判断</b></div>
+          </div>
+          <div class="wk">
+            <div class="n">WEEK 04</div>
+            <h5>比方案 · 定题目</h5>
+            <ul>
+              <li>三个候选按明确性/数据/方法/工作量比较</li>
+              <li>写 1—2 页选题说明，约导师讨论</li>
+              <li>按意见修改题目与范围</li>
+            </ul>
+            <div class="outp">产出：<b>选题说明 + 最终题目 + 研究计划</b></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 -->
+      <section id="s6">
+        <div class="sec-head">
+          <span class="sec-no">06</span>
+          <h2>选题说明模板</h2>
+          <span class="sec-sub">1—2 页，交给导师</span>
+        </div>
+        <p class="sec-desc">
+          找导师时不要只带一个标题，也不要问“我写什么好”。带上这几块内容，讨论才有落点，也才显得你已经做过功课。
+        </p>
+        <div class="brief">
+          <ol>
+            <li><span><b>拟定题目与备选题目</b><em>一个主选 + 一个备选，说明为什么主选更合适。</em></span></li>
+            <li><span><b>研究问题</b><em>一两句话说清论文究竟回答什么，而不是研究哪个领域。</em></span></li>
+            <li><span><b>选题依据</b><em>现实意义 + 已有研究基础，指出你要补的那一小块空白。</em></span></li>
+            <li><span><b>数据方案</b><em>来源、研究对象、时期、核心变量、是否已取得、主要质量问题。</em></span></li>
+            <li><span><b>分析思路</b><em>每一步分析的目的、拟用方法、成立所需条件。</em></span></li>
+            <li><span><b>预期结论</b><em>可能得到哪些具体认识，不必拔高成“重大理论创新”。</em></span></li>
+            <li><span><b>主要困难与备选方案</b><em>关键变量缺失、样本不足时准备怎么调整。</em></span></li>
+            <li><span><b>进度安排</b><em>数据整理、分析、初稿、修改的时间节点。</em></span></li>
+          </ol>
+        </div>
+        <div class="no-print" style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+          <button class="btn" onclick="copyBrief()">复制选题说明框架</button>
+          <span style="font-size:12px;color:var(--ink3)">生成一份可直接填写的八段式大纲，粘到 Word 里再补内容</span>
+        </div>
+      </section>
+
+      <!-- 07 -->
+      <section id="s7">
+        <div class="sec-head">
+          <span class="sec-no">07</span>
+          <h2>九个高频误区</h2>
+          <span class="sec-sub">每年都有人踩</span>
+        </div>
+        <div class="pits">
+          <div class="pit"><b>只看热点，不看数据</b><p>热点往往数据难拿、文献已饱和。先问一句：<i>这个变量我用什么指标测？</i></p></div>
+          <div class="pit"><b>题目过大</b><p>“中国经济高质量发展研究”不是本科论文，是一本专著。缩到<i>一个地区、一个行业、一个群体</i>。</p></div>
+          <div class="pit"><b>方法先行</b><p>“我想用机器学习写论文”——先有问题，再判断方法。模型不是研究价值本身。</p></div>
+          <div class="pit"><b>只换地区年份</b><p>把别人的“江苏”改成“河南”不构成选题理由。要能说出<i>新在哪：数据、样本、口径还是视角</i>。</p></div>
+          <div class="pit"><b>因果说得太满</b><p>普通回归显著 ≠ 因果。识别策略撑不住，就把“促进”改成“关联”。</p></div>
+          <div class="pit"><b>概念测不出来</b><p>“高质量发展水平”“数字素养”必须有<i>明确的指标定义与合成方法</i>，否则分析无从下手。</p></div>
+          <div class="pit"><b>选题拖延</b><p>十月底还没定题，数据清洗就只能挤到寒假。压缩的是后面每一步的时间。</p></div>
+          <div class="pit"><b>预设结论</b><p>先认定“一定有正向作用”，结果不显著就换变量、换样本——这是数据操纵，不是研究。</p></div>
+          <div class="pit"><b>脱离统计专业</b><p>通篇文字评论、没有数据处理环节，会被判为“不像经济统计学论文”。</p></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>经济统计学专业本科毕业论文 · 选题自查工具　|　依据《选题指引》A/B 两版整理</span>
+    <span><b>提醒：</b>清单通过只代表“可以开始”，不代表“一定写得好”。数据、代码、引用必须真实可核查。</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 数据 ---------------- */
+  var GROUPS = [
+    { id:'A', no:'A', name:'研究问题', tip:'先把“要回答什么”说清楚', items:[
+      {id:'A1', w:3, gate:true, t:'我能用一两句话说清论文要回答的问题',
+       d:'不是“研究数字经济”，而是“数字普惠金融是否缩小了城乡消费差距”。说不清，说明范围还太大。'},
+      {id:'A2', w:2, t:'我能说明这个问题为什么值得研究',
+       d:'有现实背景、政策关切或文献缺口作为支撑，而不是“因为它是热点”。'},
+      {id:'A3', w:3, t:'研究对象、范围、时期都已经明确',
+       d:'写清是哪类主体（居民/企业/省份/行业）、哪个地区、哪几年。三者缺一，工作量就无法估算。'},
+      {id:'A4', w:2, t:'我判断过它属于哪类研究',
+       d:'描述比较 / 测度评价 / 关联分析 / 预测 / 因果。类型决定方法，也决定结论能说到什么程度。'},
+      {id:'A5', w:2, t:'我能说出论文最后会产出什么',
+       d:'一张测度表、一组回归结果、一条预测曲线、一份差异分解。产不出具体东西的题目通常是空的。'}
+    ]},
+    { id:'B', no:'B', name:'文献基础', tip:'知道别人做到哪一步', items:[
+      {id:'B1', w:2, t:'已检索并列出 15 篇以上相关文献，精读 8—10 篇',
+       d:'知网、万方、维普、PubScholar 均可。按“研究对象 + 核心问题 + 方法/数据”组合检索。'},
+      {id:'B2', w:2, t:'做过一张文献整理表',
+       d:'字段：研究问题、数据与样本、主要方法、主要结论、不足与可拓展处。写文献综述时可直接复用。'},
+      {id:'B3', w:3, t:'我能说清自己的切入点，而不只是换了地区或年份',
+       d:'新数据、新样本、新口径、新视角、新方法、新时期的政策变化——至少要占一条，并说明为什么有意义。'},
+      {id:'B4', w:2, t:'确认过没有高度雷同的已有研究，或有把握说明区别',
+       d:'如果已有人做过几乎一样的题目，换一个国家或省份并不足以构成新意。'}
+    ]},
+    { id:'C', no:'C', name:'数据可得性', tip:'经济统计学最硬的一道关', items:[
+      {id:'C1', w:3, gate:true, t:'核心变量都能找到可测量的指标',
+       d:'被解释变量、核心解释变量、主要控制变量，逐个写出“用什么指标、来自哪张表”。测不出来的概念不能进题目。'},
+      {id:'C2', w:3, gate:true, t:'数据来源明确，而且我现在就有权使用',
+       d:'知道数据库名字 ≠ 拿到数据。学校是否购买、是否需要申请、审批要多久，都要提前确认。'},
+      {id:'C3', w:3, gate:true, t:'已经真正下载了一份样本，打开看过变量和缺失',
+       d:'这一步能把 80% 的“看起来能做”变成“确实能做”或“做不了”。只看网页介绍不算。'},
+      {id:'C4', w:3, gate:true, t:'样本长度和宽度足以支撑拟用的方法',
+       d:'时间序列要够长，面板要够多截面，微观数据要够多观测。样本太短，模型跑不出可信结果。'},
+      {id:'C5', w:2, t:'口径一致、年份连续，我知道缺失和异常怎么处理',
+       d:'注意行政区划调整、行业分类修订、统计口径变化。口径断裂会让前后期不可比。'},
+      {id:'C6', w:2, t:'清洗、匹配、计算的工作量在我可控范围内',
+       d:'粗估需要多少小时。若需要手工录入或跨库匹配，往往比预想多三倍时间。'},
+      {id:'C7', w:2, t:'若用问卷：已完成草案和预测试，能接触到调查对象',
+       d:'便利样本只能得出有限结论。样本量与代表性要在设计阶段就想清楚。'}
+    ]},
+    { id:'D', no:'D', name:'方法匹配', tip:'方法服务问题，不是反过来', items:[
+      {id:'D1', w:3, t:'所选方法能够直接回答我的研究问题',
+       d:'问差异就用差异检验或分解，问预测就用时间序列，问因果才需要识别策略。不要用复杂模型包装简单问题。'},
+      {id:'D2', w:3, gate:true, t:'我学过或能在一个月内掌握这个方法',
+       d:'并且能解释它的适用条件与局限。超出能力范围的模型，答辩时第一个问题就会卡住。'},
+      {id:'D3', w:2, t:'我能用软件跑通（Stata / R / Python / SPSS / EViews）',
+       d:'知道大致命令与流程，遇到报错能自己查。软件不熟可以补，但要算进时间成本。'},
+      {id:'D4', w:3, t:'我分得清相关与因果，题目表述与证据强度一致',
+       d:'只做普通回归，就不要写“促进”“导致”。改用“关联”“相关性分析”，或补上识别设计。'},
+      {id:'D5', w:2, t:'已经做过一次初步分析，验证方法能跑通',
+       d:'哪怕只是描述统计加一张图。目的是检验可行性，不是找显著结果。'}
+    ]},
+    { id:'E', no:'E', name:'题目表述', tip:'每个词都要有分析支撑', items:[
+      {id:'E1', w:1, t:'题目控制在 25 字左右，必要信息放到副标题',
+       d:'以学院要求为准。“——基于省级面板数据的实证分析”这类副标题是标准做法。'},
+      {id:'E2', w:3, t:'题目的每个词都有对应的分析内容',
+       d:'写“预测”就要做预测效果评价，写“动态演变”就要有长时期数据，写“机制”就要有路径证据。'},
+      {id:'E3', w:2, t:'没有“浅谈 / 浅析 / 初探 / 略论 / 之我见”，也没有问句',
+       d:'这类词会直接削弱论文的分量；问句不符合学术题目的陈述习惯。'},
+      {id:'E4', w:3, t:'题目里有具体对象和范围，没有“中国 / 我国经济”这类过大表述',
+       d:'“中国经济增长研究”无法完成。加上地区、行业、群体或时期，题目才成立。'},
+      {id:'E5', w:2, t:'备有 2—3 个备选题目，并能说出各自优劣',
+       d:'只准备一个题目，等于把风险全押在一处。数据一旦出问题就没有退路。'}
+    ]},
+    { id:'F', no:'F', name:'时间与可行性', tip:'能不能按时写完', items:[
+      {id:'F1', w:2, t:'读过学院的论文管理办法、开题要求和评分标准',
+       d:'确认是否必须实证、结构要求、字数要求、各节点时间。规则读错，后面全要返工。'},
+      {id:'F2', w:2, t:'已排出数据—分析—初稿—修改的时间表',
+       d:'至少留四周做选题准备。倒推法：从答辩日往前排，给修改留出两周。'},
+      {id:'F3', w:3, t:'即使结果与预期相反，论文仍然写得完',
+       d:'不显著、符号相反、结论不支持假设，都应该有讨论空间。做不到这点，说明题目绑死了结论。'},
+      {id:'F4', w:2, t:'主要困难已列出，并各有备选方案',
+       d:'关键变量缺失、样本不足、方法跑不通时，分别准备怎么缩小范围或换指标。'}
+    ]},
+    { id:'G', no:'G', name:'学术规范', tip:'底线问题', items:[
+      {id:'G1', w:3, gate:true, t:'数据、代码、引用都可追溯，不用来路不明的数据',
+       d:'二手数据要能说明原始出处与获取方式。网络流传的“整理版数据”风险极高。'},
+      {id:'G2', w:2, t:'不涉及敏感、保密或个人隐私数据',
+       d:'用微观调查数据要遵守使用协议；自己做问卷要有知情同意与匿名处理。'},
+      {id:'G3', w:2, t:'选题说明已整理好，准备带着它去找导师',
+       d:'带上文献表、数据样本、初步图表，比只带一个标题有效得多。'}
+    ]}
+  ];
+
+  var ALL = [];
+  GROUPS.forEach(function(g){ g.items.forEach(function(it){ it.g = g.id; ALL.push(it); }); });
+  var TOTAL_W = ALL.reduce(function(s,i){ return s + i.w; }, 0);
+  var GATES = ALL.filter(function(i){ return i.gate; });
+
+  var STORE = 'econstat_topic_check_v1';
+  var state = { checks:{}, title:'', cands:[], build:{} };
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORE);
+      if(raw){ var o = JSON.parse(raw); state.checks = o.checks||{}; state.title=o.title||''; state.cands=o.cands||[]; state.build=o.build||{}; }
+    }catch(e){}
+  }
+  load();
+  function save(){
+    try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){}
+  }
+
+  /* ---------------- 渲染清单 ---------------- */
+  var clEl = document.getElementById('checklist');
+  var html = '';
+  GROUPS.forEach(function(g){
+    html += '<div class="group" data-g="'+g.id+'">';
+    html += '  <div class="ghead"><div class="gno">'+g.no+'</div><h4>'+g.name+'</h4>';
+    html += '    <span class="gt">'+g.tip+'</span>';
+    html += '    <div class="gp"><span data-gp="'+g.id+'">0/'+g.items.length+'</span>';
+    html += '      <div class="track"><i data-gb="'+g.id+'"></i></div></div></div>';
+    html += '  <div class="gbody">';
+    g.items.forEach(function(it){
+      html += '<div class="item" data-item="'+it.id+'">';
+      html += '  <input type="checkbox" id="cb_'+it.id+'">';
+      html += '  <label for="cb_'+it.id+'"><div class="t">'+it.t+(it.gate?'<span class="gate">卡口</span>':'')+'</div>';
+      html += '  <div class="d">'+it.d+'</div></label>';
+      html += '</div>';
+    });
+    html += '  </div></div>';
+  });
+  clEl.innerHTML = html;
+
+  ALL.forEach(function(it){
+    var cb = document.getElementById('cb_'+it.id);
+    cb.checked = !!state.checks[it.id];
+    cb.addEventListener('change', function(){
+      state.checks[it.id] = cb.checked;
+      update(); save();
+    });
+  });
+
+  /* ---------------- 进度与结论 ---------------- */
+  function update(){
+    var got = 0, cnt = 0, gateOk = 0;
+    ALL.forEach(function(it){
+      if(state.checks[it.id]){ got += it.w; cnt++; }
+    });
+    GATES.forEach(function(it){ if(state.checks[it.id]) gateOk++; });
+
+    var pct = Math.round(got / TOTAL_W * 100);
+    document.getElementById('pct').textContent = pct;
+    document.getElementById('hcount').textContent = cnt+' / '+ALL.length;
+    document.getElementById('hbar').style.width = pct+'%';
+    document.getElementById('progSub').textContent = (ALL.length-cnt)+' 项待核对';
+    document.getElementById('gateDone').textContent = gateOk;
+    document.getElementById('gateSub').textContent = gateOk===GATES.length ? '卡口全部通过，可以进入开题' : '还有 '+(GATES.length-gateOk)+' 个卡口没通过';
+
+    ALL.forEach(function(it){
+      var row = document.querySelector('[data-item="'+it.id+'"]');
+      if(row) row.classList.toggle('done', !!state.checks[it.id]);
+    });
+
+    GROUPS.forEach(function(g){
+      var c = g.items.filter(function(i){ return state.checks[i.id]; }).length;
+      var t = document.querySelector('[data-gp="'+g.id+'"]');
+      var b = document.querySelector('[data-gb="'+g.id+'"]');
+      if(t) t.textContent = c+'/'+g.items.length;
+      if(b) b.style.width = (c/g.items.length*100)+'%';
+    });
+
+    var v = document.getElementById('verdict');
+    var badge = document.getElementById('vBadge');
+    var title = document.getElementById('vTitle');
+    var text  = document.getElementById('vText');
+    var gEl   = document.getElementById('vGates');
+    var stText = document.getElementById('stateText');
+    var stSub = document.getElementById('stateSub');
+
+    var miss = GATES.filter(function(i){ return !state.checks[i.id]; });
+    gEl.innerHTML = miss.slice(0,6).map(function(i){
+      var t = i.t.length>13 ? i.t.slice(0,13)+'…' : i.t;
+      return '<span>'+i.id+'　'+t+'</span>';
+    }).join('');
+
+    if(miss.length>0){
+      v.className = 'verdict blocked';
+      badge.textContent = '未通过';
+      title.textContent = '还有 '+miss.length+' 个卡口没解决，先别急着定题';
+      text.textContent = '这些项目不是“建议做到”，而是题目能否成立的前提。尤其先处理数据类：拿不到数据，后面的方法、写作都无从谈起。';
+      stText.textContent = '未就绪';
+      stSub.textContent = '先补齐 '+miss.length+' 个关键项';
+      document.getElementById('stGate').className = 'stat bad';
+      document.getElementById('stProg').className = 'stat warn';
+    }else if(pct>=85){
+      v.className = 'verdict ready';
+      badge.textContent = '可以定题';
+      title.textContent = '条件齐了，把题目写进选题说明，约导师';
+      text.textContent = '带着文献表、数据样本和初步图表去讨论。此时要问的是“范围还需不需要再收”，而不是“我该写什么”。';
+      stText.textContent = '可定题';
+      stSub.textContent = '建议一周内完成选题说明';
+      document.getElementById('stGate').className = 'stat ok';
+      document.getElementById('stProg').className = 'stat ok';
+    }else if(pct>=65){
+      v.className = 'verdict almost';
+      badge.textContent = '基本可行';
+      title.textContent = '方向没问题，补齐剩下几项就可以定';
+      text.textContent = '重点关注 E 组（表述）和 F 组（时间）。表述问题是改文字就能解决的，别拖到最后。';
+      stText.textContent = '待补齐';
+      stSub.textContent = '完成度 '+pct+'%，接近可定题';
+      document.getElementById('stGate').className = 'stat ok';
+      document.getElementById('stProg').className = 'stat warn';
+    }else{
+      v.className = 'verdict blocked';
+      badge.textContent = '准备中';
+      title.textContent = '还在选题准备阶段，别急着拟题目';
+      text.textContent = '先把 C 组的数据摸清楚，再回到 A 组把问题收窄。题目是最后一步的产物，不是起点。';
+      stText.textContent = '准备中';
+      stSub.textContent = '完成度 '+pct+'%，先做数据核实';
+      document.getElementById('stGate').className = miss.length? 'stat bad':'stat warn';
+      document.getElementById('stProg').className = 'stat warn';
+    }
+  }
+
+  /* ---------------- 题目诊断 ---------------- */
+  var SAMPLE = '数字普惠金融对城乡居民消费差距的影响研究——基于省级面板数据的实证分析';
+
+  function fillSample(){
+    document.getElementById('titleInput').value = SAMPLE;
+    state.title = SAMPLE; save(); diagnose();
+  }
+
+  function diagnose(){
+    var raw = document.getElementById('titleInput').value.trim();
+    var box = document.getElementById('findings');
+    var main = raw.split(/——|—|--/)[0].trim();
+    var len = main.replace(/\s/g,'').length;
+    document.getElementById('mainLen').textContent = len;
+
+    if(!raw){
+      document.getElementById('ring').style.background = 'conic-gradient(var(--accent) 0deg,#eae7dd 0deg)';
+      document.getElementById('ringNum').innerHTML = '0<i>分</i>';
+      document.getElementById('scoreTitle').textContent = '等待输入';
+      document.getElementById('scoreDesc').textContent = '输入题目后自动给出表述规范度评分。';
+      box.innerHTML = '<li class="empty">还没有内容。可以先点“填入示例”看看诊断结果长什么样。</li>';
+      box.classList.remove('fade');
+      return;
+    }
+
+    var F = [];
+    var score = 62;
+
+    function add(level, text){ F.push({level:level, text:text}); }
+
+    // 长度
+    if(len===0){ add('bad','题目为空。'); }
+    else if(len>32){ add('bad','主标题 '+len+' 字，明显偏长。把限定条件移到副标题，或删掉“研究”“分析”之外的修饰语。'); score-=16; }
+    else if(len>25){ add('warn','主标题 '+len+' 字，略超 25 字。检查是否有可删的修饰词。'); score-=7; }
+    else if(len<10){ add('warn','主标题只有 '+len+' 字，信息量可能不足：对象、问题、范围至少要交代两个。'); score-=6; }
+    else { add('good','主标题 '+len+' 字，长度合适。'); score+=6; }
+
+    // 禁用词
+    var forbid = /(浅谈|浅析|浅论|初探|略论|刍议|之我见|探析|简析|小议)/;
+    if(forbid.test(raw)){ add('bad','出现“浅谈/浅析/初探”一类词语。这类词会削弱论文分量，直接删掉。'); score-=18; }
+
+    // 问句
+    if(/[?？]/.test(raw) || /(为什么|如何|能否|是不是|吗$)/.test(main)){
+      add('bad','题目采用问句或疑问式表达。学术题目用陈述句，把问题改成“××对××的影响研究”。'); score-=15;
+    }
+
+    // 大词
+    var bigPhrase = /(中国经济|我国经济|宏观经济|经济发展研究|高质量发展研究|经济增长研究|问题研究$|发展研究$)/;
+    if(bigPhrase.test(main)){ add('warn','“××发展研究”“××问题研究”这类表述过于笼统，读者看不出你要回答什么。'); score-=9; }
+
+    // 范围限定
+    var scopeRe = /(省|市|区|县|地区|区域|城市|农村|城镇|城乡|行业|产业|企业|上市|居民|家庭|农户|女性|老年|青少年|长三角|珠三角|京津冀|城市群|板块|社区|学校|医院)/;
+    var countryRe = /(中国|我国|全国|全球|世界)/;
+    var hasScope = scopeRe.test(main);
+    var onlyCountry = !hasScope && countryRe.test(main);
+    var hasTime = /(19|20)\d{2}/.test(raw) || /(面板|时间序列|跨期|动态|长期|短期)/.test(raw);
+    if(onlyCountry){
+      add('warn','只写到“中国/我国”这一层，没有落到具体对象。宏大题目写不深，建议加上地区、行业或群体限定。'); score-=10;
+    }else if(!hasScope){
+      add('warn','没看到研究对象或地区限定。“对谁研究”不明确，数据范围就无法界定。'); score-=9;
+    }else{
+      add('good','有明确的研究对象或地区范围。'); score+=5;
+    }
+    if(!hasTime){ add('info','题目里没有时期信息。若时间跨度是研究设计的一部分（如政策前后），建议写进副标题。'); }
+
+    // 因果表述
+    var causal = /(影响|效应|作用|促进|抑制|推动|带动|导致|驱动|提升)/;
+    var identified = /(双重差分|DID|工具变量|断点回归|倾向得分|PSM|准自然实验|因果)/;
+    if(causal.test(main)){
+      if(identified.test(raw)){ add('good','使用“影响/效应”并有识别策略（'+ (raw.match(identified)||[''])[0] +'），表述与证据强度匹配。'); score+=6; }
+      else { add('info','出现“影响/效应”，但没有识别策略。保留“影响”可以，但正文避免“促进/导致”这类因果断言，或改说“关联”。'); score-=3; }
+    }
+
+    // 机制/路径/对策
+    if(/(机制|路径|对策|政策建议)/.test(raw)){
+      add('warn','出现“机制/路径/对策”。这要求有理论依据和路径证据，仅有一组回归结果撑不住，建议删除或降级为正文讨论。'); score-=9;
+    }
+
+    // 基于模型
+    if(/基于.{0,12}(模型|方法)/.test(raw)){
+      add('info','“基于××模型”只在模型选择本身有研究价值时才需要突出。多数情况下，副标题写数据与方法更合适。');
+      score-=2;
+    }
+
+    // 良好信号
+    var task = /(测度|评价|差异|预测|比较|核算|编制|指数|分解|关联|影响|效应)/;
+    if(task.test(main)){ add('good','题目包含明确的研究任务（测度/评价/差异/预测/影响），看得出要做什么。'); score+=7; }
+    else { add('warn','看不出具体研究任务。补上“测度”“差异分析”“预测”等动词，题目才落地。'); score-=10; }
+
+    if(/——|—/.test(raw)){ add('good','使用了副标题，可以把数据、方法、时期放到副标题里，主标题更干净。'); score+=5; }
+    else { add('info','没有副标题。若主标题已接近 25 字，可考虑把数据或方法移到“——基于……”中。'); }
+
+    var dataWord = /(面板数据|时间序列|截面数据|微观数据|调查数据|省际|地级市|县级|样本|CHFS|CFPS|CGSS|CHARLS|投入产出)/;
+    if(dataWord.test(raw)){ add('good','副标题交代了数据类型或样本范围，可行性一眼可见。'); score+=5; }
+
+    if(/(研究|分析)$/.test(main)){ add('good','以“研究/分析”收尾，符合学术题目惯例。'); score+=3; }
+    else if(len>0){ add('info','题目未以“研究/分析/测度/评价”收尾，确认这是有意为之。'); }
+
+    score = Math.max(0, Math.min(100, score));
+
+    var ring = document.getElementById('ring');
+    var deg = score*3.6;
+    var col = score>=80 ? '#1c7a58' : (score>=60 ? '#0e5c4a' : (score>=40 ? '#bf7a17' : '#b23a2c'));
+    ring.style.background = 'conic-gradient('+col+' 0deg,'+col+' '+deg+'deg,#eae7dd '+deg+'deg)';
+    document.getElementById('ringNum').innerHTML = score+'<i>分</i>';
+
+    var st, sd;
+    if(score>=82){ st='表述基本规范'; sd='可以拿去和导师讨论范围了。重点转向数据和方法是否撑得住题目。'; }
+    else if(score>=62){ st='需要小幅修改'; sd='结构没问题，按下面提示逐条改，通常一两轮就能到位。'; }
+    else if(score>=40){ st='问题较明显'; sd='建议按“对象 + 研究任务 + 范围”的结构重写一遍，不要在原句上修补。'; }
+    else{ st='建议重写'; sd='当前题目更像一个研究方向，还不是可执行的研究题目。'; }
+    document.getElementById('scoreTitle').textContent = st;
+    document.getElementById('scoreDesc').textContent = sd;
+
+    var order = {bad:0, warn:1, good:2, info:3};
+    F.sort(function(a,b){ return order[a.level]-order[b.level]; });
+    var labels = {bad:'必改', warn:'注意', good:'通过', info:'提示'};
+    box.innerHTML = F.map(function(f){
+      return '<li class="f-'+f.level+'"><span class="lab">'+labels[f.level]+'</span><span>'+f.text+'</span></li>';
+    }).join('');
+    box.scrollTop = 0;
+    syncFade();
+  }
+
+  var findingsEl = document.getElementById('findings');
+  function syncFade(){
+    var el = findingsEl;
+    el.classList.toggle('fade', el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+  }
+  findingsEl.addEventListener('scroll', syncFade, {passive:true});
+
+  var ti = document.getElementById('titleInput');
+  ti.value = state.title || '';
+  ti.addEventListener('input', function(){ state.title = ti.value; save(); diagnose(); });
+  diagnose();
+
+  /* ---------------- 候选比较 ---------------- */
+  var DIMS = [
+    {k:'clarity', w:.25, name:'明确性'},
+    {k:'data',    w:.25, name:'数据'},
+    {k:'method',  w:.20, name:'方法'},
+    {k:'work',    w:.15, name:'工作量'},
+    {k:'diff',    w:.15, name:'困难', rev:true}
+  ];
+
+  if(!state.cands || !state.cands.length){
+    state.cands = [
+      {t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}},
+      {t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}},
+      {t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}}
+    ];
+  }
+  while(state.cands.length<3){ state.cands.push({t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}}); }
+
+  function renderCands(){
+    var tb = document.getElementById('candBody');
+    tb.innerHTML = state.cands.map(function(c, i){
+      var cells = DIMS.map(function(d){
+        var cur = c.s[d.k] || 3;
+        var btns = '';
+        for(var v=1;v<=5;v++){
+          btns += '<button data-c="'+i+'" data-d="'+d.k+'" data-v="'+v+'" class="'+(cur===v?'on':'')+'">'+v+'</button>';
+        }
+        return '<td><div class="scale">'+btns+'</div></td>';
+      }).join('');
+      return '<tr>'+
+        '<td class="c-title"><input type="text" data-ct="'+i+'" value="'+esc(c.t)+'" placeholder="题目 '+(i+1)+'"></td>'+
+        cells+
+        '<td><div class="totbox"><span class="tot" id="tot'+i+'">0.0</span><span class="rank" id="rk'+i+'">—</span></div></td>'+
+      '</tr>';
+    }).join('');
+
+    tb.querySelectorAll('.scale button').forEach(function(b){
+      b.addEventListener('click', function(){
+        var i = +b.dataset.c, k = b.dataset.d, v = +b.dataset.v;
+        state.cands[i].s[k] = v; save(); renderCands();
+      });
+    });
+    tb.querySelectorAll('input[data-ct]').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        state.cands[+inp.dataset.ct].t = inp.value; save(); calcCands();
+      });
+    });
+    calcCands();
+  }
+
+  function calcCands(){
+    var scores = state.cands.map(function(c){
+      var s = 0;
+      DIMS.forEach(function(d){ var v = c.s[d.k]||3; if(d.rev) v = 6-v; s += v*d.w; });
+      return s;
+    });
+    var filled = [];
+    state.cands.forEach(function(c,i){ if(c.t.trim()) filled.push(i); });
+    var max = 0, topCount = 0;
+    filled.forEach(function(i){ if(scores[i]>max) max = scores[i]; });
+    if(filled.length) topCount = filled.filter(function(i){ return Math.abs(scores[i]-max)<1e-9; }).length;
+
+    state.cands.forEach(function(c,i){
+      var t = document.getElementById('tot'+i), r = document.getElementById('rk'+i);
+      if(t) t.textContent = scores[i].toFixed(1);
+      if(!r) return;
+      if(!c.t.trim()){ r.textContent='—'; r.className='rank'; return; }
+      var isTop = Math.abs(scores[i]-max)<1e-9;
+      if(isTop && topCount===1){ r.textContent='推荐'; r.className='rank top'; }
+      else if(isTop){ r.textContent='并列'; r.className='rank top'; }
+      else { r.textContent='备选'; r.className='rank'; }
+    });
+  }
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+  /* ---------------- 收敛器 ---------------- */
+  var B_IDS = ['bDir','bTask','bX','bY','bObj','bTime','bData','bMethod'];
+  function readBuild(){
+    var o = {};
+    B_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) o[id]=el.value.trim(); });
+    return o;
+  }
+  function applyBuild(){
+    var b = state.build || {};
+    B_IDS.forEach(function(id){ var el=document.getElementById(id); if(el && b[id]) el.value = b[id]; });
+  }
+  function genDrafts(){
+    var b = readBuild();
+    state.build = b; save();
+    var out = document.getElementById('drafts');
+    var obj = b.bObj || '', time = b.bTime || '', data = b.bData || '', meth = b.bMethod || '';
+    var A = b.bX || '', B = b.bY || '';
+    var task = b.bTask || 'impact';
+    var tail = '';
+    if(time && data) tail = '——基于'+time+data.replace(/^(基于)/,'')+'的实证分析';
+    else if(data) tail = '——基于'+data.replace(/^(基于)/,'')+'的实证分析';
+    else if(time) tail = '——基于'+time+'数据的实证分析';
+    else if(meth) tail = '——基于'+meth.replace(/^(基于)/,'')+'的实证分析';
+
+    var d1='', d2='';
+    if(task==='impact'){
+      if(!A || !B){ out.innerHTML = '<div class="ph">影响类题目至少要填“核心解释变量 A”和“被解释变量 B”。</div><button class="btn no-print" onclick="copyDrafts()">复制草案</button>'; return; }
+      d1 = A+'对'+B+'的影响研究'+tail;
+      d2 = (obj?obj:'')+A+'与'+B+'的关联分析'+(time?'（'+time+'）':'');
+    }else if(task==='measure'){
+      if(!B || !obj){ out.innerHTML = '<div class="ph">测度类题目需要填“被解释变量 B（测度对象）”和“研究对象”。</div><button class="btn no-print" onclick="copyDrafts()">复制草案</button>'; return; }
+      d1 = obj+B+'水平的测度与评价研究'+(time?'——基于'+time+'数据':'');
+      d2 = obj+B+'综合评价及其'+ (b.bX? '与'+b.bX+'的关系':'区域差异') +'分析';
+    }else if(task==='diff'){
+      if(!B){ out.innerHTML = '<div class="ph">差异类题目至少需要填“被解释变量 B”。</div><button class="btn no-print" onclick="copyDrafts()">复制草案</button>'; return; }
+      d1 = (obj?obj:'')+B+'的差异及其变化研究'+(time?'——基于'+time+'数据':'');
+      d2 = (obj?obj:'')+B+'的区域差异分解与比较研究';
+    }else{
+      if(!B){ out.innerHTML = '<div class="ph">预测类题目至少需要填“被解释变量 B”。</div><button class="btn no-print" onclick="copyDrafts()">复制草案</button>'; return; }
+      d1 = (obj?obj:'')+B+'的预测研究'+(meth?'——基于'+meth.replace(/^(基于)/,''):'');
+      d2 = '基于'+(meth||'时间序列模型')+'的'+(obj?obj:'')+B+'预测与比较分析';
+    }
+
+    function block(t){
+      var main = t.split(/——|—/)[0].replace(/\s/g,'');
+      return '<div class="draft">'+t+'</div><div class="meta">主标题 '+main.length+' 字'+(main.length>25?' · 偏长，建议压缩':'')+'</div>';
+    }
+    out.innerHTML = block(d1)+block(d2)+'<div class="meta" style="margin-top:8px">生成结果只是骨架，别直接提交。先用上面的诊断器检查，再和导师确认范围。</div>';
+  }
+  B_IDS.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){ el.addEventListener('input', genDrafts); el.addEventListener('change', genDrafts); }
+  });
+
+  function copyDrafts(){
+    var t = Array.prototype.map.call(document.querySelectorAll('#drafts .draft'), function(d){ return d.textContent; }).join('\n');
+    if(!t){ toast('还没有可复制的内容'); return; }
+    copyText(t);
+  }
+
+  function copyBrief(){
+    var b = readBuild();
+    var lines = [
+      '论文选题说明（草稿）','',
+      '一、拟定题目',
+      '主选：' + (document.getElementById('titleInput').value.trim() || ''),
+      '备选：',
+      '',
+      '二、研究问题',
+      '（用一两句话说清：用什么数据、研究哪些对象、回答什么具体问题）','',
+      '三、选题依据',
+      '现实背景与意义：',
+      '已有研究基础：',
+      '我准备补充的空白：','',
+      '四、数据方案',
+      '数据来源：' + (b.bData || ''),
+      '研究对象：' + (b.bObj || ''),
+      '样本时期：' + (b.bTime || ''),
+      '核心变量：被解释变量 = ' + (b.bY || '') + '；核心解释变量 = ' + (b.bX || '') + '；控制变量 = ',
+      '获取情况：',
+      '主要质量问题（缺失、口径、样本量）：','',
+      '五、分析思路',
+      '第一步：目的 / 方法 / 成立条件',
+      '第二步：',
+      '第三步：','',
+      '六、预期结论',
+      '（可能得到的具体认识，不必拔高为理论创新）','',
+      '七、主要困难与备选方案',
+      '',
+      '八、进度安排',
+      '数据整理：',
+      '实证分析：',
+      '初稿完成：',
+      '修改定稿：'
+    ];
+    copyText(lines.join('\n'));
+  }
+  function copyText(t){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ toast('已复制到剪贴板'); }, function(){ fallbackCopy(t); });
+    }else{ fallbackCopy(t); }
+  }
+  function fallbackCopy(t){
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('已复制到剪贴板'); }catch(e){ toast('复制失败，请手动选择'); }
+    document.body.removeChild(ta);
+  }
+  var tTimer;
+  function toast(msg){
+    var el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('on');
+    clearTimeout(tTimer); tTimer = setTimeout(function(){ el.classList.remove('on'); }, 1800);
+  }
+
+  /* ---------------- 目录高亮 ---------------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var y = window.scrollY + 130, idx = 0;
+    secs.forEach(function(s,i){ if(s && s.offsetTop <= y) idx = i; });
+    links.forEach(function(a,i){ a.classList.toggle('active', i===idx); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  function resetAll(){
+    if(!confirm('确定清空所有勾选与填写内容？此操作无法撤销。')) return;
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    state = { checks:{}, title:'', cands:[], build:{} };
+    ALL.forEach(function(it){ var cb = document.getElementById('cb_'+it.id); if(cb) cb.checked=false; });
+    document.getElementById('titleInput').value = '';
+    state.cands = [
+      {t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}},
+      {t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}},
+      {t:'', s:{clarity:3,data:3,method:3,work:3,diff:3}}
+    ];
+    B_IDS.forEach(function(id){ var el=document.getElementById(id); if(el && el.tagName==='INPUT') el.value=''; if(el && el.tagName==='SELECT') el.selectedIndex=0; });
+    renderCands(); diagnose(); genDrafts(); update(); toast('已重置');
+  }
+
+  /* ---------------- 初始化 ---------------- */
+  // 重新应用勾选（load 在渲染之前已执行，这里做一次状态回填）
+  ALL.forEach(function(it){
+    var cb = document.getElementById('cb_'+it.id);
+    if(cb) cb.checked = !!state.checks[it.id];
+  });
+  ti.value = state.title || '';
+  applyBuild();
+  renderCands();
+  diagnose();
+  genDrafts();
+  update();
+
+  window.resetAll = resetAll;
+  window.fillSample = fillSample;
+  window.copyDrafts = copyDrafts;
+  window.copyBrief = copyBrief;
+})();
+</script>
+</body>
+</html>
