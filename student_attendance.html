@@ -656,7 +656,10 @@
 
             <!-- 当次考勤区域 -->
             <div id="todayAttendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-4">
-                <h2 class="text-lg font-bold mb-3">当次考勤</h2>
+                <div class="flex gap-2 mb-3" role="group" aria-label="考勤范围">
+                    <button type="button" id="currentAttendanceViewBtn" class="px-4 py-2 rounded-lg font-bold bg-blue-500 text-white" aria-pressed="true">当次考勤</button>
+                    <button type="button" id="historicalAttendanceViewBtn" class="px-4 py-2 rounded-lg font-bold bg-gray-100 text-neutral" aria-pressed="false">历次考勤</button>
+                </div>
                 <!-- 当次考勤汇总数据 -->
                 <div id="todaySummary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                     <div class="summary-card border-attendance-present/30 bg-attendance-present/5">
@@ -819,6 +822,7 @@
         let remainingStudents = []; // 剩余未抽取的学生索引
         let currentStudentIndex = -1; // 当前学生索引
         let attendancePeriod = null;
+        let attendanceView = 'current'; // 名单显示范围，默认当次
 
         // DOM 元素
         const excelFileInput = document.getElementById('excelFile');
@@ -1408,6 +1412,8 @@
             resetStatsBtn.addEventListener('click', clearCacheAndRefresh);
             exportStatsBtn.addEventListener('click', exportStatsData);
             historyToggleBtn.addEventListener('click', toggleHistoryAttendance);
+            document.getElementById('currentAttendanceViewBtn').addEventListener('click', () => setAttendanceView('current'));
+            document.getElementById('historicalAttendanceViewBtn').addEventListener('click', () => setAttendanceView('history'));
             visualizeBtn.addEventListener('click', openVisualizeModal);
             visualizeTabs.forEach(btn => {
                 btn.addEventListener('click', () => switchVisualizeTab(btn.dataset.tab));
@@ -1990,12 +1996,29 @@
             updateTodayNameLists();
         }
 
-        // 更新当次异常人员名单（名字前带序号，名字后显示对应状态的累计次数）
+        function setAttendanceView(view) {
+            attendanceView = view;
+            const isHistory = view === 'history';
+            [['currentAttendanceViewBtn', !isHistory], ['historicalAttendanceViewBtn', isHistory]].forEach(([id, active]) => {
+                const button = document.getElementById(id);
+                button.setAttribute('aria-pressed', String(active));
+                button.classList.toggle('bg-blue-500', active);
+                button.classList.toggle('text-white', active);
+                button.classList.toggle('bg-gray-100', !active);
+                button.classList.toggle('text-neutral', !active);
+            });
+            document.getElementById('todaySummary').classList.toggle('hidden', isHistory);
+            document.getElementById('todayAttendanceTable').parentElement.classList.toggle('hidden', isHistory);
+            updateTodayNameLists();
+        }
+
+        // 按所选范围显示异常人员名单，方括号内为对应状态的累计次数
         function updateTodayNameLists() {
             // 每个名单标题带上当前北京时间日期（与页面顶部一致）
             const period = getAttendancePeriod();
             const startHour = Number(period.slice(11, 13));
-            const dateText = `（${period.slice(0, 10)} ${String(startHour).padStart(2, '0')}:00–${String(startHour + 6).padStart(2, '0')}:00）`;
+            const isHistory = attendanceView === 'history';
+            const dateText = isHistory ? '（历次累计）' : `（${period.slice(0, 10)} ${String(startHour).padStart(2, '0')}:00–${String(startHour + 6).padStart(2, '0')}:00）`;
             document.querySelectorAll('.name-list-date').forEach(el => {
                 el.textContent = dateText;
             });
@@ -2007,13 +2030,13 @@
             lists.forEach(item => {
                 const names = [];
                 nameData.forEach((name, index) => {
-                    if ((todayAttendance[name]?.[item.status] || 0) > 0) {
+                    if (((isHistory ? attendanceStats : todayAttendance)[name]?.[item.status] || 0) > 0) {
                         const count = attendanceStats[name]?.[item.status] || 0;
                         names.push(`${index + 1}. ${name}[${count}]`);
                     }
                 });
                 if (names.length === 0) {
-                    item.el.innerHTML = `<span class="name-list-empty">${item.emptyText}</span>`;
+                    item.el.innerHTML = `<span class="name-list-empty">${isHistory ? `历次无${item.status}记录` : item.emptyText}</span>`;
                 } else {
                     item.el.innerHTML = names.map(n => `<span class="name-list-item">${escapeHtml(n)}</span>`).join('');
                 }
