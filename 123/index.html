@@ -875,7 +875,11 @@
       <section class="math-card" aria-labelledby="mathTitle">
         <div class="math-header">
           <h2 id="mathTitle"><i class="fas fa-calculator" aria-hidden="true"></i> 加减乘除</h2>
+          <button id="reset-cache-btn" class="math-pill-btn" type="button" title="清除本页保存的成绩、错题和练习进度后刷新">
+            <i class="fas fa-refresh" aria-hidden="true"></i> 清除缓存并刷新
+          </button>
         </div>
+        <p id="storage-status" class="hidden" role="status" style="font-size:0.85rem;color:#d6342a;margin-bottom:15px"></p>
 
         <!-- 运算类型选择（选项按钮内联显示在对应模式按钮右侧） -->
         <div class="math-mode-switch">
@@ -1177,6 +1181,122 @@
       const nextQuestionBtn = $('next-question-btn');
       const roundBannerEl = $('round-banner');
       const clearWrongBtn = $('clear-wrong-btn');
+
+      // 使用独立键，避免与同域的考勤页等页面互相覆盖或清除。
+      const STORAGE_KEY = 'xuefulu.mathPractice.v1';
+      let clearingStorage = false;
+      function reportStorageError(error) {
+        console.error('练习数据存储失败:', error);
+        const status = $('storage-status');
+        status.textContent = '本地存储不可用，练习可以继续，但进度可能无法保存。';
+        status.classList.remove('hidden');
+      }
+
+      function saveProgress() {
+        if (clearingStorage) return;
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            version: 1,
+            state: { currentQuestion, lastArithmeticQuestion, lastMultiplicationQuestion, lastDivisionQuestion, lastModuloQuestion, subModeIndex, isAddition, isArithmeticMode, isNineNineMultiplicationMode, isArithmeticMixed, isMultDivMixed, isNineNineOrderMode, currentNineNineIndex, nineNinePool, nineNinePoolIndex, multDivPool, multDivPoolIndex, correctCount, totalCount, wrongQuestions, questionAttempted, isFillMode, questionSolved, selectedMaxNumber, nineRoundCorrect, nineRoundTotal, divDirectionUsed: [...divDirectionUsed] },
+            ui: {
+              questionVisible: !questionCard.classList.contains('hidden'),
+              fillAnswer: fillAnswer.value,
+              fillRemainder: fillRemainder.value,
+              options: [...optionsContainer.querySelectorAll('button')].map(button => ({
+                text: button.textContent, dataset: { ...button.dataset },
+                wrong: button.classList.contains('wrong'), correct: button.classList.contains('correct')
+              }))
+            }
+          }));
+        } catch (error) { reportStorageError(error); }
+      }
+
+      function loadProgress() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const saved = JSON.parse(raw);
+          if (saved.version !== 1 || !saved.state || !saved.ui) throw new Error('无法识别的练习数据');
+          const state = saved.state;
+          if (!Number.isSafeInteger(state.totalCount) || state.totalCount < 0 ||
+              !Number.isSafeInteger(state.correctCount) || state.correctCount < 0 ||
+              state.correctCount > state.totalCount || !Array.isArray(state.wrongQuestions) ||
+              !Array.isArray(state.divDirectionUsed) || !Array.isArray(saved.ui.options) ||
+              (state.currentQuestion && typeof state.currentQuestion.questionText !== 'string')) {
+            throw new Error('练习数据格式不正确');
+          }
+          // 先验证结构，再恢复进度；题库池与除法方向也随同保存。
+          ({ currentQuestion, lastArithmeticQuestion, lastMultiplicationQuestion, lastDivisionQuestion, lastModuloQuestion, subModeIndex, isAddition, isArithmeticMode, isNineNineMultiplicationMode, isArithmeticMixed, isMultDivMixed, isNineNineOrderMode, currentNineNineIndex, nineNinePool, nineNinePoolIndex, multDivPool, multDivPoolIndex, correctCount, totalCount, wrongQuestions, questionAttempted, isFillMode, questionSolved, selectedMaxNumber, nineRoundCorrect, nineRoundTotal } = state);
+          divDirectionUsed = new Map(state.divDirectionUsed);
+          correctCountEl.textContent = correctCount;
+          totalCountEl.textContent = totalCount;
+          updateWrongQuestionsDisplay();
+          setModeButtonActive(isArithmeticMode ? arithmeticBtn : isNineNineMultiplicationMode ? nineNineMultiplicationBtn :
+            (currentQuestion ? multiplicationBtn : null));
+          numberRangeContainer.classList.toggle('hidden', !isArithmeticMode);
+          nineNineModeContainer.classList.toggle('hidden', !isNineNineMultiplicationMode);
+          multMixedContainer.classList.toggle('hidden', isArithmeticMode || isNineNineMultiplicationMode || !currentQuestion);
+          within100Btn.classList.toggle('active', isArithmeticMode && selectedMaxNumber === 100 && !isArithmeticMixed);
+          arithmeticMixedBtn.classList.toggle('active', isArithmeticMode && isArithmeticMixed);
+          multMixedBtn.classList.toggle('active', !isArithmeticMode && !isNineNineMultiplicationMode && isMultDivMixed);
+          nineNineOrderBtn.classList.toggle('active', isNineNineOrderMode);
+          nineNineRandomBtn.classList.toggle('active', !isNineNineOrderMode);
+          answerModeBtn.textContent = isFillMode ? '当前：填空题 · 切换为选择题' : '当前：选择题 · 切换为填空题';
+          answerModeBtn.setAttribute('aria-pressed', String(isFillMode));
+          questionCard.classList.toggle('hidden', !saved.ui.questionVisible || !currentQuestion);
+          if (currentQuestion) {
+            questionEl.textContent = currentQuestion.questionText;
+            optionsContainer.replaceChildren();
+            saved.ui.options.forEach(option => {
+              const button = document.createElement('button');
+              button.type = 'button';
+              button.className = 'math-option-btn';
+              button.textContent = option.text;
+              for (const key of ['value', 'q', 'r']) {
+                if (option.dataset[key] !== undefined) button.dataset[key] = option.dataset[key];
+              }
+              button.classList.toggle('wrong', Boolean(option.wrong));
+              button.classList.toggle('correct', Boolean(option.correct));
+              optionsContainer.appendChild(button);
+            });
+            setupQuestionUI();
+            fillAnswer.value = saved.ui.fillAnswer || '';
+            fillRemainder.value = saved.ui.fillRemainder || '';
+            if (questionAttempted) {
+              questionEl.classList.add(questionSolved ? 'correct' : 'wrong');
+              questionFeedback.classList.remove('hidden');
+              questionFeedback.classList.add(questionSolved ? 'success' : 'danger');
+              feedbackIcon.className = questionSolved ? 'fas fa-check-circle' : 'fas fa-times-circle';
+              feedbackText.textContent = questionSolved ? '答对了！' : '再试一次，你一定能答对！';
+              feedbackContainer.classList.toggle('hidden', questionSolved);
+              nextQuestionBtn.classList.toggle('hidden', questionSolved);
+            }
+            // 恢复已完成题时继续自动出题，不重复计分。
+            if (questionSolved && saved.ui.questionVisible) autoNextTimeout = setTimeout(generateQuestion, AUTO_NEXT_DELAY);
+          }
+          renderAnswerMode();
+        } catch (error) { reportStorageError(error); }
+      }
+
+      $('reset-cache-btn').addEventListener('click', () => {
+        if (!confirm('确定要清除本页保存的成绩、错题和练习进度并刷新吗？此操作无法撤销。')) return;
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+          clearingStorage = true;
+          clearAutoNext();
+          window.location.reload();
+        } catch (error) {
+          reportStorageError(error);
+          alert('清除缓存失败，请检查浏览器是否允许本地存储后重试。');
+        }
+      });
+      // 在各按钮自身的处理完成后保存，也涵盖模式切换和清空错题。
+      document.querySelector('.main-content').addEventListener('click', event => {
+        if (event.target.closest('button') && !event.target.closest('#reset-cache-btn')) saveProgress();
+      });
+      fillForm.addEventListener('input', saveProgress);
+      fillForm.addEventListener('submit', saveProgress);
+      window.addEventListener('pagehide', saveProgress);
 
       // 运算类型切换
       function setModeButtonActive(btn) {
@@ -1741,6 +1861,7 @@
         generateOptions(currentQuestion.answer);
         setupQuestionUI();
         renderAnswerMode();
+        saveProgress();
       }
 
       // 设置问题UI
@@ -1960,6 +2081,7 @@
           nextQuestionBtn.classList.remove('hidden');
           feedbackContainer.classList.remove('hidden');
         }
+        saveProgress();
       }
 
       // 添加到错题记录
@@ -1989,27 +2111,33 @@
         noErrorsMessage.classList.toggle('hidden', wrongQuestions.length > 0);
         clearWrongBtn.classList.toggle('hidden', wrongQuestions.length === 0);
         wrongQuestionsContainer.innerHTML = '';
-        if (wrongQuestions.length === 0) return;
+        if (wrongQuestions.length === 0) {
+          wrongQuestionsContainer.appendChild(noErrorsMessage);
+          return;
+        }
 
         const sortedWrongQuestions = [...wrongQuestions].sort((a, b) => {
           if (a.wrongCount !== b.wrongCount) return b.wrongCount - a.wrongCount;
           return b.lastSeen - a.lastSeen;
         });
 
+        const escapeText = value => String(value).replace(/[&<>"']/g, char => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[char]);
         const fragment = document.createDocumentFragment();
         sortedWrongQuestions.forEach(wrongQuestion => {
           const item = document.createElement('div');
           item.className = 'math-wrong-item';
           item.innerHTML = `
             <div class="math-wrong-item-top">
-              <span class="math-wrong-question">${wrongQuestion.question}</span>
-              <span class="math-wrong-count">错误 ${wrongQuestion.wrongCount} 次</span>
+              <span class="math-wrong-question">${escapeText(wrongQuestion.question)}</span>
+              <span class="math-wrong-count">错误 ${escapeText(wrongQuestion.wrongCount)} 次</span>
             </div>
             <div class="math-wrong-detail">
               <span>你的答案:</span>
-              <span class="math-wrong-user-answer">${wrongQuestion.userAnswer}</span>
+              <span class="math-wrong-user-answer">${escapeText(wrongQuestion.userAnswer)}</span>
               <span class="math-wrong-arrow">→</span>
-              <span class="math-wrong-correct">正确答案: ${wrongQuestion.correctAnswer}</span>
+              <span class="math-wrong-correct">正确答案: ${escapeText(wrongQuestion.correctAnswer)}</span>
             </div>`;
           fragment.appendChild(item);
         });
@@ -2060,6 +2188,8 @@
           generateQuestion();
         }
       });
+
+      loadProgress();
 
       // 页面加载即锁定左栏宽度（加减法题型展开状态），避免切换模式时宽度变化
       (function lockWidthOnLoad() {
