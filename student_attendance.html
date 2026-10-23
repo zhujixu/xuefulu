@@ -1146,6 +1146,9 @@
                 historyToggleBtn.classList.add('bg-white', 'text-neutral', 'border-gray-300');
                 historyToggleBtn.setAttribute('aria-pressed', 'false');
             }
+            historyToggleBtn.innerHTML = isHidden
+                ? '<i class="fa fa-clock-o mr-1"></i>当次考勤'
+                : '<i class="fa fa-history mr-1"></i>历史考勤';
             // 确保展示的是最新数据
             updateAttendanceTable();
         }
