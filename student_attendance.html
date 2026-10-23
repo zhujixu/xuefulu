@@ -668,27 +668,6 @@
                 </div>
             </div>
 
-            <!-- 历史考勤面板（默认隐藏，点击"历史考勤"按钮后展示） -->
-            <div id="historyAttendancePanel" class="bg-white rounded-xl shadow-lg p-6 hidden">
-                <div class="overflow-x-auto">
-                    <table id="attendanceTable" class="attendance-table">
-                        <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>姓名</th>
-                                <th>迟到次数</th>
-                                <th>早退次数</th>
-                                <th>缺勤次数</th>
-                                <th>出勤次数</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendanceTableBody">
-                            <!-- 表格内容将通过JavaScript动态生成 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
             <!-- 当次考勤区域 -->
             <div id="todayAttendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-4">
                 <div class="flex gap-0 mb-3" role="group" aria-label="考勤范围">
@@ -759,6 +738,27 @@
                         </tbody>
                     </table>
                 </div>
+
+            <!-- 历史考勤面板（默认隐藏，点击"历史考勤"按钮后展示） -->
+            <div id="historyAttendancePanel" class="hidden">
+                <div class="overflow-x-auto">
+                    <table id="attendanceTable" class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>姓名</th>
+                                <th>迟到次数</th>
+                                <th>早退次数</th>
+                                <th>缺勤次数</th>
+                                <th>出勤次数</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- 表格内容将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             </div>
         </main>
@@ -2032,7 +2032,6 @@
             historyToggleBtn.innerHTML = isHistory
                 ? '<i class="fa fa-clock-o mr-1"></i>当次考勤'
                 : '<i class="fa fa-history mr-1"></i>历史考勤';
-            if (isHistory) updateAttendanceTable();
             [['currentAttendanceViewBtn', !isHistory], ['historicalAttendanceViewBtn', isHistory]].forEach(([id, active]) => {
                 const button = document.getElementById(id);
                 button.setAttribute('aria-pressed', String(active));
@@ -2040,6 +2039,7 @@
             document.getElementById('todaySummary').classList.toggle('hidden', isHistory);
             document.getElementById('todayAttendanceTable').parentElement.classList.toggle('hidden', isHistory);
             updateTodayNameLists();
+            if (isHistory) updateAttendanceTable();
         }
 
         // 按所选范围显示异常人员名单，方括号内为对应状态的累计次数
