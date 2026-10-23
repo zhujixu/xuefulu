@@ -480,6 +480,41 @@
             vertical-align: middle;
         }
 
+        .attendance-view-btn {
+            background: transparent;
+            padding: 0 6px;
+        }
+
+        .attendance-view-btn span {
+            position: relative;
+        }
+
+        .attendance-view-btn span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -6px;
+            height: 4px;
+            background: #ef4444;
+            visibility: hidden;
+        }
+
+        .attendance-view-btn[aria-pressed="true"] span::after {
+            visibility: visible;
+        }
+
+        /* 切换考勤范围时保留滚动条空间，避免内容高度变化引起页面横向跳动。 */
+        html {
+            scrollbar-gutter: stable;
+        }
+
+        @supports not (scrollbar-gutter: stable) {
+            html {
+                overflow-y: scroll;
+            }
+        }
+
         /* 背景装饰 */
         .bg-orb {
             position: fixed;
@@ -656,9 +691,9 @@
 
             <!-- 当次考勤区域 -->
             <div id="todayAttendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-4">
-                <div class="flex gap-2 mb-3" role="group" aria-label="考勤范围">
-                    <button type="button" id="currentAttendanceViewBtn" class="px-4 py-2 rounded-lg font-bold bg-blue-500 text-white" aria-pressed="true">当次考勤</button>
-                    <button type="button" id="historicalAttendanceViewBtn" class="px-4 py-2 rounded-lg font-bold bg-gray-100 text-neutral" aria-pressed="false">历次考勤</button>
+                <div class="flex gap-0 mb-3" role="group" aria-label="考勤范围">
+                    <button type="button" id="currentAttendanceViewBtn" class="attendance-view-btn flex items-center justify-center h-10 min-w-0 text-sm font-medium rounded-none text-neutral" aria-pressed="true"><span>当次考勤</span></button>
+                    <button type="button" id="historicalAttendanceViewBtn" class="attendance-view-btn flex items-center justify-center h-10 min-w-0 text-sm font-medium rounded-none text-neutral" aria-pressed="false"><span>历次考勤</span></button>
                 </div>
                 <!-- 当次考勤汇总数据 -->
                 <div id="todaySummary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
@@ -1406,7 +1441,7 @@
             presentBtn.addEventListener('click', () => updateAttendanceStatus('出勤'));
             // 点击姓名区域等同于点击"出勤"
             nameDisplay.addEventListener('click', () => {
-                if (nameBtn.textContent === '已完成考勤' || !nameData[currentStudentIndex]) return;
+                if (nameBtn.textContent === '已完成' || !nameData[currentStudentIndex]) return;
                 updateAttendanceStatus('出勤');
             });
             resetStatsBtn.addEventListener('click', clearCacheAndRefresh);
@@ -1427,7 +1462,7 @@
             // 点击姓名区域之外的空白区域视为"缺勤"
             document.addEventListener('click', (e) => {
                 // 考勤未开始或已结束时忽略
-                if (nameBtn.textContent === '已完成考勤' || !nameData[currentStudentIndex]) return;
+                if (nameBtn.textContent === '已完成' || !nameData[currentStudentIndex]) return;
                 // 弹窗内部交互（含拖动滚动条）不关闭下拉，也不触发缺勤
                 if (e.target.closest('.status-dropdown')) return;
                 // 有考勤记录下拉打开时，本次外部点击用于收起下拉，不触发缺勤
@@ -1473,7 +1508,7 @@
 
         // 更新姓名显示
         function updateNameDisplay() {
-            const nameText = nameBtn.textContent === '已完成考勤' ? '已完成考勤' :
+            const nameText = nameBtn.textContent === '已完成' ? '已完成' :
                 nameBtn.textContent.split('. ')[1] || '暂无考勤';
             nameDisplay.textContent = nameText;
         }
@@ -1736,7 +1771,7 @@
         function showNextRandomName() {
             if (remainingStudents.length === 0) {
                 currentStudentIndex = -1;
-                nameBtn.textContent = '已完成考勤';
+                nameBtn.textContent = '已完成';
                 updateNameDisplay();
                 return;
             }
@@ -1761,7 +1796,7 @@
         // 更新考勤状态
         function updateAttendanceStatus(status) {
             ensureAttendancePeriod();
-            if (nameBtn.textContent === '已完成考勤' || currentStudentIndex === -1 || !nameData[currentStudentIndex]) return;
+            if (nameBtn.textContent === '已完成' || currentStudentIndex === -1 || !nameData[currentStudentIndex]) return;
 
             const name = nameData[currentStudentIndex];
             // 转换状态名称以匹配数据结构
@@ -2002,10 +2037,6 @@
             [['currentAttendanceViewBtn', !isHistory], ['historicalAttendanceViewBtn', isHistory]].forEach(([id, active]) => {
                 const button = document.getElementById(id);
                 button.setAttribute('aria-pressed', String(active));
-                button.classList.toggle('bg-blue-500', active);
-                button.classList.toggle('text-white', active);
-                button.classList.toggle('bg-gray-100', !active);
-                button.classList.toggle('text-neutral', !active);
             });
             document.getElementById('todaySummary').classList.toggle('hidden', isHistory);
             document.getElementById('todayAttendanceTable').parentElement.classList.toggle('hidden', isHistory);
@@ -2066,7 +2097,7 @@
 
             // 如果所有学生都考勤完毕，显示提示
             if (checkedStudents === totalStudents) {
-                nameBtn.textContent = '已完成考勤';
+                nameBtn.textContent = '已完成';
             }
         }
 
@@ -2308,7 +2339,7 @@
             if (!ensureAttendancePeriod()) {
                 nameBtn.textContent = nameData[currentStudentIndex] ?
                     `${currentStudentIndex + 1}. ${nameData[currentStudentIndex]}` :
-                    (nameData.length && remainingStudents.length === 0 ? '已完成考勤' : '暂无考勤');
+                    (nameData.length && remainingStudents.length === 0 ? '已完成' : '暂无考勤');
             }
 
             // 更新进度条
