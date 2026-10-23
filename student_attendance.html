@@ -672,7 +672,7 @@
             <div id="todayAttendanceSection" class="bg-white rounded-xl shadow-lg p-6 mb-4">
                 <div class="flex gap-0 mb-3" role="group" aria-label="考勤范围">
                     <button type="button" id="currentAttendanceViewBtn" class="attendance-view-btn flex items-center justify-center h-10 min-w-0 text-sm font-medium rounded-none text-neutral" aria-pressed="true"><span>当次考勤</span></button>
-                    <button type="button" id="historicalAttendanceViewBtn" class="attendance-view-btn flex items-center justify-center h-10 min-w-0 text-sm font-medium rounded-none text-neutral" aria-pressed="false"><span>历次考勤</span></button>
+                    <button type="button" id="historicalAttendanceViewBtn" class="attendance-view-btn flex items-center justify-center h-10 min-w-0 text-sm font-medium rounded-none text-neutral" aria-pressed="false"><span>历史考勤</span></button>
                 </div>
                 <!-- 当次考勤汇总数据 -->
                 <div id="todaySummary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
@@ -698,7 +698,28 @@
                     </div>
                 </div>
 
-                <!-- 当次异常人员名单 -->
+                <!-- 历史考勤面板（默认隐藏，点击"历史考勤"按钮后展示） -->
+                <div id="historyAttendancePanel" class="hidden mb-6">
+                    <div class="overflow-x-auto">
+                        <table id="attendanceTable" class="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>姓名</th>
+                                    <th>迟到次数</th>
+                                    <th>早退次数</th>
+                                    <th>缺勤次数</th>
+                                    <th>出勤次数</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody">
+                                <!-- 表格内容将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 当次及历史异常人员名单 -->
                 <div id="todayNameLists" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="name-list-card border-attendance-absent/30 bg-attendance-absent/5">
                         <div class="name-list-title text-attendance-absent">
@@ -739,26 +760,6 @@
                     </table>
                 </div>
 
-            <!-- 历史考勤面板（默认隐藏，点击"历史考勤"按钮后展示） -->
-            <div id="historyAttendancePanel" class="hidden">
-                <div class="overflow-x-auto">
-                    <table id="attendanceTable" class="attendance-table">
-                        <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>姓名</th>
-                                <th>迟到次数</th>
-                                <th>早退次数</th>
-                                <th>缺勤次数</th>
-                                <th>出勤次数</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendanceTableBody">
-                            <!-- 表格内容将通过JavaScript动态生成 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
             </div>
         </main>
@@ -2048,7 +2049,7 @@
             const period = getAttendancePeriod();
             const startHour = Number(period.slice(11, 13));
             const isHistory = attendanceView === 'history';
-            const dateText = isHistory ? '（历次累计）' : `（${period.slice(0, 10)} ${String(startHour).padStart(2, '0')}:00–${String(startHour + 6).padStart(2, '0')}:00）`;
+            const dateText = isHistory ? '（历史累计）' : `（${period.slice(0, 10)} ${String(startHour).padStart(2, '0')}:00–${String(startHour + 6).padStart(2, '0')}:00）`;
             document.querySelectorAll('.name-list-date').forEach(el => {
                 el.textContent = dateText;
             });
@@ -2066,7 +2067,7 @@
                     }
                 });
                 if (names.length === 0) {
-                    item.el.innerHTML = `<span class="name-list-empty">${isHistory ? `历次无${item.status}记录` : item.emptyText}</span>`;
+                    item.el.innerHTML = `<span class="name-list-empty">${isHistory ? `历史无${item.status}记录` : item.emptyText}</span>`;
                 } else {
                     item.el.innerHTML = names.map(n => `<span class="name-list-item">${escapeHtml(n)}</span>`).join('');
                 }
