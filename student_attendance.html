@@ -1134,23 +1134,7 @@
 
         // 切换历史考勤面板显示
         function toggleHistoryAttendance() {
-            const isHidden = historyAttendancePanel.classList.contains('hidden');
-            if (isHidden) {
-                historyAttendancePanel.classList.remove('hidden');
-                historyToggleBtn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
-                historyToggleBtn.classList.remove('bg-white', 'text-neutral', 'border-gray-300');
-                historyToggleBtn.setAttribute('aria-pressed', 'true');
-            } else {
-                historyAttendancePanel.classList.add('hidden');
-                historyToggleBtn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
-                historyToggleBtn.classList.add('bg-white', 'text-neutral', 'border-gray-300');
-                historyToggleBtn.setAttribute('aria-pressed', 'false');
-            }
-            historyToggleBtn.innerHTML = isHidden
-                ? '<i class="fa fa-clock-o mr-1"></i>当次考勤'
-                : '<i class="fa fa-history mr-1"></i>历史考勤';
-            // 确保展示的是最新数据
-            updateAttendanceTable();
+            setAttendanceView(attendanceView === 'history' ? 'current' : 'history');
         }
 
         // ===== 图示数据 =====
@@ -2037,6 +2021,18 @@
         function setAttendanceView(view) {
             attendanceView = view;
             const isHistory = view === 'history';
+            historyAttendancePanel.classList.toggle('hidden', !isHistory);
+            historyToggleBtn.classList.toggle('bg-blue-500', isHistory);
+            historyToggleBtn.classList.toggle('text-white', isHistory);
+            historyToggleBtn.classList.toggle('border-blue-500', isHistory);
+            historyToggleBtn.classList.toggle('bg-white', !isHistory);
+            historyToggleBtn.classList.toggle('text-neutral', !isHistory);
+            historyToggleBtn.classList.toggle('border-gray-300', !isHistory);
+            historyToggleBtn.setAttribute('aria-pressed', String(isHistory));
+            historyToggleBtn.innerHTML = isHistory
+                ? '<i class="fa fa-clock-o mr-1"></i>当次考勤'
+                : '<i class="fa fa-history mr-1"></i>历史考勤';
+            if (isHistory) updateAttendanceTable();
             [['currentAttendanceViewBtn', !isHistory], ['historicalAttendanceViewBtn', isHistory]].forEach(([id, active]) => {
                 const button = document.getElementById(id);
                 button.setAttribute('aria-pressed', String(active));
