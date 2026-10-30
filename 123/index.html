@@ -181,7 +181,7 @@
     /* ==================== 主内容区 ==================== */
     .main-content {
       display: grid;
-      grid-template-columns: max-content minmax(0, 1fr);
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       gap: 30px;
     }
     /* ==================== 页脚 ==================== */
@@ -254,7 +254,8 @@
       padding: clamp(20px, 4vw, 30px);
       box-shadow: var(--shadow-md);
       border: 1px solid var(--glass-border);
-      width: var(--left-col-w, auto);
+      min-width: 0;
+      width: 100%;
     }
 
     .math-header {
@@ -404,6 +405,91 @@
       color: #fff;
       border-color: transparent;
       box-shadow: 0 2px 10px rgba(175, 82, 222, 0.35);
+    }
+
+    .math-timed-session {
+      margin-bottom: 22px;
+      padding: 20px 22px 16px;
+      border: 1px solid rgba(0, 113, 227, 0.10);
+      border-radius: 18px;
+      background: linear-gradient(120deg, #f4f8fd, #fafbfdf0);
+    }
+    .timed-heading, .timed-metrics, .timed-progress-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .timed-title { font-size: 0.9rem; font-weight: 600; }
+    .timed-title i { margin-right: 8px; color: var(--accent); }
+    .timed-badge {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      background: #fff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 2px 9px;
+      white-space: nowrap;
+    }
+    .math-timed-session[data-state="running"] .timed-badge { color: var(--accent); background: #e8f2ff; }
+    .math-timed-session[data-state="complete"] .timed-badge { color: #25804d; background: #e7f5eb; }
+    .timed-metrics { margin: 14px 0 16px; }
+    .timed-clock-label { display: block; color: var(--text-secondary); font-size: 0.72rem; }
+    #timed-session-clock {
+      display: block;
+      font-size: clamp(2rem, 5vw, 2.65rem);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -1.5px;
+      line-height: 1.25;
+    }
+    #timed-session-start {
+      border: 0;
+      border-radius: 11px;
+      background: var(--accent);
+      color: white;
+      padding: 10px 16px;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.2s;
+    }
+    #timed-session-start:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    #timed-session-start:focus-visible { outline: 3px solid var(--accent-glow); outline-offset: 3px; }
+    .timed-progress-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 7px; }
+    #timed-session-progress { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .timed-progress-track { height: 5px; border-radius: 5px; background: rgba(0, 113, 227, 0.09); overflow: hidden; }
+    .timed-progress-fill { height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.3s; }
+    .math-timed-session[data-state="complete"] .timed-progress-fill { background: #329760; }
+    #timed-session-status { margin: 10px 0 0; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6; }
+    .timed-rules { margin-top: 7px; font-size: 0.72rem; color: var(--text-secondary); }
+    .timed-rules summary { cursor: pointer; width: fit-content; }
+    .timed-rules p { margin-top: 4px; }
+    @media (max-width: 480px) {
+      .math-timed-session { padding: 16px; }
+      .timed-metrics { gap: 10px; }
+      #timed-session-start { padding: 10px 12px; font-size: 0.78rem; }
+    }
+
+    .math-print-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
+    .math-print-tools label { font-size: 0.85rem; color: var(--text-secondary); }
+    .math-print-tools select { max-width: 100%; padding: 8px 12px; border: 1px solid var(--border-subtle); border-radius: 10px; background: white; color: var(--text-primary); font: inherit; font-size: 0.85rem; }
+    .print-sheet { display: none; }
+    @page { size: A4 portrait; margin: 12mm; }
+    @media print {
+      html, body { background: white !important; padding: 0 !important; margin: 0 !important; min-height: 0; }
+      body > :not(.print-sheet) { display: none !important; }
+      .print-sheet { display: flex; flex-direction: column; justify-content: center; width: 174mm; height: 272mm; margin: 0 auto; color: #000; font-family: 'Microsoft YaHei', system-ui, sans-serif; }
+      .print-sheet h1 { font-size: 18pt; text-align: center; margin: 0 0 4mm; }
+      .print-meta { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 5mm; }
+      .print-columns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4mm; }
+      .print-column { list-style: none; margin: 0; padding: 0; }
+      .print-column li { display: flex; align-items: center; gap: 1mm; height: 9.6mm; font-size: 12pt; line-height: 1.4; white-space: nowrap; break-inside: avoid; }
+      .print-number { font-size: 10pt; color: #666; min-width: 6mm; }
+      .print-column li.print-long { font-size: 11pt; }
+      .print-footer { margin-top: 4mm; text-align: right; font-size: 8pt; color: #666; }
     }
 
     /* 成绩统计（右侧栏顶部）：卡片风格与错题记录项一致 */
@@ -895,15 +981,51 @@
             <button id="nine-nine-order-btn" class="math-pill-btn nine-mode-opt" type="button">顺序</button>
             <button id="nine-nine-random-btn" class="math-pill-btn nine-mode-opt" type="button">随机</button>
           </span>
-          <button id="multiplication-btn" class="math-mode-btn" type="button">乘除余</button>
+          <button id="multiplication-btn" class="math-mode-btn" type="button">乘除</button>
           <!-- 乘除余题型选择（仅乘除余模式下显示） -->
           <span id="mult-mixed-container" class="math-pill-btns hidden">
             <button id="mult-mixed-btn" class="math-pill-btn mult-mixed-opt" type="button">乘除混合</button>
+            <button id="mult-div-mod-btn" class="math-pill-btn mult-mixed-opt" type="button">乘除余混合</button>
+            <button id="all-mixed-btn" class="math-pill-btn mult-mixed-opt" type="button">加减乘除</button>
           </span>
         </div>
 
         <div class="math-answer-switch">
           <button id="answer-mode-btn" class="math-pill-btn" type="button" aria-pressed="false">当前：选择题 · 切换为填空题</button>
+        </div>
+
+        <div class="math-print-tools">
+          <label for="print-topic">打印练习</label>
+          <select id="print-topic" aria-label="打印题型">
+            <option value="arithmetic">100以内加减法</option>
+            <option value="arithmetic-mixed">加减混合</option>
+            <option value="nine-order">九九乘法 · 顺序</option>
+            <option value="nine-random">九九乘法 · 随机</option>
+            <option value="mult-mixed">乘除混合</option>
+            <option value="mult-div-mod">乘除余混合</option>
+            <option value="all-mixed">加减乘除</option>
+          </select>
+          <button id="print-practice" class="math-pill-btn" type="button"><i class="fas fa-print" aria-hidden="true"></i> 打印 100 题</button>
+        </div>
+
+        <div class="math-timed-session" data-state="idle" aria-label="100题计时">
+          <div class="timed-heading">
+            <span class="timed-title"><i class="fas fa-stopwatch" aria-hidden="true"></i>百题挑战</span>
+            <span id="timed-session-badge" class="timed-badge">准备开始</span>
+          </div>
+          <div class="timed-metrics">
+            <div>
+              <span class="timed-clock-label">累计用时</span>
+              <span id="timed-session-clock" aria-label="用时">00:00.0</span>
+            </div>
+            <button id="timed-session-start" type="button">开始计时</button>
+          </div>
+          <div class="timed-progress-label"><span>答题进度</span><span id="timed-session-progress">0 / 100 题</span></div>
+          <div id="timed-session-track" class="timed-progress-track" role="progressbar" aria-label="百题挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="timed-session-fill" class="timed-progress-fill"></div>
+          </div>
+          <p id="timed-session-status" role="status">选好题型，开始你的百题挑战。</p>
+          <details class="timed-rules"><summary>计时规则</summary><p>首次提交计数，重试不计；离开仍计时，满 100 题停止。</p></details>
         </div>
 
         <!-- 题目卡片 -->
@@ -975,6 +1097,8 @@
     </footer>
   </div>
 
+
+  <section id="print-sheet" class="print-sheet" aria-label="可打印练习卷"></section>
 
   <script>
     /**
@@ -1084,6 +1208,7 @@
       let isNineNineMultiplicationMode = false;
       let isArithmeticMixed = false;
       let isMultDivMixed = false;
+      let isAllMixed = false;
       let isNineNineOrderMode = true;
       let currentNineNineIndex = 0;
       // 九九乘法随机模式：81 个组合的洗牌题库池，取完一轮重新洗牌（保证覆盖）
@@ -1121,6 +1246,8 @@
       const arithmeticMixedBtn = $('arithmetic-mixed-btn');
       const multMixedContainer = $('mult-mixed-container');
       const multMixedBtn = $('mult-mixed-btn');
+      const allMixedBtn = $('all-mixed-btn');
+      const multDivModBtn = $('mult-div-mod-btn');
       const questionCard = $('question-card');
       const questionEl = $('question');
       const questionFeedback = $('question-feedback');
@@ -1185,6 +1312,48 @@
       // 使用独立键，避免与同域的考勤页等页面互相覆盖或清除。
       const STORAGE_KEY = 'xuefulu.mathPractice.v1';
       let clearingStorage = false;
+      let timedSession = { startedAt: null, finishedAt: null, count: 0 };
+      const timedStartBtn = $('timed-session-start');
+      function formatDuration(milliseconds) {
+        const tenths = Math.floor(Math.max(0, milliseconds) / 100);
+        return `${String(Math.floor(tenths / 600)).padStart(2, '0')}:${String(Math.floor(tenths / 10) % 60).padStart(2, '0')}.${tenths % 10}`;
+      }
+      function renderTimedSession() {
+        const { startedAt, finishedAt, count } = timedSession;
+        $('timed-session-progress').textContent = `${count} / 100 题`;
+        $('timed-session-clock').textContent = formatDuration(startedAt === null ? 0 : (finishedAt ?? Date.now()) - startedAt);
+        timedStartBtn.textContent = startedAt === null ? '开始计时' : '重新挑战';
+        document.querySelector('.math-timed-session').dataset.state = startedAt === null ? 'idle' : finishedAt === null ? 'running' : 'complete';
+        $('timed-session-badge').textContent = startedAt === null ? '准备开始' : finishedAt === null ? '计时中' : '挑战完成';
+        $('timed-session-fill').style.width = `${count}%`;
+        $('timed-session-track').setAttribute('aria-valuenow', String(count));
+        if (startedAt !== null) {
+          $('timed-session-status').textContent = finishedAt === null
+            ? `已完成 ${count} 题，继续加油。`
+            : `已完成 100 题！总用时 ${formatDuration(finishedAt - startedAt)}。`;
+        }
+      }
+      timedStartBtn.addEventListener('click', () => {
+        if (timedSession.startedAt !== null) {
+          clearAutoNext();
+          timedSession = { startedAt: null, finishedAt: null, count: 0 };
+          $('timed-session-status').textContent = '准备就绪，点击开始计时。';
+          renderTimedSession();
+          saveProgress();
+          return;
+        }
+        if (!currentQuestion || questionCard.classList.contains('hidden')) {
+          $('timed-session-status').textContent = '请先选择题型并显示题目，再开始计时。';
+          return;
+        }
+        clearAutoNext();
+        if (questionAttempted) generateQuestion();
+        timedSession = { startedAt: Date.now(), finishedAt: null, count: 0 };
+        renderTimedSession();
+        saveProgress();
+      });
+      setInterval(renderTimedSession, 100);
+
       function reportStorageError(error) {
         console.error('练习数据存储失败:', error);
         const status = $('storage-status');
@@ -1197,6 +1366,8 @@
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify({
             version: 1,
+            isAllMixed,
+            timedSession,
             state: { currentQuestion, lastArithmeticQuestion, lastMultiplicationQuestion, lastDivisionQuestion, lastModuloQuestion, subModeIndex, isAddition, isArithmeticMode, isNineNineMultiplicationMode, isArithmeticMixed, isMultDivMixed, isNineNineOrderMode, currentNineNineIndex, nineNinePool, nineNinePoolIndex, multDivPool, multDivPoolIndex, correctCount, totalCount, wrongQuestions, questionAttempted, isFillMode, questionSolved, selectedMaxNumber, nineRoundCorrect, nineRoundTotal, divDirectionUsed: [...divDirectionUsed] },
             ui: {
               questionVisible: !questionCard.classList.contains('hidden'),
@@ -1227,6 +1398,15 @@
           }
           // 先验证结构，再恢复进度；题库池与除法方向也随同保存。
           ({ currentQuestion, lastArithmeticQuestion, lastMultiplicationQuestion, lastDivisionQuestion, lastModuloQuestion, subModeIndex, isAddition, isArithmeticMode, isNineNineMultiplicationMode, isArithmeticMixed, isMultDivMixed, isNineNineOrderMode, currentNineNineIndex, nineNinePool, nineNinePoolIndex, multDivPool, multDivPoolIndex, correctCount, totalCount, wrongQuestions, questionAttempted, isFillMode, questionSolved, selectedMaxNumber, nineRoundCorrect, nineRoundTotal } = state);
+          isAllMixed = saved.isAllMixed === true;
+          const timer = saved.timedSession;
+          if (timer && Number.isFinite(timer.startedAt) && timer.startedAt > 0 &&
+              Number.isInteger(timer.count) && timer.count >= 0 && timer.count <= 100 &&
+              ((timer.count < 100 && timer.finishedAt === null) ||
+               (timer.count === 100 && Number.isFinite(timer.finishedAt) && timer.finishedAt >= timer.startedAt))) {
+            timedSession = { startedAt: timer.startedAt, finishedAt: timer.finishedAt, count: timer.count };
+          }
+          renderTimedSession();
           divDirectionUsed = new Map(state.divDirectionUsed);
           correctCountEl.textContent = correctCount;
           totalCountEl.textContent = totalCount;
@@ -1239,6 +1419,8 @@
           within100Btn.classList.toggle('active', isArithmeticMode && selectedMaxNumber === 100 && !isArithmeticMixed);
           arithmeticMixedBtn.classList.toggle('active', isArithmeticMode && isArithmeticMixed);
           multMixedBtn.classList.toggle('active', !isArithmeticMode && !isNineNineMultiplicationMode && isMultDivMixed);
+          allMixedBtn.classList.toggle('active', isAllMixed);
+          multDivModBtn.classList.toggle('active', !isArithmeticMode && !isNineNineMultiplicationMode && !isMultDivMixed && !isAllMixed && Boolean(currentQuestion) && saved.ui.questionVisible);
           nineNineOrderBtn.classList.toggle('active', isNineNineOrderMode);
           nineNineRandomBtn.classList.toggle('active', !isNineNineOrderMode);
           answerModeBtn.textContent = isFillMode ? '当前：填空题 · 切换为选择题' : '当前：选择题 · 切换为填空题';
@@ -1311,29 +1493,14 @@
         }
       }
 
-      // 锁定左栏宽度为"加减法状态"（全部按钮同一行）的宽度，
-      // 切换九九乘法/乘除余时按钮数量变化，但左栏宽度保持不变
-      function lockLeftColumnWidth() {
-        const card = document.querySelector('.math-card');
-        const switchEl = document.querySelector('.math-mode-switch');
-        if (!card || !switchEl) return;
-        // 临时强制单行，确保测出的是所有按钮在同一行的完整宽度
-        const prevWrap = switchEl.style.flexWrap;
-        switchEl.style.flexWrap = 'nowrap';
-        const pad = parseFloat(getComputedStyle(card).paddingLeft) * 2;
-        const border = parseFloat(getComputedStyle(card).borderLeftWidth) * 2;
-        const w = Math.ceil(switchEl.offsetWidth + pad + border + 2);
-        switchEl.style.flexWrap = prevWrap;
-        if (w > 0) {
-          document.documentElement.style.setProperty('--left-col-w', w + 'px');
-        }
-      }
-
       arithmeticBtn.addEventListener('click', () => {
         isArithmeticMode = true;
         isNineNineMultiplicationMode = false;
         isArithmeticMixed = false;
         isMultDivMixed = false;
+        isAllMixed = false;
+        allMixedBtn.classList.remove('active');
+        multDivModBtn.classList.remove('active');
         clearAutoNext();
         setModeButtonActive(arithmeticBtn);
         numberRangeContainer.classList.remove('hidden');
@@ -1343,19 +1510,36 @@
         questionCard.classList.add('hidden');
         selectedMaxNumber = null;
         resetRangeButtons();
-        lockLeftColumnWidth();
       });
 
       multiplicationBtn.addEventListener('click', () => {
         isArithmeticMode = false;
         isNineNineMultiplicationMode = false;
         isMultDivMixed = false;
+        isAllMixed = false;
+        clearAutoNext();
+        setModeButtonActive(multiplicationBtn);
+        numberRangeContainer.classList.add('hidden');
+        nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.remove('hidden');
+        [multMixedBtn, multDivModBtn, allMixedBtn].forEach(button => button.classList.remove('active'));
+        questionCard.classList.add('hidden');
+      });
+
+      multDivModBtn.addEventListener('click', () => {
+        isArithmeticMode = false;
+        isNineNineMultiplicationMode = false;
+        isMultDivMixed = false;
+        isAllMixed = false;
+        allMixedBtn.classList.remove('active');
+        multDivModBtn.classList.remove('active');
         clearAutoNext();
         setModeButtonActive(multiplicationBtn);
         numberRangeContainer.classList.add('hidden');
         nineNineModeContainer.classList.add('hidden');
         multMixedContainer.classList.remove('hidden');
         multMixedBtn.classList.remove('active');
+        multDivModBtn.classList.add('active');
         questionCard.classList.remove('hidden');
         // 重新进入时重置题库池与内部循环，从新一轮乘法开始
         multDivPool = null;
@@ -1371,6 +1555,9 @@
         isArithmeticMode = false;
         isNineNineMultiplicationMode = true;
         isMultDivMixed = false;
+        isAllMixed = false;
+        allMixedBtn.classList.remove('active');
+        multDivModBtn.classList.remove('active');
         clearAutoNext();
         setModeButtonActive(nineNineMultiplicationBtn);
         numberRangeContainer.classList.add('hidden');
@@ -1413,17 +1600,37 @@
         generateQuestion();
       });
 
-      // 选择"乘除混合"：生成 2 个运算符、含乘除两种运算的连式题
+      // 选择"乘除混合"：随机混合出乘法题和整除题，每题只有一个运算符
       multMixedBtn.addEventListener('click', () => {
         isArithmeticMode = false;
         isNineNineMultiplicationMode = false;
         isMultDivMixed = true;
+        isAllMixed = false;
+        allMixedBtn.classList.remove('active');
+        multDivModBtn.classList.remove('active');
         clearAutoNext();
         setModeButtonActive(multiplicationBtn);
         numberRangeContainer.classList.add('hidden');
         nineNineModeContainer.classList.add('hidden');
         multMixedContainer.classList.remove('hidden');
         multMixedBtn.classList.add('active');
+        questionCard.classList.remove('hidden');
+        generateQuestion();
+      });
+
+      allMixedBtn.addEventListener('click', () => {
+        isArithmeticMode = false;
+        isNineNineMultiplicationMode = false;
+        isMultDivMixed = false;
+        isAllMixed = true;
+        clearAutoNext();
+        setModeButtonActive(multiplicationBtn);
+        numberRangeContainer.classList.add('hidden');
+        nineNineModeContainer.classList.add('hidden');
+        multMixedContainer.classList.remove('hidden');
+        multMixedBtn.classList.remove('active');
+        allMixedBtn.classList.add('active');
+        multDivModBtn.classList.remove('active');
         questionCard.classList.remove('hidden');
         generateQuestion();
       });
@@ -1488,15 +1695,6 @@
         return shuffleArray(ops);
       }
 
-      // 生成 count 个运算符的序列：乘除混合题必须同时含 × 与 ÷
-      function buildMixedMulDivOps(count) {
-        const multCount = 1 + Math.floor(Math.random() * (count - 1));
-        const ops = [];
-        for (let i = 0; i < multCount; i++) ops.push('×');
-        for (let i = 0; i < count - multCount; i++) ops.push('÷');
-        return shuffleArray(ops);
-      }
-
       // 加减混合：2 个 + / - 运算符（两种都要出现），
       // 参与运算的每个数字、每一步中间结果和最终结果都控制在 0~100
       function generateArithmeticMixedQuestion() {
@@ -1547,61 +1745,115 @@
         };
       }
 
-      // 乘除混合：2 个 × / ÷ 运算符（两种都要出现），
-      // 参与运算的每个数字都只用 2~9，
-      // 每一步中间结果和最终结果都控制在 1~100，
-      // 每一步除法都能整除，除数取当前值的真因数
+      // 乘除混合：随机出一道乘法题或整除题，因数、除数和商使用 2~9
       function generateMixedMultDivQuestion() {
-        for (let outer = 0; outer < 200; outer++) {
-          const opCount = 2; // 固定 2 个运算符
-          for (let attempt = 0; attempt < 2000; attempt++) {
-            const ops = buildMixedMulDivOps(opCount);
-            const nums = [2 + Math.floor(Math.random() * 8)]; // 2~9
-            let value = nums[0];
-            let valid = true;
+        const factor1 = 2 + Math.floor(Math.random() * 8);
+        const factor2 = 2 + Math.floor(Math.random() * 8);
+        const isMultiplication = Math.random() < 0.5;
+        const num1 = isMultiplication ? factor1 : factor1 * factor2;
+        const num2 = factor2;
 
-            for (let i = 0; i < ops.length; i++) {
-              if (ops[i] === '×') {
-                const maxFactor = Math.min(9, Math.floor(100 / value));
-                if (maxFactor < 2) { valid = false; break; }
-                const factor = 2 + Math.floor(Math.random() * (maxFactor - 1));
-                nums.push(factor);
-                value *= factor;
-              } else {
-                const divisors = [];
-                for (let d = 2; d <= 9 && d * 2 <= value; d++) {
-                  if (value % d === 0) divisors.push(d);
-                }
-                if (divisors.length === 0) { valid = false; break; }
-                const divisor = divisors[Math.floor(Math.random() * divisors.length)];
-                nums.push(divisor);
-                value = Math.floor(value / divisor);
-              }
-            }
-            if (!valid) continue;
-
-            let result = nums[0];
-            const parts = [String(nums[0])];
-            for (let i = 0; i < ops.length; i++) {
-              if (ops[i] === '×') result *= nums[i + 1];
-              else result = Math.floor(result / nums[i + 1]);
-              parts.push(` ${ops[i]} ${nums[i + 1]}`);
-            }
-
-            return {
-              type: 'mixed-mult-div',
-              answer: result,
-              questionText: parts.join('') + ' = ?'
-            };
-          }
-        }
-        // 兜底：正常随机几乎不会走到这里
         return {
           type: 'mixed-mult-div',
-          answer: 12,
-          questionText: '6 × 8 ÷ 4 = ?'
+          answer: isMultiplication ? factor1 * factor2 : factor1,
+          questionText: `${num1} ${isMultiplication ? '×' : '÷'} ${num2} = ?`
         };
       }
+
+      // 四则混合：每题一种运算；加减不超过100，乘除使用九九表且除法整除。
+      function generateAllMixedQuestion() {
+        const operation = Math.floor(Math.random() * 4);
+        if (operation < 2) {
+          const a = 1 + Math.floor(Math.random() * 100);
+          const b = Math.floor(Math.random() * (101 - a));
+          return operation === 0
+            ? { type: 'addition', answer: a + b, questionText: `${a} + ${b} = ?` }
+            : { type: 'subtraction', answer: b, questionText: `${a + b} − ${a} = ?` };
+        }
+        const a = 2 + Math.floor(Math.random() * 8);
+        const b = 2 + Math.floor(Math.random() * 8);
+        return operation === 2
+          ? { type: 'multiplication', answer: a * b, questionText: `${a} × ${b} = ?` }
+          : { type: 'division', answer: a, questionText: `${a * b} ÷ ${b} = ?` };
+      }
+
+      // 打印使用独立题库，不改变当前题目、成绩或计时进度。
+      function buildPrintQuestions(topic) {
+        let pairs = [];
+        return Array.from({ length: 100 }, (_, index) => {
+          let text;
+          if (topic === 'all-mixed') {
+            text = generateAllMixedQuestion().questionText;
+          } else if (topic === 'arithmetic-mixed') {
+            text = generateArithmeticMixedQuestion().questionText;
+          } else if (topic === 'mult-mixed') {
+            text = generateMixedMultDivQuestion().questionText;
+          } else if (topic === 'nine-order' || topic === 'nine-random') {
+            if (topic === 'nine-random' && index % 81 === 0) pairs = buildShuffledPairs();
+            const [a, b] = topic === 'nine-order'
+              ? [Math.floor((index % 81) / 9) + 1, index % 9 + 1]
+              : pairs[index % 81];
+            text = `${a} × ${b} = ?`;
+          } else if (topic === 'mult-div-mod') {
+            const a = 2 + Math.floor(Math.random() * 8);
+            const b = 2 + Math.floor(Math.random() * 8);
+            const remainder = Math.floor(Math.random() * b);
+            switch (index % 4) {
+              case 0: text = `${a} × ${b} = ?`; break;
+              case 1: text = `${a * b} ÷ ${b} = ?`; break;
+              case 2: text = `${a * b + remainder} ÷ ${b} = ? 余 ?`; break;
+              default: text = `? ÷ ${b} = ${a} 余 ${remainder}`;
+            }
+          } else {
+            const a = 1 + Math.floor(Math.random() * 100);
+            const b = Math.floor(Math.random() * (101 - a));
+            text = index % 2 === 0 ? `${a} + ${b} = ?` : `${a + b} − ${a} = ?`;
+          }
+          return text.replace(/= \?/g, '=　').replace(/\?/g, '（　）');
+        });
+      }
+      const printTopic = $('print-topic');
+      // 切换题型后，打印默认跟随当前练习；也可直接在下拉框选择。
+      const printTopicsByButton = {
+        'arithmetic-btn': 'arithmetic', 'within100-btn': 'arithmetic',
+        'arithmetic-mixed-btn': 'arithmetic-mixed',
+        'nine-nine-multiplication-btn': 'nine-order', 'nine-nine-order-btn': 'nine-order',
+        'nine-nine-random-btn': 'nine-random', 'multiplication-btn': 'mult-div-mod', 'mult-div-mod-btn': 'mult-div-mod',
+        'mult-mixed-btn': 'mult-mixed', 'all-mixed-btn': 'all-mixed'
+      };
+      document.querySelector('.math-mode-switch').addEventListener('click', event => {
+        const button = event.target.closest('button');
+        if (button && printTopicsByButton[button.id]) printTopic.value = printTopicsByButton[button.id];
+      });
+      $('print-practice').addEventListener('click', () => {
+        const questions = buildPrintQuestions(printTopic.value);
+        const sheet = $('print-sheet');
+        sheet.replaceChildren();
+        const title = document.createElement('h1');
+        title.textContent = `${printTopic.selectedOptions[0].textContent} · 百题练习`;
+        const meta = document.createElement('div');
+        meta.className = 'print-meta';
+        ['姓名：____________', '日期：____________', '用时：____________'].forEach(text => {
+          const span = document.createElement('span'); span.textContent = text; meta.appendChild(span);
+        });
+        const columns = document.createElement('div');
+        columns.className = 'print-columns';
+        for (let col = 0; col < 4; col++) {
+          const list = document.createElement('ol'); list.className = 'print-column';
+          list.start = col * 25 + 1;
+          questions.slice(col * 25, (col + 1) * 25).forEach((text, row) => {
+            const item = document.createElement('li');
+            if (text.length > 18) item.className = 'print-long';
+            const number = document.createElement('span'); number.className = 'print-number';
+            number.textContent = `${col * 25 + row + 1}.`;
+            const question = document.createElement('span'); question.textContent = text;
+            item.append(number, question); list.appendChild(item);
+          });
+          columns.appendChild(list);
+        }
+        sheet.append(title, meta, columns);
+        window.print();
+      });
 
       // 生成新问题
       function generateQuestion() {
@@ -1716,6 +1968,8 @@
             answer: num1 * num2,
             questionText: `${num1} × ${num2} = ?`
           };
+        } else if (isAllMixed) {
+          currentQuestion = generateAllMixedQuestion();
         } else if (isMultDivMixed) {
           currentQuestion = generateMixedMultDivQuestion();
         } else {
@@ -1984,16 +2238,24 @@
         });
       }
 
-      // 答题音效：使用与页面同目录下的音频文件
+      // 内置 PCM WAV 音效，单独打开或部署本页时无需额外音频文件。
       const correctAudio = new Audio('./yes.wav');
       const wrongAudio = new Audio('./no.wav');
+      correctAudio.preload = 'auto';
+      wrongAudio.preload = 'auto';
 
       function playFeedbackSound(isCorrect) {
         const audio = isCorrect ? correctAudio : wrongAudio;
-        audio.currentTime = 0;
-        const playPromise = audio.play();
-        if (playPromise) {
-          playPromise.catch(() => {});
+        // 重试时停止上一段反馈，避免答对、答错音效重叠。
+        [correctAudio, wrongAudio].forEach(sound => sound.pause());
+        try {
+          audio.currentTime = 0;
+          const playPromise = audio.play();
+          if (playPromise) {
+            playPromise.catch(error => console.warn('答题音效播放失败：', error));
+          }
+        } catch (error) {
+          console.warn('答题音效播放失败：', error);
         }
       }
 
@@ -2013,7 +2275,7 @@
           isCorrect = userAnswer === currentQuestion.answer;
         }
 
-        // 答题音效：答对播放 yes.wav，答错播放 no.wav（重试点击同样触发）
+        // 所有题型共用内置答题音效，重试提交同样触发。
         playFeedbackSound(isCorrect);
 
         // 仅首次作答计入成绩；答错后可再次点击选择答案，重试答对不再重复计分
@@ -2021,6 +2283,11 @@
         if (isFirstAttempt) {
           questionAttempted = true;
           totalCount++;
+          if (timedSession.startedAt !== null && timedSession.finishedAt === null) {
+            timedSession.count++;
+            if (timedSession.count === 100) timedSession.finishedAt = Date.now();
+            renderTimedSession();
+          }
           if (isCorrect) {
             correctCount++;
           } else {
@@ -2191,13 +2458,6 @@
 
       loadProgress();
 
-      // 页面加载即锁定左栏宽度（加减法题型展开状态），避免切换模式时宽度变化
-      (function lockWidthOnLoad() {
-        const wasHidden = numberRangeContainer.classList.contains('hidden');
-        if (wasHidden) numberRangeContainer.classList.remove('hidden');
-        lockLeftColumnWidth();
-        if (wasHidden) numberRangeContainer.classList.add('hidden');
-      })();
     })();
 
     // 统一启动入口
