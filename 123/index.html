@@ -1818,7 +1818,7 @@
         'arithmetic-btn': 'arithmetic', 'within100-btn': 'arithmetic',
         'arithmetic-mixed-btn': 'arithmetic-mixed',
         'nine-nine-multiplication-btn': 'nine-order', 'nine-nine-order-btn': 'nine-order',
-        'nine-nine-random-btn': 'nine-random', 'multiplication-btn': 'mult-div-mod', 'mult-div-mod-btn': 'mult-div-mod',
+        'nine-nine-random-btn': 'nine-random', 'multiplication-btn': 'mult-mixed', 'mult-div-mod-btn': 'mult-div-mod',
         'mult-mixed-btn': 'mult-mixed', 'all-mixed-btn': 'all-mixed'
       };
       document.querySelector('.math-mode-switch').addEventListener('click', event => {
@@ -2457,6 +2457,15 @@
       });
 
       loadProgress();
+      // 恢复练习时，打印题型也跟随当前项目；大项未选子项时使用第一项。
+      if (isArithmeticMode) {
+        printTopic.value = isArithmeticMixed ? 'arithmetic-mixed' : 'arithmetic';
+      } else if (isNineNineMultiplicationMode) {
+        printTopic.value = questionCard.classList.contains('hidden') || isNineNineOrderMode ? 'nine-order' : 'nine-random';
+      } else if (multiplicationBtn.classList.contains('active')) {
+        printTopic.value = questionCard.classList.contains('hidden') ? 'mult-mixed'
+          : isAllMixed ? 'all-mixed' : isMultDivMixed ? 'mult-mixed' : 'mult-div-mod';
+      }
 
     })();
 
