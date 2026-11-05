@@ -514,20 +514,29 @@
     background:var(--sun);
   }
 
-  .choices{display:flex;flex-direction:column;gap:11px;}
+  .choices{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    gap:11px;
+  }
+  .choices[data-n="4"]{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .choices[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .choices[data-n="4"] .choice{font-size:15.5px;padding:12px 6px;gap:7px;}
+  .choices[data-n="4"] .letter{width:24px;height:24px;font-size:11px;}
   .choice{
     position:relative;
     display:flex;
     align-items:center;
-    gap:13px;
+    justify-content:center;
+    gap:9px;
     width:100%;
-    min-height:64px;
-    padding:15px 18px;
+    min-height:58px;
+    padding:12px;
     font:inherit;
-    font-size:18px;
+    font-size:17px;
     font-weight:700;
     color:var(--ink);
-    text-align:left;
+    text-align:center;
     background:#fff;
     border:2px solid #E7EDF8;
     border-radius:18px;
@@ -549,11 +558,11 @@
 
   .letter{
     flex:0 0 auto;
-    width:33px;height:33px;
+    width:27px;height:27px;
     border-radius:50%;
     display:grid;
     place-items:center;
-    font-size:13.5px;
+    font-size:12px;
     font-weight:800;
     background:#EFF3FB;
     color:#64748F;
@@ -563,19 +572,21 @@
   .choice:nth-child(2) .letter{background:#FFF0E7;color:#D4703C;}
   .choice:nth-child(3) .letter{background:#E7F7EF;color:#289A6E;}
   .choice:nth-child(4) .letter{background:#F1EEFF;color:#6B57C9;}
-  .choice .label{flex:1 1 auto;min-width:0;}
+  .choice .label{flex:0 1 auto;min-width:0;}
 
   .mark{
-    margin-left:auto;
+    position:absolute;
+    top:-7px;right:-6px;
     flex:0 0 auto;
-    width:27px;height:27px;
+    width:24px;height:24px;
     border-radius:50%;
     display:grid;
     place-items:center;
-    font-size:14px;
+    font-size:12.5px;
     font-weight:800;
     color:#fff;
     background:var(--mint);
+    box-shadow:0 2px 5px rgba(35,49,80,.18);
   }
 
   .choice.correct{
@@ -952,10 +963,13 @@
     .blank{min-width:80px;padding:0 10px 1px;border-radius:10px;margin:0 3px;}
     .bank-hint{font-size:10px;margin:-6px 0 11px;}
 
-    .choices{gap:9px;}
-    .choice{font-size:15px;padding:11px 13px;border-radius:15px;min-height:52px;gap:10px;}
-    .letter{width:28px;height:28px;font-size:11.5px;}
-    .mark{width:24px;height:24px;font-size:12px;}
+    .choices[data-n]{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+    .choices[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .choices[data-n="3"] .choice{font-size:14px;padding:12px 4px;gap:4px;}
+    .choices[data-n="3"] .letter{width:22px;height:22px;font-size:10.5px;}
+    .choice{font-size:15.5px;padding:12px 8px;border-radius:15px;min-height:50px;gap:6px;}
+    .letter{width:24px;height:24px;font-size:11px;}
+    .mark{width:21px;height:21px;font-size:11px;top:-6px;right:-5px;}
 
     .choices.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;}
     .choices.grid .choice{min-height:46px;padding:10px 2px;font-size:12.5px;border-radius:13px;}
@@ -4456,7 +4470,7 @@ function render(){
 
   html += '<p class="stem">'+parts[0]+'<span class="'+blankCls+'">'+(displayWord !== null ? displayWord : "&nbsp;")+'</span>'+(parts[1]||"")+'</p>';
 
-  html += '<div class="choices">';
+  html += '<div class="choices" data-n="'+q.o.length+'">';
   q.o.forEach((opt,i)=>{
     let cls = "choice";
     let disabled = answered ? " disabled" : "";
