@@ -407,71 +407,7 @@
       box-shadow: 0 2px 10px rgba(175, 82, 222, 0.35);
     }
 
-    .math-timed-session {
-      margin-bottom: 22px;
-      padding: 20px 22px 16px;
-      border: 1px solid rgba(0, 113, 227, 0.10);
-      border-radius: 18px;
-      background: linear-gradient(120deg, #f4f8fd, #fafbfdf0);
-    }
-    .timed-heading, .timed-metrics, .timed-progress-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .timed-title { font-size: 0.9rem; font-weight: 600; }
-    .timed-title i { margin-right: 8px; color: var(--accent); }
-    .timed-badge {
-      font-size: 0.72rem;
-      color: var(--text-secondary);
-      background: #fff;
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 2px 9px;
-      white-space: nowrap;
-    }
-    .math-timed-session[data-state="running"] .timed-badge { color: var(--accent); background: #e8f2ff; }
-    .math-timed-session[data-state="complete"] .timed-badge { color: #25804d; background: #e7f5eb; }
-    .timed-metrics { margin: 14px 0 16px; }
-    .timed-clock-label { display: block; color: var(--text-secondary); font-size: 0.72rem; }
-    #timed-session-clock {
-      display: block;
-      font-size: clamp(2rem, 5vw, 2.65rem);
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -1.5px;
-      line-height: 1.25;
-    }
-    #timed-session-start {
-      border: 0;
-      border-radius: 11px;
-      background: var(--accent);
-      color: white;
-      padding: 10px 16px;
-      font: inherit;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s, transform 0.2s;
-    }
-    #timed-session-start:hover { background: var(--accent-hover); transform: translateY(-1px); }
-    #timed-session-start:focus-visible { outline: 3px solid var(--accent-glow); outline-offset: 3px; }
-    .timed-progress-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 7px; }
-    #timed-session-progress { color: var(--text-primary); font-variant-numeric: tabular-nums; }
-    .timed-progress-track { height: 5px; border-radius: 5px; background: rgba(0, 113, 227, 0.09); overflow: hidden; }
-    .timed-progress-fill { height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.3s; }
-    .math-timed-session[data-state="complete"] .timed-progress-fill { background: #329760; }
-    #timed-session-status { margin: 10px 0 0; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6; }
-    .timed-rules { margin-top: 7px; font-size: 0.72rem; color: var(--text-secondary); }
-    .timed-rules summary { cursor: pointer; width: fit-content; }
-    .timed-rules p { margin-top: 4px; }
-    @media (max-width: 480px) {
-      .math-timed-session { padding: 16px; }
-      .timed-metrics { gap: 10px; }
-      #timed-session-start { padding: 10px 12px; font-size: 0.78rem; }
-    }
+    #timed-session-clock { font-variant-numeric: tabular-nums; }
 
     .math-print-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
     .math-print-tools label { font-size: 0.85rem; color: var(--text-secondary); }
@@ -1006,26 +942,7 @@
             <option value="all-mixed">加减乘除</option>
           </select>
           <button id="print-practice" class="math-pill-btn" type="button"><i class="fas fa-print" aria-hidden="true"></i> 打印 100 题</button>
-        </div>
-
-        <div class="math-timed-session" data-state="idle" aria-label="100题计时">
-          <div class="timed-heading">
-            <span class="timed-title"><i class="fas fa-stopwatch" aria-hidden="true"></i>百题挑战</span>
-            <span id="timed-session-badge" class="timed-badge">准备开始</span>
-          </div>
-          <div class="timed-metrics">
-            <div>
-              <span class="timed-clock-label">累计用时</span>
-              <span id="timed-session-clock" aria-label="用时">00:00.0</span>
-            </div>
-            <button id="timed-session-start" type="button">开始计时</button>
-          </div>
-          <div class="timed-progress-label"><span>答题进度</span><span id="timed-session-progress">0 / 100 题</span></div>
-          <div id="timed-session-track" class="timed-progress-track" role="progressbar" aria-label="百题挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-            <div id="timed-session-fill" class="timed-progress-fill"></div>
-          </div>
-          <p id="timed-session-status" role="status">选好题型，开始你的百题挑战。</p>
-          <details class="timed-rules"><summary>计时规则</summary><p>首次提交计数，重试不计；离开仍计时，满 100 题停止。</p></details>
+          <button id="timed-session-start" class="math-pill-btn" type="button"><span id="timed-session-action">开始计时</span> <span id="timed-session-clock">00:00.0</span></button>
         </div>
 
         <!-- 题目卡片 -->
@@ -1318,32 +1235,20 @@
         const tenths = Math.floor(Math.max(0, milliseconds) / 100);
         return `${String(Math.floor(tenths / 600)).padStart(2, '0')}:${String(Math.floor(tenths / 10) % 60).padStart(2, '0')}.${tenths % 10}`;
       }
-      function renderTimedSession() {
-        const { startedAt, finishedAt, count } = timedSession;
-        $('timed-session-progress').textContent = `${count} / 100 题`;
+      function renderTimedClock() {
+        const { startedAt, finishedAt } = timedSession;
         $('timed-session-clock').textContent = formatDuration(startedAt === null ? 0 : (finishedAt ?? Date.now()) - startedAt);
-        timedStartBtn.textContent = startedAt === null ? '开始计时' : '重新挑战';
-        document.querySelector('.math-timed-session').dataset.state = startedAt === null ? 'idle' : finishedAt === null ? 'running' : 'complete';
-        $('timed-session-badge').textContent = startedAt === null ? '准备开始' : finishedAt === null ? '计时中' : '挑战完成';
-        $('timed-session-fill').style.width = `${count}%`;
-        $('timed-session-track').setAttribute('aria-valuenow', String(count));
-        if (startedAt !== null) {
-          $('timed-session-status').textContent = finishedAt === null
-            ? `已完成 ${count} 题，继续加油。`
-            : `已完成 100 题！总用时 ${formatDuration(finishedAt - startedAt)}。`;
-        }
+      }
+      function renderTimedSession() {
+        const running = timedSession.startedAt !== null && timedSession.finishedAt === null;
+        $('timed-session-action').textContent = running ? '停止计时' : '开始计时';
+        renderTimedClock();
       }
       timedStartBtn.addEventListener('click', () => {
-        if (timedSession.startedAt !== null) {
-          clearAutoNext();
-          timedSession = { startedAt: null, finishedAt: null, count: 0 };
-          $('timed-session-status').textContent = '准备就绪，点击开始计时。';
+        if (timedSession.startedAt !== null && timedSession.finishedAt === null) {
+          timedSession.finishedAt = Date.now();
           renderTimedSession();
           saveProgress();
-          return;
-        }
-        if (!currentQuestion || questionCard.classList.contains('hidden')) {
-          $('timed-session-status').textContent = '请先选择题型并显示题目，再开始计时。';
           return;
         }
         clearAutoNext();
@@ -1352,7 +1257,9 @@
         renderTimedSession();
         saveProgress();
       });
-      setInterval(renderTimedSession, 100);
+      setInterval(() => {
+        if (timedSession.startedAt !== null && timedSession.finishedAt === null) renderTimedClock();
+      }, 100);
 
       function reportStorageError(error) {
         console.error('练习数据存储失败:', error);
@@ -1403,7 +1310,7 @@
           if (timer && Number.isFinite(timer.startedAt) && timer.startedAt > 0 &&
               Number.isInteger(timer.count) && timer.count >= 0 && timer.count <= 100 &&
               ((timer.count < 100 && timer.finishedAt === null) ||
-               (timer.count === 100 && Number.isFinite(timer.finishedAt) && timer.finishedAt >= timer.startedAt))) {
+               (Number.isFinite(timer.finishedAt) && timer.finishedAt >= timer.startedAt))) {
             timedSession = { startedAt: timer.startedAt, finishedAt: timer.finishedAt, count: timer.count };
           }
           renderTimedSession();
