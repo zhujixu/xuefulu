@@ -897,11 +897,15 @@
         let studentNames = Object.create(null);
         let attendanceRecords = Object.create(null); // 每次考勤一条，迟到和早退均计入出勤
         const VALID_STATUSES = ['出勤', '迟到', '早退', '缺勤', '迟到早退'];
+        const DETAIL_SHEET = '完整考勤明细';
+        const DETAIL_HEADERS = ['学号', '状态', '记录时间', '出勤时间', '迟到时间', '早退时间', '缺勤时间'];
+        const DETAIL_TIMES = ['出勤', '迟到', '早退', '缺勤'];
         let historyDateFilter = 'all';
         let normalAttendanceExpanded = false;
         let normalAttendanceLayoutFrame = null;
         const STORAGE_KEY = 'studentAttendance.v2';
         let storageRecoveryRequired = false;
+        let latestImport = 0;
         const LEGACY_KEYS = ['attendancePeriod', 'nameData', 'attendanceStats', 'attendanceHistory', 'todayAttendance', 'attendanceToggle', 'totalStudents', 'remainingStudents', 'currentStudentIndex', 'absenceHistory'];
         function studentLabel(id) { return studentNames[id] || id || ''; }
         function studentDetail(id) { return `${studentLabel(id)}(${id})`; }
@@ -989,6 +993,19 @@
             return record;
         }
 
+        function validateImportedRecords(records, id) {
+            const periods = new Map();
+            for (const record of records) {
+                const period = getAttendancePeriod(record.time);
+                if (!period) continue;
+                const previous = periods.get(period);
+                if (previous) {
+                    throw new Error(`${id}在${period}开始的时段有多条考勤（${previous.time} ${previous.status}、${record.time} ${record.status}），请核对原表`);
+                }
+                periods.set(period, record);
+            }
+        }
+
         function currentRecordIndex(id) {
             const records = attendanceRecords[id] || [];
             let found = -1;
@@ -1018,15 +1035,20 @@
             });
         }
 
-        function updateStatusHistory(name, newStatus, previousStatus) {
+        function updateStatusHistory(name, newStatus) {
             const records = attendanceRecords[name] || (attendanceRecords[name] = []);
-            const index = previousStatus ? currentRecordIndex(name) : -1;
+            const index = currentRecordIndex(name);
+            if (index >= 0 && records.some((record, i) => i !== index && getAttendancePeriod(record.time) === attendancePeriod)) {
+                alert('该时段存在多条旧记录，请先在历史记录中取消多余记录');
+                return false;
+            }
             const record = makeAttendanceRecord(newStatus, index < 0 ? formatBeijingNow() : records[index].time, index < 0 ? {} : records[index]);
             // 添加新的异常时保留出勤时间，并记录此次实际操作时间。
             ['迟到','早退'].forEach(status => {
                 if (statusCounts(newStatus)[status] && (index < 0 || !records[index][status])) record[status] = formatBeijingNow();
             });
             if (index < 0) records.push(record); else records[index] = record;
+            return true;
         }
 
         // 关闭所有考勤记录下拉
@@ -1125,13 +1147,25 @@
 
         function editHistoryRecord(name, entry, newStatus) {
             ensureAttendancePeriod();
-            if (!VALID_STATUSES.includes(newStatus) || newStatus === entry.sourceStatus) return;
+            const cancel = newStatus === null;
+            if (!cancel && (!VALID_STATUSES.includes(newStatus) || newStatus === entry.sourceStatus)) return;
             const source = attendanceRecords[name]?.[entry.index];
             if (!source || source.time !== entry.time || source.status !== entry.sourceStatus) return;
-            const isCurrent = entry.index === currentRecordIndex(name);
-            attendanceRecords[name][entry.index] = makeAttendanceRecord(newStatus, source.time, source);
+            const records = attendanceRecords[name];
+            if (cancel) {
+                if (!confirm(`取消 ${studentDetail(name)} 在 ${source.time} 的这条考勤记录？`)) return;
+                records.splice(entry.index, 1);
+            } else {
+                records[entry.index] = makeAttendanceRecord(newStatus, source.time, source);
+            }
             rebuildAttendanceData();
-            if (isCurrent) todayAttendance[name] = statusCounts(newStatus);
+            const index = currentRecordIndex(name);
+            todayAttendance[name] = statusCounts(records[index]?.status);
+            if (cancel && index < 0 && getAttendancePeriod(source.time) === attendancePeriod) {
+                const studentIndex = nameData.indexOf(name);
+                if (studentIndex !== currentStudentIndex && !remainingStudents.includes(studentIndex)) remainingStudents.push(studentIndex);
+                if (currentStudentIndex < 0) showNextRandomName();
+            }
             saveToLocalStorage();
             updateAttendanceTable();
             updateTodayAttendanceTable();
@@ -1196,7 +1230,8 @@
                     [
                         ['迟到', '迟到', 'late'], ['早退', '早退', 'early'],
                         ['迟到且早退', '迟到早退', 'early'],
-                        ['缺勤', '缺勤', 'absent'], ['出勤', '出勤', 'present']
+                        ['缺勤', '缺勤', 'absent'], ['出勤', '出勤', 'present'],
+                        ['取消记录', null, 'absent']
                     ].forEach(([label, value, color]) => {
                         const action = document.createElement('button');
                         action.type = 'button';
@@ -1204,7 +1239,7 @@
                         action.textContent = label;
                         action.disabled = entry.sourceStatus === value;
                         action.style.opacity = action.disabled ? '0.5' : '1';
-                        action.title = action.disabled ? `当前为${label}` : `将这条记录改为${label}`;
+                        action.title = value === null ? '取消这条考勤记录' : action.disabled ? `当前为${label}` : `将这条记录改为${label}`;
                         action.setAttribute('aria-label', `${studentDetail(name)} ${entry.displayTime}：${action.title}`);
                         action.addEventListener('click', e => {
                             e.stopPropagation();
@@ -1663,21 +1698,64 @@
 
         // 处理文件上传
         function handleFileUpload(e) {
-            importExcelFile(e.target.files[0]);
+            const file = e.target.files[0];
+            e.target.value = '';
+            importExcelFile(file);
+        }
+
+        function readCompleteAttendanceDetails(sheet, ids, stats) {
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            if (!DETAIL_HEADERS.every((header, i) => rows[0]?.[i] === header)) throw new Error(`${DETAIL_SHEET}的表头不完整`);
+            const records = Object.assign(Object.create(null), Object.fromEntries(ids.map(id => [id, []])));
+            rows.slice(1).forEach((row, i) => {
+                if (!row.some(value => String(value ?? '').trim())) return;
+                const [id, status, time] = row;
+                const counts = statusCounts(status);
+                if (!Object.hasOwn(records, id) || !VALID_STATUSES.includes(status) || typeof time !== 'string' || !time.trim()) {
+                    throw new Error(`${DETAIL_SHEET}第${i + 2}行的学号、状态或时间无效`);
+                }
+                const record = {status, time};
+                DETAIL_TIMES.forEach((key, column) => {
+                    const value = row[column + 3];
+                    if (counts[key]) {
+                        if (typeof value !== 'string' || !value.trim()) throw new Error(`${DETAIL_SHEET}第${i + 2}行缺少${key}时间`);
+                        record[key] = value;
+                    } else if (value != null && value !== '') {
+                        throw new Error(`${DETAIL_SHEET}第${i + 2}行的${key}时间与状态不符`);
+                    }
+                });
+                records[id].push(record);
+            });
+            ids.forEach(id => {
+                const totals = statusCounts(null);
+                records[id].forEach(record => {
+                    const counts = statusCounts(record.status);
+                    ['迟到', '早退', '缺勤', '总出勤'].forEach(key => { totals[key] += counts[key]; });
+                });
+                if (['迟到', '早退', '缺勤', '总出勤'].some(key => totals[key] !== stats[id][key])) {
+                    throw new Error(`${id}的完整考勤明细与汇总次数不一致`);
+                }
+            });
+            return records;
         }
 
         function importExcelFile(file) {
             if (!file) return;
 
+            const importNumber = ++latestImport;
             fileInfo.textContent = `正在处理: ${file.name}`;
 
             if (typeof XLSX === 'undefined') { fileInfo.textContent = 'Excel组件未加载，请连接网络后刷新重试'; return; }
             const reader = new FileReader();
-            reader.onerror = () => { fileInfo.textContent = '读取文件失败，原数据已保留'; };
+            reader.onerror = () => {
+                if (importNumber === latestImport) fileInfo.textContent = '读取文件失败，原数据已保留';
+            };
             reader.onload = function (e) {
+                if (importNumber !== latestImport) return;
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
+                    const detailSheet = workbook.Sheets[DETAIL_SHEET];
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -1703,7 +1781,7 @@
                         if (typeof rawId === 'number' && !Number.isSafeInteger(rawId)) throw new Error(`第${index + 2}行学号精度不安全，请将Excel学号列设为文本`);
                         const id = String(rawId ?? '').trim();
                         const name = String(row[nameColumnIndex] ?? '').trim();
-                        if (id.startsWith('legacy:')) throw new Error('学号不能以内部保留前缀legacy:开头');
+                        if (id.startsWith('legacy:') && !(detailSheet && /^legacy:\d+$/.test(id))) throw new Error('学号不能以内部保留前缀legacy:开头');
                         if (!id || !name) throw new Error(`第${index + 2}行缺少学号或姓名`);
                         if (Object.hasOwn(names, id)) throw new Error(`学号重复：${id}`);
                         ids.push(id); names[id] = name;
@@ -1713,84 +1791,114 @@
                         statuses.forEach(status => { history[status][id] = []; });
                     });
                     if (!ids.length) throw new Error('未找到有效学生数据');
-                    const specs = [['迟到记录','迟到'], ['早退记录','早退'], ['缺勤记录','缺勤'], ['出勤记录','出勤'], ['双异常记录','迟到早退']];
-                    specs.forEach(([sheetName, status]) => {
-                        if (!workbook.Sheets[sheetName]) return;
-                        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
-                        const hs = (rows[0] || []).map(h => String(h ?? '').trim());
-                        const idIdx = hs.indexOf('学号'), nameIdx = findNameColumnIndex(hs), timeIdx = hs.findIndex(h => h.includes('时间'));
-                        rows.slice(1).forEach(row => {
-                            if (!row.some(v => String(v ?? '').trim())) return;
-                            let id = String(row[idIdx] ?? '').trim();
-                            if (idIdx < 0) {
-                                const matches = ids.filter(key => names[key] === String(row[nameIdx] ?? '').trim());
-                                if (matches.length !== 1) throw new Error(`${sheetName}缺少学号，无法唯一匹配学生`);
-                                id = matches[0];
-                            }
-                            if (!Object.hasOwn(names, id)) throw new Error(`${sheetName}存在名单外学号：${id}`);
-                            const t = row[timeIdx];
-                            if (t === undefined || t === null || String(t).trim() === '') throw new Error(`${sheetName}缺少记录时间`);
-                            history[status][id].push(typeof t === 'number' ? formatExcelSerialDate(t) : String(t).trim());
-                        });
-                    });
-                    ids.forEach(id => {
-                        // 出勤包含迟到、早退：同一考勤时段内的记录属于同一次出勤。
-                        // 内部用互斥状态计算，展示和导出仍保留每个状态的实际时间。
-                        const grouped = new Map();
-                        ['迟到', '早退', '迟到早退', '出勤'].forEach(status => {
-                            history[status][id].forEach(time => {
-                                const period = getAttendancePeriod(time);
-                                if (!period) return;
-                                if (!grouped.has(period)) grouped.set(period, Object.create(null));
-                                const group = grouped.get(period);
-                                (group[status] || (group[status] = [])).push(time);
+                    let recordsById;
+                    if (detailSheet) {
+                        recordsById = readCompleteAttendanceDetails(detailSheet, ids, stats);
+                    } else {
+                        const specs = [['迟到记录','迟到'], ['早退记录','早退'], ['缺勤记录','缺勤'], ['出勤记录','出勤'], ['双异常记录','迟到早退']];
+                        specs.forEach(([sheetName, status]) => {
+                            if (!workbook.Sheets[sheetName]) return;
+                            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+                            const hs = (rows[0] || []).map(h => String(h ?? '').trim());
+                            const idIdx = hs.indexOf('学号'), nameIdx = findNameColumnIndex(hs), timeIdx = hs.findIndex(h => h.includes('时间'));
+                            rows.slice(1).forEach(row => {
+                                if (!row.some(v => String(v ?? '').trim())) return;
+                                let id = String(row[idIdx] ?? '').trim();
+                                if (idIdx < 0) {
+                                    const matches = ids.filter(key => names[key] === String(row[nameIdx] ?? '').trim());
+                                    if (matches.length !== 1) throw new Error(`${sheetName}缺少学号，无法唯一匹配学生`);
+                                    id = matches[0];
+                                }
+                                if (!Object.hasOwn(names, id)) throw new Error(`${sheetName}存在名单外学号：${id}`);
+                                const t = row[timeIdx];
+                                if (t === undefined || t === null || String(t).trim() === '') throw new Error(`${sheetName}缺少记录时间`);
+                                history[status][id].push(typeof t === 'number' ? formatExcelSerialDate(t) : String(t).trim());
                             });
                         });
-                        recordTimes[id] = Object.create(null);
-                        grouped.forEach(group => {
-                            if (!group['迟到'] && !group['早退'] && !group['迟到早退']) return;
-                            // 同一时段多条同类记录不能无依据合并。
-                            if (Object.values(group).some(times => times.length > 1)) throw new Error(`${id}同一时段存在多条记录，无法唯一匹配`);
-                            const late = group['迟到']?.[0], early = group['早退']?.[0], both = group['迟到早退']?.[0];
-                            const time = both || late || early;
-                            const status = both || (late && early) ? '迟到早退' : late ? '迟到' : '早退';
-                            recordTimes[id][time] = {迟到: late || time, 早退: early || time, 出勤: group['出勤']?.[0] || time};
-                            Object.entries(group).forEach(([source, times]) => {
-                                const index = history[source][id].indexOf(times[0]);
-                                history[source][id].splice(index, 1);
-                            });
-                            history[status][id].push(time);
-                        });
-                        const st = stats[id], combined = history['迟到早退'][id].length;
                         const hasTotal = headers.includes('出勤次数') || headers.includes('总出勤次数');
-                        if (!hasTotal) st.总出勤 = history['出勤'][id].length + st.迟到 + st.早退 - combined;
-                        const required = {迟到: st.迟到 - combined, 早退: st.早退 - combined, 缺勤: st.缺勤,
-                            出勤: st.总出勤 - st.迟到 - st.早退 + combined};
-                        if (required.出勤 < st.出勤) throw new Error(`${id}的出勤统计不一致`);
-                        Object.entries(required).forEach(([status, count]) => {
-                            // 无时间的出勤占位记录也可能包含迟到/早退，按汇总口径消除重叠。
-                            while (history[status][id].length > count && count >= 0) {
-                                const placeholder = history[status][id].findIndex(time => time === '导入数据（无具体时间）');
-                                if (placeholder < 0) break;
-                                history[status][id].splice(placeholder, 1);
+                        ids.forEach(id => {
+                            const st = stats[id];
+                            const lateTimes = history['迟到'][id], earlyTimes = history['早退'][id];
+                            const presentTimes = history['出勤'][id];
+                            // 历史明细可能在同一时段包含多次独立考勤。优先按汇总保留这些记录，
+                            // 只在超出出勤总数且时间完全相同时消除跨表重复。
+                            let matchesTotals = false;
+                            if (hasTotal && !history['迟到早退'][id].length &&
+                                lateTimes.length === st.迟到 && earlyTimes.length === st.早退) {
+                                const excess = presentTimes.length + lateTimes.length + earlyTimes.length - st.总出勤;
+                                matchesTotals = excess === 0;
+                                if (excess > 0) {
+                                    const anomalyTimes = new Set([...lateTimes, ...earlyTimes].filter(time => getAttendancePeriod(time)));
+                                    const distinctPresentTimes = presentTimes.filter(time => !anomalyTimes.delete(time));
+                                    if (presentTimes.length - distinctPresentTimes.length === excess) {
+                                        history['出勤'][id] = distinctPresentTimes;
+                                        matchesTotals = true;
+                                    }
+                                }
                             }
-                            if (count < 0 || history[status][id].length > count) throw new Error(`${id}的${status}次数与记录不一致（统计应为${count}次，明细为${history[status][id].length}条）`);
-                            while (history[status][id].length < count) history[status][id].push('导入数据（无具体时间）');
-                            // 当次状态切换会移除最后一条记录，故始终将有日期记录按时间升序保存。
-                            history[status][id].sort((a,b) => (/^\d{4}-/.test(a) ? a : '').localeCompare(/^\d{4}-/.test(b) ? b : ''));
+                            // 出勤包含迟到、早退：同一考勤时段内的记录属于同一次出勤。
+                            // 内部用互斥状态计算，展示和导出仍保留每个状态的实际时间。
+                            const grouped = new Map();
+                            ['迟到', '早退', '迟到早退', '出勤'].forEach(status => {
+                                if (matchesTotals) return;
+                                history[status][id].forEach(time => {
+                                    const period = getAttendancePeriod(time);
+                                    if (!period) return;
+                                    if (!grouped.has(period)) grouped.set(period, Object.create(null));
+                                    const group = grouped.get(period);
+                                    (group[status] || (group[status] = [])).push(time);
+                                });
+                            });
+                            recordTimes[id] = Object.create(null);
+                            grouped.forEach(group => {
+                                if (!group['迟到'] && !group['早退'] && !group['迟到早退']) return;
+                                // 同一时段多条同类记录不能无依据合并。
+                                if (Object.values(group).some(times => times.length > 1)) throw new Error(`${id}同一时段存在多条记录，无法唯一匹配`);
+                                const late = group['迟到']?.[0], early = group['早退']?.[0], both = group['迟到早退']?.[0];
+                                const time = both || late || early;
+                                const status = both || (late && early) ? '迟到早退' : late ? '迟到' : '早退';
+                                recordTimes[id][time] = {迟到: late || time, 早退: early || time, 出勤: group['出勤']?.[0] || time};
+                                Object.entries(group).forEach(([source, times]) => {
+                                    const index = history[source][id].indexOf(times[0]);
+                                    history[source][id].splice(index, 1);
+                                });
+                                history[status][id].push(time);
+                            });
+                            const combined = history['迟到早退'][id].length;
+                            if (!hasTotal) st.总出勤 = history['出勤'][id].length + st.迟到 + st.早退 - combined;
+                            const required = {迟到: st.迟到 - combined, 早退: st.早退 - combined, 缺勤: st.缺勤,
+                                出勤: st.总出勤 - st.迟到 - st.早退 + combined};
+                            if (required.出勤 < st.出勤) throw new Error(`${id}的出勤统计不一致`);
+                            Object.entries(required).forEach(([status, count]) => {
+                                // 无时间的出勤占位记录也可能包含迟到/早退，按汇总口径消除重叠。
+                                while (history[status][id].length > count && count >= 0) {
+                                    const placeholder = history[status][id].findIndex(time => time === '导入数据（无具体时间）');
+                                    if (placeholder < 0) break;
+                                    history[status][id].splice(placeholder, 1);
+                                }
+                                if (count < 0 || history[status][id].length > count) throw new Error(`${id}的${status}次数与记录不一致（统计应为${count}次，明细为${history[status][id].length}条）`);
+                                while (history[status][id].length < count) history[status][id].push('导入数据（无具体时间）');
+                                // 当次状态切换会移除最后一条记录，故始终将有日期记录按时间升序保存。
+                                history[status][id].sort((a,b) => (/^\d{4}-/.test(a) ? a : '').localeCompare(/^\d{4}-/.test(b) ? b : ''));
+                            });
+                            history['迟到早退'][id].sort((a,b) => a.localeCompare(b));
+                            st.出勤 = required.出勤;
                         });
-                        history['迟到早退'][id].sort((a,b) => a.localeCompare(b));
-                        st.出勤 = required.出勤;
-                    });
-                    const recordsById = Object.create(null);
-                    ids.forEach(id => {
-                        recordsById[id] = statuses.flatMap(status => history[status][id].map(time => {
-                            const record = makeAttendanceRecord(status, time);
-                            const details = recordTimes[id]?.[time] || {};
-                            ['出勤','迟到','早退'].forEach(key => { if (statusCounts(status)[key] && details[key]) record[key] = details[key]; });
-                            return record;
-                        }));
-                    });
+                        recordsById = Object.create(null);
+                        ids.forEach(id => {
+                            const records = statuses.flatMap(status => history[status][id].map(time => {
+                                const record = makeAttendanceRecord(status, time);
+                                const details = recordTimes[id]?.[time] || {};
+                                ['出勤','迟到','早退'].forEach(key => { if (statusCounts(status)[key] && details[key]) record[key] = details[key]; });
+                                return record;
+                            }));
+                            // 这批历史考勤 10 月 16 日于 08:30 开始，剔除开始前的误记。
+                            recordsById[id] = records.filter(record =>
+                                !record.time.startsWith('2026-10-16 ') ||
+                                !getAttendancePeriod(record.time) || record.time >= '2026-10-16 08:30:00');
+                        });
+                    }
+                    ids.forEach(id => validateImportedRecords(recordsById[id], id));
                     storageRecoveryRequired = false;
                     nameData = ids; studentNames = names; attendanceStats = stats; attendanceRecords = recordsById;
                     historyDateFilter = 'all';
@@ -1802,11 +1910,6 @@
                     // 初始化当次考勤数据
                     initTodayAttendanceData();
 
-                    // 恢复当前时段记录，重新导入不重复累计。
-                    nameData.forEach(id => {
-                        const index = currentRecordIndex(id);
-                        if (index >= 0) todayAttendance[id] = statusCounts(attendanceRecords[id][index].status);
-                    });
                     updateTodayAttendanceTable();
                     // 初始化剩余学生数组
                     resetRemainingStudents();
@@ -1859,14 +1962,8 @@
             todayAttendance = Object.create(null);
             attendanceToggle = {};
             nameData.forEach(name => {
-                todayAttendance[name] = {
-                    迟到: 0,
-                    早退: 0,
-                    缺勤: 0,
-                    出勤: 0,
-                    总出勤: 0,
-                    总计: 0
-                };
+                const index = currentRecordIndex(name);
+                todayAttendance[name] = statusCounts(attendanceRecords[name]?.[index]?.status);
                 attendanceToggle[name] = {
                     迟到: 1,
                     早退: 1,
@@ -1917,7 +2014,7 @@
             // 转换状态名称以匹配数据结构
             const normalizedStatus = status;
 
-            applyTodayStatus(name, normalizedStatus);
+            if (applyTodayStatus(name, normalizedStatus) === false) return;
 
             // 显示下一个随机姓名
             showNextRandomName();
@@ -1961,9 +2058,9 @@
                     before.迟到 ? '迟到' : before.早退 ? '早退' : '出勤';
             }
             if (nextStatus === previousStatus) return;
-            updateStatusHistory(name, nextStatus, previousStatus);
+            if (!updateStatusHistory(name, nextStatus)) return false;
             updateHistoricalAttendance(name, nextStatus, previousStatus);
-            todayAttendance[name] = statusCounts(nextStatus);
+            todayAttendance[name] = statusCounts(attendanceRecords[name][currentRecordIndex(name)]?.status);
             lastUpdatedCells[name] = nextStatus;
             updateAttendanceTable();
             updateTodayAttendanceTable();
@@ -2338,7 +2435,7 @@
                 nameData.forEach((name, index) => {
                     exportData.push([
                         index + 1,
-                        name.startsWith('legacy:') ? '' : name,
+                        name,
                         studentLabel(name),
                         attendanceStats[name]?.迟到 || 0,
                         attendanceStats[name]?.早退 || 0,
@@ -2364,12 +2461,22 @@
                     const rows = [['学号', '姓名', timeHeader]];
                     nameData.forEach(name => {
                         getStatusHistory(name, status).slice().reverse().forEach(entry => {
-                            rows.push([name.startsWith('legacy:') ? '' : name, studentLabel(name), entry.displayTime]);
+                            rows.push([name, studentLabel(name), entry.displayTime]);
                         });
                     });
                     const wsHistory = XLSX.utils.aoa_to_sheet(rows);
                     XLSX.utils.book_append_sheet(wb, wsHistory, sheetName);
                 });
+
+                const details = [DETAIL_HEADERS];
+                nameData.forEach(id => {
+                    attendanceRecords[id].forEach(record => {
+                        const counts = statusCounts(record.status);
+                        details.push([id, record.status, record.time,
+                            ...DETAIL_TIMES.map(key => counts[key] ? record[key] || record.time : null)]);
+                    });
+                });
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(details), DETAIL_SHEET);
 
                 // 获取当前时间（年月日时分秒）
                 const now = new Date();
@@ -2484,7 +2591,7 @@
                             times.forEach(time => {
                                 const record = makeAttendanceRecord(source === legacyPresent ? '出勤' : source, time);
                                 const details = oldTimes[oldId]?.[time] || {};
-                                ['出勤','迟到','早退'].forEach(status => { if (details[status]) record[status] = details[status]; });
+                                ['出勤','迟到','早退'].forEach(status => { if (record[status] && typeof details[status] === 'string') record[status] = details[status]; });
                                 records.push(record);
                             });
                         });
