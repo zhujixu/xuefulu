@@ -897,8 +897,14 @@
         let studentNames = Object.create(null);
         let attendanceRecords = Object.create(null); // 每次考勤一条，迟到和早退均计入出勤
         const VALID_STATUSES = ['出勤', '迟到', '早退', '缺勤', '迟到早退'];
-        const DETAIL_SHEET = '完整考勤明细';
-        const DETAIL_HEADERS = ['学号', '状态', '记录时间', '出勤时间', '迟到时间', '早退时间', '缺勤时间'];
+        const DETAIL_SHEET = '完整明细';
+        const COMBINED_SHEET = '迟到早退';
+        const HISTORY_SHEETS = [
+            ['迟到记录', '迟到时间', '迟到'], ['早退记录', '早退时间', '早退'],
+            ['缺勤记录', '缺勤时间', '缺勤'], ['出勤记录', '出勤时间', '出勤'],
+            [COMBINED_SHEET, '迟到早退时间', '迟到早退']
+        ];
+        const DETAIL_HEADERS = ['学号', '姓名', '状态', '记录时间', '出勤时间', '迟到时间', '早退时间', '缺勤时间'];
         const DETAIL_TIMES = ['出勤', '迟到', '早退', '缺勤'];
         let historyDateFilter = 'all';
         let normalAttendanceExpanded = false;
@@ -1703,23 +1709,28 @@
             importExcelFile(file);
         }
 
-        function readCompleteAttendanceDetails(sheet, ids, stats) {
+        function readCompleteAttendanceDetails(sheet, ids, stats, date1904) {
             const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-            if (!DETAIL_HEADERS.every((header, i) => rows[0]?.[i] === header)) throw new Error(`${DETAIL_SHEET}的表头不完整`);
+            const hasName = rows[0]?.[1] === '姓名';
+            const headers = hasName ? DETAIL_HEADERS : DETAIL_HEADERS.filter(header => header !== '姓名');
+            if (!headers.every((header, i) => rows[0]?.[i] === header)) throw new Error(`${DETAIL_SHEET}的表头不完整`);
+            const statusIndex = hasName ? 2 : 1;
             const records = Object.assign(Object.create(null), Object.fromEntries(ids.map(id => [id, []])));
             rows.slice(1).forEach((row, i) => {
                 if (!row.some(value => String(value ?? '').trim())) return;
-                const [id, status, time] = row;
+                const id = row[0];
+                const status = row[statusIndex];
                 const counts = statusCounts(status);
-                if (!Object.hasOwn(records, id) || !VALID_STATUSES.includes(status) || typeof time !== 'string' || !time.trim()) {
-                    throw new Error(`${DETAIL_SHEET}第${i + 2}行的学号、状态或时间无效`);
+                const location = `${DETAIL_SHEET}第${i + 2}行`;
+                if (!Object.hasOwn(records, id) || !VALID_STATUSES.includes(status)) {
+                    throw new Error(`${location}的学号或状态无效`);
                 }
+                const time = normalizeImportedTime(row[statusIndex + 1], `${location}记录时间`, date1904);
                 const record = {status, time};
                 DETAIL_TIMES.forEach((key, column) => {
-                    const value = row[column + 3];
+                    const value = row[statusIndex + 2 + column];
                     if (counts[key]) {
-                        if (typeof value !== 'string' || !value.trim()) throw new Error(`${DETAIL_SHEET}第${i + 2}行缺少${key}时间`);
-                        record[key] = value;
+                        record[key] = normalizeImportedTime(value, `${location}${key}时间`, date1904);
                     } else if (value != null && value !== '') {
                         throw new Error(`${DETAIL_SHEET}第${i + 2}行的${key}时间与状态不符`);
                     }
@@ -1733,7 +1744,7 @@
                     ['迟到', '早退', '缺勤', '总出勤'].forEach(key => { totals[key] += counts[key]; });
                 });
                 if (['迟到', '早退', '缺勤', '总出勤'].some(key => totals[key] !== stats[id][key])) {
-                    throw new Error(`${id}的完整考勤明细与汇总次数不一致`);
+                    throw new Error(`${id}的${DETAIL_SHEET}与汇总次数不一致`);
                 }
             });
             return records;
@@ -1755,8 +1766,12 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
+                    const date1904 = workbook.Workbook?.WBProps?.date1904 === true;
                     const detailSheet = workbook.Sheets[DETAIL_SHEET];
                     const firstSheetName = workbook.SheetNames[0];
+                    const supportedSheets = new Set([DETAIL_SHEET, ...HISTORY_SHEETS.map(([name]) => name)]);
+                    const unknownSheet = workbook.SheetNames.slice(1).find(name => !supportedSheets.has(name));
+                    if (unknownSheet) throw new Error(`不支持工作表“${unknownSheet}”，请使用新版导出的考勤文件`);
                     const worksheet = workbook.Sheets[firstSheetName];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
@@ -1793,15 +1808,14 @@
                     if (!ids.length) throw new Error('未找到有效学生数据');
                     let recordsById;
                     if (detailSheet) {
-                        recordsById = readCompleteAttendanceDetails(detailSheet, ids, stats);
+                        recordsById = readCompleteAttendanceDetails(detailSheet, ids, stats, date1904);
                     } else {
-                        const specs = [['迟到记录','迟到'], ['早退记录','早退'], ['缺勤记录','缺勤'], ['出勤记录','出勤'], ['双异常记录','迟到早退']];
-                        specs.forEach(([sheetName, status]) => {
+                        HISTORY_SHEETS.forEach(([sheetName, , status]) => {
                             if (!workbook.Sheets[sheetName]) return;
                             const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
                             const hs = (rows[0] || []).map(h => String(h ?? '').trim());
                             const idIdx = hs.indexOf('学号'), nameIdx = findNameColumnIndex(hs), timeIdx = hs.findIndex(h => h.includes('时间'));
-                            rows.slice(1).forEach(row => {
+                            rows.slice(1).forEach((row, index) => {
                                 if (!row.some(v => String(v ?? '').trim())) return;
                                 let id = String(row[idIdx] ?? '').trim();
                                 if (idIdx < 0) {
@@ -1810,9 +1824,7 @@
                                     id = matches[0];
                                 }
                                 if (!Object.hasOwn(names, id)) throw new Error(`${sheetName}存在名单外学号：${id}`);
-                                const t = row[timeIdx];
-                                if (t === undefined || t === null || String(t).trim() === '') throw new Error(`${sheetName}缺少记录时间`);
-                                history[status][id].push(typeof t === 'number' ? formatExcelSerialDate(t) : String(t).trim());
+                                history[status][id].push(normalizeImportedTime(row[timeIdx], `${sheetName}第${index + 2}行记录时间`, date1904));
                             });
                         });
                         const hasTotal = headers.includes('出勤次数') || headers.includes('总出勤次数');
@@ -1886,16 +1898,12 @@
                         });
                         recordsById = Object.create(null);
                         ids.forEach(id => {
-                            const records = statuses.flatMap(status => history[status][id].map(time => {
+                            recordsById[id] = statuses.flatMap(status => history[status][id].map(time => {
                                 const record = makeAttendanceRecord(status, time);
                                 const details = recordTimes[id]?.[time] || {};
                                 ['出勤','迟到','早退'].forEach(key => { if (statusCounts(status)[key] && details[key]) record[key] = details[key]; });
                                 return record;
                             }));
-                            // 这批历史考勤 10 月 16 日于 08:30 开始，剔除开始前的误记。
-                            recordsById[id] = records.filter(record =>
-                                !record.time.startsWith('2026-10-16 ') ||
-                                !getAttendancePeriod(record.time) || record.time >= '2026-10-16 08:30:00');
                         });
                     }
                     ids.forEach(id => validateImportedRecords(recordsById[id], id));
@@ -2450,14 +2458,7 @@
                 XLSX.utils.book_append_sheet(wb, ws, "历史考勤");
 
                 // 创建各状态记录表（含具体北京时间），供再次导入时还原
-                const historySheetSpecs = [
-                    ['迟到记录', '迟到时间', '迟到'],
-                    ['早退记录', '早退时间', '早退'],
-                    ['缺勤记录', '缺勤时间', '缺勤'],
-                    ['出勤记录', '出勤时间', '出勤'],
-                    ['双异常记录', '迟到早退时间', '迟到早退']
-                ];
-                historySheetSpecs.forEach(([sheetName, timeHeader, status]) => {
+                HISTORY_SHEETS.forEach(([sheetName, timeHeader, status]) => {
                     const rows = [['学号', '姓名', timeHeader]];
                     nameData.forEach(name => {
                         getStatusHistory(name, status).slice().reverse().forEach(entry => {
@@ -2472,7 +2473,7 @@
                 nameData.forEach(id => {
                     attendanceRecords[id].forEach(record => {
                         const counts = statusCounts(record.status);
-                        details.push([id, record.status, record.time,
+                        details.push([id, studentLabel(id), record.status, record.time,
                             ...DETAIL_TIMES.map(key => counts[key] ? record[key] || record.time : null)]);
                     });
                 });
@@ -2500,12 +2501,31 @@
             return num < 10 ? '0' + num : num;
         }
 
-        // 辅助函数：将 Excel 日期序列号格式化为 YYYY-MM-DD HH:mm:ss
-        function formatExcelSerialDate(serial) {
-            const d = XLSX.SSF.parse_date_code(serial);
-            if (!d) return String(serial);
-            const p = n => (n < 10 ? '0' + n : '' + n);
-            return `${d.y}-${p(d.m)}-${p(d.d)} ${p(d.H)}:${p(d.M)}:${p(d.S)}`;
+        function normalizeImportedTime(value, location, date1904) {
+            const text = String(value ?? '').trim();
+            if (!text) throw new Error(`${location}为空`);
+            if (text === '导入数据（无具体时间）') return text;
+
+            const dateOnly = typeof value === 'string' && /^\d{4}([-/.])\d{1,2}\1\d{1,2}$/.test(text);
+            let parts;
+            if (typeof value === 'number' && Number.isFinite(value)) {
+                const date = XLSX.SSF.parse_date_code(value, { date1904 });
+                if (date) parts = [date.y, date.m, date.d, date.H, date.M, date.S];
+            } else {
+                const match = /^(\d{4})([-/.])(\d{1,2})\2(\d{1,2})(?:\s+|T)(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/.exec(dateOnly ? `${text} 00:00` : text);
+                if (match) parts = [match[1], match[3], match[4], match[5], match[6], match[7] ?? '0'].map(Number);
+            }
+            if (parts) {
+                const [year, month, day, hour, minute, second] = parts;
+                const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+                const daysPerMonth = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                if (year >= 1 && year <= 9999 && month >= 1 && month <= 12 &&
+                    day >= 1 && day <= daysPerMonth[month - 1] && hour <= 23 && minute <= 59 && second <= 59) {
+                    const date = `${String(year).padStart(4, '0')}-${padZero(month)}-${padZero(day)}`;
+                    return dateOnly ? date : `${date} ${padZero(hour)}:${padZero(minute)}:${padZero(second)}`;
+                }
+            }
+            throw new Error(`${location}无效：${text}，请填写完整日期和时间`);
         }
 
         // 保存到本地存储
