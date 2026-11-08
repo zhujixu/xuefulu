@@ -402,7 +402,7 @@ body.dark .card:target .no { background: #2f6fae; color: #fff; }
   .title-row .design-badge { font-size: 13px; padding: 0 10px; margin-right: 10px; }
 }
 /* === 增强：顶部品牌行 === */
-/* 顶部三行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
+/* 顶部两行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
    ⚠️ `.top-brand` 的**位置**在 `<body>` 直下（`.layout` 之前；历史形态曾在 `<main>` 内），
    所以这里补上 `max-width:1200px; margin:… auto 0` —— 这两条合起来正好复刻 index 的
    「`body{padding:clamp(10px,3vw,20px)}` + `.container{max-width:1200px;margin:0 auto}`」几何：
@@ -432,18 +432,7 @@ body.dark .card:target .no { background: #2f6fae; color: #fff; }
   animation: tp-pulse 2s ease-in-out infinite; }
 @keyframes tp-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .top-brand .brand-accent { color: #0071e3; text-shadow: 0 0 10px rgba(0,113,227,.3); }
-/* ② 「今天你 AI 赋能了吗？」下载提示行 */
-.top-brand .download-tip {
-  display: block; text-align: center; color: #86868b; font-size: .875rem;
-  padding: 8px 20px; text-decoration: none; transition: color .2s ease;
-}
-.top-brand .download-tip:hover { color: #0071e3; }
-.top-brand .download-tip i { margin-right: 6px; color: #86868b; }
-.top-brand .download-tip .highlight {
-  background-color: #fde047; color: #111827; font-weight: 700;
-  padding: .125rem .375rem; border-radius: .25rem;
-}
-/* ③ 实时北京时间行 */
+/* ② 实时北京时间行 */
 .top-brand .time-display { text-align: center; padding: 6px 0; color: #86868b;
   position: relative; z-index: 1; }
 .top-brand .time-display .time-main { font-size: 1.05rem; font-weight: 400; letter-spacing: .5px; }
@@ -452,10 +441,7 @@ body.dark .card:target .no { background: #2f6fae; color: #fff; }
 /* 深色主题（index 没有深色模式，这几条是按用户「深色下自动提亮」的要求新增的）：
    正文色与灰字、品牌蓝各提亮一档；浅色下一律与 index.html 完全一致。 */
 body.dark .top-brand { color: #f0f0f0; }
-body.dark .top-brand .download-tip,
-body.dark .top-brand .download-tip i,
 body.dark .top-brand .time-display { color: #a1a1a6; }
-body.dark .top-brand .download-tip:hover { color: #4dabf7; }
 body.dark .top-brand .logo i,
 body.dark .top-brand .brand-accent { color: #4dabf7; }
 body.dark .top-brand .logo i { filter: drop-shadow(0 0 8px rgba(77,171,247,.45)); }
@@ -798,17 +784,13 @@ body.sb-open .sb-mask { opacity: 1; visibility: visible; }
 
 <button id="themeBtn">🌙 深色</button>
 
-    <!-- 增强：顶部品牌行（克隆自 index.html 页首三行，勿手改） -->
+    <!-- 增强：顶部品牌行（克隆自 index.html 页首，下载提示行已移除，勿手改） -->
     <div class="top-brand">
       <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
         <div class="logo">
           <i class="fas fa-graduation-cap" aria-hidden="true"></i>
           <span>学府路<span class="brand-accent">1</span>号 · <span class="brand-accent">xuefulu.ai</span></span>
         </div>
-      </a>
-      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
-        <i class="fas fa-external-link" aria-hidden="true"></i><span class="highlight">今天你 AI 赋能了吗？</span>打开浏览器，在地址栏输入
-        <span class="highlight">xuefulu.ai</span>，按下 <span class="highlight">Enter</span> 即可访问学府路1号！
       </a>
       <div class="time-display">
         <span class="time-main"><span id="currentDateTime">2026年11月05日 星期四 21:12:37</span><span class="time-sync-status" id="timeSyncStatus"></span></span>
