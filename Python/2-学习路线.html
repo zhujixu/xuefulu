@@ -323,11 +323,11 @@
 /* 页眉横幅里的常用网址清单（2026-10-04 起横幅就这一行） */
 .warn .warn-links { display: block; font-size: 13px; line-height: 1.9; }
 .warn .warn-links a { word-break: break-all; }
-/* 横幅里的「教程导航」站内链接（2026-10-10 用户要求加在「学府路1号」前面）：
-   样式与品牌行的「今天你 AI 赋能了吗?」黄底高亮块**完全一致**
-   （同 #fde047 底 / #111827 黑字 / 700 加粗 / .125rem .375rem 内边距 / .25rem 圆角，
-   逐字照抄 `.top-brand .download-tip .highlight`）；站内相对链接，不开新页签。
-   深色模式下不加覆盖——与品牌行那块一样保持黄底黑字（显式写色值天然继承）。 */
+/* 横幅里的「学习路线／教程导航」站内链接（黄底黑字 chip）：
+   色值最初照抄品牌行下载提示里的高亮块（#fde047 底 / #111827 黑字 / 700 加粗 /
+   .125rem .375rem 内边距 / .25rem 圆角）；2026-11-08 品牌行那条下载提示已整行删除，
+   样式现独立写在本规则里，不再依赖品牌行原先的提示块；站内相对链接，不开新页签。
+   深色模式下不加覆盖——保持黄底黑字（显式写色值天然继承）。 */
 .warn .warn-links a.banner-home {
   background-color: #fde047; color: #111827; font-weight: 700;
   padding: .125rem .375rem; border-radius: .25rem; text-decoration: none;
@@ -360,7 +360,7 @@
   .title-row h1, .title-row .page-heading { font-size: 19px; }
 }
 /* === 增强：顶部品牌行 === */
-/* 顶部三行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
+/* 顶部两行：`.top-brand` ≈ index 的 <header>（含它那圈内边距）。
    ⚠️ `.top-brand` 的**位置**在 `<body>` 直下（`.layout` 之前；历史形态曾在 `<main>` 内），
    所以这里补上 `max-width:1200px; margin:… auto 0` —— 这两条合起来正好复刻 index 的
    「`body{padding:clamp(10px,3vw,20px)}` + `.container{max-width:1200px;margin:0 auto}`」几何：
@@ -390,18 +390,7 @@
   animation: tp-pulse 2s ease-in-out infinite; }
 @keyframes tp-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .top-brand .brand-accent { color: #0071e3; text-shadow: 0 0 10px rgba(0,113,227,.3); }
-/* ② 「今天你 AI 赋能了吗?」下载提示行 */
-.top-brand .download-tip {
-  display: block; text-align: center; color: #86868b; font-size: .875rem;
-  padding: 8px 20px; text-decoration: none; transition: color .2s ease;
-}
-.top-brand .download-tip:hover { color: #0071e3; }
-.top-brand .download-tip i { margin-right: 6px; color: #86868b; }
-.top-brand .download-tip .highlight {
-  background-color: #fde047; color: #111827; font-weight: 700;
-  padding: .125rem .375rem; border-radius: .25rem;
-}
-/* ③ 实时北京时间行 */
+/* ② 实时北京时间行 */
 .top-brand .time-display { text-align: center; padding: 6px 0; color: #86868b;
   position: relative; z-index: 1; }
 .top-brand .time-display .time-main { font-size: 1.05rem; font-weight: 400; letter-spacing: .5px; }
@@ -410,10 +399,7 @@
 /* 深色主题（index 没有深色模式，这几条是按用户「深色下自动提亮」的要求新增的）：
    正文色与灰字、品牌蓝各提亮一档；浅色下一律与 index.html 完全一致。 */
 body.dark .top-brand { color: #f0f0f0; }
-body.dark .top-brand .download-tip,
-body.dark .top-brand .download-tip i,
 body.dark .top-brand .time-display { color: #a1a1a6; }
-body.dark .top-brand .download-tip:hover { color: #4dabf7; }
 body.dark .top-brand .logo i,
 body.dark .top-brand .brand-accent { color: #4dabf7; }
 body.dark .top-brand .logo i { filter: drop-shadow(0 0 8px rgba(77,171,247,.45)); }
@@ -484,7 +470,7 @@ body.dark .hl-hit.is-first { background: #8a7418; color: #fff2c2; box-shadow: 0 
      导航页父容器只 3744px 高，实测展开态在页底偏了 130px（讲义父容器一万八，从没碰到这个上限）。
      改成 top: calc(50vh - H/2) 后布局盒本身就居中，底部只占 50vh + H/2 ≤ 视口高（H ≤ 100vh-72px）。 */
   top: var(--sb-top, 50vh);
-  /* 品牌行（index 首三行）在 `.layout` **之前**（＝页面最顶端），
+  /* 品牌行（index 的 logo 行与时间行）在 `.layout` **之前**（＝页面最顶端），
      于是书签的**静态位置**被整体推低了「品牌行高 + 外边距 + .layout 上内边距」那么多。
      sticky 只能把元素往下推、不能往上提：展开态面板在页顶会被切掉（实测 1200×800 切掉一截）。
      解法＝用等量**负上外边距**把静态位置提回版式顶端——`--sb-head` 由 JS 实测（＝文档顶到
@@ -731,18 +717,13 @@ body.sb-open .sb-mask { opacity: 1; visibility: visible; }
 
 <button id="themeBtn">🌙 深色</button>
 
-    <!-- 增强：顶部品牌行（克隆自 index.html 页首三行，勿手改） -->
+    <!-- 增强：顶部品牌行（学士帽 logo ＋ 实时北京时间；下载提示行已删除，勿手改） -->
     <div class="top-brand">
       <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
         <div class="logo">
           <i class="fas fa-graduation-cap" aria-hidden="true"></i>
           <span>学府路<span class="brand-accent">1</span>号 · <span class="brand-accent">xuefulu.ai</span></span>
         </div>
-      </a>
-      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="download-tip">
-        <i class="fas fa-external-link" aria-hidden="true"></i><span class="highlight">今天你 AI 赋能了吗?</span>打开浏览器,在地址栏输入
-        <span class="highlight">xuefulu.ai</span>
-        ,按下 <span class="highlight">Enter</span> 即可访问学府路1号!
       </a>
       <div class="time-display">
         <span class="time-main"><span id="currentDateTime">2026年10月14日 星期三 10:40:00</span><span class="time-sync-status" id="timeSyncStatus"></span></span>
