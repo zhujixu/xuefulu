@@ -449,19 +449,11 @@
         const FETCH_TIMEOUT = 3000;
         const STORAGE_KEY_SUBJECT = 'exam_clock_subject';
 
-        // ===== 时间段定义（06:00-11:59 上午 / 12:00-17:59 下午 / 18:00-23:59 晚上） =====
-        const TIME_RANGES = [
-            { name: 'morning', label: '上午', startHour: 6, endHour: 12, defaultTime: '09:00-11:00' },
-            { name: 'afternoon', label: '下午', startHour: 12, endHour: 18, defaultTime: '15:00-17:00' },
-            { name: 'evening', label: '晚上', startHour: 18, endHour: 24, defaultTime: '19:00-21:00' },
-        ];
-
-        function getCurrentTimeRange() {
-            const hour = getBeijingTime().hour();
-            for (const r of TIME_RANGES) {
-                if (hour >= r.startHour && hour < r.endHour) return r;
-            }
-            return TIME_RANGES[TIME_RANGES.length - 1]; // 00:00-05:59 归入晚上
+        // ===== 按北京时间选择默认场次 =====
+        function getDefaultExamTime(hour) {
+            if (hour < 12) return '09:00-11:00'; // 00:00 起选择当天上午场
+            if (hour < 18) return '15:00-17:00';
+            return '19:00-21:00';
         }
 
         // ===== DOM 缓存 =====
@@ -789,7 +781,7 @@
         }
 
         function setDefaultExamTime() {
-            setExamTime(getCurrentTimeRange().defaultTime);
+            setExamTime(getDefaultExamTime(getBeijingTime().hour()));
         }
 
         // ===== 时间显示更新 =====
