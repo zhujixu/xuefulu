@@ -43,7 +43,7 @@
                 transition: all 0.3s ease-in-out;
             }
             .card {
-                @apply bg-white rounded-xl p-4 md:p-6 card-shadow transition-smooth hover:shadow-lg;
+                @apply bg-white rounded-xl p-4 md:p-6 card-shadow;
             }
             .btn {
                 @apply text-white font-bold py-2 px-4 rounded-lg transition-smooth focus:outline-none focus:ring-2 focus:ring-opacity-50;
@@ -53,14 +53,6 @@
             }
             .btn--danger {
                 @apply bg-danger hover:bg-danger/90 focus:ring-danger;
-            }
-            /* ===== 按钮悬停上浮效果 ===== */
-            .btn-float:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.15);
-            }
-            .btn-float:active {
-                transform: translateY(0);
             }
 
             .input-container {
@@ -225,6 +217,27 @@
         .card #examTimeContainer,
         .card .custom-select-btn {
             border-radius: 0;
+        }
+
+        /* ===== 品牌色按钮（xuefulu.ai 蓝，与官网 .btn-primary 一致） ===== */
+        .btn--brand {
+            background: linear-gradient(135deg, #0071e3, #0066cc);
+            box-shadow: 0 2px 10px rgba(0, 113, 227, 0.28);
+            border: 1px solid transparent;
+        }
+
+        /* 悬停 / 按下保持完全静态：不位移、不变色、不改变阴影 */
+        .btn--brand:hover,
+        .btn--brand:active {
+            background: linear-gradient(135deg, #0071e3, #0066cc);
+            box-shadow: 0 2px 10px rgba(0, 113, 227, 0.28);
+            transform: none;
+        }
+
+        /* 「考试科目 / 考试时间」标题条：同色渐变，作为静态标签不加悬停位移 */
+        .title-btn.btn--brand {
+            background: linear-gradient(135deg, #0071e3, #0066cc);
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 113, 227, 0.2);
         }
 
         /* ===== 考试纪律折叠动画 ===== */
@@ -413,7 +426,6 @@
     .footer-link:hover {
       color: var(--text-primary);
       text-decoration: underline;
-      transform: translateY(-2px);
     }
 
     .separator {
@@ -509,13 +521,13 @@
           <!-- 考试纪律区域 -->
           <section class="card mb-6">
               <div class="flex flex-wrap justify-center gap-3">
-                  <button id="toggleDisciplineBtn" class="btn btn--danger btn-float action-btn flex items-center justify-center" aria-label="展开或收起考试纪律">
+                  <button id="toggleDisciplineBtn" class="btn btn--brand action-btn flex items-center justify-center" aria-label="展开或收起考试纪律">
                       <i class="fa fa-chevron-down mr-2" id="toggleDisciplineIcon"></i><span id="toggleDisciplineLabel">展开考试纪律</span>
                   </button>
-                  <button id="playOnceBtn" class="btn btn--success btn-float action-btn flex items-center justify-center" aria-label="单次播放考试纪律音频">
+                  <button id="playOnceBtn" class="btn btn--brand action-btn flex items-center justify-center" aria-label="单次播放考试纪律音频">
                       <i class="fa fa-play mr-2"></i>单次播放
                   </button>
-                  <button id="playLoopBtn" class="btn btn--danger btn-float action-btn flex items-center justify-center" aria-label="循环播放考试纪律音频">
+                  <button id="playLoopBtn" class="btn btn--brand action-btn flex items-center justify-center" aria-label="循环播放考试纪律音频">
                       <i class="fa fa-repeat mr-2"></i>循环播放
                   </button>
               </div>
@@ -561,7 +573,7 @@
               <form id="examForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <!-- 考试科目输入 -->
                   <div class="input-container">
-                      <button type="button" class="title-btn bg-success h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
+                      <button type="button" class="title-btn btn--brand h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
                           <i class="fa fa-book mr-2"></i>考试科目
                       </button>
                       <input type="text" id="examSubject" placeholder="xuefulu.ai" class="form-input text-[clamp(1.2rem,5vw,1.8rem)]">
@@ -569,7 +581,7 @@
 
                   <!-- 考试时间输入 -->
                   <div class="input-container">
-                      <button type="button" class="title-btn bg-danger h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
+                      <button type="button" class="title-btn btn--brand h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
                           <i class="fa fa-clock mr-2"></i>考试时间
                       </button>
                       <div id="examTimeContainer" class="w-full h-16 px-2 border border-gray-300 rounded-b-lg transition-smooth outline-none font-bold text-red-600 text-center flex items-center justify-center gap-0 bg-white select-none">
@@ -989,11 +1001,11 @@
                 btn.innerHTML = `<i class="fa fa-${icon} mr-2"></i>${label}`;
                 btn.dataset.state = 'stopped';
                 btn.disabled = false;
-                btn.className = `btn ${colorClass} btn-float action-btn flex items-center justify-center`;
+                btn.className = `btn ${colorClass} action-btn flex items-center justify-center`;
             };
 
-            resetBtn(DOM.playOnceBtn, 'play', '单次播放', 'btn--success');
-            resetBtn(DOM.playLoopBtn, 'repeat', '循环播放', 'btn--danger');
+            resetBtn(DOM.playOnceBtn, 'play', '单次播放', 'btn--brand');
+            resetBtn(DOM.playLoopBtn, 'repeat', '循环播放', 'btn--brand');
 
             if (isPlaying && activeBtn) {
                 activeBtn.innerHTML = '<i class="fa fa-stop mr-2"></i>停止播放';
@@ -1336,7 +1348,6 @@
                         next.querySelector('input,select,.custom-select-btn');
                     if (focusable) focusable.focus();
                 });
-                btn.classList.add('hover:opacity-90');
             });
         }
 
