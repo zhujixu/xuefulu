@@ -305,7 +305,7 @@
 
     function renderCard(platform) {
       var data = platforms[platform];
-      var version = state.selected[platform] || state.versions[0];
+      var version = state.selected[platform] || state.versions[1];
       var options = state.versions.map(function(value) {
         return '<option value="' + escapeAttr(value) + '"' + (value === version ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
       }).join('');
