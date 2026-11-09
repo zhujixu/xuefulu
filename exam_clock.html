@@ -202,6 +202,14 @@
                 pointer-events: none;
             }
         }
+        /* ===== 考试纪律操作按钮：统一尺寸（宽高完全一致） ===== */
+        .action-btn {
+            width: 10rem;
+            height: 2.75rem;
+            padding: 0 0.5rem;
+            white-space: nowrap;
+        }
+
         /* ===== 考试纪律折叠动画 ===== */
         .discipline-collapse {
             overflow: hidden;
@@ -305,8 +313,8 @@
     /* ==================== 头部 ==================== */
     header {
       text-align: center;
-      /* 顶部间距保持响应式，底部固定 10px：与时间显示的 6px 底部内边距合计 16px */
-      padding: clamp(20px, 5vw, 30px) 20px 10px;
+      /* 顶部间距保持响应式，底部收窄到 6px：与时间显示的 6px 底部内边距合计 12px，让时间行贴近下方内容 */
+      padding: clamp(20px, 5vw, 30px) 20px 6px;
       color: var(--text-primary);
       margin-bottom: 0;
     }
@@ -363,7 +371,7 @@
     .footer {
       text-align: center;
       color: var(--text-secondary);
-      padding: 20px 0 20px;
+      padding: 4px 0 20px;
       font-size: 0.9rem;
     }
 
@@ -480,17 +488,17 @@
     </header>
 
     <main class="main-content">
-      <div class="mx-auto w-full px-4 pt-6 max-w-5xl flex flex-col font-sans text-dark leading-normal">
+      <div class="mx-auto w-full px-4 pt-2 max-w-5xl flex flex-col font-sans text-dark leading-normal">
           <!-- 考试纪律区域 -->
           <section class="card mb-6">
               <div class="flex flex-wrap justify-center gap-3">
-                  <button id="toggleDisciplineBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="展开或收起考试纪律">
+                  <button id="toggleDisciplineBtn" class="btn btn--danger btn-float action-btn flex items-center justify-center" aria-label="展开或收起考试纪律">
                       <i class="fa fa-chevron-down mr-2" id="toggleDisciplineIcon"></i><span id="toggleDisciplineLabel">展开考试纪律</span>
                   </button>
-                  <button id="playOnceBtn" class="btn btn--success btn-float flex items-center justify-center" aria-label="单次播放考试纪律音频">
+                  <button id="playOnceBtn" class="btn btn--success btn-float action-btn flex items-center justify-center" aria-label="单次播放考试纪律音频">
                       <i class="fa fa-play mr-2"></i>单次播放
                   </button>
-                  <button id="playLoopBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="循环播放考试纪律音频">
+                  <button id="playLoopBtn" class="btn btn--danger btn-float action-btn flex items-center justify-center" aria-label="循环播放考试纪律音频">
                       <i class="fa fa-repeat mr-2"></i>循环播放
                   </button>
               </div>
@@ -964,7 +972,7 @@
                 btn.innerHTML = `<i class="fa fa-${icon} mr-2"></i>${label}`;
                 btn.dataset.state = 'stopped';
                 btn.disabled = false;
-                btn.className = `btn ${colorClass} btn-float flex items-center justify-center`;
+                btn.className = `btn ${colorClass} btn-float action-btn flex items-center justify-center`;
             };
 
             resetBtn(DOM.playOnceBtn, 'play', '单次播放', 'btn--success');
