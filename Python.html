@@ -224,8 +224,7 @@
 
     // ============== Constants ==============
     var PYTHON_SERIES_API = 'https://endoflife.date/api/python.json';
-    var GITHUB_TAGS_API = 'https://api.github.com/repos/python/cpython/git/matching-refs/tags/v';
-    var SERIES_COUNT = 5;
+    var SERIES_COUNT = 3;
     var platforms = {
       windows: { name: 'Windows', mirrorUrl: 'https://mirrors.aliyun.com/python-release/windows/', suffix: '-amd64.exe' },
       macos: { name: 'MacOS', mirrorUrl: 'https://mirrors.aliyun.com/python-release/macos/', suffix: '-macos11.pkg' }
@@ -236,9 +235,7 @@
       '3.12': '3.12.10',
       '3.11': '3.11.9'
     };
-    var FALLBACK_VERSIONS = ['3.15.2', '3.15.1', '3.15.0', '3.14.10',
-      LAST_INSTALLER_BY_SERIES['3.13'], LAST_INSTALLER_BY_SERIES['3.12'],
-      LAST_INSTALLER_BY_SERIES['3.11']];
+    var FALLBACK_VERSIONS = ['3.15.2', '3.14.10', LAST_INSTALLER_BY_SERIES['3.13']];
     var TIME_API = 'https://api.shijian.online/timestamp/';
 
     // ============== Data Helpers ==============
@@ -272,17 +269,7 @@
       });
       if (series.length < SERIES_COUNT) throw new Error('发行系列信息不完整');
 
-      var latest = series[0].version;
-      var prefix = latest.major + '.' + latest.minor + '.';
-      var refs = await fetchWithTimeout(GITHUB_TAGS_API + prefix);
-      var patches = refs.map(function(tag) {
-        return parseVersion(tag.ref.replace(/^refs\/tags\//, ''));
-      }).filter(function(version) {
-        return version && version.str.startsWith(prefix) && version.patch <= latest.patch;
-      }).sort(function(a, b) { return b.patch - a.patch; });
-      if (!patches.length || patches[0].str !== latest.str) throw new Error('当前系列的版本信息不完整');
-
-      var previous = series.slice(1, SERIES_COUNT).map(function(cycle) {
+      return series.slice(0, SERIES_COUNT).map(function(cycle) {
         var version = cycle.version;
         var lastInstaller = LAST_INSTALLER_BY_SERIES[version.major + '.' + version.minor];
         if (lastInstaller && version.patch > parseVersion(lastInstaller).patch) return lastInstaller;
@@ -291,7 +278,6 @@
         }
         return version.str;
       });
-      return patches.map(function(version) { return version.str; }).concat(previous);
     }
 
     function downloadUrl(platform, version) {
