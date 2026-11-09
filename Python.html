@@ -32,9 +32,6 @@
       --accent-hover: #0077ed;
       --card-header-windows: linear-gradient(90deg, #0071e3, #2997ff);
       --card-header-macos: linear-gradient(90deg, #555, #777);
-      --btn-bg: #0071e3;
-      --btn-hover: #0077ed;
-      --btn-shadow: rgba(0, 113, 227, 0.3);
       --orb-1-bg: radial-gradient(circle, rgba(0,113,227,0.06) 0%, transparent 70%);
       --orb-2-bg: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
       --shadow-md: 0 2px 12px rgba(0,0,0,0.06);
@@ -48,8 +45,6 @@
     body .footer-link { color: #0071e3; }
     body .footer-link:hover { color: #1d1d1f; }
     body .time-display .time-main { color: #86868b; font-weight: 400; }
-    body .download-card .version-text { color: #1d1d1f; }
-    body .download-btn { color: #ffffff; }
     body .download-subtitle a { color: #0071e3; }
 
     /* ==================== 通用样式（基于CSS变量） ==================== */
@@ -151,28 +146,39 @@
     .download-card .card-header a:hover { text-decoration: underline; }
 
     .download-card .card-body { padding: 1.5rem; }
-    .download-actions { display: flex; flex-wrap: wrap; gap: 0.625rem; }
-    .download-actions > * { min-height: 44px; border-radius: 10px; }
-    .download-card .version-text {
-      flex: 1 0 6.5rem; appearance: none;
-      font: inherit; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums;
-      padding: 0.5rem 2rem 0.5rem 0.75rem;
-      border: 1px solid #c9c9ce; cursor: pointer;
-      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 0.625rem center / 1rem no-repeat;
-    }
+    .download-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.625rem; }
     .download-actions > :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    @media (forced-colors: active) {
-      .download-card .version-text { appearance: auto; background-image: none; padding-right: 0.75rem; }
-    }
 
     .download-btn {
-      flex: 1 0 auto; padding: 0.5rem 0.75rem;
-      background: var(--btn-bg); color: #fff; border: 1px solid var(--glass-border);
-      font-size: 0.875rem; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      text-decoration: none; backdrop-filter: blur(10px);
+      --button-ink: #0054a6;
+      --button-surface: #f0f7ff;
+      --button-border: #b8d4ee;
+      min-height: 48px;
+      padding: 0.5rem 0.125rem;
+      background: var(--button-surface);
+      color: var(--button-ink);
+      border: 1px solid var(--button-border);
+      border-bottom: 2px solid var(--button-ink);
+      font-size: 0.9375rem;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
     }
-    .download-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; }
+    .card-header.macos + .card-body .download-btn {
+      --button-ink: #42474d;
+      --button-surface: #f3f4f5;
+      --button-border: #cdd1d5;
+    }
+    .download-btn:hover, .download-btn:focus-visible {
+      background: var(--button-ink);
+      border-color: var(--button-ink);
+      color: #fff;
+    }
 
     .stale-warning {
       display: flex; align-items: center; gap: 0.5rem;
@@ -218,8 +224,7 @@
     // ============== Icons ==============
     var icons = {
       windows: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.05M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>',
-      macos: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
-      download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>'
+      macos: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>'
     };
 
     // ============== Constants ==============
@@ -288,7 +293,6 @@
     // ============== App State ==============
     var state = {
       versions: [],
-      selected: { windows: null, macos: null },
       isFallback: false,
       year: new Date().getFullYear()
     };
@@ -305,9 +309,11 @@
 
     function renderCard(platform) {
       var data = platforms[platform];
-      var version = state.selected[platform] || state.versions[1];
-      var options = state.versions.map(function(value) {
-        return '<option value="' + escapeAttr(value) + '"' + (value === version ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
+      var platformLabel = platform === 'windows' ? 'Windows x64' : 'Apple M 系列';
+      var buttons = state.versions.map(function(version) {
+        return '<a class="download-btn" href="' + escapeAttr(downloadUrl(platform, version)) + '" target="_blank" rel="noopener noreferrer" aria-label="' + escapeAttr('下载 Python ' + version + '（' + platformLabel + '）') + '">' +
+          escapeHtml(version) +
+        '</a>';
       }).join('');
 
       return (
@@ -318,10 +324,7 @@
           '</div>' +
           '<div class="card-body">' +
             '<div class="download-actions">' +
-              '<select id="' + platform + '-version" class="version-text" aria-label="' + escapeAttr(data.name) + ' 发行版本" data-platform="' + platform + '">' + options + '</select>' +
-              '<a id="' + platform + '-download" class="download-btn" href="' + escapeAttr(downloadUrl(platform, version)) + '" target="_blank" rel="noopener noreferrer">' +
-                icons.download + (platform === 'windows' ? ' 下载 Windows x64' : ' 下载 Apple M 系列') +
-              '</a>' +
+              buttons +
             '</div>' +
           '</div>' +
         '</div>'
@@ -359,14 +362,6 @@
       if (window.__updateClockDisplay) window.__updateClockDisplay();
     }
 
-    appEl.addEventListener('change', function(event) {
-      var platform = event.target.dataset.platform;
-      var version = event.target.value;
-      if (!Object.hasOwn(platforms, platform) || !state.versions.includes(version)) return;
-      state.selected[platform] = version;
-      document.getElementById(platform + '-download').href = downloadUrl(platform, version);
-    });
-
     // ============== Fetch Logic ==============
     window.__fetchData = async function fetchData() {
       if (!state.versions.length) render();
@@ -378,9 +373,6 @@
         state.isFallback = true;
       }
 
-      Object.keys(platforms).forEach(function(platform) {
-        if (!state.versions.includes(state.selected[platform])) state.selected[platform] = null;
-      });
       render();
       initTimeSync();
     };
