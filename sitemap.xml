@@ -80,7 +80,7 @@
   </url>
   <url>
     <loc>https://xuefulu.ai/sitemap.html</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -503,5 +503,20 @@
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://xuefulu.ai/UUYC.html</loc>
+  </url>
+  <url>
+    <loc>https://xuefulu.ai/ABC/</loc>
+  </url>
+  <url>
+    <loc>https://xuefulu.ai/ABC/index2.html</loc>
+  </url>
+  <url>
+    <loc>https://xuefulu.ai/Statistics/%E9%80%89%E9%A2%98%E6%9C%89%E6%95%B0.html</loc>
+  </url>
+  <url>
+    <loc>https://xuefulu.ai/Statistics/%E9%80%89%E9%A2%98%E8%87%AA%E6%9F%A5.html</loc>
   </url>
 </urlset>
