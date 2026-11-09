@@ -250,7 +250,7 @@
         .discipline-collapse.open {
             max-height: 2000px;
             opacity: 1;
-            margin-top: 24px;
+            margin-top: 16px;
         }
 
 
@@ -302,7 +302,7 @@
       background: var(--page-bg);
       color: var(--text-primary);
       min-height: 100dvh;
-      padding: clamp(10px, 3vw, 20px);
+      padding: clamp(6px, 1.5vw, 12px) clamp(10px, 3vw, 20px) clamp(10px, 3vw, 20px);
       overflow-x: hidden;
       line-height: 1.6;
     }
@@ -343,8 +343,8 @@
     /* ==================== 头部 ==================== */
     header {
       text-align: center;
-      /* 顶部间距保持响应式，底部收窄到 6px：与时间显示的 6px 底部内边距合计 12px，让时间行贴近下方内容 */
-      padding: clamp(20px, 5vw, 30px) 20px 6px;
+      /* 响应式页眉留白 */
+      padding: clamp(8px, 2vw, 14px) 20px 4px;
       color: var(--text-primary);
       margin-bottom: 0;
     }
@@ -401,7 +401,7 @@
     .footer {
       text-align: center;
       color: var(--text-secondary);
-      padding: 4px 0 20px;
+      padding: 4px 0 14px;
       font-size: 0.9rem;
     }
 
@@ -435,7 +435,7 @@
     /* ==================== 时间显示 ==================== */
     .time-display {
       text-align: center;
-      padding: 6px 0;
+      padding: 4px 0;
       color: var(--text-secondary);
       position: relative;
       z-index: 1;
@@ -517,9 +517,9 @@
     </header>
 
     <main class="main-content">
-      <div class="mx-auto w-full px-4 pt-2 max-w-5xl flex flex-col font-sans text-dark leading-normal">
+      <div class="mx-auto w-full px-4 pt-1 max-w-5xl flex flex-col font-sans text-dark leading-normal">
           <!-- 考试纪律区域 -->
-          <section class="card mb-6">
+          <section class="card mb-4">
               <div class="flex flex-wrap justify-center gap-3">
                   <button id="toggleDisciplineBtn" class="btn btn--brand action-btn flex items-center justify-center" aria-label="展开或收起考试纪律">
                       <i class="fa fa-chevron-down mr-2" id="toggleDisciplineIcon"></i><span id="toggleDisciplineLabel">展开考试纪律</span>
@@ -542,7 +542,7 @@
               <div id="disciplineMessage" class="text-red-500 text-center text-sm mb-3 hidden"></div>
 
               <div id="disciplineCollapse" class="discipline-collapse">
-                  <div class="space-y-3">
+                  <div class="space-y-2">
                       <div class="discipline-item">
                           <span class="discipline-number">1</span>
                           <p>考生须自觉服从监考老师管理，严禁扰乱考场秩序。</p>
@@ -569,8 +569,8 @@
 
 
           <!-- 考试信息设置区域 -->
-          <section class="card mb-6">
-              <form id="examForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section class="card mb-4">
+              <form id="examForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
                   <!-- 考试科目输入 -->
                   <div class="input-container">
                       <button type="button" class="title-btn btn--brand h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
@@ -613,7 +613,7 @@
           </section>
 
           <!-- 时钟显示区域 -->
-          <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <section class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 mb-4">
               <!-- 当前时间卡片 -->
               <div id="currentTimeCard"
                   class="card border-t-4 border-primary">
