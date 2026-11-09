@@ -2,13 +2,12 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>考试时钟 学府路1号 xuefulu.ai</title>
-
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学府路1号 xuefulu.ai</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/utc.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/timezone.js"></script>
@@ -203,42 +202,6 @@
                 pointer-events: none;
             }
         }
-        /* ===== 页脚（与 index.html 保持一致） ===== */
-        .footer {
-            text-align: center;
-
-            color: #6b7280;
-        }
-        .footer-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .footer-link {
-            color: #ef4444;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .footer-link:hover {
-            color: #ef4444;
-            text-decoration: underline;
-        }
-        .separator {
-            opacity: 0.4;
-        }
-        @media (max-width: 640px) {
-            .footer-content {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .separator {
-                display: none;
-            }
-        }
-
-
         /* ===== 考试纪律折叠动画 ===== */
         .discipline-collapse {
             overflow: hidden;
@@ -254,167 +217,427 @@
 
 
     </style>
+  <style>
+    /* ==================== CSS变量系统（暖灰极简主题） ==================== */
+    :root {
+      --page-bg: #f5f3ef;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-hover: rgba(255, 255, 255, 0.95);
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --accent-soft: rgba(0, 113, 227, 0.1);
+      --accent-glow: rgba(0, 113, 227, 0.3);
+      --accent-focus: rgba(0, 113, 227, 0.12);
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --bg-subtle: rgba(0, 0, 0, 0.05);
+      --bg-active: rgba(0, 0, 0, 0.1);
+      --glass-border: var(--border-subtle);
+      --btn-shadow: var(--accent-glow);
+      --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --radius-sm: 10px;
+      --radius-md: 15px;
+      --radius-lg: 20px;
+    }
+
+    /* ==================== 基础重置 ==================== */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+      background: var(--page-bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      padding: clamp(10px, 3vw, 20px);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* 背景装饰 */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-orb-1 {
+      top: -10%;
+      right: -5%;
+      width: min(500px, 50vw);
+      height: min(500px, 50vw);
+      background: radial-gradient(circle, rgba(0,113,227,0.06) 0%, transparent 70%);
+    }
+
+    .bg-orb-2 {
+      bottom: -10%;
+      left: -5%;
+      width: min(400px, 40vw);
+      height: min(400px, 40vw);
+      background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
+    }
+
+    /* ==================== 布局容器 ==================== */
+    .site-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==================== 头部 ==================== */
+    header {
+      text-align: center;
+      /* 顶部间距保持响应式，底部固定 10px：与时间显示的 6px 底部内边距合计 16px */
+      padding: clamp(20px, 5vw, 30px) 20px 10px;
+      color: var(--text-primary);
+      margin-bottom: 0;
+    }
+
+    .logo {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo i {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* ==================== 链接类 ==================== */
+    .header-logo-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    /* 品牌强调色（蓝色） */
+    .brand-accent {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    /* ==================== 主内容区 ==================== */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* ==================== 页脚 ==================== */
+    .footer {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 20px 0 20px;
+      font-size: 0.9rem;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+      transform: translateY(-2px);
+    }
+
+    .separator {
+      opacity: 0.4;
+    }
+
+    /* ==================== 时间显示 ==================== */
+    .time-display {
+      text-align: center;
+      padding: 6px 0;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+    .time-display .time-main {
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .time-display .time-sync-status {
+      font-size: 0.7rem;
+      opacity: 0.5;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .separator {
+        display: none;
+      }
+    }
+
+    /* 减少动画偏好 */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* 打印样式 */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .bg-orb {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen font-sans text-dark flex flex-col">
-    <div class="container mx-auto px-4 pt-6 max-w-5xl flex-grow flex flex-col justify-start">
-        <!-- 考试纪律区域 -->
-        <section class="card mb-6">
-            <div class="flex flex-wrap justify-center gap-3">
-                <a href="https://xuefulu.ai/" class="btn btn--success btn-float flex items-center justify-center" target="_blank" rel="noopener">
-                    <i class="fa fa-external-link mr-2"></i>学府路1号 · <span class="bg-yellow-300 text-gray-900 font-bold px-1.5 py-0.5 rounded">xuefulu.ai</span>
-                </a>
-                <button id="toggleDisciplineBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="展开或收起考试纪律">
-                    <i class="fa fa-chevron-down mr-2" id="toggleDisciplineIcon"></i><span id="toggleDisciplineLabel">展开考试纪律</span>
-                </button>
-                <button id="playOnceBtn" class="btn btn--success btn-float flex items-center justify-center" aria-label="单次播放考试纪律音频">
-                    <i class="fa fa-play mr-2"></i>单次播放
-                </button>
-                <button id="playLoopBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="循环播放考试纪律音频">
-                    <i class="fa fa-repeat mr-2"></i>循环播放
-                </button>
-            </div>
+<body>
+  <!-- 背景装饰 -->
+  <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
 
-            <audio id="disciplineAudio" src="https://xuefulu.ai/Attention.mp3" preload="metadata">
-                您的浏览器不支持音频播放
-            </audio>
-            <audio id="reminderAudio" src="https://xuefulu.ai/Reminder.mp3" preload="metadata">
-                您的浏览器不支持音频播放
-            </audio>
+  <div class="site-container">
+    <header>
+      <a href="https://xuefulu.ai/" target="_blank" rel="noopener noreferrer" class="header-logo-link">
+        <h1 class="logo">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          <span>学府路<span class="brand-accent">1</span>号 · <span
+              class="brand-accent">xuefulu.ai</span></span>
+        </h1>
+      </a>
+      <div class="time-display">
+        <span class="time-main">
+          <span id="currentDateTime">--</span>
+          <span class="time-sync-status" id="timeSyncStatus"><i class="fas fa-spinner fa-spin"></i></span>
+        </span>
+      </div>
+    </header>
 
-            <div id="disciplineMessage" class="text-red-500 text-center text-sm mb-3 hidden"></div>
+    <main class="main-content">
+      <div class="mx-auto w-full px-4 pt-6 max-w-5xl flex flex-col font-sans text-dark leading-normal">
+          <!-- 考试纪律区域 -->
+          <section class="card mb-6">
+              <div class="flex flex-wrap justify-center gap-3">
+                  <button id="toggleDisciplineBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="展开或收起考试纪律">
+                      <i class="fa fa-chevron-down mr-2" id="toggleDisciplineIcon"></i><span id="toggleDisciplineLabel">展开考试纪律</span>
+                  </button>
+                  <button id="playOnceBtn" class="btn btn--success btn-float flex items-center justify-center" aria-label="单次播放考试纪律音频">
+                      <i class="fa fa-play mr-2"></i>单次播放
+                  </button>
+                  <button id="playLoopBtn" class="btn btn--danger btn-float flex items-center justify-center" aria-label="循环播放考试纪律音频">
+                      <i class="fa fa-repeat mr-2"></i>循环播放
+                  </button>
+              </div>
 
-            <div id="disciplineCollapse" class="discipline-collapse">
-                <div class="space-y-3">
-                    <div class="discipline-item">
-                        <span class="discipline-number">1</span>
-                        <p>考生须自觉服从监考老师管理，严禁扰乱考场秩序。</p>
-                    </div>
-                    <div class="discipline-item">
-                        <span class="discipline-number">2</span>
-                        <p>考生须凭学生证，在规定时间进入指定教室，并按指定座位号就座参加考试。入场前须主动自查，自觉接受监考人员检查；严禁携带任何具有通讯、存储、拍照、传输功能的电子设备进入考场，包括但不限于：手机、智能眼镜、智能手表（手环）、蓝牙耳机、隐形耳机等新型智能穿戴设备，以及其他具备收发信息、扫描功能的电子设备。</p>
-                    </div>
-                    <div class="discipline-item">
-                        <span class="discipline-number">3</span>
-                        <p>入场后，考桌上仅可放置学生证及答题所需工具；其余无关物品（含各类电子设备）须提前关闭电源，统一放置于讲台两侧，不得随身携带；开考 45 分钟后，方可交卷。</p>
-                    </div>
-                    <div class="discipline-item">
-                        <span class="discipline-number">4</span>
-                        <p>凡携带、使用通讯工具及各类电子设备进行通话、查阅、发送、接收与考试相关内容的，一经发现，该门课程成绩按无效处理，并给予开除学籍处分。</p>
-                    </div>
-                    <div class="discipline-item">
-                        <span class="discipline-number">5</span>
-                        <p>考试过程中须保持安静，严格遵守考试纪律。对于任何违反考试规定的行为，将依据学校相关规定严肃处理。考试结束后，请安静有序离开考区。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+              <audio id="disciplineAudio" src="https://xuefulu.ai/Attention.mp3" preload="metadata">
+                  您的浏览器不支持音频播放
+              </audio>
+              <audio id="reminderAudio" src="https://xuefulu.ai/Reminder.mp3" preload="metadata">
+                  您的浏览器不支持音频播放
+              </audio>
 
+              <div id="disciplineMessage" class="text-red-500 text-center text-sm mb-3 hidden"></div>
 
-        <!-- 考试信息设置区域 -->
-        <section class="card mb-6">
-            <form id="examForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- 考试科目输入 -->
-                <div class="input-container">
-                    <button type="button" class="title-btn bg-success h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
-                        <i class="fa fa-book mr-2"></i>考试科目
-                    </button>
-                    <input type="text" id="examSubject" placeholder="xuefulu.ai" class="form-input text-[clamp(1.2rem,5vw,1.8rem)]">
-                </div>
-
-                <!-- 考试时间输入 -->
-                <div class="input-container">
-                    <button type="button" class="title-btn bg-danger h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
-                        <i class="fa fa-clock-o mr-2"></i>考试时间
-                    </button>
-                    <div id="examTimeContainer" class="w-full h-16 px-2 border border-gray-300 rounded-b-lg transition-smooth outline-none font-bold text-red-600 text-center flex items-center justify-center gap-0 bg-white select-none">
-                        <div class="custom-select-wrap relative inline-flex" data-field="startHour">
-                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="09">09</button>
-                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
-                        </div>
-                        <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600">:</span>
-                        <div class="custom-select-wrap relative inline-flex" data-field="startMinute">
-                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="00">00</button>
-                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
-                        </div>
-                        <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 mx-1">–</span>
-                        <div class="custom-select-wrap relative inline-flex" data-field="endHour">
-                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="09">09</button>
-                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
-                        </div>
-                        <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600">:</span>
-                        <div class="custom-select-wrap relative inline-flex" data-field="endMinute">
-                            <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="00">00</button>
-                            <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
-                        </div>
-                    </div>
-                    <div id="timeError" class="text-danger text-xs hidden text-center">开始和结束时间不能相同；支持跨日，如 22:00-00:30</div>
-                    <div id="autoAdjustHint" class="auto-adjust-hint">修改起始时间将自动调整结束时间（2小时后）</div>
-                </div>
-
-            </form>
-        </section>
-
-        <!-- 时钟显示区域 -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <!-- 当前时间卡片 -->
-            <div id="currentTimeCard"
-                class="card border-t-4 border-primary">
-                <div class="text-center">
-                    <h3 class="text-base font-semibold mb-2 text-gray-700 flex items-center justify-center flex-wrap">
-                        <i class="fa fa-clock-o mr-2 text-primary"></i>当前北京时间
-                        <span id="syncStatus" class="ml-2">
-                            <span class="sync-indicator warning">
-                                <i class="fa fa-spinner fa-spin mr-1"></i> 同步中…
-                            </span>
-                        </span>
-                        <button id="syncNowBtn" class="ml-2 text-xs text-primary hover:text-primary/80 transition-smooth"
-                            title="立即同步">
-                            <i class="fa fa-refresh"></i> 立即同步
-                        </button>
-                    </h3>
-                    <div class="time-glow">
-                        <div id="currentTime" class="text-[clamp(3rem,12vw,5rem)] font-bold text-gray-800 tabular-nums" role="timer" aria-label="当前北京时间"></div>
-                    </div>
-                    <div id="currentDate" class="text-gray-500 mt-1 text-base"></div>
-                    <div id="localTimeWarning" class="hidden mt-2 text-sm text-warning">
-                        <i class="fa fa-exclamation-triangle"></i>
-                        <span>使用本机时间，可能存在误差</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 剩余时间卡片 -->
-            <div id="countdownCard"
-                class="card border-t-4 border-accent">
-                <div class="text-center">
-                    <h3 id="countdownTitle"
-                        class="text-base font-semibold mb-2 text-gray-700 flex items-center justify-center">
-                        <i id="countdownIcon" class="fa fa-hourglass-half mr-2 text-accent"></i><span
-                            id="countdownHeader">考试剩余时间</span>
-                    </h3>
-                    <div class="time-glow">
-                        <div id="countdown" class="text-[clamp(3rem,12vw,5rem)] font-bold text-accent tabular-nums" role="timer" aria-label="考试倒计时"></div>
-                    </div>
-                    <div id="countdownStatus" class="text-gray-500 mt-1 text-base"></div>
-                </div>
-            </div>
-        </section>
+              <div id="disciplineCollapse" class="discipline-collapse">
+                  <div class="space-y-3">
+                      <div class="discipline-item">
+                          <span class="discipline-number">1</span>
+                          <p>考生须自觉服从监考老师管理，严禁扰乱考场秩序。</p>
+                      </div>
+                      <div class="discipline-item">
+                          <span class="discipline-number">2</span>
+                          <p>考生须凭学生证，在规定时间进入指定教室，并按指定座位号就座参加考试。入场前须主动自查，自觉接受监考人员检查；严禁携带任何具有通讯、存储、拍照、传输功能的电子设备进入考场，包括但不限于：手机、智能眼镜、智能手表（手环）、蓝牙耳机、隐形耳机等新型智能穿戴设备，以及其他具备收发信息、扫描功能的电子设备。</p>
+                      </div>
+                      <div class="discipline-item">
+                          <span class="discipline-number">3</span>
+                          <p>入场后，考桌上仅可放置学生证及答题所需工具；其余无关物品（含各类电子设备）须提前关闭电源，统一放置于讲台两侧，不得随身携带；开考 45 分钟后，方可交卷。</p>
+                      </div>
+                      <div class="discipline-item">
+                          <span class="discipline-number">4</span>
+                          <p>凡携带、使用通讯工具及各类电子设备进行通话、查阅、发送、接收与考试相关内容的，一经发现，该门课程成绩按无效处理，并给予开除学籍处分。</p>
+                      </div>
+                      <div class="discipline-item">
+                          <span class="discipline-number">5</span>
+                          <p>考试过程中须保持安静，严格遵守考试纪律。对于任何违反考试规定的行为，将依据学校相关规定严肃处理。考试结束后，请安静有序离开考区。</p>
+                      </div>
+                  </div>
+              </div>
+          </section>
 
 
-    <footer class="footer mb-6 bg-white rounded-xl px-4 md:px-6 py-4 md:py-6 card-shadow">
+          <!-- 考试信息设置区域 -->
+          <section class="card mb-6">
+              <form id="examForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- 考试科目输入 -->
+                  <div class="input-container">
+                      <button type="button" class="title-btn bg-success h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
+                          <i class="fa fa-book mr-2"></i>考试科目
+                      </button>
+                      <input type="text" id="examSubject" placeholder="xuefulu.ai" class="form-input text-[clamp(1.2rem,5vw,1.8rem)]">
+                  </div>
+
+                  <!-- 考试时间输入 -->
+                  <div class="input-container">
+                      <button type="button" class="title-btn bg-danger h-16 text-[clamp(1.2rem,5vw,1.8rem)]">
+                          <i class="fa fa-clock mr-2"></i>考试时间
+                      </button>
+                      <div id="examTimeContainer" class="w-full h-16 px-2 border border-gray-300 rounded-b-lg transition-smooth outline-none font-bold text-red-600 text-center flex items-center justify-center gap-0 bg-white select-none">
+                          <div class="custom-select-wrap relative inline-flex" data-field="startHour">
+                              <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="09">09</button>
+                              <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                          </div>
+                          <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600">:</span>
+                          <div class="custom-select-wrap relative inline-flex" data-field="startMinute">
+                              <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="00">00</button>
+                              <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                          </div>
+                          <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 mx-1">–</span>
+                          <div class="custom-select-wrap relative inline-flex" data-field="endHour">
+                              <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="09">09</button>
+                              <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                          </div>
+                          <span class="text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600">:</span>
+                          <div class="custom-select-wrap relative inline-flex" data-field="endMinute">
+                              <button type="button" class="custom-select-btn bg-transparent text-center text-[clamp(1.2rem,4vw,1.8rem)] font-bold text-red-600 outline-none cursor-pointer border-none px-0 py-0 leading-none" data-value="00">00</button>
+                              <div class="custom-select-popup absolute top-full left-1/2 -translate-x-1/2 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[24rem] overflow-y-auto hidden min-w-[3.2rem]"></div>
+                          </div>
+                      </div>
+                      <div id="timeError" class="text-danger text-xs hidden text-center">开始和结束时间不能相同；支持跨日，如 22:00-00:30</div>
+                      <div id="autoAdjustHint" class="auto-adjust-hint">修改起始时间将自动调整结束时间（2小时后）</div>
+                  </div>
+
+              </form>
+          </section>
+
+          <!-- 时钟显示区域 -->
+          <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <!-- 当前时间卡片 -->
+              <div id="currentTimeCard"
+                  class="card border-t-4 border-primary">
+                  <div class="text-center">
+                      <h3 class="text-base font-semibold mb-2 text-gray-700 flex items-center justify-center flex-wrap">
+                          <i class="fa fa-clock mr-2 text-primary"></i>当前北京时间
+                          <span id="syncStatus" class="ml-2">
+                              <span class="sync-indicator warning">
+                                  <i class="fa fa-spinner fa-spin mr-1"></i> 同步中…
+                              </span>
+                          </span>
+                          <button id="syncNowBtn" class="ml-2 text-xs text-primary hover:text-primary/80 transition-smooth"
+                              title="立即同步">
+                              <i class="fa fa-arrows-rotate"></i> 立即同步
+                          </button>
+                      </h3>
+                      <div class="time-glow">
+                          <div id="currentTime" class="text-[clamp(3rem,12vw,5rem)] font-bold text-gray-800 tabular-nums" role="timer" aria-label="当前北京时间"></div>
+                      </div>
+                      <div id="currentDate" class="text-gray-500 mt-1 text-base"></div>
+                      <div id="localTimeWarning" class="hidden mt-2 text-sm text-warning">
+                          <i class="fa fa-triangle-exclamation"></i>
+                          <span>使用本机时间，可能存在误差</span>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- 剩余时间卡片 -->
+              <div id="countdownCard"
+                  class="card border-t-4 border-accent">
+                  <div class="text-center">
+                      <h3 id="countdownTitle"
+                          class="text-base font-semibold mb-2 text-gray-700 flex items-center justify-center">
+                          <i id="countdownIcon" class="fa fa-hourglass-half mr-2 text-accent"></i><span
+                              id="countdownHeader">考试剩余时间</span>
+                      </h3>
+                      <div class="time-glow">
+                          <div id="countdown" class="text-[clamp(3rem,12vw,5rem)] font-bold text-accent tabular-nums" role="timer" aria-label="考试倒计时"></div>
+                      </div>
+                      <div id="countdownStatus" class="text-gray-500 mt-1 text-base"></div>
+                  </div>
+              </div>
+          </section>
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-content">
-        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank"
-            rel="noopener"><i class="fa fa-graduation-cap" aria-hidden="true"></i> © 2026 学府路1号 xuefulu.ai</a></span>
+        <span><a href="https://xuefulu.ai" class="footer-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> © <span
+              id="footerYear">2026</span> 学府路1号
+            xuefulu.ai</a></span>
         <span class="separator" aria-hidden="true">|</span>
         <a href="mailto:ai@xuefulu.ai" class="footer-link">
-          <i class="fa fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai
+          <i class="fas fa-envelope" aria-hidden="true"></i> ai@xuefulu.ai
         </a>
       </div>
     </footer>
-    </div>
+  </div>
 
-    <script>
+  <script>
+    (() => {
         // ===== 基础配置 =====
         dayjs.extend(window.dayjs_plugin_utc);
         dayjs.extend(window.dayjs_plugin_timezone);
@@ -601,9 +824,9 @@
         function updateSyncStatus(status, message) {
             const icons = {
                 syncing: '<i class="fa fa-spinner fa-spin mr-1"></i>',
-                success: '<i class="fa fa-check-circle mr-1"></i>',
-                warning: '<i class="fa fa-exclamation-circle mr-1"></i>',
-                error: '<i class="fa fa-times-circle mr-1"></i>'
+                success: '<i class="fa fa-circle-check mr-1"></i>',
+                warning: '<i class="fa fa-circle-exclamation mr-1"></i>',
+                error: '<i class="fa fa-circle-xmark mr-1"></i>'
             };
             DOM.syncStatus.innerHTML = `
                 <span class="sync-indicator ${status === 'syncing' ? 'warning' : status}">
@@ -801,7 +1024,7 @@
             if (!validateExamTime(timeInput)) {
                 if (_timeErrorDirty) DOM.timeError.classList.remove('hidden');
                 DOM.countdownHeader.textContent = '时间格式错误';
-                DOM.countdownIcon.className = 'fa fa-exclamation-circle mr-2 text-red-500';
+                DOM.countdownIcon.className = 'fa fa-circle-exclamation mr-2 text-red-500';
                 DOM.countdownEl.innerHTML = '--:--:--';
                 DOM.countdownStatus.textContent = '格式: HH:MM-HH:MM（不能相同；支持跨日）';
                 setCountdownColor('text-red-500');
@@ -940,7 +1163,7 @@
         /** 考后阶段：显示考试已结束 */
         function updateEnded(endTime) {
             DOM.countdownHeader.textContent = '考试已结束';
-            DOM.countdownIcon.className = 'fa fa-check-circle mr-2 text-green-500';
+            DOM.countdownIcon.className = 'fa fa-circle-check mr-2 text-green-500';
             DOM.countdownEl.innerHTML = '00:00:00';
             DOM.countdownStatus.textContent = `考试已于 ${endTime.format('HH:mm')} 结束`;
             setCountdownColor('text-green-500');
@@ -1132,7 +1355,7 @@
                 DOM.syncNowBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                 syncInternetTime(true).finally(() => {
                     DOM.syncNowBtn.disabled = false;
-                    DOM.syncNowBtn.innerHTML = '<i class="fa fa-refresh"></i> 立即同步';
+                    DOM.syncNowBtn.innerHTML = '<i class="fa fa-arrows-rotate"></i> 立即同步';
                 });
             });
         }
@@ -1169,10 +1392,91 @@
                 setDiscipline(false);
             }
         }
-</script>
-<script>
-fetch('https://api.shijian.online/timestamp/').then(function(r){return r.json();}).then(function(d){var y=new Date(d.data.timestamp).getFullYear();document.querySelectorAll('.footer-link').forEach(function(e){e.innerHTML=e.innerHTML.replace(/\d{4}/,y);});}).catch(function(){});
-</script>
+    })();
+  </script>
+
+  <script>
+    // ==================== 时间同步与显示（原生 Intl 实现，无第三方依赖） ====================
+    const TIME = {
+      SYNC_INTERVAL_MS: 5 * 60 * 1000,
+      offset: 0,
+      syncTimer: null,
+      formatter: new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+      })
+    };
+
+    const timeEl = document.getElementById('currentDateTime');
+    const syncStatusEl = document.getElementById('timeSyncStatus');
+
+    function getBeijingParts() {
+      return TIME.formatter.formatToParts(new Date(Date.now() + TIME.offset));
+    }
+
+    function getBeijingPart(type) {
+      const part = getBeijingParts().find(p => p.type === type);
+      return part ? part.value : '';
+    }
+
+    function updateDisplay() {
+      if (!timeEl) return;
+      const parts = {};
+      for (const p of getBeijingParts()) parts[p.type] = p.value;
+      timeEl.textContent = `${parts.year}年${parts.month}月${parts.day}日 ${parts.weekday} ${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+
+    function updateFooterYear(useLocal) {
+      const yearEl = document.getElementById('footerYear');
+      if (!yearEl) return;
+      yearEl.textContent = useLocal ? new Date().getFullYear() : getBeijingPart('year');
+    }
+
+    async function syncTime() {
+      if (syncStatusEl) {
+        syncStatusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      }
+
+      // 单次探测：网络时间 = 服务器时间 + 单向延迟（RTT/2）
+      try {
+        const t0 = performance.now();
+        const res = await fetch('https://api.shijian.online/timestamp/', { cache: 'no-store', mode: 'cors' });
+        const data = await res.json();
+        const t1 = performance.now();
+
+        if (!(data.status === 1 && data.data && data.data.timestamp)) {
+          throw new Error('invalid response');
+        }
+
+        TIME.offset = data.data.timestamp + Math.round((t1 - t0) / 2) - Date.now();
+        if (syncStatusEl) syncStatusEl.innerHTML = '';
+        updateFooterYear(false);
+      } catch (e) {
+        if (syncStatusEl) syncStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;opacity:0.8" title="时间同步失败，显示为本机时间"></i>';
+        updateFooterYear(true);
+      }
+
+      updateDisplay();
+    }
+
+    function startSync() {
+      syncTime();
+      if (TIME.syncTimer) clearInterval(TIME.syncTimer);
+      TIME.syncTimer = setInterval(syncTime, TIME.SYNC_INTERVAL_MS);
+      setInterval(updateDisplay, 1000);
+    }
+
+    updateFooterYear(true);
+    updateDisplay();
+    startSync();
+  </script>
 </body>
 
 </html>
