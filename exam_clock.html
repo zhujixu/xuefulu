@@ -202,12 +202,29 @@
                 pointer-events: none;
             }
         }
-        /* ===== 考试纪律操作按钮：统一尺寸（宽高完全一致） ===== */
+        /* ===== 考试纪律操作按钮：三等分铺满整行，与下方「考试科目/考试时间」总宽对齐 ===== */
         .action-btn {
-            width: 10rem;
+            flex: 1 1 0;
+            min-width: 0;
             height: 2.75rem;
             padding: 0 0.5rem;
             white-space: nowrap;
+        }
+
+        /* 窄屏下改为整行堆叠，避免文字被挤压 */
+        @media (max-width: 640px) {
+            .action-btn {
+                flex: 1 1 100%;
+            }
+        }
+
+        /* ===== 白色卡片内部的按钮与文本输入框：取消圆角 ===== */
+        .card .btn,
+        .card .title-btn,
+        .card .form-input,
+        .card #examTimeContainer,
+        .card .custom-select-btn {
+            border-radius: 0;
         }
 
         /* ===== 考试纪律折叠动画 ===== */
