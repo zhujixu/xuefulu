@@ -30,8 +30,10 @@
       --glass-hover: rgba(255, 255, 255, 0.95);
       --accent: #0071e3;
       --accent-hover: #0077ed;
-      --card-header-windows: linear-gradient(90deg, #0071e3, #2997ff);
-      --card-header-macos: linear-gradient(90deg, #555, #777);
+      --platform-windows: #0071e3;
+      --card-header-windows: linear-gradient(90deg, var(--platform-windows), #2997ff);
+      --platform-macos: #555;
+      --card-header-macos: linear-gradient(90deg, var(--platform-macos), #777);
       --orb-1-bg: radial-gradient(circle, rgba(0,113,227,0.06) 0%, transparent 70%);
       --orb-2-bg: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
       --shadow-md: 0 2px 12px rgba(0,0,0,0.06);
@@ -150,7 +152,7 @@
     .download-actions > :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .download-btn {
-      --button-ink: #0054a6;
+      --button-ink: var(--platform-windows);
       --button-surface: #f0f7ff;
       --button-border: #b8d4ee;
       min-height: 48px;
@@ -170,7 +172,7 @@
       transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
     }
     .card-header.macos + .card-body .download-btn {
-      --button-ink: #42474d;
+      --button-ink: var(--platform-macos);
       --button-surface: #f3f4f5;
       --button-border: #cdd1d5;
     }
