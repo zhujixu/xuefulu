@@ -8,7 +8,6 @@
   <title>学府路1号 xuefulu.ai</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
   <style>
-    /* ==================== CSS变量系统（暖灰极简主题） ==================== */
     :root {
       --page-bg: #f5f3ef;
       --text-primary: #1d1d1f;
@@ -34,7 +33,6 @@
       --radius-lg: 20px;
     }
 
-    /* ==================== 基础重置 ==================== */
     *,
     *::before,
     *::after {
@@ -59,7 +57,6 @@
       line-height: 1.6;
     }
 
-    /* 背景装饰 */
     .bg-orb {
       position: fixed;
       border-radius: 50%;
@@ -84,7 +81,6 @@
       background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
     }
 
-    /* ==================== 布局容器 ==================== */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -92,7 +88,6 @@
       z-index: 1;
     }
 
-    /* ==================== 头部 ==================== */
     header {
       text-align: center;
       /* 顶部间距保持响应式，底部固定 10px：与时间显示的 6px 底部内边距合计 16px */
@@ -148,20 +143,17 @@
       border-radius: 0.25rem;
     }
 
-    /* ==================== 链接类 ==================== */
     .header-logo-link {
       text-decoration: none;
       color: inherit;
       display: block;
     }
 
-    /* 品牌强调色（蓝色） */
     .brand-accent {
       color: var(--accent);
       text-shadow: 0 0 10px var(--accent-glow);
     }
 
-    /* ==================== 主内容区 ==================== */
     .main-content {
       display: flex;
       flex-direction: column;
@@ -203,7 +195,6 @@
       flex-wrap: wrap;
     }
 
-    /* "其他链接"入口 */
     .other-links-link {
       text-decoration: none;
       color: var(--accent);
@@ -226,14 +217,12 @@
       transform: translateY(-1px);
     }
 
-    /* ==================== 按钮系统 ==================== */
     .actions {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
     }
 
-    /* 头部操作按钮：胶囊样式（配色见全局 .btn-* 定义） */
     .links-header .btn {
       border-radius: 999px;
       padding: 6px 14px;
@@ -321,7 +310,6 @@
       background: var(--bg-active);
     }
 
-    /* ==================== 链接网格 ==================== */
     .links-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -336,7 +324,6 @@
       }
     }
 
-    /* ==================== 链接卡片 ==================== */
     .link-item {
       background: rgba(255, 255, 255, 0.7);
       border-radius: var(--radius-md);
@@ -353,7 +340,6 @@
       overflow: hidden;
     }
 
-    /* 左侧彩色强调条 */
     .link-item::before {
       content: '';
       position: absolute;
@@ -420,7 +406,6 @@
       font-size: 0.9rem;
     }
 
-    /* 链接Favicon */
     .link-favicon {
       width: 36px;
       height: 36px;
@@ -455,7 +440,6 @@
       background: rgba(255, 255, 255, 0.5);
     }
 
-    /* 拖拽手柄 */
     .drag-handle {
       color: rgba(0, 0, 0, 0.2);
       font-size: 1rem;
@@ -475,7 +459,6 @@
       cursor: grabbing;
     }
 
-    /* 链接内容 */
     .link-content {
       flex: 1;
       min-width: 0;
@@ -499,7 +482,6 @@
       text-overflow: ellipsis;
     }
 
-    /* 操作按钮 */
     .link-actions {
       display: flex;
       gap: 5px;
@@ -567,7 +549,6 @@
       color: var(--accent);
     }
 
-    /* ==================== 空状态 ==================== */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -594,7 +575,6 @@
       }
     }
 
-    /* ==================== 模态框 ==================== */
     .modal {
       display: none;
       position: fixed;
@@ -672,7 +652,6 @@
       color: var(--text-primary);
     }
 
-    /* ==================== 表单 ==================== */
     .form-group {
       margin-bottom: 20px;
     }
@@ -714,7 +693,6 @@
       margin-top: 28px;
     }
 
-    /* 删除确认特殊样式 */
     .delete-confirm-content {
       text-align: center;
       padding: 20px;
@@ -757,7 +735,6 @@
       gap: 12px;
     }
 
-    /* ==================== 通知 ==================== */
     .notification {
       position: fixed;
       bottom: 24px;
@@ -789,7 +766,6 @@
       background: #ff3b30;
     }
 
-    /* ==================== 页脚 ==================== */
     .footer {
       text-align: center;
       color: var(--text-secondary);
@@ -825,7 +801,6 @@
       opacity: 0.4;
     }
 
-    /* ==================== 时间显示 ==================== */
     .time-display {
       text-align: center;
       padding: 6px 0;
@@ -845,7 +820,6 @@
       vertical-align: middle;
     }
 
-    /* ==================== 响应式优化 ==================== */
     @media (max-width: 768px) {
       .links-header {
         flex-direction: column;
@@ -901,7 +875,6 @@
       }
     }
 
-    /* 减少动画偏好 */
     @media (prefers-reduced-motion: reduce) {
 
       *,
@@ -913,7 +886,6 @@
       }
     }
 
-    /* 打印样式 */
     @media print {
       body {
         background: white;
@@ -943,7 +915,6 @@
 </head>
 
 <body>
-  <!-- 背景装饰 -->
   <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
   <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
 
@@ -991,7 +962,6 @@
         </div>
 
         <div class="links-grid" id="linksGrid" role="list" aria-label="链接列表">
-          <!-- 链接项将通过JS动态生成 -->
         </div>
 
         <div class="empty-state" id="emptyState" role="status" aria-live="polite">
@@ -1014,7 +984,6 @@
     </footer>
   </div>
 
-  <!-- 添加/编辑链接模态框 -->
   <div class="modal" id="linkModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
       <div class="modal-header">
@@ -1041,7 +1010,6 @@
     </div>
   </div>
 
-  <!-- 删除确认模态框 -->
   <div class="modal delete-confirm-modal" id="deleteConfirmModal" role="dialog" aria-modal="true"
     aria-labelledby="deleteConfirmText">
     <div class="modal-content delete-confirm-content">
@@ -1054,7 +1022,6 @@
     </div>
   </div>
 
-  <!-- 通知 -->
   <div class="notification" id="notification" role="status" aria-live="polite">
     <i class="fas fa-check-circle" id="notificationIcon" aria-hidden="true"></i>
     <span id="notificationText">操作成功</span>
@@ -1068,16 +1035,10 @@
   </script>
 
   <script>
-    /**
-     * 学府路1号 - 链接管理器
-     */
-
-    // ==================== 配置常量 ====================
     const CONFIG = {
       NOTIFICATION_DURATION: 3000
     };
 
-    // 卡片配色方案 - Apple 生态色系（适配浅色背景）
     const CARD_COLORS = [
       { accent: '#0071e3', glow: 'rgba(0,113,227,0.08)', border: 'rgba(0,113,227,0.2)' },
       { accent: '#34c759', glow: 'rgba(52,199,89,0.08)', border: 'rgba(52,199,89,0.2)' },
@@ -1089,7 +1050,6 @@
       { accent: '#00c7be', glow: 'rgba(0,199,190,0.08)', border: 'rgba(0,199,190,0.2)' },
     ];
 
-    // ==================== 状态管理 ====================
     const state = {
       links: [],
       isEditing: false,
@@ -1101,7 +1061,6 @@
       lastFocused: null
     };
 
-    // ==================== DOM元素缓存 ====================
     const elements = {
       linksGrid: document.getElementById('linksGrid'),
       emptyState: document.getElementById('emptyState'),
@@ -1125,7 +1084,6 @@
       wechatHelperBtn: document.getElementById('wechatHelperBtn')
     };
 
-    // ==================== 工具函数 ====================
     const utils = {
       generateId: () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
 
@@ -1138,8 +1096,6 @@
         try { return new URL(url).hostname; } catch { return ''; }
       },
 
-      // 提取主域名：去掉子域名前缀，只保留根域名
-      // 如 www.doubao.com → doubao.com、sc.gcut.edu.cn → gcut.edu.cn、chat.z.ai → z.ai
       // 最后两段是多段后缀（edu.cn、com.cn 等）时保留三段，否则保留两段
       getMainDomain: (hostname) => {
         if (!hostname) return '';
@@ -1150,7 +1106,6 @@
       },
     };
 
-    // ==================== 文件下载 ====================
     function downloadFile(filename, content) {
       const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -1166,7 +1121,7 @@
       });
     }
 
-    // ==================== Favicon 加载（favicon.im → 源站 → 学士帽，带缓存与超时） ====================
+    // Favicon 加载（favicon.im → 源站 → 学士帽，带缓存与超时）
     const faviconCache = new Map();
     const FAVICON_TIMEOUT_MS = 3000;
 
@@ -1232,7 +1187,6 @@
       tryNext();
     }
 
-    // ==================== UI管理 ====================
     const ui = {
       showNotification: (message, isError = false) => {
         if (state.notificationTimer) {
@@ -1333,9 +1287,7 @@
       }
     };
 
-    // ==================== 事件处理器 ====================
     const handlers = {
-      // 打开链接
       openLink: (url) => {
         if (!url) return;
         try {
@@ -1346,7 +1298,6 @@
         } catch { /* 忽略非法 URL */ }
       },
 
-      // 打开添加模态框
       openAddModal: () => {
         state.isEditing = false;
         state.editingId = null;
@@ -1355,7 +1306,6 @@
         ui.toggleModal(elements.linkModal, true);
       },
 
-      // 打开编辑模态框
       openEditModal: (id) => {
         const link = handlers.findLinkById(id);
         if (!link) return;
@@ -1368,14 +1318,12 @@
         ui.toggleModal(elements.linkModal, true);
       },
 
-      // 打开删除确认模态框
       openDeleteModal: (id, name) => {
         state.deleteId = id;
         elements.deleteConfirmText.textContent = `确定要删除"${name || '未命名链接'}"吗？此操作无法撤销！`;
         ui.toggleModal(elements.deleteConfirmModal, true);
       },
 
-      // 关闭所有模态框
       closeModals: () => {
         ui.toggleModal(elements.linkModal, false);
         ui.toggleModal(elements.deleteConfirmModal, false);
@@ -1384,7 +1332,6 @@
         state.deleteId = null;
       },
 
-      // 保存链接
       saveLink: (e) => {
         e.preventDefault();
 
@@ -1396,7 +1343,6 @@
           return;
         }
 
-        // 自动补全协议
         let finalUrl = url;
         if (!/^https?:\/\//i.test(url)) {
           finalUrl = `https://${url}`;
@@ -1432,7 +1378,6 @@
         handlers.closeModals();
       },
 
-      // 删除链接
       confirmDelete: () => {
         if (state.deleteId === null) return;
 
@@ -1447,7 +1392,6 @@
         handlers.closeModals();
       },
 
-      // 上移/下移排序（触屏设备替代拖拽）
       moveLink: (id, direction) => {
         const index = state.links.findIndex(l => String(l.id) === String(id));
         const target = index + direction;
@@ -1457,7 +1401,6 @@
         ui.showNotification(direction < 0 ? '链接已上移' : '链接已下移');
       },
 
-      // 下载页面
       downloadPage: () => {
         try {
           const clone = document.documentElement.cloneNode(true);
@@ -1493,13 +1436,11 @@
         e.dataTransfer.setData('text/plain', item.dataset.id);
       },
 
-      // 拖拽经过
       dragOver: (e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
       },
 
-      // 拖拽进入
       dragEnter: (e) => {
         e.preventDefault();
         const item = e.target.closest('.link-item');
@@ -1508,13 +1449,11 @@
         }
       },
 
-      // 拖拽离开
       dragLeave: (e) => {
         const item = e.target.closest('.link-item');
         if (item) item.classList.remove('drag-over');
       },
 
-      // 放置
       drop: (e) => {
         e.preventDefault();
         const target = e.target.closest('.link-item');
@@ -1535,7 +1474,6 @@
         }
       },
 
-      // 拖拽结束
       dragEnd: (e) => {
         const item = e.target.closest('.link-item');
         if (item) item.classList.remove('dragging');
@@ -1546,7 +1484,6 @@
         state.justDragged = true;
       },
 
-      // 键盘导航
       handleLinkKeydown: (e) => {
         // 按钮、输入框等可交互元素自己处理键盘事件，避免误触发打开链接
         if (e.target.closest('button, input, textarea, select, a')) return;
@@ -1584,12 +1521,10 @@
         } else if (e.target.closest('.move-down')) {
           handlers.moveLink(link.id, 1);
         } else if (!e.target.closest('.drag-handle')) {
-          // 整卡可点：除拖拽手柄和操作按钮外，点击任意区域都打开链接
           handlers.openLink(link.url);
         }
       },
 
-      // 网格事件委托：右键卡片打开编辑
       handleGridContextMenu: (e) => {
         const item = e.target.closest('.link-item');
         if (!item || e.target.closest('button')) return;
@@ -1600,7 +1535,6 @@
 
       findLinkById: (id) => state.links.find(l => String(l.id) === String(id)),
 
-      // 键盘快捷键
       handleKeydown: (e) => {
         if (e.key === 'Escape') {
           handlers.closeModals();
@@ -1615,7 +1549,6 @@
 
     };
 
-    // ==================== 初始化 ====================
     const init = () => {
       // 统一 ID 为字符串，保证新增/初始链接的严格相等比较一致
       state.links = JSON.parse(elements.initialData.textContent || '[]').map(link => ({ ...link, id: String(link.id) }));
@@ -1637,7 +1570,6 @@
         });
       });
 
-      // 事件委托：拖拽和键盘导航
       elements.linksGrid.addEventListener('dragstart', handlers.dragStart);
       elements.linksGrid.addEventListener('dragover', handlers.dragOver);
       elements.linksGrid.addEventListener('dragenter', handlers.dragEnter);
@@ -1665,7 +1597,6 @@
       startSync();
     };
 
-    // ==================== 时间同步与显示（原生 Intl 实现，无第三方依赖） ====================
     const TIME = {
       SYNC_INTERVAL_MS: 5 * 60 * 1000,
       offset: 0,
@@ -1742,7 +1673,6 @@
       setInterval(updateDisplay, 1000);
     }
 
-    // 统一启动入口
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {
